@@ -182,7 +182,7 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
                       if required else 1.0,
                       "prov": eq.prov},
         "variant": variant(template, slots, eq.label, sub_parts, km),
-        "slots": [{"role": s.role, "required": s.required, "medium": s.medium or None,
+        "slots": [{"role": s.role, "classes": list(s.classes), "required": s.required, "medium": s.medium or None,
                    "anchor": spec["anchors"][s.role], "points": slots.get(s.role, [])} for s in template.slots],
         "points": points,
         "unplaced": sorted(unplaced, key=lambda i: points[i]["label"]),

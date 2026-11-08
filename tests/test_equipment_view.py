@@ -125,6 +125,7 @@ def test_reheat_vav(store, km, anchors):
     roles = {s["role"]: s for s in p["slots"]}
     assert roles["reheat_valve"]["points"] and roles["reheat_valve"]["medium"] == "hot_water"
     assert roles["zone_temp"]["anchor"]["part"] == "zone_sensor"
+    assert roles["zone_temp"]["classes"] == ["Zone_Air_Temperature_Sensor"]  # the view draws a ghost from these
     assert p["unplaced"] == []
     assert AHU2 in [r["id"] for r in p["relations"]["fed_by"]]
 

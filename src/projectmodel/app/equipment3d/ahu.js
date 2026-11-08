@@ -5,15 +5,14 @@
 const AHU = (() => {
   const { V, MAT, box, duct, joint, flow } = Parts;
 
-  // Internals drawn as simple blocks for now; E2(b) replaces them with filters, coils, fan and dampers.
-  const BLOCK = {
-    pre_filter:   new THREE.MeshStandardMaterial({ color: 0xc9a65a, roughness: 0.85, metalness: 0 }),
-    bag_filter:   new THREE.MeshStandardMaterial({ color: 0xc7792e, roughness: 0.8, metalness: 0 }),
-    cooling_coil: new THREE.MeshStandardMaterial({ color: 0xb9bdc2, roughness: 0.35, metalness: 0.8 }),
-    heating_coil: new THREE.MeshStandardMaterial({ color: 0xc9b9ad, roughness: 0.35, metalness: 0.8 }),
-    copper:       new THREE.MeshStandardMaterial({ color: 0xb87333, roughness: 0.3, metalness: 0.9 }),
-    fan:          new THREE.MeshStandardMaterial({ color: 0x3b3e43, roughness: 0.45, metalness: 0.6 }),
-  };
+  // Sensor model from the point class: the first *_Sensor class among a slot's points (or its first class).
+  function sensorKind(classes) {
+    const c = classes.find(c => c && c.endsWith("_Sensor"));
+    if (!c) return null;
+    for (const [k, word] of [["humidity", "Humidity"], ["pressure", "Pressure"], ["flow", "Flow"], ["temperature", "Temperature"]])
+      if (c.includes(word)) return k;
+    return null;  // frequency, power, speed: read on the VFD, no sensor head
+  }
 
   function build(data, viewer) {
     const v = data.variant || {};
@@ -50,6 +49,8 @@ const AHU = (() => {
       [V(0, y0, zb), V(t, top, zf)],             // left end
       [V(L - t, y0, zb), V(L, top, zf)],         // right end
     ]) casing.add(box(a, b, MAT.skin, 0.02));
+    // Cut-away illustration: the roof and its liner don't shadow the inside, so the components stay lit.
+    casing.children.forEach(m => { if (m.position.y > top - t) m.castShadow = false; });
     // liner: the inside faces, lighter than the skin
     const li = 0.02;
     for (const [a, b] of [
@@ -81,50 +82,61 @@ const AHU = (() => {
     casing.add(front);
     for (const [name, [a, b]] of Object.entries(at)) if (name !== "discharge") marker(name, V((a + b) / 2, y0 + H / 2, 0));
 
-    // --- internals (blocks until E2(b)) ------------------------------------------------------------
-    const yin = y0 + t + 0.15, yout = top - t - 0.15, zin = zb + t + 0.15, zout = zf - 0.25;
-    const slab = (name, x0, x1, mat) => parts[name].add(
-      box(V(x0, yin, zin), V(x1, yout, zout), mat, 0.02).translateX(-parts[name].position.x)
-        .translateY(-parts[name].position.y));
-    if (parts.pre_filter) slab("pre_filter", at.pre_filter[0] + 0.25, at.pre_filter[0] + 0.45, BLOCK.pre_filter);
-    if (parts.bag_filter) slab("bag_filter", at.bag_filter[0] + 0.2, at.bag_filter[1] - 0.25, BLOCK.bag_filter);
-    for (const c of ["cooling_coil", "heating_coil"]) {
+    // --- internals ----------------------------------------------------------------------------------
+    const yc = y0 + H / 2, hIn = H - 2 * t - 0.12, dIn = D - 2 * t - 0.1, zc = (zb + t + zf) / 2 - 0.03;
+    const mid = name => (at[name][0] + at[name][1]) / 2;
+    const place = (name, obj, p) => { obj.position.copy(p).sub(parts[name].position); parts[name].add(obj); return obj; };
+    const slotPoints = role => (data.slots || []).find(s => s.role === role)?.points || [];
+    const spinners = [];
+
+    place("pre_filter", Parts.pleatedFilter(hIn, dIn), V(mid("pre_filter"), yc, zc));
+    place("bag_filter", Parts.bagFilter(hIn, dIn, { length: at.bag_filter[1] - at.bag_filter[0] - 0.4 }),
+          V(at.bag_filter[0] + 0.15, yc, zc));
+    for (const [c, medium] of [["cooling_coil", "chilled_water"], ["heating_coil", "hot_water"]]) {
       if (!parts[c]) continue;
-      const [a, b] = at[c], x = (a + b) / 2;
-      slab(c, x - 0.18, x + 0.18, BLOCK[c]);
-      // valve body on the coil's pipe stub, outside the back wall
-      const valve = new THREE.Group();
-      valve.add(box(V(-0.12, -0.12, -0.12), V(0.12, 0.12, 0.12), BLOCK.copper, 0.03));
-      valve.add(box(V(-0.08, 0.12, -0.08), V(0.08, 0.36, 0.08), MAT.frame, 0.02));
-      valve.position.set(x + 0.25, y0 + 0.75, zf - 0.45);
-      add(`${c}.valve`, valve);
+      const k = Parts.coil(hIn - 0.1, dIn - 0.2, { medium });
+      const kp = V(mid(c), yc, zc - 0.1);
+      place(c, k, kp);
+      // valve + actuator on the supply stub, where the pipe leaves the cut-away front
+      const st = k.userData.stubs.supply.clone().add(kp);
+      const vl = Parts.valve(0.5, k.userData.medium);
+      vl.rotation.y = Math.PI / 2;
+      vl.position.copy(st).add(V(0, 0, -0.2));
+      add(`${c}.valve`, vl);
     }
     {
-      const [a, b] = at.supply_fan, x = (a + b) / 2, yc = y0 + H / 2;
-      const fan = parts.supply_fan;
-      const housing = box(V(x - 0.9, yc - 0.95, zin + 0.05), V(x + 0.6, yc + 0.95, zout - 0.1), BLOCK.fan, 0.04);
-      fan.add(housing.translateX(-fan.position.x).translateY(-fan.position.y));
-      const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.72, 0.3, 40), MAT.trim);
-      wheel.rotation.x = Math.PI / 2;
-      wheel.position.set(x - 0.15 - fan.position.x, yc - fan.position.y, zout - 0.05);
-      wheel.castShadow = true;
-      fan.add(wheel);
-      marker("supply_fan.vfd", V(b - 0.3, y0 + 0.5, zf - 0.4));
+      const x = mid("supply_fan") - 0.25;
+      const f = Parts.fan({ r: 0.66, width: 0.9, housing: [1.75, 1.9, 1.5] });
+      place("supply_fan", f.group, V(x, yc + 0.02, zc - 0.2));
+      f.setStatus("on");  // static until the simulator (E4) drives it from Fan_Status
+      spinners.push(f.wheel);
+      place("supply_fan", Parts.motor(), V(at.supply_fan[1] - 0.42, y0 + t + 0.3, zc + 0.25));
+      const d = Parts.vfd();
+      d.position.set(mid("discharge"), y0 + 1.25, zb + t + 0.11);
+      add("supply_fan.vfd", d);
     }
-    const mx = (at.mixing_box[0] + at.mixing_box[1]) / 2;
-    marker("mixing_box.oa_damper", V(t + 0.1, y0 + 1.1, 0));
-    marker("controller", V(0.6, top + 0.3, zf - 0.5));
+    if (v.mixing_box) {
+      const oa = Parts.damper(1.5, 1.2, { stack: "y", open: 0.6 });
+      oa.position.set(t + 0.1, y0 + 1.1, 0);
+      add("mixing_box.oa_damper", oa);
+    }
+    const ctl = new THREE.Group();
+    ctl.add(box(V(-0.3, -0.35, -0.1), V(0.3, 0.35, 0.1), new THREE.MeshStandardMaterial({ color: 0xd3d6da, roughness: 0.5 }), 0.03));
+    ctl.add(box(V(-0.2, 0.12, 0.098), V(0.2, 0.26, 0.104), Parts.C.screen));
+    ctl.position.set(mid("mixing_box") + 0.6, y0 + 1.5, zb + t + 0.12);
+    add("controller", ctl);
 
     // --- ductwork ------------------------------------------------------------------------------------
     const yOA = y0 + 1.1, zFace = 0.78;
     // outside air inlet, left
     add("outside_air_inlet", duct(V(-3.2, yOA, 0), V(0, yOA, 0), 1.5, 1.2));
-    paths.outside_air_inlet = [V(-3.2, yOA, 0), V(0, yOA, 0)];
+    paths.outside_air_inlet = { pts: [V(-3.2, yOA, 0), V(0, yOA, 0)], off: [0.6], size: [1.2, 1.5] };
+    paths.mixing_box = { pts: [V(at.mixing_box[0], top, 0), V(at.mixing_box[1], top, 0)], off: [0] };
     stream("outside", [V(-4.6, yOA, zFace), V(-0.25, yOA, zFace)]);
     label("Fresh Air", V(-4.0, yOA + 0.95, zFace));
 
     // return duct over the top, into the mixing box roof
-    const yR = top + 1.75, rx = v.mixing_box ? mx - 0.4 : null;
+    const yR = top + 1.75, rx = v.mixing_box ? mid("mixing_box") - 0.4 : null;
     const retEnd = L - 0.2;
     if (v.mixing_box) {
       const ret = new THREE.Group();
@@ -133,35 +145,41 @@ const AHU = (() => {
       ret.add(joint(V(rx, yR, 0), 1.2, 1.0, 1.5));
       let x0 = rx + 0.6;
       if (v.return_fan) {
-        const fx = L * 0.62, rf = new THREE.Group();
-        rf.add(box(V(-0.75, -0.72, -0.95), V(0.75, 0.72, 0.95), MAT.skin, 0.05));
-        rf.add(box(V(-0.77, -0.6, 0.6), V(0.77, 0.6, 0.97), MAT.trim, 0.03));
-        rf.position.set(fx, yR, 0);
-        add("return_fan", rf);
-        marker("return_fan.vfd", V(fx + 0.4, yR - 0.5, 1.0));
+        const fx = L * 0.62, rf = Parts.fan({ r: 0.5, width: 0.7, housing: [1.5, 1.44, 1.9] });
+        rf.group.position.set(fx, yR, 0);
+        rf.setStatus("on");
+        spinners.push(rf.wheel);
+        add("return_fan", rf.group);
+        const d = Parts.vfd();
+        d.position.set(fx + 1.25, yR - 0.05, 0.75 + 0.1);
+        add("return_fan.vfd", d);
         ret.add(duct(V(x0, yR, 0), V(fx - 0.75, yR, 0), 1.5, 1.0));
         x0 = fx + 0.75;
       }
       ret.add(duct(V(x0, yR, 0), V(retEnd, yR, 0), 1.5, 1.0));
-      paths.return_duct = [V(retEnd, yR, 0), V(rx, yR, 0), V(rx, top, 0)];
+      paths.return_duct = { pts: [V(retEnd, yR, 0), V(rx, yR, 0), V(rx, top, 0)], off: [0.5, 0.75] };
       stream("return", [V(retEnd + 1.1, yR, zFace), V(rx + 0.5, yR, zFace)]);
       stream("return", [V(rx, yR - 0.55, 0.78), V(rx, top + 0.25, 0.78)], { spacing: 0.3, groups: 2 });
       label("Return Air", V(retEnd + 0.7, yR + 0.85, zFace));
-      marker("mixing_box.ra_damper", V(rx, top - 0.2, 0));
-      marker("building_ref", V(retEnd + 0.3, yR + 0.9, 0));
+      const ra = Parts.damper(1.5, 1.1, { stack: "x", open: 0.4 });
+      ra.position.set(rx, top - t - 0.08, 0);
+      add("mixing_box.ra_damper", ra);
+      marker("building_ref", V(retEnd - 0.5, yR + 0.5, 0));
       if (v.relief_outlet) {
         const xr = rx + 2.0, yt = yR + 1.9;
         const rel = new THREE.Group();
         add("relief_outlet", rel);
         rel.add(duct(V(xr, yR + 0.5, 0), V(xr, yt, 0), 1.0, 1.2));
-        marker("relief_outlet.damper", V(xr, yt - 0.35, 0));
+        const rd = Parts.damper(1.2, 0.9, { stack: "x", open: 0.3 });
+        rd.position.set(xr, yt - 0.35, 0);
+        add("relief_outlet.damper", rd);
         stream("return", [V(xr, yR + 0.6, 0.64), V(xr, yt + 1.1, 0.64)], { spacing: 0.3, groups: 2 });
         label("Relief Air", V(xr + 0.95, yt + 0.5, 0.6));
       }
     }
 
     // inside the unit: mixed air up to the cooling coil, supply air after it
-    const yIn = y0 + H * 0.55, zIn = 0.45, xc = at.cooling_coil[0];
+    const yIn = y0 + H * 0.55, zIn = 0.8, xc = at.cooling_coil[0];
     stream("mixed", [V(0.35, yIn, zIn), V(xc - 0.1, yIn, zIn)], { size: 0.85 });
     stream("supply", [V(at.cooling_coil[1] + 0.1, yIn, zIn), V(L - 0.2, yIn, zIn)], { size: 0.85 });
 
@@ -175,7 +193,7 @@ const AHU = (() => {
     add("supply_duct", sup);
     sup.add(duct(V(L, yS, 0), V(sx1, yS, 0), 1.4, 1.1));
     sup.add(duct(V(rxc, y0, 0), V(rxc, riserTop, 0), 1.2, 1.4, { capA: true, capB: true }));
-    paths.supply_duct = [V(L, yS, 0), V(sx1, yS, 0), V(rxc, yS, 0), V(rxc, riserTop, 0)];
+    paths.supply_duct = { pts: [V(L, yS, 0), V(sx1, yS, 0)], off: [0.55], size: [1.1, 1.4] };
     stream("supply", [V(L + 0.2, yS, 0.72), V(sx1 - 0.15, yS, 0.72)]);
     stream("supply", [V(rxc, y0 + 0.3, 0.72), V(rxc, riserTop - 0.25, 0.72)], { spacing: 0.35, groups: 2 });
     label("Supply Air", V(L + 0.9, yS - 1.2, 0.72));
@@ -191,13 +209,61 @@ const AHU = (() => {
       label(f ? f.label.split("/").pop() : "VAV", V(bx1 + 3.1, y, 0), "stream vav");
     }
 
+    // --- anchors and sensors ------------------------------------------------------------------------------
+    // anchor(part, at) -> {p, n}: the mounting point on the part's surface and the outward normal. Along a duct
+    // `at` is 0-1 of its centreline; sensors sit on top of horizontal runs and on the front of vertical ones.
+    // Parts inside the casing mount on the roof above them.
+    function anchor(part, a) {
+      const path = paths[part];
+      if (path && a != null) {
+        const pts = path.pts, lens = pts.slice(1).map((q, i) => q.distanceTo(pts[i]));
+        let s = a * lens.reduce((x, y) => x + y, 0), i = 0;
+        while (i < lens.length - 1 && s > lens[i]) s -= lens[i++];
+        const d = pts[i + 1].clone().sub(pts[i]).normalize(), c = pts[i].clone().addScaledVector(d, s);
+        const n = Math.abs(d.y) > 0.5 ? V(0, 0, 1) : V(0, 1, 0);
+        return { p: c.addScaledVector(n, path.off[i]), n, center: pts[i].clone().addScaledVector(d, s), path, seg: i };
+      }
+      const o = parts[part];
+      if (!o) return null;
+      const p = o.getWorldPosition(V(0, 0, 0));
+      if (p.x > 0 && p.x < L && p.y < top) return { p: V(p.x, top, Math.min(p.z, 0.5)), n: V(0, 1, 0) };
+      return { p, n: V(0, 1, 0) };
+    }
+    group.updateMatrixWorld(true);
+    const mounted = new Map(), sensors = [];
+    for (const slot of data.slots || []) {
+      const pts = slot.points.map(id => data.points[id]).filter(Boolean);
+      const kind = sensorKind(pts.length ? pts.map(p => p.cls) : slot.required ? slot.classes : []);
+      if (!kind) continue;
+      const key = `${slot.anchor.part}@${slot.anchor.at ?? ""}`;
+      if (mounted.has(key)) continue;
+      const a = anchor(slot.anchor.part, slot.anchor.at);
+      if (!a) continue;
+      const ghost = !pts.length;
+      const sg = Parts.sensor(kind, { ghost });
+      sg.position.copy(a.p);
+      sg.quaternion.setFromUnitVectors(V(0, 1, 0), a.n);
+      sg.name = `sensor:${slot.role}`;
+      group.add(sg);
+      if (kind === "flow" && a.center && a.path.size) {
+        const fs = Parts.flowStation(a.path.size[0] - 0.1, a.path.size[1] - 0.1);
+        fs.position.copy(a.center);
+        group.add(fs);
+      }
+      mounted.set(key, sg);
+      sensors.push({ role: slot.role, kind, ghost, object: sg });
+    }
+
     group.traverse(o => { if (o.isMesh && !o.isInstancedMesh && o.material !== MAT.glass) o.castShadow = o.castShadow ?? true; });
     const bounds = new THREE.Box3().setFromObject(group);
     bounds.expandByPoint(V(-4.8, 0, 0)).expandByPoint(V(bx1 + 3.9, 0, 0));
 
     return {
-      group, parts, paths, bounds,
-      update: (t, dt) => flows.forEach(f => f.update(t, dt)),
+      group, parts, paths, bounds, anchor, sensors,
+      update: (t, dt) => {
+        flows.forEach(f => f.update(t, dt));
+        for (const w of spinners) w.rotation.z -= dt * 4.5;  // nominal speed until E4 drives it
+      },
       applyTheme: P => flows.forEach(f => f.setColor(P.air[f.key])),
       setFrontWall: on => { front.visible = on; },
     };
