@@ -1,0 +1,1843 @@
+blind_id,name,path
+pt-00001,Occupied status,Airside AHU-3/VAV 1-3-1
+pt-00002,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-81
+pt-00003,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-19
+pt-00004,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-20
+pt-00005,Desired Airflow,Airside AHU-2/VAV 1-2-86
+pt-00006,Damper Command,Airside AHU-2/VAV 1-2-68
+pt-00007,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-17
+pt-00008,Desired Airflow,Airside AHU-2/VAV 1-2-70
+pt-00009,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-5
+pt-00010,Occupied status,Airside AHU-3/VAV 1-3-4
+pt-00011,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-11
+pt-00012,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-17
+pt-00013,CWP-1 Status,Waterside Chilled Water Plant/CWP-1
+pt-00014,Current Airflow,Airside AHU-2/VAV 1-2-40
+pt-00015,Heating Valve Signal,Airside AHU-2/VAV 1-2-8
+pt-00016,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-14
+pt-00017,Heating Valve Signal,Airside AHU-2/VAV 1-2-55
+pt-00018,Discharge Air Temp,Airside AHU-3/VAV 1-3-17
+pt-00019,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-36
+pt-00020,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-4
+pt-00021,Desired Airflow - Hot,Airside AHU-4/DD 1-4-14
+pt-00022,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-8
+pt-00023,Heating Valve Signal,Airside AHU-3/VAV 1-3-4
+pt-00024,Occupied status,Airside AHU-2/VAV 1-2-55
+pt-00025,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-9
+pt-00026,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-20
+pt-00027,Occupied status,Airside AHU-5/DD 1-5-7
+pt-00028,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-12
+pt-00029,Occupied status,Airside AHU-3/VAV 1-3-6
+pt-00030,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-64
+pt-00031,Desired Airflow,Airside AHU-3/VAV 1-3-14
+pt-00032,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-50
+pt-00033,Discharge Air Temp,Airside AHU-2/VAV 1-2-83
+pt-00034,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-14
+pt-00035,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-1
+pt-00036,B-1 Fire Rate,Waterside Hot Water Plant/B-1
+pt-00037,Current Airflow,Airside AHU-2/VAV 1-2-92
+pt-00038,Desired Airflow - Cold,Airside AHU-5/DD 1-5-16
+pt-00039,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-11
+pt-00040,Desired Airflow - Hot,Airside AHU-5/DD 1-5-12
+pt-00041,Desired Airflow,Airside AHU-3/VAV 1-3-1
+pt-00042,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-13
+pt-00043,Power,Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-1
+pt-00044,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-14
+pt-00045,Occupied status,Airside AHU-4/DD 1-4-14
+pt-00046,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-5
+pt-00047,Occupied status,Airside AHU-3/VAV 1-3-9
+pt-00048,Current Airflow,Airside AHU-2/VAV 1-2-43
+pt-00049,Cost,Utility Bills Gas Meter 2
+pt-00050,Mode_Occ,Airside AHU-5
+pt-00051,Desired Airflow,Airside AHU-2/VAV 1-2-95
+pt-00052,Space Temperature,Airside AHU-2/VAV 1-2-62
+pt-00053,Discharge Air Temp,Airside AHU-2/VAV 1-2-67
+pt-00054,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-71
+pt-00055,Current Airflow,Airside AHU-2/VAV 1-2-35
+pt-00056,Econ_Cmd,Airside AHU-2
+pt-00057,Discharge Air Temp,Airside AHU-5/DD 1-5-9
+pt-00058,Supply %RH SP,Airside AHU-3
+pt-00059,Occupied status,Airside AHU-2/VAV 1-2-18
+pt-00060,Space Temperature,Airside AHU-2/VAV 1-2-87
+pt-00061,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-3
+pt-00062,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-78
+pt-00063,Discharge Air Temp,Airside AHU-2/VAV 1-2-85
+pt-00064,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-23
+pt-00065,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-3
+pt-00066,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-27
+pt-00067,Occupied status,Airside AHU-2/VAV 1-2-61
+pt-00068,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-20
+pt-00069,Space Temperature,Airside AHU-2/VAV 1-2-3
+pt-00070,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-4
+pt-00071,Desired Airflow - Hot,Airside AHU-4/DD 1-4-8
+pt-00072,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-76
+pt-00073,Occupied status,Airside AHU-2/VAV 1-2-32
+pt-00074,Heating Valve Signal,Airside AHU-2/VAV 1-2-90
+pt-00075,Steam Valve Control Signal,Waterside Hot Water Plant/Boiler Room HW Sys
+pt-00076,Damper Command,Airside AHU-2/VAV 1-2-26
+pt-00077,Discharge Air Temp,Airside AHU-5/DD 1-5-13
+pt-00078,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-1
+pt-00079,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-14
+pt-00080,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-13
+pt-00081,SF VFD S/S,Airside AHU-4
+pt-00082,Current Airflow,Airside AHU-3/VAV 1-3-7
+pt-00083,Volume,Utility Bills Water Meter 5
+pt-00084,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-18
+pt-00085,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-80
+pt-00086,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-9
+pt-00087,Current Airflow,Airside AHU-2/VAV 1-2-51
+pt-00088,Occupied status,Airside AHU-2/VAV 1-2-63
+pt-00089,Space Temperature,Airside AHU-3/VAV 1-3-16
+pt-00090,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-11
+pt-00091,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-59
+pt-00092,Desired Airflow,Airside AHU-2/VAV 1-2-37
+pt-00093,Current Airflow,Airside AHU-2/VAV 1-2-34
+pt-00094,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-21
+pt-00095,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-5
+pt-00096,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-75
+pt-00097,Occupied status,Airside AHU-2/VAV 1-2-25
+pt-00098,Desired Airflow,Airside AHU-2/VAV 1-2-68
+pt-00099,DAT_SP,Airside AHU-2
+pt-00100,Space Temperature,Airside AHU-2/VAV 1-2-74
+pt-00101,Occupied status,Airside AHU-2/VAV 1-2-5
+pt-00102,Discharge Air Temp,Airside AHU-2/VAV 1-2-34
+pt-00103,Desired Airflow - Hot,Airside AHU-5/DD 1-5-8
+pt-00104,Current Airflow,Airside AHU-3/VAV 1-3-2
+pt-00105,Occupied status,Airside AHU-2/VAV 1-2-28
+pt-00106,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-65
+pt-00107,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-10
+pt-00108,Cost,Utility Bills Water Meter 5
+pt-00109,Discharge Air Temp,Airside AHU-2/VAV 1-2-9
+pt-00110,DSP_SP_Curr_Value,Airside AHU-4
+pt-00111,CH-1 Cond Inlet,Waterside Chilled Water Plant/CH-1
+pt-00112,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-5
+pt-00113,Discharge Air Temp,Airside AHU-5/DD 1-5-1
+pt-00114,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-12
+pt-00115,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-48
+pt-00116,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-18
+pt-00117,Heating Valve Signal,Airside AHU-2/VAV 1-2-21
+pt-00118,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-32
+pt-00119,Desired Airflow - Cold,Airside AHU-5/DD 1-5-14
+pt-00120,Space Temperature,Airside AHU-2/VAV 1-2-96
+pt-00121,Damper Command,Airside AHU-3/VAV 1-3-14
+pt-00122,Cost,Utility Bills Water Meter 7
+pt-00123,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-67
+pt-00124,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-4
+pt-00125,Space Temperature,Airside AHU-5/DD 1-5-6
+pt-00126,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-71
+pt-00127,Current Airflow,Airside AHU-3/VAV 1-3-17
+pt-00128,Space Temperature,Airside AHU-2/VAV 1-2-67
+pt-00129,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-66
+pt-00130,Occupied status,Airside AHU-2/VAV 1-2-48
+pt-00131,RAT,Airside AHU-2
+pt-00132,CH-2 Cond ISO Valve OPEN,Waterside Chilled Water Plant/CH-2
+pt-00133,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-18
+pt-00134,Current Airflow,Airside AHU-3/VAV 1-3-5
+pt-00135,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-6
+pt-00136,Damper Command,Airside AHU-3/VAV 1-3-7
+pt-00137,Discharge Air Temp,Airside AHU-2/VAV 1-2-11
+pt-00138,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-25
+pt-00139,Occupied status,Airside AHU-2/VAV 1-2-21
+pt-00140,Occupied status,Airside AHU-5/DD 1-5-15
+pt-00141,Desired Airflow - Cold,Airside AHU-4/DD 1-4-13
+pt-00142,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-19
+pt-00143,Heating Valve Signal,Airside AHU-2/VAV 1-2-47
+pt-00144,Damper Command,Airside AHU-2/VAV 1-2-89
+pt-00145,Current Airflow,Airside AHU-2/VAV 1-2-1
+pt-00146,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-62
+pt-00147,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-5
+pt-00148,Discharge Air Temp,Airside AHU-2/VAV 1-2-51
+pt-00149,Current Airflow,Airside AHU-2/VAV 1-2-96
+pt-00150,Occupied status,Airside AHU-2/VAV 1-2-90
+pt-00151,Space Temperature,Airside AHU-5/DD 1-5-16
+pt-00152,Desired Airflow,Airside AHU-2/VAV 1-2-69
+pt-00153,Current Airflow,Airside AHU-2/VAV 1-2-76
+pt-00154,Desired Airflow,Airside AHU-2/VAV 1-2-42
+pt-00155,Discharge Air Temp,Airside AHU-2/VAV 1-2-43
+pt-00156,Desired Airflow - Cold,Airside AHU-5/DD 1-5-7
+pt-00157,Current Airflow,Airside AHU-2/VAV 1-2-71
+pt-00158,Space Temperature,Airside AHU-2/VAV 1-2-92
+pt-00159,Discharge Air Temp,Airside AHU-3/VAV 1-3-12
+pt-00160,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-13
+pt-00161,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-58
+pt-00162,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-10
+pt-00163,Heating Valve Signal,Airside AHU-2/VAV 1-2-29
+pt-00164,Occupied status,Airside AHU-3/VAV 1-3-2
+pt-00165,Heating Valve Signal,Airside AHU-2/VAV 1-2-26
+pt-00166,Chilled Water Leaving Temp,Waterside Chilled Water Plant/CH-2
+pt-00167,Discharge Air Temp,Airside AHU-2/VAV 1-2-74
+pt-00168,Occupied status,Airside AHU-2/VAV 1-2-64
+pt-00169,Mode_Occ,Airside AHU-4
+pt-00170,Current Airflow,Airside AHU-2/VAV 1-2-46
+pt-00171,Occupied status,Airside AHU-2/VAV 1-2-11
+pt-00172,Occupied status,Airside AHU-2/VAV 1-2-85
+pt-00173,Discharge Air Temp,Airside AHU-2/VAV 1-2-89
+pt-00174,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-69
+pt-00175,Current Airflow,Airside AHU-2/VAV 1-2-27
+pt-00176,SF VFD S/S,Airside AHU-3
+pt-00177,Occupied status,Airside AHU-2/VAV 1-2-47
+pt-00178,CH-1 Evap ISO Valve,Waterside Chilled Water Plant/CH-1
+pt-00179,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-85
+pt-00180,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-6
+pt-00181,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-56
+pt-00182,Discharge Air Temp,Airside AHU-2/VAV 1-2-59
+pt-00183,Discharge Air Temp,Airside AHU-2/VAV 1-2-71
+pt-00184,Space Temperature,Airside AHU-2/VAV 1-2-88
+pt-00185,Desired Airflow - Hot,Airside AHU-5/DD 1-5-7
+pt-00186,Discharge Air Temp,Airside AHU-3/VAV 1-3-3
+pt-00187,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-12
+pt-00188,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-12
+pt-00189,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-18
+pt-00190,Heating Valve Signal,Airside AHU-2/VAV 1-2-72
+pt-00191,RF VFD Speed,Airside AHU-2
+pt-00192,Space Temperature,Airside AHU-2/VAV 1-2-95
+pt-00193,Occupied status,Airside AHU-2/VAV 1-2-38
+pt-00194,Space Temperature,Airside AHU-2/VAV 1-2-51
+pt-00195,Space Temperature,Airside AHU-2/VAV 1-2-85
+pt-00196,Discharge Air Temp,Airside AHU-3/VAV 1-3-10
+pt-00197,Space Temperature,Airside AHU-2/VAV 1-2-64
+pt-00198,Return Fan Status,Airside AHU-2/RF VFD
+pt-00199,CT-2 Speed Command,Waterside Chilled Water Plant/CT-2
+pt-00200,CW Return Temp,Waterside Chilled Water Plant
+pt-00201,Damper Command,Airside AHU-2/VAV 1-2-40
+pt-00202,Current Airflow,Airside AHU-2/VAV 1-2-78
+pt-00203,Cost,Utility Bills Water Meter 3
+pt-00204,Cost,Utility Bills Water Meter 4
+pt-00205,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-8
+pt-00206,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-34
+pt-00207,Occupied status,Airside AHU-2/VAV 1-2-72
+pt-00208,SF VFD Signal,Airside AHU-3
+pt-00209,Space Temperature,Airside AHU-2/VAV 1-2-37
+pt-00210,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-9
+pt-00211,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-13
+pt-00212,Occupied status,Airside AHU-3/VAV 1-3-13
+pt-00213,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-9
+pt-00214,Discharge Air Temp,Airside AHU-2/VAV 1-2-55
+pt-00215,Chilled Water Flow (CC),Waterside Chilled Water Plant/CH-1
+pt-00216,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-8
+pt-00217,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-65
+pt-00218,Space Temperature,Airside AHU-2/VAV 1-2-75
+pt-00219,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-15
+pt-00220,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-84
+pt-00221,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-82
+pt-00222,Space Temperature,Airside AHU-2/VAV 1-2-45
+pt-00223,Occupied status,Airside AHU-2/VAV 1-2-15
+pt-00224,Discharge Air Temp,Airside AHU-2/VAV 1-2-80
+pt-00225,Damper Command,Airside AHU-3/VAV 1-3-3
+pt-00226,Evap Efficiency (CC),Waterside Chilled Water Plant/CH-1
+pt-00227,Heating Valve Signal,Airside AHU-2/VAV 1-2-58
+pt-00228,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-5
+pt-00229,Heating Valve Signal,Airside AHU-2/VAV 1-2-13
+pt-00230,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-93
+pt-00231,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-5
+pt-00232,HHWP-3 Status,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-3
+pt-00233,Discharge Air Temp,Airside AHU-2/VAV 1-2-18
+pt-00234,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-29
+pt-00235,Building Static Sensor,Airside AHU-4
+pt-00236,Occupied status,Airside AHU-5/DD 1-5-12
+pt-00237,CWP-2 ISO Valve,Waterside Chilled Water Plant/CWP-2
+pt-00238,Desired Airflow,Airside AHU-2/VAV 1-2-74
+pt-00239,Desired Airflow - Hot,Airside AHU-4/DD 1-4-13
+pt-00240,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-12
+pt-00241,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-3
+pt-00242,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-76
+pt-00243,Heating Valve Signal,Airside AHU-3/VAV 1-3-7
+pt-00244,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-1
+pt-00245,Current Airflow,Airside AHU-2/VAV 1-2-61
+pt-00246,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-87
+pt-00247,Heating Valve Signal,Airside AHU-2/VAV 1-2-71
+pt-00248,Evap Refrig Saturation Temp (CC),Waterside Chilled Water Plant/CH-1
+pt-00249,Power,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-3
+pt-00250,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-7
+pt-00251,RF Status,Airside AHU-4
+pt-00252,Current Airflow,Airside AHU-2/VAV 1-2-13
+pt-00253,Current Airflow,Airside AHU-3/VAV 1-3-12
+pt-00254,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-12
+pt-00255,Full Load Amp Percentage,Waterside Chilled Water Plant/CH-1
+pt-00256,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-82
+pt-00257,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-9
+pt-00258,Desired Airflow - Hot,Airside AHU-5/DD 1-5-15
+pt-00259,Space Temperature,Airside AHU-2/VAV 1-2-90
+pt-00260,Desired Airflow,Airside AHU-2/VAV 1-2-73
+pt-00261,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-37
+pt-00262,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-13
+pt-00263,Discharge Air Temp,Airside AHU-3/VAV 1-3-7
+pt-00264,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-8
+pt-00265,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-1
+pt-00266,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-2
+pt-00267,Damper Command,Airside AHU-2/VAV 1-2-92
+pt-00268,Desired Airflow,Airside AHU-2/VAV 1-2-83
+pt-00269,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-1
+pt-00270,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-16
+pt-00271,Boiler 2 Status,Waterside Hot Water Plant/B-2
+pt-00272,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-31
+pt-00273,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-12
+pt-00274,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-12
+pt-00275,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-5
+pt-00276,Power Peak,Utility Bills Elec Meter 2
+pt-00277,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-7
+pt-00278,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-44
+pt-00279,MAT,Airside AHU-2
+pt-00280,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-7
+pt-00281,Desired Airflow,Airside AHU-3/VAV 1-3-16
+pt-00282,Compressor Refrig Leaving Temp (CC),Waterside Chilled Water Plant/CH-1
+pt-00283,Current Airflow,Airside AHU-2/VAV 1-2-53
+pt-00284,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-7
+pt-00285,Space Temperature,Airside AHU-2/VAV 1-2-91
+pt-00286,Discharge Air Temp,Airside AHU-2/VAV 1-2-5
+pt-00287,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-90
+pt-00288,Volume,Utility Bills Water Meter 1
+pt-00289,Heating Valve Signal,Airside AHU-2/VAV 1-2-15
+pt-00290,Current Airflow,Airside AHU-2/VAV 1-2-38
+pt-00291,Occupied status,Airside AHU-2/VAV 1-2-10
+pt-00292,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-15
+pt-00293,Heating Valve Signal,Airside AHU-2/VAV 1-2-28
+pt-00294,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-3
+pt-00295,Space Temperature,Airside AHU-2/VAV 1-2-61
+pt-00296,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-14
+pt-00297,Power,Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-2
+pt-00298,Space Temperature,Airside AHU-4/DD 1-4-14
+pt-00299,Occupied status,Airside AHU-2/VAV 1-2-75
+pt-00300,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-10
+pt-00301,Desired Airflow,Airside AHU-2/VAV 1-2-81
+pt-00302,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-48
+pt-00303,Cond Water Leaving Temp,Waterside Chilled Water Plant/CH-2
+pt-00304,Space Temperature,Airside AHU-5/DD 1-5-4
+pt-00305,Discharge Air Temp,Airside AHU-5/DD 1-5-15
+pt-00306,Boiler 3 Status,Waterside Hot Water Plant/B-3
+pt-00307,Current Airflow,Airside AHU-2/VAV 1-2-50
+pt-00308,Occupied status,Airside AHU-2/VAV 1-2-22
+pt-00309,Discharge Air Temp,Airside AHU-2/VAV 1-2-25
+pt-00310,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-84
+pt-00311,Desired Airflow - Cold,Airside AHU-5/DD 1-5-10
+pt-00312,CW Supply Temp,Waterside Chilled Water Plant
+pt-00313,Desired Airflow,Airside AHU-2/VAV 1-2-62
+pt-00314,Discharge Air Temp,Airside AHU-2/VAV 1-2-17
+pt-00315,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-9
+pt-00316,Space Temperature,Airside AHU-3/VAV 1-3-2
+pt-00317,Space Temperature,Airside AHU-2/VAV 1-2-42
+pt-00318,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-33
+pt-00319,Boiler 2 S/S,Waterside Hot Water Plant/B-2
+pt-00320,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-42
+pt-00321,Occupied status,Airside AHU-5/DD 1-5-10
+pt-00322,Current Airflow,Airside AHU-2/VAV 1-2-48
+pt-00323,Damper Command,Airside AHU-3/VAV 1-3-8
+pt-00324,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-11
+pt-00325,Occupied status,Airside AHU-5/DD 1-5-5
+pt-00326,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-3
+pt-00327,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-14
+pt-00328,Cost,Utility Bills Gas Meter 1
+pt-00329,Desired Airflow,Airside AHU-2/VAV 1-2-7
+pt-00330,Damper Command,Airside AHU-2/VAV 1-2-67
+pt-00331,Discharge Air Temp,Airside AHU-3/VAV 1-3-5
+pt-00332,Heating Valve Signal,Airside AHU-2/VAV 1-2-59
+pt-00333,Current Airflow,Airside AHU-2/VAV 1-2-16
+pt-00334,Heating Valve Signal,Airside AHU-2/VAV 1-2-36
+pt-00335,Damper Command,Airside AHU-2/VAV 1-2-8
+pt-00336,Desired Airflow - Cold,Airside AHU-5/DD 1-5-2
+pt-00337,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-78
+pt-00338,Damper Command,Airside AHU-2/VAV 1-2-87
+pt-00339,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-87
+pt-00340,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-7
+pt-00341,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-7
+pt-00342,Heating Valve Signal,Airside AHU-3/VAV 1-3-9
+pt-00343,Current Airflow,Airside AHU-2/VAV 1-2-82
+pt-00344,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-11
+pt-00345,Desired Airflow,Airside AHU-2/VAV 1-2-8
+pt-00346,Hot Deck SAT,Airside AHU-4
+pt-00347,Desired Airflow,Airside AHU-2/VAV 1-2-79
+pt-00348,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-13
+pt-00349,Occupied status,Airside AHU-3/VAV 1-3-11
+pt-00350,Relief Signal,Airside AHU-5
+pt-00351,Desired Airflow - Hot,Airside AHU-5/DD 1-5-5
+pt-00352,RF VFD S/S,Airside AHU-2
+pt-00353,Occupied status,Airside AHU-3/VAV 1-3-3
+pt-00354,Occupied status,Airside AHU-5/DD 1-5-17
+pt-00355,Discharge Air Temp,Airside AHU-4/DD 1-4-4
+pt-00356,Heating Valve Signal,Airside AHU-2/VAV 1-2-37
+pt-00357,Damper Command,Airside AHU-2/VAV 1-2-96
+pt-00358,Discharge Air Temp,Airside AHU-4/DD 1-4-9
+pt-00359,Space Temperature,Airside AHU-2/VAV 1-2-72
+pt-00360,Desired Airflow,Airside AHU-2/VAV 1-2-10
+pt-00361,Heating Valve Signal,Airside AHU-3/VAV 1-3-2
+pt-00362,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-33
+pt-00363,Heating Valve Signal,Airside AHU-2/VAV 1-2-11
+pt-00364,Desired Airflow - Cold,Airside AHU-5/DD 1-5-18
+pt-00365,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-65
+pt-00366,RF Status,Airside AHU-2
+pt-00367,Damper Command,Airside AHU-2/VAV 1-2-36
+pt-00368,Heating Valve Signal,Airside AHU-2/VAV 1-2-87
+pt-00369,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-1
+pt-00370,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-48
+pt-00371,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-17
+pt-00372,Damper Command,Airside AHU-2/VAV 1-2-32
+pt-00373,Damper Command,Airside AHU-2/VAV 1-2-52
+pt-00374,Current Airflow,Airside AHU-2/VAV 1-2-33
+pt-00375,Desired Airflow,Airside AHU-2/VAV 1-2-4
+pt-00376,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-9
+pt-00377,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-13
+pt-00378,Current Airflow,Airside AHU-2/VAV 1-2-10
+pt-00379,Heating Valve Signal,Airside AHU-3/VAV 1-3-13
+pt-00380,Desired Airflow,Airside AHU-2/VAV 1-2-90
+pt-00381,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-41
+pt-00382,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-8
+pt-00383,Desired Airflow - Cold,Airside AHU-5/DD 1-5-9
+pt-00384,Desired Airflow - Cold,Airside AHU-5/DD 1-5-11
+pt-00385,Command,Waterside Chilled Water Plant/CH-1
+pt-00386,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-3
+pt-00387,Desired Airflow,Airside AHU-2/VAV 1-2-20
+pt-00388,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-4
+pt-00389,Damper Command,Airside AHU-2/VAV 1-2-85
+pt-00390,Desired Airflow,Airside AHU-2/VAV 1-2-48
+pt-00391,Damper Command,Airside AHU-2/VAV 1-2-25
+pt-00392,Heating Valve Signal,Airside AHU-2/VAV 1-2-88
+pt-00393,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-9
+pt-00394,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-45
+pt-00395,Desired Airflow,Airside AHU-2/VAV 1-2-41
+pt-00396,Occupied status,Airside AHU-2/VAV 1-2-78
+pt-00397,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-33
+pt-00398,Space Temperature,Airside AHU-2/VAV 1-2-66
+pt-00399,Current Airflow,Airside AHU-2/VAV 1-2-75
+pt-00400,Desired Airflow,Airside AHU-2/VAV 1-2-63
+pt-00401,Space Temperature,Airside AHU-2/VAV 1-2-22
+pt-00402,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-96
+pt-00403,Occupied status,Airside AHU-2/VAV 1-2-43
+pt-00404,Discharge Air Temp,Airside AHU-2/VAV 1-2-79
+pt-00405,Occupied status,Airside AHU-2/VAV 1-2-35
+pt-00406,Heating Valve Signal,Airside AHU-2/VAV 1-2-94
+pt-00407,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-21
+pt-00408,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-8
+pt-00409,Occupied status,Airside AHU-2/VAV 1-2-96
+pt-00410,Space Temperature,Airside AHU-2/VAV 1-2-20
+pt-00411,Desired Airflow - Hot,Airside AHU-5/DD 1-5-4
+pt-00412,Damper Command,Airside AHU-2/VAV 1-2-12
+pt-00413,Occupied status,Airside AHU-4/DD 1-4-10
+pt-00414,Occupied status,Airside AHU-4/DD 1-4-9
+pt-00415,Discharge Air Temp,Airside AHU-2/VAV 1-2-10
+pt-00416,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-11
+pt-00417,Volume,Utility Bills Water Meter 7
+pt-00418,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-16
+pt-00419,Supply Fan Frequency,Airside AHU-2/SF VFD
+pt-00420,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-14
+pt-00421,Discharge Air Temp,Airside AHU-4/DD 1-4-12
+pt-00422,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-7
+pt-00423,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-3
+pt-00424,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-16
+pt-00425,OSA Damper Signal,Airside AHU-3
+pt-00426,HHWP-2 S/S,Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-2
+pt-00427,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-2
+pt-00428,Current Airflow,Airside AHU-2/VAV 1-2-66
+pt-00429,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-81
+pt-00430,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-11
+pt-00431,Current Airflow,Airside AHU-2/VAV 1-2-23
+pt-00432,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-15
+pt-00433,Discharge Air Temp,Airside AHU-2/VAV 1-2-20
+pt-00434,CH-2 Status,Waterside Chilled Water Plant/CH-2
+pt-00435,Discharge Air Temp,Airside AHU-2/VAV 1-2-69
+pt-00436,CH-1 Cond Outlet,Waterside Chilled Water Plant/CH-1
+pt-00437,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-16
+pt-00438,Desired Airflow,Airside AHU-2/VAV 1-2-92
+pt-00439,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-85
+pt-00440,Desired Airflow,Airside AHU-2/VAV 1-2-89
+pt-00441,Current Airflow,Airside AHU-2/VAV 1-2-7
+pt-00442,Heating Valve Signal,Airside AHU-2/VAV 1-2-86
+pt-00443,Relief Damper Signal,Airside AHU-2
+pt-00444,CT-1 ISO Valve,Waterside Chilled Water Plant/CT-1
+pt-00445,Desired Airflow,Airside AHU-2/VAV 1-2-72
+pt-00446,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-18
+pt-00447,Desired Airflow - Cold,Airside AHU-5/DD 1-5-19
+pt-00448,Occupied status,Airside AHU-3/VAV 1-3-17
+pt-00449,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-58
+pt-00450,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-8
+pt-00451,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-50
+pt-00452,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-73
+pt-00453,Damper Command,Airside AHU-2/VAV 1-2-83
+pt-00454,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-64
+pt-00455,Desired Airflow,Airside AHU-3/VAV 1-3-6
+pt-00456,Discharge Air Temp,Airside AHU-2/VAV 1-2-68
+pt-00457,Space Temperature,Airside AHU-5/DD 1-5-2
+pt-00458,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-15
+pt-00459,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-13
+pt-00460,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-17
+pt-00461,Space Temperature,Airside AHU-2/VAV 1-2-28
+pt-00462,Desired Airflow - Hot,Airside AHU-4/DD 1-4-7
+pt-00463,Discharge Air Temp,Airside AHU-4/DD 1-4-5
+pt-00464,Damper Command,Airside AHU-2/VAV 1-2-11
+pt-00465,Discharge Air Temp,Airside AHU-5/DD 1-5-17
+pt-00466,1/3 Steam Valve Signal,Waterside Hot Water Plant/Boiler Room HW Sys/HX-3
+pt-00467,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-12
+pt-00468,Discharge Air Temp,Airside AHU-2/VAV 1-2-46
+pt-00469,Building Static Reading,Airside AHU-4
+pt-00470,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-5
+pt-00471,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-12
+pt-00472,Desired Airflow,Airside AHU-3/VAV 1-3-3
+pt-00473,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-43
+pt-00474,Occupied status,Airside AHU-2/VAV 1-2-67
+pt-00475,Space Temperature,Airside AHU-2/VAV 1-2-34
+pt-00476,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-73
+pt-00477,Damper Command,Airside AHU-2/VAV 1-2-79
+pt-00478,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-62
+pt-00479,HHWP-2 Status,Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-2
+pt-00480,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-6
+pt-00481,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-75
+pt-00482,Heating Valve Signal,Airside AHU-2/VAV 1-2-5
+pt-00483,Discharge Air Temp,Airside AHU-5/DD 1-5-18
+pt-00484,Desired Airflow,Airside AHU-3/VAV 1-3-4
+pt-00485,Space Temperature,Airside AHU-3/VAV 1-3-15
+pt-00486,Elec Power,Waterside Chilled Water Plant/CT-1
+pt-00487,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-10
+pt-00488,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-1
+pt-00489,Discharge Air Temp,Airside AHU-2/VAV 1-2-87
+pt-00490,Heating Valve Signal,Airside AHU-2/VAV 1-2-80
+pt-00491,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-12
+pt-00492,Occupied status,Airside AHU-3/VAV 1-3-10
+pt-00493,Refrig Cycle Efficiency (CC),Waterside Chilled Water Plant/CH-1
+pt-00494,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-23
+pt-00495,Desired Airflow - Cold,Airside AHU-5/DD 1-5-15
+pt-00496,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-46
+pt-00497,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-2
+pt-00498,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-10
+pt-00499,Heating Valve Signal,Airside AHU-3/VAV 1-3-14
+pt-00500,Cost,Utility Bills Elec Meter 1
+pt-00501,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-10
+pt-00502,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-56
+pt-00503,Damper Command,Airside AHU-2/VAV 1-2-18
+pt-00504,Damper Command,Airside AHU-2/VAV 1-2-19
+pt-00505,Desired Airflow,Airside AHU-2/VAV 1-2-15
+pt-00506,Occupied status,Airside AHU-5/DD 1-5-8
+pt-00507,B-2 Fire Rate,Waterside Hot Water Plant/B-2
+pt-00508,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-7
+pt-00509,Damper Command,Airside AHU-2/VAV 1-2-64
+pt-00510,Occupied status,Airside AHU-3/VAV 1-3-16
+pt-00511,Discharge Air Temp,Airside AHU-4/DD 1-4-7
+pt-00512,Current Airflow,Airside AHU-2/VAV 1-2-5
+pt-00513,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-36
+pt-00514,Occupied status,Airside AHU-2/VAV 1-2-23
+pt-00515,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-10
+pt-00516,EF-2 Status,Airside AHU-3/EF-2
+pt-00517,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-9
+pt-00518,Occupied status,Airside AHU-2/VAV 1-2-14
+pt-00519,Damper Command,Airside AHU-2/VAV 1-2-80
+pt-00520,Damper Command,Airside AHU-2/VAV 1-2-78
+pt-00521,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-93
+pt-00522,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-16
+pt-00523,CT-2 S/S,Waterside Chilled Water Plant/CT-2
+pt-00524,Htg_Valve_Cmd,Airside AHU-5
+pt-00525,Discharge Air Temp,Airside AHU-5/DD 1-5-8
+pt-00526,Occupied status,Airside AHU-2/VAV 1-2-4
+pt-00527,Occupied status,Airside AHU-2/VAV 1-2-41
+pt-00528,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-6
+pt-00529,Discharge Air Temp,Airside AHU-2/VAV 1-2-45
+pt-00530,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-63
+pt-00531,Space Temperature,Airside AHU-5/DD 1-5-14
+pt-00532,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-53
+pt-00533,Space Temperature,Airside AHU-2/VAV 1-2-10
+pt-00534,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-10
+pt-00535,Current Airflow,Airside AHU-3/VAV 1-3-15
+pt-00536,Space Temperature,Airside AHU-2/VAV 1-2-94
+pt-00537,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-3
+pt-00538,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-47
+pt-00539,Desired Airflow - Cold,Airside AHU-5/DD 1-5-3
+pt-00540,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-2
+pt-00541,Discharge Air Temp,Airside AHU-2/VAV 1-2-33
+pt-00542,Heating Valve Signal,Airside AHU-3/VAV 1-3-10
+pt-00543,Desired Airflow,Airside AHU-2/VAV 1-2-50
+pt-00544,Efficiency (CC),Waterside Chilled Water Plant/CH-1
+pt-00545,Desired Airflow,Airside AHU-2/VAV 1-2-67
+pt-00546,Outside Air Humidity,Airside AHU-3
+pt-00547,Occupied status,Airside AHU-2/VAV 1-2-31
+pt-00548,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-14
+pt-00549,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-8
+pt-00550,Space Temperature,Airside AHU-2/VAV 1-2-76
+pt-00551,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-46
+pt-00552,Damper Command,Airside AHU-3/VAV 1-3-6
+pt-00553,Current Airflow,Airside AHU-3/VAV 1-3-13
+pt-00554,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-2
+pt-00555,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-52
+pt-00556,Heating Valve Signal,Airside AHU-2/VAV 1-2-78
+pt-00557,Desired Airflow,Airside AHU-2/VAV 1-2-31
+pt-00558,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-7
+pt-00559,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-45
+pt-00560,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-30
+pt-00561,Duct Static,Airside AHU-5
+pt-00562,DSP_SP_Curr_Value,Airside AHU-2
+pt-00563,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-4
+pt-00564,Space Temperature,Airside AHU-2/VAV 1-2-40
+pt-00565,Supply Fan Status,Airside AHU-2/SF VFD
+pt-00566,CH-3 Evap ISO Valve OPEN,Waterside Chilled Water Plant/CH-3
+pt-00567,Space Temperature,Airside AHU-2/VAV 1-2-25
+pt-00568,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-12
+pt-00569,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-14
+pt-00570,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-15
+pt-00571,Current Airflow,Airside AHU-2/VAV 1-2-17
+pt-00572,Damper Command,Airside AHU-2/VAV 1-2-84
+pt-00573,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-17
+pt-00574,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-68
+pt-00575,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-6
+pt-00576,SF_VFD_Curr_Speed,Airside AHU-5
+pt-00577,Space Temperature,Airside AHU-2/VAV 1-2-30
+pt-00578,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-62
+pt-00579,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-45
+pt-00580,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-58
+pt-00581,Volume,Utility Bills Water Meter 8
+pt-00582,Occupied status,Airside AHU-2/VAV 1-2-80
+pt-00583,Discharge Air Temp,Airside AHU-2/VAV 1-2-28
+pt-00584,Discharge Air Temp,Airside AHU-2/VAV 1-2-19
+pt-00585,Space Temperature,Airside AHU-2/VAV 1-2-46
+pt-00586,Space Temperature,Airside AHU-2/VAV 1-2-16
+pt-00587,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-12
+pt-00588,Space Temperature,Airside AHU-4/DD 1-4-12
+pt-00589,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-5
+pt-00590,Discharge Air Temp,Airside AHU-5/DD 1-5-12
+pt-00591,SF VFD S/S,Airside AHU-5
+pt-00592,Space Temperature,Airside AHU-3/VAV 1-3-11
+pt-00593,MAT,Airside AHU-5
+pt-00594,Occupied status,Airside AHU-2/VAV 1-2-51
+pt-00595,Space Temperature,Airside AHU-3/VAV 1-3-17
+pt-00596,Current Airflow,Airside AHU-2/VAV 1-2-11
+pt-00597,Heating Valve Signal,Airside AHU-2/VAV 1-2-68
+pt-00598,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-96
+pt-00599,Space Temperature,Airside AHU-2/VAV 1-2-89
+pt-00600,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-13
+pt-00601,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-50
+pt-00602,Occupied status,Airside AHU-4/DD 1-4-7
+pt-00603,Damper Command,Airside AHU-3/VAV 1-3-10
+pt-00604,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-17
+pt-00605,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-95
+pt-00606,Current Airflow,Airside AHU-2/VAV 1-2-44
+pt-00607,Current Airflow,Airside AHU-3/VAV 1-3-8
+pt-00608,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-92
+pt-00609,Occupied status,Airside AHU-4/DD 1-4-3
+pt-00610,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-10
+pt-00611,Desired Airflow,Airside AHU-2/VAV 1-2-53
+pt-00612,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-9
+pt-00613,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-19
+pt-00614,Discharge Fan Power-1,Airside AHU-2/SF VFD
+pt-00615,CH-3 Cond ISO Valve OPEN,Waterside Chilled Water Plant/CH-3
+pt-00616,SF_VFD_Curr_Speed,Airside AHU-4
+pt-00617,Desired Airflow - Cold,Airside AHU-5/DD 1-5-4
+pt-00618,Space Temperature,Airside AHU-3/VAV 1-3-10
+pt-00619,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-75
+pt-00620,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-47
+pt-00621,Frequency,Waterside Chilled Water Plant/CWP-1
+pt-00622,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-72
+pt-00623,Current Airflow,Airside AHU-2/VAV 1-2-6
+pt-00624,Heating Valve Signal,Airside AHU-2/VAV 1-2-22
+pt-00625,Discharge Air Temp,Airside AHU-2/VAV 1-2-63
+pt-00626,Space Temperature,Airside AHU-2/VAV 1-2-1
+pt-00627,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-7
+pt-00628,Econ_Cmd,Airside AHU-4
+pt-00629,Clg_Valve_Cmd,Airside AHU-4
+pt-00630,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-14
+pt-00631,Discharge Air Temp,Airside AHU-4/DD 1-4-2
+pt-00632,Current Airflow,Airside AHU-2/VAV 1-2-69
+pt-00633,Current Airflow,Airside AHU-2/VAV 1-2-31
+pt-00634,Cond Water Flow (CC),Waterside Chilled Water Plant/CH-1
+pt-00635,HX-2 1/3 Steam Valve Signal,Waterside Hot Water Plant/Penthouse HW Sys/HX-2
+pt-00636,Space Temperature,Airside AHU-2/VAV 1-2-55
+pt-00637,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-1
+pt-00638,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-31
+pt-00639,Heating Valve Signal,Airside AHU-2/VAV 1-2-50
+pt-00640,CT-1 S/S,Waterside Chilled Water Plant/CT-1
+pt-00641,Occupied status,Airside AHU-3/VAV 1-3-12
+pt-00642,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-47
+pt-00643,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-8
+pt-00644,Damper Command,Airside AHU-2/VAV 1-2-70
+pt-00645,Space Temperature,Airside AHU-2/VAV 1-2-43
+pt-00646,Volume,Utility Bills Water Meter 2
+pt-00647,Discharge Air Temp,Airside AHU-2/VAV 1-2-84
+pt-00648,Cond Refrig Pressure (CC),Waterside Chilled Water Plant/CH-1
+pt-00649,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-41
+pt-00650,Frequency,Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-1
+pt-00651,Occupied status,Airside AHU-5/DD 1-5-14
+pt-00652,RF VFD Speed,Airside AHU-3
+pt-00653,Current Airflow,Airside AHU-2/VAV 1-2-30
+pt-00654,HW Supply Temp,Waterside Hot Water Plant/Penthouse HW Sys
+pt-00655,HHWP-3 S/S,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-3
+pt-00656,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-79
+pt-00657,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-9
+pt-00658,Desired Airflow,Airside AHU-2/VAV 1-2-94
+pt-00659,Occupied status,Airside AHU-5/DD 1-5-11
+pt-00660,Current Airflow,Airside AHU-3/VAV 1-3-1
+pt-00661,Frequency,Waterside Chilled Water Plant/PCHWP-1A
+pt-00662,Duct Static,Airside AHU-2
+pt-00663,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-42
+pt-00664,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-96
+pt-00665,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-41
+pt-00666,Desired Airflow - Cold,Airside AHU-4/DD 1-4-6
+pt-00667,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-64
+pt-00668,Discharge Air Temp,Airside AHU-5/DD 1-5-19
+pt-00669,Desired Airflow - Hot,Airside AHU-4/DD 1-4-6
+pt-00670,Space Temperature,Airside AHU-4/DD 1-4-11
+pt-00671,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-2
+pt-00672,Occupied status,Airside AHU-2/VAV 1-2-87
+pt-00673,Desired Airflow,Airside AHU-3/VAV 1-3-13
+pt-00674,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-66
+pt-00675,Heating Valve Signal,Airside AHU-2/VAV 1-2-32
+pt-00676,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-52
+pt-00677,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-3
+pt-00678,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-7
+pt-00679,Building DP,Airside AHU-3
+pt-00680,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-10
+pt-00681,Occupied status,Airside AHU-5/DD 1-5-13
+pt-00682,Space Temperature,Airside AHU-2/VAV 1-2-82
+pt-00683,Damper Command,Airside AHU-2/VAV 1-2-17
+pt-00684,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-89
+pt-00685,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-22
+pt-00686,Heating Valve Signal,Airside AHU-2/VAV 1-2-76
+pt-00687,Heating Valve Signal,Airside AHU-2/VAV 1-2-30
+pt-00688,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-3
+pt-00689,Current Airflow,Airside AHU-3/VAV 1-3-9
+pt-00690,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-36
+pt-00691,Damper Command,Airside AHU-2/VAV 1-2-59
+pt-00692,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-72
+pt-00693,Current Airflow,Airside AHU-3/VAV 1-3-11
+pt-00694,Status (CC),Waterside Chilled Water Plant/CH-1
+pt-00695,Current Airflow,Airside AHU-2/VAV 1-2-93
+pt-00696,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-14
+pt-00697,Econ_Cmd,Airside AHU-5
+pt-00698,Discharge Air Temp,Airside AHU-2/VAV 1-2-40
+pt-00699,Discharge Air Temp,Airside AHU-2/VAV 1-2-64
+pt-00700,Desired Airflow,Airside AHU-3/VAV 1-3-12
+pt-00701,Desired Airflow,Airside AHU-2/VAV 1-2-5
+pt-00702,Current Airflow,Airside AHU-3/VAV 1-3-3
+pt-00703,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-26
+pt-00704,Heating Valve Signal,Airside AHU-2/VAV 1-2-95
+pt-00705,Damper Command,Airside AHU-2/VAV 1-2-95
+pt-00706,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-8
+pt-00707,Volume,Utility Bills Water Meter 3
+pt-00708,Clg SAT SP,Airside AHU-5
+pt-00709,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-17
+pt-00710,Occupied status,Airside AHU-4/DD 1-4-1
+pt-00711,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-26
+pt-00712,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-13
+pt-00713,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-14
+pt-00714,Htg_Valve_Cmd,Airside AHU-5
+pt-00715,Power,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-4
+pt-00716,Discharge Air Temp,Airside AHU-4/DD 1-4-13
+pt-00717,Cond Water Entering Temp,Waterside Chilled Water Plant/CH-3
+pt-00718,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-15
+pt-00719,Damper Command,Airside AHU-2/VAV 1-2-34
+pt-00720,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-1
+pt-00721,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-4
+pt-00722,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-40
+pt-00723,Damper Command,Airside AHU-2/VAV 1-2-55
+pt-00724,Space Temperature,Airside AHU-4/DD 1-4-9
+pt-00725,Damper Command,Airside AHU-2/VAV 1-2-44
+pt-00726,Space Temperature,Airside AHU-2/VAV 1-2-12
+pt-00727,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-7
+pt-00728,Discharge Air Temp,Airside AHU-2/VAV 1-2-61
+pt-00729,Space Temperature,Airside AHU-3/VAV 1-3-14
+pt-00730,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-59
+pt-00731,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-29
+pt-00732,Space Temperature,Airside AHU-2/VAV 1-2-29
+pt-00733,Desired Airflow,Airside AHU-2/VAV 1-2-44
+pt-00734,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-6
+pt-00735,Current Airflow,Airside AHU-2/VAV 1-2-65
+pt-00736,Cold Deck SAT,Airside AHU-4
+pt-00737,HX-2 2/3 Steam Valve Signal,Waterside Hot Water Plant/Penthouse HW Sys/HX-2
+pt-00738,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-63
+pt-00739,Space Temperature,Airside AHU-2/VAV 1-2-83
+pt-00740,Damper Command,Airside AHU-2/VAV 1-2-50
+pt-00741,Heating Valve Signal,Airside AHU-2/VAV 1-2-12
+pt-00742,Space Temperature,Airside AHU-4/DD 1-4-8
+pt-00743,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-11
+pt-00744,Chilled Water Entering Temp,Waterside Chilled Water Plant/CH-2
+pt-00745,Heating Valve Signal,Airside AHU-3/VAV 1-3-11
+pt-00746,Desired Airflow,Airside AHU-3/VAV 1-3-11
+pt-00747,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-69
+pt-00748,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-2
+pt-00749,Damper Command,Airside AHU-2/VAV 1-2-61
+pt-00750,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-74
+pt-00751,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-12
+pt-00752,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-91
+pt-00753,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-1
+pt-00754,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-4
+pt-00755,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-94
+pt-00756,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-6
+pt-00757,Discharge Air Temp,Airside AHU-2/VAV 1-2-93
+pt-00758,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-14
+pt-00759,Current Airflow,Airside AHU-2/VAV 1-2-86
+pt-00760,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-37
+pt-00761,Discharge Air Temp,Airside AHU-2/VAV 1-2-31
+pt-00762,Current Airflow,Airside AHU-2/VAV 1-2-55
+pt-00763,Occupied status,Airside AHU-2/VAV 1-2-95
+pt-00764,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-11
+pt-00765,Discharge Air Temp,Airside AHU-2/VAV 1-2-78
+pt-00766,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-17
+pt-00767,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-5
+pt-00768,Space Temperature,Airside AHU-5/DD 1-5-11
+pt-00769,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-40
+pt-00770,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-35
+pt-00771,Current Airflow,Airside AHU-2/VAV 1-2-20
+pt-00772,Enthalpy,Airside AHU-2
+pt-00773,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-8
+pt-00774,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-4
+pt-00775,Desired Airflow,Airside AHU-2/VAV 1-2-38
+pt-00776,Cost,Utility Bills Water Meter 2
+pt-00777,Discharge Air Temp,Airside AHU-2/VAV 1-2-42
+pt-00778,Heating Valve Signal,Airside AHU-2/VAV 1-2-67
+pt-00779,Discharge Air Temp,Airside AHU-2/VAV 1-2-8
+pt-00780,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-3
+pt-00781,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-88
+pt-00782,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-9
+pt-00783,Desired Airflow,Airside AHU-2/VAV 1-2-35
+pt-00784,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-6
+pt-00785,Damper Command,Airside AHU-2/VAV 1-2-22
+pt-00786,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-28
+pt-00787,Chilled Water Load (CC),Waterside Chilled Water Plant/CH-1
+pt-00788,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-14
+pt-00789,Heating Valve Signal,Airside AHU-2/VAV 1-2-73
+pt-00790,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-35
+pt-00791,Discharge Air Temp,Airside AHU-2/VAV 1-2-22
+pt-00792,Discharge Air Temp,Airside AHU-2/VAV 1-2-23
+pt-00793,Occupied status,Airside AHU-2/VAV 1-2-30
+pt-00794,Discharge Air Temp,Airside AHU-2/VAV 1-2-92
+pt-00795,Heating Valve Signal,Airside AHU-2/VAV 1-2-9
+pt-00796,Discharge Air Temp,Airside AHU-2/VAV 1-2-12
+pt-00797,Decon EF Status,Airside AHU-2/VAV 1-2-89
+pt-00798,Desired Airflow - Cold,Airside AHU-5/DD 1-5-5
+pt-00799,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-52
+pt-00800,Space Temperature,Airside AHU-2/VAV 1-2-13
+pt-00801,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-70
+pt-00802,Discharge Air Temp,Airside AHU-5/DD 1-5-3
+pt-00803,Damper Command,Airside AHU-2/VAV 1-2-51
+pt-00804,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-19
+pt-00805,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-42
+pt-00806,Current Airflow,Airside AHU-3/VAV 1-3-6
+pt-00807,CHW DP SP,Waterside Chilled Water Plant
+pt-00808,Desired Airflow - Hot,Airside AHU-4/DD 1-4-11
+pt-00809,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-11
+pt-00810,Heating Valve Signal,Airside AHU-2/VAV 1-2-62
+pt-00811,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-69
+pt-00812,Current Airflow,Airside AHU-2/VAV 1-2-22
+pt-00813,Desired Airflow,Airside AHU-2/VAV 1-2-84
+pt-00814,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-14
+pt-00815,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-23
+pt-00816,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-14
+pt-00817,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-70
+pt-00818,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-32
+pt-00819,Damper Command,Airside AHU-2/VAV 1-2-58
+pt-00820,Damper Command,Airside AHU-2/VAV 1-2-33
+pt-00821,Discharge Air Temp,Airside AHU-3/VAV 1-3-8
+pt-00822,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-6
+pt-00823,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-9
+pt-00824,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-10
+pt-00825,Desired Airflow,Airside AHU-2/VAV 1-2-34
+pt-00826,Heating Valve Signal,Airside AHU-2/VAV 1-2-27
+pt-00827,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-10
+pt-00828,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-10
+pt-00829,Discharge Air Temp,Airside AHU-3/VAV 1-3-11
+pt-00830,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-51
+pt-00831,Desired Airflow,Airside AHU-2/VAV 1-2-6
+pt-00832,Desired Airflow,Airside AHU-2/VAV 1-2-43
+pt-00833,Heating Valve Signal,Airside AHU-2/VAV 1-2-1
+pt-00834,Chilled Water Leaving Temp,Waterside Chilled Water Plant/CH-1
+pt-00835,Space Temperature,Airside AHU-3/VAV 1-3-4
+pt-00836,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-6
+pt-00837,Occupied status,Airside AHU-2/VAV 1-2-42
+pt-00838,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-4
+pt-00839,Desired Airflow,Airside AHU-2/VAV 1-2-23
+pt-00840,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-8
+pt-00841,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-62
+pt-00842,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-7
+pt-00843,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-3
+pt-00844,Discharge Air Temp,Airside AHU-2/VAV 1-2-56
+pt-00845,Discharge Air Temp,Airside AHU-2/VAV 1-2-76
+pt-00846,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-55
+pt-00847,Damper Command,Airside AHU-2/VAV 1-2-71
+pt-00848,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-1
+pt-00849,Power,Waterside Chilled Water Plant/CWP-2
+pt-00850,Desired Airflow,Airside AHU-3/VAV 1-3-8
+pt-00851,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-15
+pt-00852,Space Temperature,Airside AHU-2/VAV 1-2-52
+pt-00853,Current Airflow,Airside AHU-2/VAV 1-2-73
+pt-00854,Desired Airflow - Hot,Airside AHU-5/DD 1-5-17
+pt-00855,Frequency,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-4
+pt-00856,Cost,Utility Bills Gas Meter 3
+pt-00857,Desired Airflow,Airside AHU-2/VAV 1-2-82
+pt-00858,Space Temperature,Airside AHU-2/VAV 1-2-73
+pt-00859,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-12
+pt-00860,Space Temperature,Airside AHU-2/VAV 1-2-86
+pt-00861,Occupied status,Airside AHU-2/VAV 1-2-79
+pt-00862,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-2
+pt-00863,Volume,Utility Bills Water Meter 4
+pt-00864,Desired Airflow - Cold,Airside AHU-5/DD 1-5-1
+pt-00865,Current Airflow,Airside AHU-2/VAV 1-2-79
+pt-00866,Damper Command,Airside AHU-3/VAV 1-3-4
+pt-00867,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-74
+pt-00868,Space Temperature,Airside AHU-2/VAV 1-2-7
+pt-00869,Current Airflow,Airside AHU-3/VAV 1-3-16
+pt-00870,Space Temperature,Airside AHU-3/VAV 1-3-8
+pt-00871,Occupied status,Airside AHU-2/VAV 1-2-1
+pt-00872,Desired Airflow - Cold,Airside AHU-4/DD 1-4-7
+pt-00873,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-27
+pt-00874,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-8
+pt-00875,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-16
+pt-00876,Current Airflow,Airside AHU-2/VAV 1-2-80
+pt-00877,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-66
+pt-00878,Heating Valve Signal,Airside AHU-2/VAV 1-2-34
+pt-00879,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-82
+pt-00880,Damper Command,Airside AHU-2/VAV 1-2-29
+pt-00881,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-95
+pt-00882,Heating Valve Signal,Airside AHU-2/VAV 1-2-69
+pt-00883,Heating Valve Signal,Airside AHU-2/VAV 1-2-38
+pt-00884,Desired Airflow,Airside AHU-2/VAV 1-2-45
+pt-00885,Occupied status,Airside AHU-2/VAV 1-2-89
+pt-00886,Discharge Air Temp,Airside AHU-2/VAV 1-2-73
+pt-00887,Space Temperature,Airside AHU-5/DD 1-5-18
+pt-00888,Chilled Water Temp Setpoint,Waterside Chilled Water Plant/CH-1
+pt-00889,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-81
+pt-00890,Space Temperature,Airside AHU-2/VAV 1-2-6
+pt-00891,DSP_SP_Curr_Value,Airside AHU-3
+pt-00892,Space Temperature,Airside AHU-3/VAV 1-3-5
+pt-00893,Occupied status,Airside AHU-2/VAV 1-2-17
+pt-00894,Duct Static,Airside AHU-4
+pt-00895,Space Temperature,Airside AHU-5/DD 1-5-3
+pt-00896,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-51
+pt-00897,RF VFD S/S,Airside AHU-5
+pt-00898,Current Airflow,Airside AHU-2/VAV 1-2-56
+pt-00899,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-6
+pt-00900,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-13
+pt-00901,Current Airflow,Airside AHU-2/VAV 1-2-36
+pt-00902,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-31
+pt-00903,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-15
+pt-00904,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-37
+pt-00905,Desired Airflow,Airside AHU-2/VAV 1-2-80
+pt-00906,Desired Airflow - Cold,Airside AHU-4/DD 1-4-1
+pt-00907,Damper Command,Airside AHU-2/VAV 1-2-42
+pt-00908,Discharge Air Temp,Airside AHU-4/DD 1-4-3
+pt-00909,Occupied status,Airside AHU-2/VAV 1-2-13
+pt-00910,Space Temperature,Airside AHU-2/VAV 1-2-69
+pt-00911,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-68
+pt-00912,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-73
+pt-00913,Damper Command,Airside AHU-2/VAV 1-2-31
+pt-00914,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-27
+pt-00915,Desired Airflow - Hot,Airside AHU-5/DD 1-5-2
+pt-00916,Heating Valve Signal,Airside AHU-2/VAV 1-2-14
+pt-00917,Space Temperature,Airside AHU-5/DD 1-5-17
+pt-00918,Damper Command,Airside AHU-3/VAV 1-3-1
+pt-00919,Evap Refrig Pressure,Waterside Chilled Water Plant/CH-1
+pt-00920,Chilled Water Entering Temp,Waterside Chilled Water Plant/CH-3
+pt-00921,Desired Airflow,Airside AHU-2/VAV 1-2-19
+pt-00922,Heating Valve Signal,Airside AHU-2/VAV 1-2-92
+pt-00923,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-11
+pt-00924,Occupied status,Airside AHU-2/VAV 1-2-44
+pt-00925,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-6
+pt-00926,Current Airflow,Airside AHU-2/VAV 1-2-9
+pt-00927,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-18
+pt-00928,Discharge Air Temp,Airside AHU-2/VAV 1-2-6
+pt-00929,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-10
+pt-00930,HHWP-4 Status,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-4
+pt-00931,Discharge Air Temp,Airside AHU-2/VAV 1-2-47
+pt-00932,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-9
+pt-00933,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-74
+pt-00934,Desired Airflow - Cold,Airside AHU-5/DD 1-5-13
+pt-00935,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-9
+pt-00936,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-13
+pt-00937,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-6
+pt-00938,Energy,Utility Bills Gas Meter 3
+pt-00939,CT-2 Status,Waterside Chilled Water Plant/CT-2
+pt-00940,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-11
+pt-00941,Building Static_SP,Airside AHU-5
+pt-00942,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-89
+pt-00943,Desired Airflow,Airside AHU-2/VAV 1-2-40
+pt-00944,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-81
+pt-00945,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-4
+pt-00946,Occupied status,Airside AHU-2/VAV 1-2-50
+pt-00947,Discharge Air Temp,Airside AHU-2/VAV 1-2-4
+pt-00948,SF Status,Airside AHU-4
+pt-00949,Space Temperature,Airside AHU-4/DD 1-4-1
+pt-00950,Damper Command,Airside AHU-3/VAV 1-3-15
+pt-00951,Damper Command,Airside AHU-2/VAV 1-2-72
+pt-00952,Current Airflow,Airside AHU-2/VAV 1-2-29
+pt-00953,Damper Command,Airside AHU-2/VAV 1-2-38
+pt-00954,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-17
+pt-00955,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-7
+pt-00956,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-18
+pt-00957,Clg SAT SP,Airside AHU-4
+pt-00958,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-1
+pt-00959,Heating Valve Signal,Airside AHU-2/VAV 1-2-19
+pt-00960,Damper Command,Airside AHU-3/VAV 1-3-13
+pt-00961,Desired Airflow,Airside AHU-3/VAV 1-3-2
+pt-00962,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-2
+pt-00963,Discharge Air Temp,Airside AHU-2/VAV 1-2-50
+pt-00964,Volume,Utility Bills Water Meter 6
+pt-00965,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-13
+pt-00966,Current Airflow,Airside AHU-2/VAV 1-2-81
+pt-00967,Current Airflow,Airside AHU-2/VAV 1-2-88
+pt-00968,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-21
+pt-00969,Cond Efficiency (CC),Waterside Chilled Water Plant/CH-1
+pt-00970,Discharge Air Temp,Airside AHU-4/DD 1-4-8
+pt-00971,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-18
+pt-00972,Current Airflow,Airside AHU-2/VAV 1-2-87
+pt-00973,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-9
+pt-00974,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-90
+pt-00975,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-68
+pt-00976,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-2
+pt-00977,Current Airflow,Airside AHU-2/VAV 1-2-74
+pt-00978,Damper Command,Airside AHU-3/VAV 1-3-2
+pt-00979,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-83
+pt-00980,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-76
+pt-00981,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-1
+pt-00982,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-19
+pt-00983,Damper Command,Airside AHU-2/VAV 1-2-48
+pt-00984,SAT,Airside AHU-2
+pt-00985,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-71
+pt-00986,Current Airflow,Airside AHU-2/VAV 1-2-84
+pt-00987,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-58
+pt-00988,Heating Valve Signal,Airside AHU-2/VAV 1-2-6
+pt-00989,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-4
+pt-00990,EF-3 Status,Airside AHU-3/EF-3
+pt-00991,Energy,Utility Bills Elec Meter 1
+pt-00992,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-15
+pt-00993,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-41
+pt-00994,Occupied status,Airside AHU-5/DD 1-5-4
+pt-00995,Refrig Suction Superheat Delta Temp (CC),Waterside Chilled Water Plant/CH-1
+pt-00996,Discharge Air Temp,Airside AHU-2/VAV 1-2-14
+pt-00997,Frequency,Waterside Chilled Water Plant/PCHWP-1B
+pt-00998,Desired Airflow,Airside AHU-2/VAV 1-2-32
+pt-00999,Relief Signal,Airside AHU-4
+pt-01000,Space Temperature,Airside AHU-2/VAV 1-2-14
+pt-01001,Mode_Occ,Airside AHU-3
+pt-01002,Desired Airflow - Cold,Airside AHU-4/DD 1-4-10
+pt-01003,Occupied status,Airside AHU-2/VAV 1-2-26
+pt-01004,RF VFD S/S,Airside AHU-3
+pt-01005,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-3
+pt-01006,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-18
+pt-01007,RF Status,Airside AHU-5
+pt-01008,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-5
+pt-01009,Desired Airflow - Hot,Airside AHU-5/DD 1-5-13
+pt-01010,Current Airflow,Airside AHU-2/VAV 1-2-91
+pt-01011,Damper Command,Airside AHU-2/VAV 1-2-74
+pt-01012,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-79
+pt-01013,Current Airflow,Airside AHU-3/VAV 1-3-10
+pt-01014,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-87
+pt-01015,Power,Waterside Chilled Water Plant/CWP-1
+pt-01016,Discharge Air Temp,Airside AHU-2/VAV 1-2-48
+pt-01017,Desired Airflow,Airside AHU-2/VAV 1-2-52
+pt-01018,Heating Valve Signal,Airside AHU-3/VAV 1-3-8
+pt-01019,Discharge Air Temp,Airside AHU-5/DD 1-5-7
+pt-01020,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-18
+pt-01021,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-56
+pt-01022,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-14
+pt-01023,Occupied status,Airside AHU-2/VAV 1-2-16
+pt-01024,OAT,Airside AHU-3
+pt-01025,Heating Valve Signal,Airside AHU-3/VAV 1-3-1
+pt-01026,Space Temperature,Airside AHU-5/DD 1-5-7
+pt-01027,Heating Valve Signal,Airside AHU-2/VAV 1-2-42
+pt-01028,Heating Valve Signal,Airside AHU-2/VAV 1-2-91
+pt-01029,Discharge Air Temp,Airside AHU-2/VAV 1-2-90
+pt-01030,Discharge Air Temp,Airside AHU-2/VAV 1-2-95
+pt-01031,Damper Command,Airside AHU-2/VAV 1-2-73
+pt-01032,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-17
+pt-01033,Occupied status,Airside AHU-2/VAV 1-2-56
+pt-01034,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-74
+pt-01035,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-45
+pt-01036,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-8
+pt-01037,Occupied status,Airside AHU-2/VAV 1-2-9
+pt-01038,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-82
+pt-01039,Compressor Refrig Entering Temp (CC),Waterside Chilled Water Plant/CH-1
+pt-01040,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-30
+pt-01041,Heating Valve Signal,Airside AHU-2/VAV 1-2-18
+pt-01042,Building DP,Airside AHU-2
+pt-01043,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-11
+pt-01044,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-7
+pt-01045,Current Airflow,Airside AHU-2/VAV 1-2-72
+pt-01046,EF-4 Status,Airside AHU-3/EF-4
+pt-01047,Desired Airflow,Airside AHU-2/VAV 1-2-65
+pt-01048,Heating Valve Signal,Airside AHU-2/VAV 1-2-53
+pt-01049,CWP-1 ISO Valve OPEN,Waterside Chilled Water Plant/CWP-1
+pt-01050,Clg_Valve_Cmd,Airside AHU-3
+pt-01051,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-12
+pt-01052,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-8
+pt-01053,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-2
+pt-01054,CWP-2 Status,Waterside Chilled Water Plant/CWP-2
+pt-01055,Current Airflow,Airside AHU-2/VAV 1-2-95
+pt-01056,Building Static_SP,Airside AHU-4
+pt-01057,Htg_Valve_Cmd,Airside AHU-4
+pt-01058,Discharge Air Temp,Airside AHU-3/VAV 1-3-2
+pt-01059,Damper Command,Airside AHU-3/VAV 1-3-16
+pt-01060,Discharge Air Temp,Airside AHU-3/VAV 1-3-13
+pt-01061,Discharge Air Temp,Airside AHU-2/VAV 1-2-3
+pt-01062,Heating Valve Signal,Airside AHU-2/VAV 1-2-96
+pt-01063,B-3 Fire Rate,Waterside Hot Water Plant/B-3
+pt-01064,Discharge Air Temp,Airside AHU-2/VAV 1-2-70
+pt-01065,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-4
+pt-01066,Space Temperature,Airside AHU-2/VAV 1-2-31
+pt-01067,Space Temperature,Airside AHU-2/VAV 1-2-71
+pt-01068,Heating Valve Signal,Airside AHU-2/VAV 1-2-56
+pt-01069,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-85
+pt-01070,Heating Valve Signal,Airside AHU-2/VAV 1-2-4
+pt-01071,Current Airflow,Airside AHU-2/VAV 1-2-42
+pt-01072,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-15
+pt-01073,Heating Valve Signal,Airside AHU-2/VAV 1-2-7
+pt-01074,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-16
+pt-01075,Discharge Air Temp,Airside AHU-2/VAV 1-2-82
+pt-01076,Compressor Efficiency (CC),Waterside Chilled Water Plant/CH-1
+pt-01077,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-35
+pt-01078,Space Temperature,Airside AHU-2/VAV 1-2-50
+pt-01079,Desired Airflow,Airside AHU-2/VAV 1-2-21
+pt-01080,Space Temperature,Airside AHU-2/VAV 1-2-15
+pt-01081,Occupied status,Airside AHU-4/DD 1-4-2
+pt-01082,Occupied status,Airside AHU-2/VAV 1-2-40
+pt-01083,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-72
+pt-01084,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-7
+pt-01085,Energy,Utility Bills Elec Meter 2
+pt-01086,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-9
+pt-01087,Discharge Air Temp,Airside AHU-2/VAV 1-2-72
+pt-01088,Boiler 1 Status,Waterside Hot Water Plant/B-1
+pt-01089,RAT,Airside AHU-5
+pt-01090,SF Status,Airside AHU-2
+pt-01091,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-21
+pt-01092,HHWP-4 S/S,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-4
+pt-01093,Occupied status,Airside AHU-5/DD 1-5-18
+pt-01094,HW Supply Temp,Waterside Hot Water Plant/Boiler Room HW Sys
+pt-01095,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-10
+pt-01096,Occupied status,Airside AHU-2/VAV 1-2-70
+pt-01097,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-38
+pt-01098,Occupied status,Airside AHU-5/DD 1-5-2
+pt-01099,Damper Command,Airside AHU-2/VAV 1-2-69
+pt-01100,Power Peak,Utility Bills Elec Meter 1
+pt-01101,Current Airflow,Airside AHU-2/VAV 1-2-67
+pt-01102,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-34
+pt-01103,Heating Valve Signal,Airside AHU-2/VAV 1-2-20
+pt-01104,DSP_SP_Curr_Value,Airside AHU-5
+pt-01105,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-11
+pt-01106,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-1
+pt-01107,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-53
+pt-01108,Current Airflow,Airside AHU-2/VAV 1-2-14
+pt-01109,Desired Airflow,Airside AHU-2/VAV 1-2-93
+pt-01110,Damper Command,Airside AHU-2/VAV 1-2-82
+pt-01111,Desired Airflow - Hot,Airside AHU-4/DD 1-4-9
+pt-01112,Current Airflow,Airside AHU-2/VAV 1-2-52
+pt-01113,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-6
+pt-01114,Discharge Air Temp,Airside AHU-5/DD 1-5-11
+pt-01115,Space Temperature,Airside AHU-3/VAV 1-3-7
+pt-01116,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-12
+pt-01117,Heating Valve Signal,Airside AHU-2/VAV 1-2-16
+pt-01118,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-78
+pt-01119,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-16
+pt-01120,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-5
+pt-01121,EF-1 Status,Airside AHU-3/EF-1
+pt-01122,Damper Command,Airside AHU-2/VAV 1-2-28
+pt-01123,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-38
+pt-01124,Space Temperature,Airside AHU-2/VAV 1-2-18
+pt-01125,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-16
+pt-01126,Refrig Subcool Delta Temp (CC),Waterside Chilled Water Plant/CH-1
+pt-01127,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-4
+pt-01128,Heating Valve Signal,Airside AHU-2/VAV 1-2-83
+pt-01129,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-25
+pt-01130,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-1
+pt-01131,Heating Valve Signal,Airside AHU-3/VAV 1-3-12
+pt-01132,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-63
+pt-01133,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-17
+pt-01134,Current Airflow,Airside AHU-2/VAV 1-2-8
+pt-01135,Current Airflow,Airside AHU-2/VAV 1-2-63
+pt-01136,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-13
+pt-01137,Heating Valve Signal,Airside AHU-2/VAV 1-2-25
+pt-01138,Desired Airflow - Hot,Airside AHU-5/DD 1-5-10
+pt-01139,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-16
+pt-01140,Space Temperature,Airside AHU-2/VAV 1-2-9
+pt-01141,Space Temperature,Airside AHU-2/VAV 1-2-78
+pt-01142,Heating Valve Signal,Airside AHU-2/VAV 1-2-43
+pt-01143,Heating Valve Signal,Airside AHU-2/VAV 1-2-89
+pt-01144,Compressor Frequency Status,Waterside Chilled Water Plant/CH-1
+pt-01145,Occupied status,Airside AHU-4/DD 1-4-13
+pt-01146,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-16
+pt-01147,Duct Static,Airside AHU-3
+pt-01148,Discharge Air Temp,Airside AHU-2/VAV 1-2-41
+pt-01149,Discharge Air Temp,Airside AHU-2/VAV 1-2-37
+pt-01150,Heating Valve Signal,Airside AHU-2/VAV 1-2-31
+pt-01151,Heating Valve Signal,Airside AHU-3/VAV 1-3-5
+pt-01152,Current Airflow,Airside AHU-3/VAV 1-3-14
+pt-01153,Occupied status,Airside AHU-2/VAV 1-2-53
+pt-01154,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-13
+pt-01155,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-43
+pt-01156,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-84
+pt-01157,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-8
+pt-01158,Desired Airflow - Hot,Airside AHU-5/DD 1-5-1
+pt-01159,Discharge Air Temp,Airside AHU-2/VAV 1-2-26
+pt-01160,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-42
+pt-01161,Discharge Air Temp,Airside AHU-5/DD 1-5-10
+pt-01162,Desired Airflow,Airside AHU-3/VAV 1-3-5
+pt-01163,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-9
+pt-01164,MAT,Airside AHU-3
+pt-01165,Heating Valve Signal,Airside AHU-3/VAV 1-3-16
+pt-01166,Frequency,Waterside Hot Water Plant/Penthouse HW Sys/HHWP-3
+pt-01167,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-66
+pt-01168,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-30
+pt-01169,Space Temperature,Airside AHU-2/VAV 1-2-68
+pt-01170,Space Temperature,Airside AHU-5/DD 1-5-10
+pt-01171,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-46
+pt-01172,Space Temperature,Airside AHU-3/VAV 1-3-1
+pt-01173,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-89
+pt-01174,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-3
+pt-01175,Space Temperature,Airside AHU-4/DD 1-4-2
+pt-01176,Damper Command,Airside AHU-2/VAV 1-2-5
+pt-01177,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-10
+pt-01178,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-5
+pt-01179,Occupied status,Airside AHU-2/VAV 1-2-20
+pt-01180,Damper Command,Airside AHU-2/VAV 1-2-7
+pt-01181,Occupied status,Airside AHU-5/DD 1-5-6
+pt-01182,PCHWP-1B Status,Waterside Chilled Water Plant/PCHWP-1B
+pt-01183,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-3
+pt-01184,Desired Airflow - Hot,Airside AHU-5/DD 1-5-3
+pt-01185,Heating Valve Signal,Airside AHU-2/VAV 1-2-63
+pt-01186,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-65
+pt-01187,Cond Refrig Saturation Temp (CC),Waterside Chilled Water Plant/CH-1
+pt-01188,CH-2 Evap ISO Valve OPEN,Waterside Chilled Water Plant/CH-2
+pt-01189,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-6
+pt-01190,CH-1 Evap ISO Valve OPEN,Waterside Chilled Water Plant/CH-1
+pt-01191,Damper Command,Airside AHU-2/VAV 1-2-93
+pt-01192,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-3
+pt-01193,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-5
+pt-01194,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-20
+pt-01195,Space Temperature,Airside AHU-4/DD 1-4-7
+pt-01196,Occupied status,Airside AHU-4/DD 1-4-6
+pt-01197,Occupied status,Airside AHU-3/VAV 1-3-15
+pt-01198,Occupied status,Airside AHU-2/VAV 1-2-68
+pt-01199,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-2
+pt-01200,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-15
+pt-01201,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-6
+pt-01202,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-9
+pt-01203,Occupied status,Airside AHU-2/VAV 1-2-52
+pt-01204,Occupied status,Airside AHU-2/VAV 1-2-88
+pt-01205,Desired Airflow,Airside AHU-2/VAV 1-2-55
+pt-01206,Space Temperature,Airside AHU-2/VAV 1-2-17
+pt-01207,Heating Valve Signal,Airside AHU-2/VAV 1-2-66
+pt-01208,Desired Airflow,Airside AHU-2/VAV 1-2-13
+pt-01209,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-3
+pt-01210,Cond Water Entering Temp,Waterside Chilled Water Plant/CH-2
+pt-01211,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-9
+pt-01212,RAT,Airside AHU-4
+pt-01213,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-4
+pt-01214,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-1
+pt-01215,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-52
+pt-01216,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-88
+pt-01217,Heating Valve Signal,Airside AHU-2/VAV 1-2-17
+pt-01218,Discharge Air Temp,Airside AHU-2/VAV 1-2-15
+pt-01219,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-67
+pt-01220,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-91
+pt-01221,PCHWP-1A Speed Command,Waterside Chilled Water Plant/PCHWP-1A
+pt-01222,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-92
+pt-01223,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-12
+pt-01224,Space Temperature,Airside AHU-2/VAV 1-2-19
+pt-01225,Damper Command,Airside AHU-2/VAV 1-2-91
+pt-01226,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-90
+pt-01227,OAT,Airside AHU-5
+pt-01228,Occupied status,Airside AHU-2/VAV 1-2-12
+pt-01229,Occupied status,Airside AHU-2/VAV 1-2-27
+pt-01230,Transport Cost,Utility Bills Gas Meter 2
+pt-01231,Heating Valve Signal,Airside AHU-2/VAV 1-2-3
+pt-01232,Current Airflow,Airside AHU-2/VAV 1-2-70
+pt-01233,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-14
+pt-01234,CT-1 Status,Waterside Chilled Water Plant/CT-1
+pt-01235,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-2
+pt-01236,Cost,Utility Bills Water Meter 8
+pt-01237,Supply %RH,Airside AHU-3
+pt-01238,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-38
+pt-01239,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-1
+pt-01240,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-4
+pt-01241,Occupied status,Airside AHU-2/VAV 1-2-3
+pt-01242,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-91
+pt-01243,Desired Airflow,Airside AHU-2/VAV 1-2-25
+pt-01244,Discharge Air Temp,Airside AHU-2/VAV 1-2-7
+pt-01245,Desired Airflow - Hot,Airside AHU-5/DD 1-5-18
+pt-01246,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-4
+pt-01247,Discharge Air Temp,Airside AHU-2/VAV 1-2-29
+pt-01248,Heating Valve Signal,Airside AHU-2/VAV 1-2-41
+pt-01249,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-78
+pt-01250,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-73
+pt-01251,Space Temperature,Airside AHU-2/VAV 1-2-11
+pt-01252,Desired Airflow,Airside AHU-2/VAV 1-2-91
+pt-01253,Space Temperature,Airside AHU-2/VAV 1-2-27
+pt-01254,Desired Airflow,Airside AHU-2/VAV 1-2-66
+pt-01255,Occupied status,Airside AHU-4/DD 1-4-11
+pt-01256,Desired Airflow,Airside AHU-2/VAV 1-2-87
+pt-01257,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-16
+pt-01258,Space Temperature,Airside AHU-5/DD 1-5-15
+pt-01259,Discharge Air Temp,Airside AHU-5/DD 1-5-14
+pt-01260,HW Return Temp,Waterside Hot Water Plant/Penthouse HW Sys
+pt-01261,Heating Valve Signal,Airside AHU-2/VAV 1-2-84
+pt-01262,IT Room Temp,Airside AHU-4
+pt-01263,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-11
+pt-01264,Discharge Air Temp,Airside AHU-3/VAV 1-3-6
+pt-01265,Occupied status,Airside AHU-2/VAV 1-2-36
+pt-01266,OSA Temperature,Waterside Chilled Water Plant
+pt-01267,Discharge Air Temp,Airside AHU-2/VAV 1-2-38
+pt-01268,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-43
+pt-01269,Steam Pressure,Waterside Hot Water Plant
+pt-01270,Discharge Air Temp,Airside AHU-4/DD 1-4-10
+pt-01271,HW Supply Temp SP,Waterside Hot Water Plant/Boiler Room HW Sys
+pt-01272,Space Temperature,Airside AHU-2/VAV 1-2-53
+pt-01273,Occupied status,Airside AHU-2/VAV 1-2-19
+pt-01274,Desired Airflow,Airside AHU-3/VAV 1-3-10
+pt-01275,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-17
+pt-01276,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-12
+pt-01277,Damper Command,Airside AHU-3/VAV 1-3-11
+pt-01278,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-15
+pt-01279,Space Temperature,Airside AHU-2/VAV 1-2-35
+pt-01280,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-90
+pt-01281,Discharge Air Temp,Airside AHU-4/DD 1-4-11
+pt-01282,2/3 Steam Valve Signal,Waterside Hot Water Plant/Boiler Room HW Sys/HX-3
+pt-01283,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-85
+pt-01284,Cold Deck SAT,Airside AHU-5
+pt-01285,Space Temperature,Airside AHU-2/VAV 1-2-26
+pt-01286,Heating Valve Signal,Airside AHU-3/VAV 1-3-6
+pt-01287,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-46
+pt-01288,Desired Airflow - Cold,Airside AHU-4/DD 1-4-14
+pt-01289,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-50
+pt-01290,Damper Command,Airside AHU-2/VAV 1-2-9
+pt-01291,Discharge Air Temp,Airside AHU-5/DD 1-5-2
+pt-01292,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-36
+pt-01293,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-19
+pt-01294,Desired Airflow - Cold,Airside AHU-5/DD 1-5-6
+pt-01295,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-44
+pt-01296,Discharge Air Temp,Airside AHU-4/DD 1-4-6
+pt-01297,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-33
+pt-01298,Damper Command,Airside AHU-2/VAV 1-2-86
+pt-01299,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-13
+pt-01300,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-13
+pt-01301,Discharge Air Temp,Airside AHU-4/DD 1-4-1
+pt-01302,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-55
+pt-01303,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-67
+pt-01304,CWP-2 ISO Valve OPEN,Waterside Chilled Water Plant/CWP-2
+pt-01305,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-3
+pt-01306,Boiler 1 S/S,Waterside Hot Water Plant/B-1
+pt-01307,Desired Airflow,Airside AHU-2/VAV 1-2-12
+pt-01308,Occupied status,Airside AHU-5/DD 1-5-16
+pt-01309,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-6
+pt-01310,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-17
+pt-01311,Heating Valve Signal,Airside AHU-2/VAV 1-2-23
+pt-01312,Desired Airflow,Airside AHU-2/VAV 1-2-30
+pt-01313,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-87
+pt-01314,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-18
+pt-01315,Exp Valve Refrig Entering Temp (CC),Waterside Chilled Water Plant/CH-1
+pt-01316,Htg SAT SP,Airside AHU-5
+pt-01317,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-91
+pt-01318,HW Sys DP SP,Waterside Hot Water Plant/Boiler Room HW Sys
+pt-01319,Desired Airflow - Hot,Airside AHU-5/DD 1-5-9
+pt-01320,Damper Command,Airside AHU-3/VAV 1-3-9
+pt-01321,Desired Airflow - Cold,Airside AHU-4/DD 1-4-9
+pt-01322,Current Airflow,Airside AHU-2/VAV 1-2-62
+pt-01323,Occupied status,Airside AHU-2/VAV 1-2-69
+pt-01324,Occupied status,Airside AHU-2/VAV 1-2-73
+pt-01325,Heating Valve Signal,Airside AHU-2/VAV 1-2-51
+pt-01326,Damper Command,Airside AHU-2/VAV 1-2-47
+pt-01327,Discharge Air Temp,Airside AHU-2/VAV 1-2-1
+pt-01328,Heating Valve Signal,Airside AHU-2/VAV 1-2-61
+pt-01329,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-1
+pt-01330,Occupied status,Airside AHU-5/DD 1-5-19
+pt-01331,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-43
+pt-01332,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-19
+pt-01333,Space Temperature,Airside AHU-5/DD 1-5-5
+pt-01334,Current Airflow,Airside AHU-2/VAV 1-2-89
+pt-01335,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-80
+pt-01336,Desired Airflow,Airside AHU-2/VAV 1-2-17
+pt-01337,Damper Command,Airside AHU-3/VAV 1-3-5
+pt-01338,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-61
+pt-01339,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-14
+pt-01340,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-44
+pt-01341,Desired Airflow,Airside AHU-2/VAV 1-2-76
+pt-01342,Heating Valve Signal,Airside AHU-3/VAV 1-3-3
+pt-01343,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-5
+pt-01344,Damper Command,Airside AHU-2/VAV 1-2-10
+pt-01345,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-4
+pt-01346,Occupied status,Airside AHU-3/VAV 1-3-5
+pt-01347,Occupied status,Airside AHU-2/VAV 1-2-62
+pt-01348,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-1
+pt-01349,CWP-1 ISO Valve,Waterside Chilled Water Plant/CWP-1
+pt-01350,Occupied status,Airside AHU-4/DD 1-4-12
+pt-01351,CH-3 Status,Waterside Chilled Water Plant/CH-3
+pt-01352,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-80
+pt-01353,Current Airflow,Airside AHU-2/VAV 1-2-90
+pt-01354,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-59
+pt-01355,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-92
+pt-01356,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-40
+pt-01357,Building Static_SP,Airside AHU-3
+pt-01358,Current Airflow,Airside AHU-2/VAV 1-2-26
+pt-01359,Occupied status,Airside AHU-2/VAV 1-2-59
+pt-01360,Desired Airflow - Hot,Airside AHU-4/DD 1-4-12
+pt-01361,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-14
+pt-01362,Chilled Water Temp Setpoint,Waterside Chilled Water Plant/CH-3
+pt-01363,Occupied status,Airside AHU-2/VAV 1-2-58
+pt-01364,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-11
+pt-01365,Rtn Damper Signal,Airside AHU-5
+pt-01366,Current Airflow,Airside AHU-2/VAV 1-2-64
+pt-01367,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-55
+pt-01368,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-79
+pt-01369,Space Temperature,Airside AHU-3/VAV 1-3-9
+pt-01370,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-13
+pt-01371,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-17
+pt-01372,Desired Airflow,Airside AHU-2/VAV 1-2-26
+pt-01373,OAT,Airside AHU-2
+pt-01374,Space Temperature,Airside AHU-2/VAV 1-2-38
+pt-01375,RF Status,Airside AHU-3
+pt-01376,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-72
+pt-01377,Htg_Valve_Cmd,Airside AHU-2
+pt-01378,Occupied status,Airside AHU-4/DD 1-4-8
+pt-01379,Space Temperature,Airside AHU-2/VAV 1-2-56
+pt-01380,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-38
+pt-01381,Damper Command,Airside AHU-2/VAV 1-2-1
+pt-01382,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-3
+pt-01383,Discharge Air Temp,Airside AHU-2/VAV 1-2-58
+pt-01384,Current Airflow,Airside AHU-2/VAV 1-2-4
+pt-01385,Heating Valve Signal,Airside AHU-2/VAV 1-2-10
+pt-01386,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-8
+pt-01387,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-2
+pt-01388,Damper Command,Airside AHU-2/VAV 1-2-37
+pt-01389,Occupied status,Airside AHU-2/VAV 1-2-81
+pt-01390,Boiler 3 S/S,Waterside Hot Water Plant/B-3
+pt-01391,Desired Airflow - Hot,Airside AHU-4/DD 1-4-1
+pt-01392,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-2
+pt-01393,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-22
+pt-01394,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-88
+pt-01395,Heating Valve Signal,Airside AHU-2/VAV 1-2-33
+pt-01396,Occupied status,Airside AHU-5/DD 1-5-1
+pt-01397,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-12
+pt-01398,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-4
+pt-01399,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-86
+pt-01400,PCHWP-1B Speed Command,Waterside Chilled Water Plant/PCHWP-1B
+pt-01401,Occupied status,Airside AHU-2/VAV 1-2-76
+pt-01402,Occupied status,Airside AHU-5/DD 1-5-3
+pt-01403,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-23
+pt-01404,Space Temperature,Airside AHU-4/DD 1-4-3
+pt-01405,Space Temperature,Airside AHU-4/DD 1-4-6
+pt-01406,Occupied status,Airside AHU-2/VAV 1-2-34
+pt-01407,CH-2 Cond ISO Valve,Waterside Chilled Water Plant/CH-2
+pt-01408,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-8
+pt-01409,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-5
+pt-01410,Heating Valve Signal,Airside AHU-3/VAV 1-3-15
+pt-01411,Space Temperature,Airside AHU-5/DD 1-5-12
+pt-01412,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-86
+pt-01413,Occupied status,Airside AHU-4/DD 1-4-5
+pt-01414,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-10
+pt-01415,Discharge Air Temp,Airside AHU-2/VAV 1-2-86
+pt-01416,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-11
+pt-01417,Damper Command,Airside AHU-2/VAV 1-2-13
+pt-01418,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-7
+pt-01419,OAT,Airside AHU-4
+pt-01420,Occupied status,Airside AHU-2/VAV 1-2-94
+pt-01421,Desired Airflow - Hot,Airside AHU-4/DD 1-4-4
+pt-01422,Damper Command,Airside AHU-3/VAV 1-3-17
+pt-01423,Space Temperature,Airside AHU-2/VAV 1-2-23
+pt-01424,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-51
+pt-01425,Desired Airflow,Airside AHU-2/VAV 1-2-27
+pt-01426,Damper Command,Airside AHU-2/VAV 1-2-56
+pt-01427,2nd Floor HW Pump DP,Waterside Hot Water Plant/Penthouse HW Sys
+pt-01428,Space Temperature,Airside AHU-2/VAV 1-2-41
+pt-01429,Heating Valve Signal,Airside AHU-2/VAV 1-2-48
+pt-01430,Space Temperature,Airside AHU-2/VAV 1-2-59
+pt-01431,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-1
+pt-01432,Discharge Air Temp,Airside AHU-5/DD 1-5-5
+pt-01433,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-61
+pt-01434,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-53
+pt-01435,Occupied status,Airside AHU-2/VAV 1-2-8
+pt-01436,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-22
+pt-01437,Discharge Air Temp,Airside AHU-2/VAV 1-2-94
+pt-01438,Discharge Air Temp,Airside AHU-2/VAV 1-2-88
+pt-01439,Damper Command,Airside AHU-2/VAV 1-2-14
+pt-01440,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-68
+pt-01441,Heating Valve Signal,Airside AHU-3/VAV 1-3-17
+pt-01442,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-18
+pt-01443,Rtn Damper Signal,Airside AHU-3
+pt-01444,Hot Deck SAT,Airside AHU-5
+pt-01445,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-17
+pt-01446,Space Temperature,Airside AHU-5/DD 1-5-1
+pt-01447,Space Temperature,Airside AHU-2/VAV 1-2-65
+pt-01448,Space Temperature,Airside AHU-2/VAV 1-2-4
+pt-01449,Desired Airflow,Airside AHU-2/VAV 1-2-29
+pt-01450,Discharge Air Temp,Airside AHU-2/VAV 1-2-66
+pt-01451,Desired Airflow - Cold,Airside AHU-4/DD 1-4-8
+pt-01452,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-13
+pt-01453,Heating Valve Signal,Airside AHU-2/VAV 1-2-45
+pt-01454,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-10
+pt-01455,Discharge Air Temp,Airside AHU-3/VAV 1-3-1
+pt-01456,Occupied status,Airside AHU-2/VAV 1-2-71
+pt-01457,Discharge Air Temp,Airside AHU-5/DD 1-5-4
+pt-01458,Occupied status,Airside AHU-2/VAV 1-2-65
+pt-01459,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-5
+pt-01460,HX-1 1/3 Steam Valve Signal,Waterside Hot Water Plant/Penthouse HW Sys/HX-1
+pt-01461,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-10
+pt-01462,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-28
+pt-01463,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-10
+pt-01464,Damper Command,Airside AHU-2/VAV 1-2-63
+pt-01465,Desired Airflow - Cold,Airside AHU-4/DD 1-4-4
+pt-01466,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-17
+pt-01467,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-6
+pt-01468,Damper Command,Airside AHU-2/VAV 1-2-4
+pt-01469,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-59
+pt-01470,Current Airflow,Airside AHU-2/VAV 1-2-19
+pt-01471,Discharge Air Temp,Airside AHU-2/VAV 1-2-13
+pt-01472,Occupied status,Airside AHU-2/VAV 1-2-74
+pt-01473,Space Temperature,Airside AHU-3/VAV 1-3-12
+pt-01474,Desired Airflow - Hot,Airside AHU-5/DD 1-5-16
+pt-01475,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-94
+pt-01476,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-5
+pt-01477,SF VFD Signal,Airside AHU-5
+pt-01478,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-71
+pt-01479,Current Airflow,Airside AHU-2/VAV 1-2-15
+pt-01480,HHWP-1 S/S,Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-1
+pt-01481,PHASE B MOTOR CURRENT,Waterside Chilled Water Plant/CH-1
+pt-01482,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-16
+pt-01483,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-47
+pt-01484,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-79
+pt-01485,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-40
+pt-01486,Desired Airflow,Airside AHU-2/VAV 1-2-51
+pt-01487,Desired Airflow,Airside AHU-2/VAV 1-2-1
+pt-01488,Desired Airflow,Airside AHU-2/VAV 1-2-56
+pt-01489,Space Temperature,Airside AHU-2/VAV 1-2-8
+pt-01490,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-83
+pt-01491,Current Airflow,Airside AHU-2/VAV 1-2-25
+pt-01492,Current Airflow,Airside AHU-2/VAV 1-2-41
+pt-01493,Damper Command,Airside AHU-2/VAV 1-2-88
+pt-01494,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-55
+pt-01495,Discharge Air Temp,Airside AHU-2/VAV 1-2-62
+pt-01496,Current Airflow,Airside AHU-2/VAV 1-2-59
+pt-01497,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-13
+pt-01498,Mode_Occ,Airside AHU-2
+pt-01499,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-7
+pt-01500,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-28
+pt-01501,Space Temperature,Airside AHU-4/DD 1-4-5
+pt-01502,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-22
+pt-01503,Damper Command,Airside AHU-3/VAV 1-3-12
+pt-01504,Discharge Air Temp,Airside AHU-5/DD 1-5-6
+pt-01505,Desired Airflow - Hot,Airside AHU-5/DD 1-5-14
+pt-01506,Heating Valve Signal,Airside AHU-2/VAV 1-2-35
+pt-01507,Htg SAT SP,Airside AHU-4
+pt-01508,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-61
+pt-01509,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-12
+pt-01510,Relief Damper Signal,Airside AHU-3
+pt-01511,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-8
+pt-01512,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-15
+pt-01513,Space Temperature,Airside AHU-5/DD 1-5-13
+pt-01514,Space Temperature,Airside AHU-2/VAV 1-2-63
+pt-01515,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-16
+pt-01516,Desired Airflow,Airside AHU-2/VAV 1-2-16
+pt-01517,Current Airflow,Airside AHU-2/VAV 1-2-32
+pt-01518,CH-2 Evap ISO Valve,Waterside Chilled Water Plant/CH-2
+pt-01519,Chilled Water Leaving Temp,Waterside Chilled Water Plant/CH-3
+pt-01520,Damper Command,Airside AHU-2/VAV 1-2-62
+pt-01521,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-32
+pt-01522,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-27
+pt-01523,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-95
+pt-01524,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-6
+pt-01525,Desired Airflow,Airside AHU-2/VAV 1-2-18
+pt-01526,Damper Command,Airside AHU-2/VAV 1-2-3
+pt-01527,Heating Valve Signal,Airside AHU-2/VAV 1-2-93
+pt-01528,Current Airflow,Airside AHU-2/VAV 1-2-37
+pt-01529,Desired Airflow - Cold,Airside AHU-4/DD 1-4-3
+pt-01530,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-8
+pt-01531,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-11
+pt-01532,Desired Airflow - Hot,Airside AHU-4/DD 1-4-2
+pt-01533,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-10
+pt-01534,Damper Command,Airside AHU-2/VAV 1-2-27
+pt-01535,Desired Airflow - Cold,Airside AHU-4/DD 1-4-11
+pt-01536,Space Temperature,Airside AHU-2/VAV 1-2-70
+pt-01537,CH-1 Cond ISO Valve,Waterside Chilled Water Plant/CH-1
+pt-01538,Desired Airflow,Airside AHU-2/VAV 1-2-75
+pt-01539,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-14
+pt-01540,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-13
+pt-01541,CH-3 Cond ISO Valve,Waterside Chilled Water Plant/CH-3
+pt-01542,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-34
+pt-01543,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-19
+pt-01544,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-6
+pt-01545,Discharge Air Temp,Airside AHU-2/VAV 1-2-44
+pt-01546,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-5
+pt-01547,Occupied status,Airside AHU-2/VAV 1-2-93
+pt-01548,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-11
+pt-01549,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-4
+pt-01550,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-37
+pt-01551,Space Temperature,Airside AHU-3/VAV 1-3-13
+pt-01552,Space Temperature,Airside AHU-4/DD 1-4-10
+pt-01553,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-76
+pt-01554,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-32
+pt-01555,Space Temperature,Airside AHU-5/DD 1-5-9
+pt-01556,Occupied status,Airside AHU-2/VAV 1-2-84
+pt-01557,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-67
+pt-01558,CT-1 ISO Valve OPEN,Waterside Chilled Water Plant/CT-1
+pt-01559,Discharge Air Temp,Airside AHU-2/VAV 1-2-36
+pt-01560,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-9
+pt-01561,Econ_Cmd,Airside AHU-2
+pt-01562,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-7
+pt-01563,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-12
+pt-01564,Desired Airflow,Airside AHU-2/VAV 1-2-58
+pt-01565,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-2
+pt-01566,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-6
+pt-01567,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-1
+pt-01568,Space Temperature,Airside AHU-5/DD 1-5-8
+pt-01569,Occupied Clg Setpoint,Airside AHU-4/DD 1-4-13
+pt-01570,Desired Airflow,Airside AHU-3/VAV 1-3-15
+pt-01571,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-7
+pt-01572,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-48
+pt-01573,Desired Airflow - Hot,Airside AHU-4/DD 1-4-10
+pt-01574,Chilled Water Entering Temp,Waterside Chilled Water Plant/CH-1
+pt-01575,Desired Airflow - Cold,Airside AHU-4/DD 1-4-2
+pt-01576,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-7
+pt-01577,Unoccupied Clg Sp,Airside AHU-3/VAV 1-3-12
+pt-01578,Occupied status,Airside AHU-4/DD 1-4-4
+pt-01579,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-13
+pt-01580,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-3
+pt-01581,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-16
+pt-01582,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-70
+pt-01583,Clg Dmpr Pos. %,Airside AHU-4/DD 1-4-1
+pt-01584,Space Temperature,Airside AHU-2/VAV 1-2-36
+pt-01585,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-8
+pt-01586,Desired Airflow - Cold,Airside AHU-5/DD 1-5-12
+pt-01587,Occupied status,Airside AHU-2/VAV 1-2-29
+pt-01588,Current Airflow,Airside AHU-2/VAV 1-2-94
+pt-01589,Space Temperature,Airside AHU-2/VAV 1-2-81
+pt-01590,Discharge Air Temp,Airside AHU-3/VAV 1-3-15
+pt-01591,Desired Airflow,Airside AHU-2/VAV 1-2-71
+pt-01592,Fan Frequency,Waterside Chilled Water Plant/CT-1
+pt-01593,Occupied status,Airside AHU-2/VAV 1-2-83
+pt-01594,HW System DP,Waterside Hot Water Plant/Boiler Room HW Sys
+pt-01595,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-56
+pt-01596,Damper Command,Airside AHU-2/VAV 1-2-46
+pt-01597,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-2
+pt-01598,Discharge Air Temp,Airside AHU-3/VAV 1-3-14
+pt-01599,Current Airflow,Airside AHU-2/VAV 1-2-28
+pt-01600,Heating Valve Signal,Airside AHU-2/VAV 1-2-85
+pt-01601,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-25
+pt-01602,HX-1 2/3 Steam Valve Signal,Waterside Hot Water Plant/Penthouse HW Sys/HX-1
+pt-01603,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-83
+pt-01604,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-93
+pt-01605,CWS Temp SP,Waterside Chilled Water Plant
+pt-01606,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-4
+pt-01607,Cost,Utility Bills Elec Meter 2
+pt-01608,Current Airflow,Airside AHU-2/VAV 1-2-83
+pt-01609,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-5
+pt-01610,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-88
+pt-01611,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-29
+pt-01612,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-70
+pt-01613,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-8
+pt-01614,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-92
+pt-01615,Damper Command,Airside AHU-2/VAV 1-2-90
+pt-01616,Discharge Air Temp,Airside AHU-3/VAV 1-3-9
+pt-01617,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-15
+pt-01618,Current Airflow,Airside AHU-2/VAV 1-2-12
+pt-01619,Occupied status,Airside AHU-2/VAV 1-2-91
+pt-01620,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-44
+pt-01621,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-75
+pt-01622,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-69
+pt-01623,HW Supply Temp SP,Waterside Hot Water Plant/Penthouse HW Sys
+pt-01624,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-29
+pt-01625,SF Status,Airside AHU-5
+pt-01626,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-15
+pt-01627,Damper Command,Airside AHU-2/VAV 1-2-45
+pt-01628,CH-3 Evap ISO Valve,Waterside Chilled Water Plant/CH-3
+pt-01629,Discharge Air Temp,Airside AHU-2/VAV 1-2-16
+pt-01630,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-4
+pt-01631,Decon EF S/S,Airside AHU-2/VAV 1-2-89
+pt-01632,Desired Airflow,Airside AHU-2/VAV 1-2-59
+pt-01633,Discharge Air Temp,Airside AHU-3/VAV 1-3-16
+pt-01634,Desired Airflow - Cold,Airside AHU-4/DD 1-4-5
+pt-01635,Cond Water Leaving Temp,Waterside Chilled Water Plant/CH-3
+pt-01636,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-94
+pt-01637,Occupied status,Airside AHU-2/VAV 1-2-92
+pt-01638,Damper Command,Airside AHU-2/VAV 1-2-43
+pt-01639,Desired Airflow,Airside AHU-2/VAV 1-2-96
+pt-01640,Heating Valve Signal,Airside AHU-2/VAV 1-2-74
+pt-01641,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-34
+pt-01642,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-26
+pt-01643,RF VFD S/S,Airside AHU-4
+pt-01644,Chilled Water Temp Setpoint,Waterside Chilled Water Plant/CH-2
+pt-01645,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-10
+pt-01646,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-3
+pt-01647,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-11
+pt-01648,Space Temperature,Airside AHU-2/VAV 1-2-48
+pt-01649,Occupied status,Airside AHU-5/DD 1-5-9
+pt-01650,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-61
+pt-01651,DAT_SP,Airside AHU-3
+pt-01652,Desired Airflow,Airside AHU-2/VAV 1-2-14
+pt-01653,Heating Valve Signal,Airside AHU-2/VAV 1-2-64
+pt-01654,Cost,Utility Bills Water Meter 1
+pt-01655,Discharge Air Temp,Airside AHU-2/VAV 1-2-53
+pt-01656,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-26
+pt-01657,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-30
+pt-01658,Desired Airflow,Airside AHU-2/VAV 1-2-61
+pt-01659,Energy,Utility Bills Gas Meter 2
+pt-01660,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-86
+pt-01661,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-6
+pt-01662,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-84
+pt-01663,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-19
+pt-01664,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-25
+pt-01665,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-6
+pt-01666,Heating Valve Signal,Airside AHU-2/VAV 1-2-79
+pt-01667,Damper Command,Airside AHU-2/VAV 1-2-75
+pt-01668,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-11
+pt-01669,Clg_Valve_Cmd,Airside AHU-5
+pt-01670,Desired Airflow,Airside AHU-2/VAV 1-2-11
+pt-01671,Discharge Air Temp,Airside AHU-2/VAV 1-2-96
+pt-01672,Desired Airflow,Airside AHU-2/VAV 1-2-78
+pt-01673,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-3
+pt-01674,Space Temperature,Airside AHU-2/VAV 1-2-79
+pt-01675,Cost,Utility Bills Water Meter 6
+pt-01676,Building DP,Airside AHU-5
+pt-01677,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-19
+pt-01678,Occupied status,Airside AHU-2/VAV 1-2-37
+pt-01679,Desired Airflow - Hot,Airside AHU-5/DD 1-5-6
+pt-01680,Desired Airflow,Airside AHU-3/VAV 1-3-7
+pt-01681,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-96
+pt-01682,Desired Airflow - Hot,Airside AHU-5/DD 1-5-19
+pt-01683,Current Airflow,Airside AHU-2/VAV 1-2-45
+pt-01684,Current Airflow,Airside AHU-2/VAV 1-2-21
+pt-01685,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-19
+pt-01686,Discharge Air Temp,Airside AHU-2/VAV 1-2-21
+pt-01687,Discharge Air Temp,Airside AHU-2/VAV 1-2-27
+pt-01688,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-6
+pt-01689,SF Status,Airside AHU-3
+pt-01690,Damper Command,Airside AHU-2/VAV 1-2-76
+pt-01691,SAT,Airside AHU-3
+pt-01692,Desired Airflow,Airside AHU-2/VAV 1-2-33
+pt-01693,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-12
+pt-01694,Desired Airflow,Airside AHU-2/VAV 1-2-36
+pt-01695,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-93
+pt-01696,Desired Airflow,Airside AHU-2/VAV 1-2-85
+pt-01697,RAT,Airside AHU-3
+pt-01698,Heating Valve Signal,Airside AHU-2/VAV 1-2-40
+pt-01699,Occupied Clg Setpoint,Airside AHU-5/DD 1-5-5
+pt-01700,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-5
+pt-01701,Current Airflow,Airside AHU-2/VAV 1-2-85
+pt-01702,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-11
+pt-01703,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-13
+pt-01704,Space Temperature,Airside AHU-2/VAV 1-2-93
+pt-01705,HW Sys DP SP,Waterside Hot Water Plant/Penthouse HW Sys
+pt-01706,Occupied status,Airside AHU-2/VAV 1-2-82
+pt-01707,Space Temperature,Airside AHU-2/VAV 1-2-84
+pt-01708,Discharge Air Temp,Airside AHU-3/VAV 1-3-4
+pt-01709,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-63
+pt-01710,Space Temperature,Airside AHU-5/DD 1-5-19
+pt-01711,MAT,Airside AHU-4
+pt-01712,Damper Command,Airside AHU-2/VAV 1-2-15
+pt-01713,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-7
+pt-01714,Occupied status,Airside AHU-2/VAV 1-2-46
+pt-01715,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-94
+pt-01716,Damper Command,Airside AHU-2/VAV 1-2-21
+pt-01717,Heating Valve Signal,Airside AHU-2/VAV 1-2-46
+pt-01718,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-10
+pt-01719,Occupied Htg Setpoint,Airside AHU-4/DD 1-4-2
+pt-01720,Desired Airflow - Cold,Airside AHU-5/DD 1-5-17
+pt-01721,Occupied status,Airside AHU-2/VAV 1-2-7
+pt-01722,Desired Airflow - Cold,Airside AHU-4/DD 1-4-12
+pt-01723,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-28
+pt-01724,Current Airflow,Airside AHU-2/VAV 1-2-47
+pt-01725,Damper Command,Airside AHU-2/VAV 1-2-20
+pt-01726,CH-1 Cond ISO Valve OPEN,Waterside Chilled Water Plant/CH-1
+pt-01727,Fan Frequency,Waterside Chilled Water Plant/CT-2
+pt-01728,Space Temperature,Airside AHU-2/VAV 1-2-5
+pt-01729,Desired Airflow,Airside AHU-2/VAV 1-2-88
+pt-01730,Desired Airflow - Cold,Airside AHU-5/DD 1-5-8
+pt-01731,Unoccupied Htg Sp,Airside AHU-5/DD 1-5-2
+pt-01732,Desired Airflow,Airside AHU-2/VAV 1-2-64
+pt-01733,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-7
+pt-01734,Heating Valve Signal,Airside AHU-2/VAV 1-2-70
+pt-01735,Return Fan Frequency,Airside AHU-2/RF VFD
+pt-01736,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-31
+pt-01737,Desired Airflow,Airside AHU-2/VAV 1-2-46
+pt-01738,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-5
+pt-01739,Desired Airflow,Airside AHU-2/VAV 1-2-3
+pt-01740,Desired Airflow,Airside AHU-2/VAV 1-2-47
+pt-01741,Occupied status,Airside AHU-2/VAV 1-2-6
+pt-01742,Airflow sensor 1 (Hot),Airside AHU-4/DD 1-4-8
+pt-01743,Desired Airflow,Airside AHU-2/VAV 1-2-22
+pt-01744,Discharge Air Temp,Airside AHU-2/VAV 1-2-52
+pt-01745,Current Airflow,Airside AHU-2/VAV 1-2-18
+pt-01746,HW Pump Status,Waterside Hot Water Plant/Boiler Room HW Sys
+pt-01747,Desired Airflow - Hot,Airside AHU-5/DD 1-5-11
+pt-01748,CT-2 ISO Valve,Waterside Chilled Water Plant/CT-2
+pt-01749,Space Temperature,Airside AHU-3/VAV 1-3-6
+pt-01750,Current Airflow,Airside AHU-2/VAV 1-2-3
+pt-01751,Damper Command,Airside AHU-2/VAV 1-2-65
+pt-01752,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-95
+pt-01753,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-10
+pt-01754,Current Airflow,Airside AHU-2/VAV 1-2-58
+pt-01755,Return Fan Power,Airside AHU-2/RF VFD
+pt-01756,OSA Damper Signal,Airside AHU-5
+pt-01757,Occupied Htg Setpoint,Airside AHU-5/DD 1-5-2
+pt-01758,Damper Command,Airside AHU-2/VAV 1-2-81
+pt-01759,Discharge Air Temp,Airside AHU-2/VAV 1-2-35
+pt-01760,Space Temperature,Airside AHU-3/VAV 1-3-3
+pt-01761,Unoccupied Clg Sp,Airside AHU-5/DD 1-5-8
+pt-01762,Space Temperature,Airside AHU-4/DD 1-4-4
+pt-01763,Frequency,Waterside Chilled Water Plant/CWP-2
+pt-01764,Occupied status,Airside AHU-2/VAV 1-2-33
+pt-01765,Damper Command,Airside AHU-2/VAV 1-2-6
+pt-01766,Htg Dmpr Cmnd 0-100,Airside AHU-5/DD 1-5-9
+pt-01767,SF VFD S/S,Airside AHU-2
+pt-01768,Clg Dmpr Pos. %,Airside AHU-5/DD 1-5-11
+pt-01769,Desired Airflow,Airside AHU-3/VAV 1-3-9
+pt-01770,Elec Power,Waterside Chilled Water Plant/CT-2
+pt-01771,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-11
+pt-01772,Htg Dmpr Cmnd 0-100,Airside AHU-4/DD 1-4-1
+pt-01773,Desired Airflow,Airside AHU-2/VAV 1-2-28
+pt-01774,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-80
+pt-01775,Current Airflow,Airside AHU-3/VAV 1-3-4
+pt-01776,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-9
+pt-01777,Space Temperature,Airside AHU-2/VAV 1-2-80
+pt-01778,Unoccupied Htg Sp,Airside AHU-4/DD 1-4-14
+pt-01779,Occupied Htg Setpoint,Airside AHU-3/VAV 1-3-7
+pt-01780,Unoccupied Clg Sp,Airside AHU-4/DD 1-4-14
+pt-01781,Space Temperature,Airside AHU-2/VAV 1-2-58
+pt-01782,Heating Valve Signal,Airside AHU-2/VAV 1-2-82
+pt-01783,Space Temperature,Airside AHU-2/VAV 1-2-32
+pt-01784,Occupied status,Airside AHU-2/VAV 1-2-66
+pt-01785,Occupied status,Airside AHU-3/VAV 1-3-7
+pt-01786,Space Temperature,Airside AHU-4/DD 1-4-13
+pt-01787,Damper Command,Airside AHU-2/VAV 1-2-53
+pt-01788,Damper Command,Airside AHU-2/VAV 1-2-94
+pt-01789,CT-2 ISO Valve OPEN,Waterside Chilled Water Plant/CT-2
+pt-01790,Occupied status,Airside AHU-2/VAV 1-2-45
+pt-01791,Space Temperature,Airside AHU-2/VAV 1-2-44
+pt-01792,Energy,Utility Bills Gas Meter 1
+pt-01793,Desired Airflow - Hot,Airside AHU-4/DD 1-4-3
+pt-01794,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-89
+pt-01795,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-53
+pt-01796,Desired Airflow,Airside AHU-3/VAV 1-3-17
+pt-01797,Desired Airflow,Airside AHU-2/VAV 1-2-9
+pt-01798,Damper Command,Airside AHU-2/VAV 1-2-35
+pt-01799,HW Return Temp,Waterside Hot Water Plant/Boiler Room HW Sys
+pt-01800,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-16
+pt-01801,Building Static_SP,Airside AHU-2
+pt-01802,Discharge Air Temp,Airside AHU-5/DD 1-5-16
+pt-01803,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-83
+pt-01804,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-51
+pt-01805,Space Temperature,Airside AHU-2/VAV 1-2-33
+pt-01806,Damper Command,Airside AHU-2/VAV 1-2-41
+pt-01807,Airflow sensor 2 (Cold),Airside AHU-5/DD 1-5-19
+pt-01808,Damper Command,Airside AHU-2/VAV 1-2-23
+pt-01809,Current Airflow,Airside AHU-2/VAV 1-2-68
+pt-01810,Frequency,Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-2
+pt-01811,Clg_Valve_Cmd,Airside AHU-2
+pt-01812,Steam SP,Waterside Hot Water Plant
+pt-01813,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-9
+pt-01814,Occupied status,Airside AHU-3/VAV 1-3-8
+pt-01815,Discharge Air Temp,Airside AHU-2/VAV 1-2-30
+pt-01816,Occupied Clg Setpoint,Airside AHU-3/VAV 1-3-3
+pt-01817,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-1
+pt-01818,Discharge Air Temp,Airside AHU-4/DD 1-4-14
+pt-01819,Space Temperature,Airside AHU-2/VAV 1-2-47
+pt-01820,Unoccupied Htg Sp,Airside AHU-3/VAV 1-3-3
+pt-01821,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-35
+pt-01822,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-86
+pt-01823,Unoccupied Htg Sp,Airside AHU-2/VAV 1-2-15
+pt-01824,Damper Command,Airside AHU-2/VAV 1-2-30
+pt-01825,SF VFD Signal,Airside AHU-2
+pt-01826,Desired Airflow - Hot,Airside AHU-4/DD 1-4-5
+pt-01827,Discharge Air Temp,Airside AHU-2/VAV 1-2-91
+pt-01828,Occupied Clg Setpoint,Airside AHU-2/VAV 1-2-4
+pt-01829,Elec Power (BAS),Waterside Chilled Water Plant/CH-1
+pt-01830,Airflow sensor 2 (Cold),Airside AHU-4/DD 1-4-14
+pt-01831,Occupied Htg Setpoint,Airside AHU-2/VAV 1-2-4
+pt-01832,Occupied status,Airside AHU-2/VAV 1-2-86
+pt-01833,Occupied status,Airside AHU-3/VAV 1-3-14
+pt-01834,Unoccupied Clg Sp,Airside AHU-2/VAV 1-2-64
+pt-01835,Htg_Valve_Cmd,Airside AHU-3
+pt-01836,Damper Command,Airside AHU-2/VAV 1-2-66
+pt-01837,Discharge Air Temp,Airside AHU-2/VAV 1-2-32
+pt-01838,Damper Command,Airside AHU-2/VAV 1-2-16
+pt-01839,PCHWP-1A Status,Waterside Chilled Water Plant/PCHWP-1A
+pt-01840,Airflow sensor 1 (Hot),Airside AHU-5/DD 1-5-4
+pt-01841,Heating Valve Signal,Airside AHU-2/VAV 1-2-44
+pt-01842,Space Temperature,Airside AHU-2/VAV 1-2-21

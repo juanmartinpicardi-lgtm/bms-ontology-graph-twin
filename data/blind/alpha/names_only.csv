@@ -1,0 +1,1843 @@
+blind_id,name
+pt-00001,Occupied status
+pt-00002,Occupied Htg Setpoint
+pt-00003,Airflow sensor 1 (Hot)
+pt-00004,Occupied Htg Setpoint
+pt-00005,Desired Airflow
+pt-00006,Damper Command
+pt-00007,Occupied Clg Setpoint
+pt-00008,Desired Airflow
+pt-00009,Htg Dmpr Cmnd 0-100
+pt-00010,Occupied status
+pt-00011,Occupied Clg Setpoint
+pt-00012,Occupied Clg Setpoint
+pt-00013,CWP-1 Status
+pt-00014,Current Airflow
+pt-00015,Heating Valve Signal
+pt-00016,Unoccupied Clg Sp
+pt-00017,Heating Valve Signal
+pt-00018,Discharge Air Temp
+pt-00019,Unoccupied Htg Sp
+pt-00020,Occupied Clg Setpoint
+pt-00021,Desired Airflow - Hot
+pt-00022,Occupied Clg Setpoint
+pt-00023,Heating Valve Signal
+pt-00024,Occupied status
+pt-00025,Unoccupied Htg Sp
+pt-00026,Unoccupied Clg Sp
+pt-00027,Occupied status
+pt-00028,Airflow sensor 1 (Hot)
+pt-00029,Occupied status
+pt-00030,Unoccupied Htg Sp
+pt-00031,Desired Airflow
+pt-00032,Occupied Clg Setpoint
+pt-00033,Discharge Air Temp
+pt-00034,Occupied Htg Setpoint
+pt-00035,Unoccupied Htg Sp
+pt-00036,B-1 Fire Rate
+pt-00037,Current Airflow
+pt-00038,Desired Airflow - Cold
+pt-00039,Unoccupied Clg Sp
+pt-00040,Desired Airflow - Hot
+pt-00041,Desired Airflow
+pt-00042,Occupied Htg Setpoint
+pt-00043,Power
+pt-00044,Occupied Htg Setpoint
+pt-00045,Occupied status
+pt-00046,Clg Dmpr Pos. %
+pt-00047,Occupied status
+pt-00048,Current Airflow
+pt-00049,Cost
+pt-00050,Mode_Occ
+pt-00051,Desired Airflow
+pt-00052,Space Temperature
+pt-00053,Discharge Air Temp
+pt-00054,Occupied Clg Setpoint
+pt-00055,Current Airflow
+pt-00056,Econ_Cmd
+pt-00057,Discharge Air Temp
+pt-00058,Supply %RH SP
+pt-00059,Occupied status
+pt-00060,Space Temperature
+pt-00061,Occupied Htg Setpoint
+pt-00062,Unoccupied Clg Sp
+pt-00063,Discharge Air Temp
+pt-00064,Occupied Htg Setpoint
+pt-00065,Unoccupied Htg Sp
+pt-00066,Occupied Clg Setpoint
+pt-00067,Occupied status
+pt-00068,Occupied Clg Setpoint
+pt-00069,Space Temperature
+pt-00070,Occupied Clg Setpoint
+pt-00071,Desired Airflow - Hot
+pt-00072,Unoccupied Htg Sp
+pt-00073,Occupied status
+pt-00074,Heating Valve Signal
+pt-00075,Steam Valve Control Signal
+pt-00076,Damper Command
+pt-00077,Discharge Air Temp
+pt-00078,Occupied Htg Setpoint
+pt-00079,Unoccupied Htg Sp
+pt-00080,Unoccupied Htg Sp
+pt-00081,SF VFD S/S
+pt-00082,Current Airflow
+pt-00083,Volume
+pt-00084,Occupied Clg Setpoint
+pt-00085,Unoccupied Clg Sp
+pt-00086,Airflow sensor 2 (Cold)
+pt-00087,Current Airflow
+pt-00088,Occupied status
+pt-00089,Space Temperature
+pt-00090,Htg Dmpr Cmnd 0-100
+pt-00091,Occupied Clg Setpoint
+pt-00092,Desired Airflow
+pt-00093,Current Airflow
+pt-00094,Unoccupied Clg Sp
+pt-00095,Unoccupied Clg Sp
+pt-00096,Unoccupied Clg Sp
+pt-00097,Occupied status
+pt-00098,Desired Airflow
+pt-00099,DAT_SP
+pt-00100,Space Temperature
+pt-00101,Occupied status
+pt-00102,Discharge Air Temp
+pt-00103,Desired Airflow - Hot
+pt-00104,Current Airflow
+pt-00105,Occupied status
+pt-00106,Unoccupied Htg Sp
+pt-00107,Clg Dmpr Pos. %
+pt-00108,Cost
+pt-00109,Discharge Air Temp
+pt-00110,DSP_SP_Curr_Value
+pt-00111,CH-1 Cond Inlet
+pt-00112,Airflow sensor 1 (Hot)
+pt-00113,Discharge Air Temp
+pt-00114,Airflow sensor 2 (Cold)
+pt-00115,Occupied Htg Setpoint
+pt-00116,Unoccupied Htg Sp
+pt-00117,Heating Valve Signal
+pt-00118,Unoccupied Clg Sp
+pt-00119,Desired Airflow - Cold
+pt-00120,Space Temperature
+pt-00121,Damper Command
+pt-00122,Cost
+pt-00123,Unoccupied Clg Sp
+pt-00124,Unoccupied Clg Sp
+pt-00125,Space Temperature
+pt-00126,Unoccupied Clg Sp
+pt-00127,Current Airflow
+pt-00128,Space Temperature
+pt-00129,Unoccupied Htg Sp
+pt-00130,Occupied status
+pt-00131,RAT
+pt-00132,CH-2 Cond ISO Valve OPEN
+pt-00133,Occupied Htg Setpoint
+pt-00134,Current Airflow
+pt-00135,Clg Dmpr Pos. %
+pt-00136,Damper Command
+pt-00137,Discharge Air Temp
+pt-00138,Occupied Clg Setpoint
+pt-00139,Occupied status
+pt-00140,Occupied status
+pt-00141,Desired Airflow - Cold
+pt-00142,Occupied Htg Setpoint
+pt-00143,Heating Valve Signal
+pt-00144,Damper Command
+pt-00145,Current Airflow
+pt-00146,Occupied Htg Setpoint
+pt-00147,Unoccupied Clg Sp
+pt-00148,Discharge Air Temp
+pt-00149,Current Airflow
+pt-00150,Occupied status
+pt-00151,Space Temperature
+pt-00152,Desired Airflow
+pt-00153,Current Airflow
+pt-00154,Desired Airflow
+pt-00155,Discharge Air Temp
+pt-00156,Desired Airflow - Cold
+pt-00157,Current Airflow
+pt-00158,Space Temperature
+pt-00159,Discharge Air Temp
+pt-00160,Unoccupied Htg Sp
+pt-00161,Occupied Clg Setpoint
+pt-00162,Clg Dmpr Pos. %
+pt-00163,Heating Valve Signal
+pt-00164,Occupied status
+pt-00165,Heating Valve Signal
+pt-00166,Chilled Water Leaving Temp
+pt-00167,Discharge Air Temp
+pt-00168,Occupied status
+pt-00169,Mode_Occ
+pt-00170,Current Airflow
+pt-00171,Occupied status
+pt-00172,Occupied status
+pt-00173,Discharge Air Temp
+pt-00174,Unoccupied Htg Sp
+pt-00175,Current Airflow
+pt-00176,SF VFD S/S
+pt-00177,Occupied status
+pt-00178,CH-1 Evap ISO Valve
+pt-00179,Occupied Htg Setpoint
+pt-00180,Airflow sensor 2 (Cold)
+pt-00181,Occupied Htg Setpoint
+pt-00182,Discharge Air Temp
+pt-00183,Discharge Air Temp
+pt-00184,Space Temperature
+pt-00185,Desired Airflow - Hot
+pt-00186,Discharge Air Temp
+pt-00187,Htg Dmpr Cmnd 0-100
+pt-00188,Unoccupied Clg Sp
+pt-00189,Occupied Clg Setpoint
+pt-00190,Heating Valve Signal
+pt-00191,RF VFD Speed
+pt-00192,Space Temperature
+pt-00193,Occupied status
+pt-00194,Space Temperature
+pt-00195,Space Temperature
+pt-00196,Discharge Air Temp
+pt-00197,Space Temperature
+pt-00198,Return Fan Status
+pt-00199,CT-2 Speed Command
+pt-00200,CW Return Temp
+pt-00201,Damper Command
+pt-00202,Current Airflow
+pt-00203,Cost
+pt-00204,Cost
+pt-00205,Unoccupied Htg Sp
+pt-00206,Occupied Htg Setpoint
+pt-00207,Occupied status
+pt-00208,SF VFD Signal
+pt-00209,Space Temperature
+pt-00210,Unoccupied Clg Sp
+pt-00211,Unoccupied Htg Sp
+pt-00212,Occupied status
+pt-00213,Airflow sensor 2 (Cold)
+pt-00214,Discharge Air Temp
+pt-00215,Chilled Water Flow (CC)
+pt-00216,Airflow sensor 1 (Hot)
+pt-00217,Unoccupied Clg Sp
+pt-00218,Space Temperature
+pt-00219,Unoccupied Clg Sp
+pt-00220,Unoccupied Htg Sp
+pt-00221,Occupied Clg Setpoint
+pt-00222,Space Temperature
+pt-00223,Occupied status
+pt-00224,Discharge Air Temp
+pt-00225,Damper Command
+pt-00226,Evap Efficiency (CC)
+pt-00227,Heating Valve Signal
+pt-00228,Unoccupied Htg Sp
+pt-00229,Heating Valve Signal
+pt-00230,Unoccupied Clg Sp
+pt-00231,Occupied Htg Setpoint
+pt-00232,HHWP-3 Status
+pt-00233,Discharge Air Temp
+pt-00234,Unoccupied Clg Sp
+pt-00235,Building Static Sensor
+pt-00236,Occupied status
+pt-00237,CWP-2 ISO Valve
+pt-00238,Desired Airflow
+pt-00239,Desired Airflow - Hot
+pt-00240,Unoccupied Clg Sp
+pt-00241,Occupied Htg Setpoint
+pt-00242,Occupied Clg Setpoint
+pt-00243,Heating Valve Signal
+pt-00244,Occupied Htg Setpoint
+pt-00245,Current Airflow
+pt-00246,Unoccupied Clg Sp
+pt-00247,Heating Valve Signal
+pt-00248,Evap Refrig Saturation Temp (CC)
+pt-00249,Power
+pt-00250,Airflow sensor 2 (Cold)
+pt-00251,RF Status
+pt-00252,Current Airflow
+pt-00253,Current Airflow
+pt-00254,Airflow sensor 1 (Hot)
+pt-00255,Full Load Amp Percentage
+pt-00256,Unoccupied Htg Sp
+pt-00257,Airflow sensor 1 (Hot)
+pt-00258,Desired Airflow - Hot
+pt-00259,Space Temperature
+pt-00260,Desired Airflow
+pt-00261,Occupied Clg Setpoint
+pt-00262,Clg Dmpr Pos. %
+pt-00263,Discharge Air Temp
+pt-00264,Occupied Clg Setpoint
+pt-00265,Unoccupied Htg Sp
+pt-00266,Occupied Clg Setpoint
+pt-00267,Damper Command
+pt-00268,Desired Airflow
+pt-00269,Unoccupied Clg Sp
+pt-00270,Occupied Clg Setpoint
+pt-00271,Boiler 2 Status
+pt-00272,Unoccupied Clg Sp
+pt-00273,Occupied Htg Setpoint
+pt-00274,Occupied Htg Setpoint
+pt-00275,Clg Dmpr Pos. %
+pt-00276,Power Peak
+pt-00277,Clg Dmpr Pos. %
+pt-00278,Occupied Clg Setpoint
+pt-00279,MAT
+pt-00280,Unoccupied Clg Sp
+pt-00281,Desired Airflow
+pt-00282,Compressor Refrig Leaving Temp (CC)
+pt-00283,Current Airflow
+pt-00284,Airflow sensor 1 (Hot)
+pt-00285,Space Temperature
+pt-00286,Discharge Air Temp
+pt-00287,Occupied Htg Setpoint
+pt-00288,Volume
+pt-00289,Heating Valve Signal
+pt-00290,Current Airflow
+pt-00291,Occupied status
+pt-00292,Airflow sensor 1 (Hot)
+pt-00293,Heating Valve Signal
+pt-00294,Airflow sensor 2 (Cold)
+pt-00295,Space Temperature
+pt-00296,Htg Dmpr Cmnd 0-100
+pt-00297,Power
+pt-00298,Space Temperature
+pt-00299,Occupied status
+pt-00300,Unoccupied Clg Sp
+pt-00301,Desired Airflow
+pt-00302,Occupied Clg Setpoint
+pt-00303,Cond Water Leaving Temp
+pt-00304,Space Temperature
+pt-00305,Discharge Air Temp
+pt-00306,Boiler 3 Status
+pt-00307,Current Airflow
+pt-00308,Occupied status
+pt-00309,Discharge Air Temp
+pt-00310,Unoccupied Clg Sp
+pt-00311,Desired Airflow - Cold
+pt-00312,CW Supply Temp
+pt-00313,Desired Airflow
+pt-00314,Discharge Air Temp
+pt-00315,Occupied Htg Setpoint
+pt-00316,Space Temperature
+pt-00317,Space Temperature
+pt-00318,Occupied Clg Setpoint
+pt-00319,Boiler 2 S/S
+pt-00320,Unoccupied Htg Sp
+pt-00321,Occupied status
+pt-00322,Current Airflow
+pt-00323,Damper Command
+pt-00324,Clg Dmpr Pos. %
+pt-00325,Occupied status
+pt-00326,Occupied Clg Setpoint
+pt-00327,Unoccupied Htg Sp
+pt-00328,Cost
+pt-00329,Desired Airflow
+pt-00330,Damper Command
+pt-00331,Discharge Air Temp
+pt-00332,Heating Valve Signal
+pt-00333,Current Airflow
+pt-00334,Heating Valve Signal
+pt-00335,Damper Command
+pt-00336,Desired Airflow - Cold
+pt-00337,Occupied Clg Setpoint
+pt-00338,Damper Command
+pt-00339,Unoccupied Htg Sp
+pt-00340,Unoccupied Htg Sp
+pt-00341,Airflow sensor 2 (Cold)
+pt-00342,Heating Valve Signal
+pt-00343,Current Airflow
+pt-00344,Occupied Htg Setpoint
+pt-00345,Desired Airflow
+pt-00346,Hot Deck SAT
+pt-00347,Desired Airflow
+pt-00348,Unoccupied Clg Sp
+pt-00349,Occupied status
+pt-00350,Relief Signal
+pt-00351,Desired Airflow - Hot
+pt-00352,RF VFD S/S
+pt-00353,Occupied status
+pt-00354,Occupied status
+pt-00355,Discharge Air Temp
+pt-00356,Heating Valve Signal
+pt-00357,Damper Command
+pt-00358,Discharge Air Temp
+pt-00359,Space Temperature
+pt-00360,Desired Airflow
+pt-00361,Heating Valve Signal
+pt-00362,Unoccupied Clg Sp
+pt-00363,Heating Valve Signal
+pt-00364,Desired Airflow - Cold
+pt-00365,Occupied Htg Setpoint
+pt-00366,RF Status
+pt-00367,Damper Command
+pt-00368,Heating Valve Signal
+pt-00369,Airflow sensor 1 (Hot)
+pt-00370,Unoccupied Htg Sp
+pt-00371,Clg Dmpr Pos. %
+pt-00372,Damper Command
+pt-00373,Damper Command
+pt-00374,Current Airflow
+pt-00375,Desired Airflow
+pt-00376,Unoccupied Clg Sp
+pt-00377,Occupied Htg Setpoint
+pt-00378,Current Airflow
+pt-00379,Heating Valve Signal
+pt-00380,Desired Airflow
+pt-00381,Occupied Htg Setpoint
+pt-00382,Occupied Htg Setpoint
+pt-00383,Desired Airflow - Cold
+pt-00384,Desired Airflow - Cold
+pt-00385,Command
+pt-00386,Clg Dmpr Pos. %
+pt-00387,Desired Airflow
+pt-00388,Clg Dmpr Pos. %
+pt-00389,Damper Command
+pt-00390,Desired Airflow
+pt-00391,Damper Command
+pt-00392,Heating Valve Signal
+pt-00393,Occupied Clg Setpoint
+pt-00394,Unoccupied Clg Sp
+pt-00395,Desired Airflow
+pt-00396,Occupied status
+pt-00397,Unoccupied Htg Sp
+pt-00398,Space Temperature
+pt-00399,Current Airflow
+pt-00400,Desired Airflow
+pt-00401,Space Temperature
+pt-00402,Unoccupied Clg Sp
+pt-00403,Occupied status
+pt-00404,Discharge Air Temp
+pt-00405,Occupied status
+pt-00406,Heating Valve Signal
+pt-00407,Unoccupied Htg Sp
+pt-00408,Unoccupied Htg Sp
+pt-00409,Occupied status
+pt-00410,Space Temperature
+pt-00411,Desired Airflow - Hot
+pt-00412,Damper Command
+pt-00413,Occupied status
+pt-00414,Occupied status
+pt-00415,Discharge Air Temp
+pt-00416,Unoccupied Clg Sp
+pt-00417,Volume
+pt-00418,Occupied Htg Setpoint
+pt-00419,Supply Fan Frequency
+pt-00420,Occupied Htg Setpoint
+pt-00421,Discharge Air Temp
+pt-00422,Clg Dmpr Pos. %
+pt-00423,Unoccupied Clg Sp
+pt-00424,Unoccupied Clg Sp
+pt-00425,OSA Damper Signal
+pt-00426,HHWP-2 S/S
+pt-00427,Airflow sensor 2 (Cold)
+pt-00428,Current Airflow
+pt-00429,Unoccupied Clg Sp
+pt-00430,Unoccupied Clg Sp
+pt-00431,Current Airflow
+pt-00432,Htg Dmpr Cmnd 0-100
+pt-00433,Discharge Air Temp
+pt-00434,CH-2 Status
+pt-00435,Discharge Air Temp
+pt-00436,CH-1 Cond Outlet
+pt-00437,Clg Dmpr Pos. %
+pt-00438,Desired Airflow
+pt-00439,Unoccupied Clg Sp
+pt-00440,Desired Airflow
+pt-00441,Current Airflow
+pt-00442,Heating Valve Signal
+pt-00443,Relief Damper Signal
+pt-00444,CT-1 ISO Valve
+pt-00445,Desired Airflow
+pt-00446,Htg Dmpr Cmnd 0-100
+pt-00447,Desired Airflow - Cold
+pt-00448,Occupied status
+pt-00449,Unoccupied Htg Sp
+pt-00450,Htg Dmpr Cmnd 0-100
+pt-00451,Unoccupied Clg Sp
+pt-00452,Unoccupied Htg Sp
+pt-00453,Damper Command
+pt-00454,Occupied Clg Setpoint
+pt-00455,Desired Airflow
+pt-00456,Discharge Air Temp
+pt-00457,Space Temperature
+pt-00458,Occupied Clg Setpoint
+pt-00459,Htg Dmpr Cmnd 0-100
+pt-00460,Unoccupied Htg Sp
+pt-00461,Space Temperature
+pt-00462,Desired Airflow - Hot
+pt-00463,Discharge Air Temp
+pt-00464,Damper Command
+pt-00465,Discharge Air Temp
+pt-00466,1/3 Steam Valve Signal
+pt-00467,Unoccupied Clg Sp
+pt-00468,Discharge Air Temp
+pt-00469,Building Static Reading
+pt-00470,Occupied Clg Setpoint
+pt-00471,Unoccupied Htg Sp
+pt-00472,Desired Airflow
+pt-00473,Occupied Clg Setpoint
+pt-00474,Occupied status
+pt-00475,Space Temperature
+pt-00476,Occupied Htg Setpoint
+pt-00477,Damper Command
+pt-00478,Unoccupied Htg Sp
+pt-00479,HHWP-2 Status
+pt-00480,Unoccupied Htg Sp
+pt-00481,Unoccupied Htg Sp
+pt-00482,Heating Valve Signal
+pt-00483,Discharge Air Temp
+pt-00484,Desired Airflow
+pt-00485,Space Temperature
+pt-00486,Elec Power
+pt-00487,Htg Dmpr Cmnd 0-100
+pt-00488,Unoccupied Clg Sp
+pt-00489,Discharge Air Temp
+pt-00490,Heating Valve Signal
+pt-00491,Unoccupied Htg Sp
+pt-00492,Occupied status
+pt-00493,Refrig Cycle Efficiency (CC)
+pt-00494,Occupied Clg Setpoint
+pt-00495,Desired Airflow - Cold
+pt-00496,Unoccupied Clg Sp
+pt-00497,Unoccupied Clg Sp
+pt-00498,Unoccupied Htg Sp
+pt-00499,Heating Valve Signal
+pt-00500,Cost
+pt-00501,Occupied Htg Setpoint
+pt-00502,Unoccupied Htg Sp
+pt-00503,Damper Command
+pt-00504,Damper Command
+pt-00505,Desired Airflow
+pt-00506,Occupied status
+pt-00507,B-2 Fire Rate
+pt-00508,Unoccupied Htg Sp
+pt-00509,Damper Command
+pt-00510,Occupied status
+pt-00511,Discharge Air Temp
+pt-00512,Current Airflow
+pt-00513,Unoccupied Clg Sp
+pt-00514,Occupied status
+pt-00515,Airflow sensor 1 (Hot)
+pt-00516,EF-2 Status
+pt-00517,Unoccupied Clg Sp
+pt-00518,Occupied status
+pt-00519,Damper Command
+pt-00520,Damper Command
+pt-00521,Occupied Htg Setpoint
+pt-00522,Unoccupied Htg Sp
+pt-00523,CT-2 S/S
+pt-00524,Htg_Valve_Cmd
+pt-00525,Discharge Air Temp
+pt-00526,Occupied status
+pt-00527,Occupied status
+pt-00528,Unoccupied Clg Sp
+pt-00529,Discharge Air Temp
+pt-00530,Occupied Clg Setpoint
+pt-00531,Space Temperature
+pt-00532,Occupied Clg Setpoint
+pt-00533,Space Temperature
+pt-00534,Unoccupied Clg Sp
+pt-00535,Current Airflow
+pt-00536,Space Temperature
+pt-00537,Unoccupied Htg Sp
+pt-00538,Occupied Htg Setpoint
+pt-00539,Desired Airflow - Cold
+pt-00540,Airflow sensor 1 (Hot)
+pt-00541,Discharge Air Temp
+pt-00542,Heating Valve Signal
+pt-00543,Desired Airflow
+pt-00544,Efficiency (CC)
+pt-00545,Desired Airflow
+pt-00546,Outside Air Humidity
+pt-00547,Occupied status
+pt-00548,Unoccupied Htg Sp
+pt-00549,Occupied Htg Setpoint
+pt-00550,Space Temperature
+pt-00551,Unoccupied Htg Sp
+pt-00552,Damper Command
+pt-00553,Current Airflow
+pt-00554,Unoccupied Clg Sp
+pt-00555,Occupied Clg Setpoint
+pt-00556,Heating Valve Signal
+pt-00557,Desired Airflow
+pt-00558,Unoccupied Htg Sp
+pt-00559,Unoccupied Htg Sp
+pt-00560,Occupied Htg Setpoint
+pt-00561,Duct Static
+pt-00562,DSP_SP_Curr_Value
+pt-00563,Unoccupied Clg Sp
+pt-00564,Space Temperature
+pt-00565,Supply Fan Status
+pt-00566,CH-3 Evap ISO Valve OPEN
+pt-00567,Space Temperature
+pt-00568,Occupied Htg Setpoint
+pt-00569,Airflow sensor 1 (Hot)
+pt-00570,Unoccupied Htg Sp
+pt-00571,Current Airflow
+pt-00572,Damper Command
+pt-00573,Unoccupied Clg Sp
+pt-00574,Unoccupied Clg Sp
+pt-00575,Airflow sensor 1 (Hot)
+pt-00576,SF_VFD_Curr_Speed
+pt-00577,Space Temperature
+pt-00578,Unoccupied Clg Sp
+pt-00579,Occupied Clg Setpoint
+pt-00580,Occupied Htg Setpoint
+pt-00581,Volume
+pt-00582,Occupied status
+pt-00583,Discharge Air Temp
+pt-00584,Discharge Air Temp
+pt-00585,Space Temperature
+pt-00586,Space Temperature
+pt-00587,Htg Dmpr Cmnd 0-100
+pt-00588,Space Temperature
+pt-00589,Airflow sensor 2 (Cold)
+pt-00590,Discharge Air Temp
+pt-00591,SF VFD S/S
+pt-00592,Space Temperature
+pt-00593,MAT
+pt-00594,Occupied status
+pt-00595,Space Temperature
+pt-00596,Current Airflow
+pt-00597,Heating Valve Signal
+pt-00598,Unoccupied Htg Sp
+pt-00599,Space Temperature
+pt-00600,Unoccupied Clg Sp
+pt-00601,Occupied Htg Setpoint
+pt-00602,Occupied status
+pt-00603,Damper Command
+pt-00604,Unoccupied Htg Sp
+pt-00605,Unoccupied Clg Sp
+pt-00606,Current Airflow
+pt-00607,Current Airflow
+pt-00608,Unoccupied Htg Sp
+pt-00609,Occupied status
+pt-00610,Htg Dmpr Cmnd 0-100
+pt-00611,Desired Airflow
+pt-00612,Unoccupied Htg Sp
+pt-00613,Unoccupied Clg Sp
+pt-00614,Discharge Fan Power-1
+pt-00615,CH-3 Cond ISO Valve OPEN
+pt-00616,SF_VFD_Curr_Speed
+pt-00617,Desired Airflow - Cold
+pt-00618,Space Temperature
+pt-00619,Occupied Htg Setpoint
+pt-00620,Unoccupied Htg Sp
+pt-00621,Frequency
+pt-00622,Occupied Htg Setpoint
+pt-00623,Current Airflow
+pt-00624,Heating Valve Signal
+pt-00625,Discharge Air Temp
+pt-00626,Space Temperature
+pt-00627,Occupied Clg Setpoint
+pt-00628,Econ_Cmd
+pt-00629,Clg_Valve_Cmd
+pt-00630,Occupied Clg Setpoint
+pt-00631,Discharge Air Temp
+pt-00632,Current Airflow
+pt-00633,Current Airflow
+pt-00634,Cond Water Flow (CC)
+pt-00635,HX-2 1/3 Steam Valve Signal
+pt-00636,Space Temperature
+pt-00637,Clg Dmpr Pos. %
+pt-00638,Unoccupied Htg Sp
+pt-00639,Heating Valve Signal
+pt-00640,CT-1 S/S
+pt-00641,Occupied status
+pt-00642,Unoccupied Clg Sp
+pt-00643,Occupied Clg Setpoint
+pt-00644,Damper Command
+pt-00645,Space Temperature
+pt-00646,Volume
+pt-00647,Discharge Air Temp
+pt-00648,Cond Refrig Pressure (CC)
+pt-00649,Unoccupied Htg Sp
+pt-00650,Frequency
+pt-00651,Occupied status
+pt-00652,RF VFD Speed
+pt-00653,Current Airflow
+pt-00654,HW Supply Temp
+pt-00655,HHWP-3 S/S
+pt-00656,Unoccupied Clg Sp
+pt-00657,Unoccupied Htg Sp
+pt-00658,Desired Airflow
+pt-00659,Occupied status
+pt-00660,Current Airflow
+pt-00661,Frequency
+pt-00662,Duct Static
+pt-00663,Occupied Clg Setpoint
+pt-00664,Occupied Htg Setpoint
+pt-00665,Occupied Clg Setpoint
+pt-00666,Desired Airflow - Cold
+pt-00667,Occupied Htg Setpoint
+pt-00668,Discharge Air Temp
+pt-00669,Desired Airflow - Hot
+pt-00670,Space Temperature
+pt-00671,Clg Dmpr Pos. %
+pt-00672,Occupied status
+pt-00673,Desired Airflow
+pt-00674,Unoccupied Clg Sp
+pt-00675,Heating Valve Signal
+pt-00676,Unoccupied Clg Sp
+pt-00677,Occupied Htg Setpoint
+pt-00678,Occupied Htg Setpoint
+pt-00679,Building DP
+pt-00680,Unoccupied Htg Sp
+pt-00681,Occupied status
+pt-00682,Space Temperature
+pt-00683,Damper Command
+pt-00684,Unoccupied Clg Sp
+pt-00685,Occupied Clg Setpoint
+pt-00686,Heating Valve Signal
+pt-00687,Heating Valve Signal
+pt-00688,Htg Dmpr Cmnd 0-100
+pt-00689,Current Airflow
+pt-00690,Occupied Htg Setpoint
+pt-00691,Damper Command
+pt-00692,Unoccupied Htg Sp
+pt-00693,Current Airflow
+pt-00694,Status (CC)
+pt-00695,Current Airflow
+pt-00696,Occupied Clg Setpoint
+pt-00697,Econ_Cmd
+pt-00698,Discharge Air Temp
+pt-00699,Discharge Air Temp
+pt-00700,Desired Airflow
+pt-00701,Desired Airflow
+pt-00702,Current Airflow
+pt-00703,Occupied Htg Setpoint
+pt-00704,Heating Valve Signal
+pt-00705,Damper Command
+pt-00706,Unoccupied Clg Sp
+pt-00707,Volume
+pt-00708,Clg SAT SP
+pt-00709,Airflow sensor 1 (Hot)
+pt-00710,Occupied status
+pt-00711,Occupied Clg Setpoint
+pt-00712,Clg Dmpr Pos. %
+pt-00713,Airflow sensor 2 (Cold)
+pt-00714,Htg_Valve_Cmd
+pt-00715,Power
+pt-00716,Discharge Air Temp
+pt-00717,Cond Water Entering Temp
+pt-00718,Occupied Htg Setpoint
+pt-00719,Damper Command
+pt-00720,Airflow sensor 1 (Hot)
+pt-00721,Htg Dmpr Cmnd 0-100
+pt-00722,Occupied Htg Setpoint
+pt-00723,Damper Command
+pt-00724,Space Temperature
+pt-00725,Damper Command
+pt-00726,Space Temperature
+pt-00727,Unoccupied Htg Sp
+pt-00728,Discharge Air Temp
+pt-00729,Space Temperature
+pt-00730,Unoccupied Htg Sp
+pt-00731,Occupied Clg Setpoint
+pt-00732,Space Temperature
+pt-00733,Desired Airflow
+pt-00734,Occupied Clg Setpoint
+pt-00735,Current Airflow
+pt-00736,Cold Deck SAT
+pt-00737,HX-2 2/3 Steam Valve Signal
+pt-00738,Unoccupied Htg Sp
+pt-00739,Space Temperature
+pt-00740,Damper Command
+pt-00741,Heating Valve Signal
+pt-00742,Space Temperature
+pt-00743,Occupied Clg Setpoint
+pt-00744,Chilled Water Entering Temp
+pt-00745,Heating Valve Signal
+pt-00746,Desired Airflow
+pt-00747,Unoccupied Clg Sp
+pt-00748,Occupied Clg Setpoint
+pt-00749,Damper Command
+pt-00750,Unoccupied Htg Sp
+pt-00751,Occupied Clg Setpoint
+pt-00752,Occupied Htg Setpoint
+pt-00753,Occupied Clg Setpoint
+pt-00754,Unoccupied Htg Sp
+pt-00755,Unoccupied Htg Sp
+pt-00756,Occupied Htg Setpoint
+pt-00757,Discharge Air Temp
+pt-00758,Occupied Clg Setpoint
+pt-00759,Current Airflow
+pt-00760,Unoccupied Clg Sp
+pt-00761,Discharge Air Temp
+pt-00762,Current Airflow
+pt-00763,Occupied status
+pt-00764,Occupied Htg Setpoint
+pt-00765,Discharge Air Temp
+pt-00766,Occupied Htg Setpoint
+pt-00767,Occupied Htg Setpoint
+pt-00768,Space Temperature
+pt-00769,Unoccupied Clg Sp
+pt-00770,Unoccupied Htg Sp
+pt-00771,Current Airflow
+pt-00772,Enthalpy
+pt-00773,Unoccupied Clg Sp
+pt-00774,Unoccupied Htg Sp
+pt-00775,Desired Airflow
+pt-00776,Cost
+pt-00777,Discharge Air Temp
+pt-00778,Heating Valve Signal
+pt-00779,Discharge Air Temp
+pt-00780,Occupied Clg Setpoint
+pt-00781,Occupied Htg Setpoint
+pt-00782,Unoccupied Clg Sp
+pt-00783,Desired Airflow
+pt-00784,Airflow sensor 1 (Hot)
+pt-00785,Damper Command
+pt-00786,Occupied Htg Setpoint
+pt-00787,Chilled Water Load (CC)
+pt-00788,Clg Dmpr Pos. %
+pt-00789,Heating Valve Signal
+pt-00790,Occupied Clg Setpoint
+pt-00791,Discharge Air Temp
+pt-00792,Discharge Air Temp
+pt-00793,Occupied status
+pt-00794,Discharge Air Temp
+pt-00795,Heating Valve Signal
+pt-00796,Discharge Air Temp
+pt-00797,Decon EF Status
+pt-00798,Desired Airflow - Cold
+pt-00799,Unoccupied Htg Sp
+pt-00800,Space Temperature
+pt-00801,Unoccupied Htg Sp
+pt-00802,Discharge Air Temp
+pt-00803,Damper Command
+pt-00804,Occupied Clg Setpoint
+pt-00805,Unoccupied Clg Sp
+pt-00806,Current Airflow
+pt-00807,CHW DP SP
+pt-00808,Desired Airflow - Hot
+pt-00809,Occupied Clg Setpoint
+pt-00810,Heating Valve Signal
+pt-00811,Occupied Clg Setpoint
+pt-00812,Current Airflow
+pt-00813,Desired Airflow
+pt-00814,Unoccupied Clg Sp
+pt-00815,Unoccupied Clg Sp
+pt-00816,Clg Dmpr Pos. %
+pt-00817,Occupied Clg Setpoint
+pt-00818,Unoccupied Htg Sp
+pt-00819,Damper Command
+pt-00820,Damper Command
+pt-00821,Discharge Air Temp
+pt-00822,Htg Dmpr Cmnd 0-100
+pt-00823,Occupied Htg Setpoint
+pt-00824,Occupied Clg Setpoint
+pt-00825,Desired Airflow
+pt-00826,Heating Valve Signal
+pt-00827,Occupied Clg Setpoint
+pt-00828,Occupied Clg Setpoint
+pt-00829,Discharge Air Temp
+pt-00830,Unoccupied Clg Sp
+pt-00831,Desired Airflow
+pt-00832,Desired Airflow
+pt-00833,Heating Valve Signal
+pt-00834,Chilled Water Leaving Temp
+pt-00835,Space Temperature
+pt-00836,Clg Dmpr Pos. %
+pt-00837,Occupied status
+pt-00838,Occupied Htg Setpoint
+pt-00839,Desired Airflow
+pt-00840,Htg Dmpr Cmnd 0-100
+pt-00841,Occupied Clg Setpoint
+pt-00842,Htg Dmpr Cmnd 0-100
+pt-00843,Occupied Htg Setpoint
+pt-00844,Discharge Air Temp
+pt-00845,Discharge Air Temp
+pt-00846,Occupied Htg Setpoint
+pt-00847,Damper Command
+pt-00848,Unoccupied Clg Sp
+pt-00849,Power
+pt-00850,Desired Airflow
+pt-00851,Unoccupied Clg Sp
+pt-00852,Space Temperature
+pt-00853,Current Airflow
+pt-00854,Desired Airflow - Hot
+pt-00855,Frequency
+pt-00856,Cost
+pt-00857,Desired Airflow
+pt-00858,Space Temperature
+pt-00859,Airflow sensor 2 (Cold)
+pt-00860,Space Temperature
+pt-00861,Occupied status
+pt-00862,Htg Dmpr Cmnd 0-100
+pt-00863,Volume
+pt-00864,Desired Airflow - Cold
+pt-00865,Current Airflow
+pt-00866,Damper Command
+pt-00867,Occupied Clg Setpoint
+pt-00868,Space Temperature
+pt-00869,Current Airflow
+pt-00870,Space Temperature
+pt-00871,Occupied status
+pt-00872,Desired Airflow - Cold
+pt-00873,Unoccupied Htg Sp
+pt-00874,Unoccupied Htg Sp
+pt-00875,Occupied Htg Setpoint
+pt-00876,Current Airflow
+pt-00877,Occupied Clg Setpoint
+pt-00878,Heating Valve Signal
+pt-00879,Unoccupied Clg Sp
+pt-00880,Damper Command
+pt-00881,Occupied Clg Setpoint
+pt-00882,Heating Valve Signal
+pt-00883,Heating Valve Signal
+pt-00884,Desired Airflow
+pt-00885,Occupied status
+pt-00886,Discharge Air Temp
+pt-00887,Space Temperature
+pt-00888,Chilled Water Temp Setpoint
+pt-00889,Occupied Clg Setpoint
+pt-00890,Space Temperature
+pt-00891,DSP_SP_Curr_Value
+pt-00892,Space Temperature
+pt-00893,Occupied status
+pt-00894,Duct Static
+pt-00895,Space Temperature
+pt-00896,Unoccupied Htg Sp
+pt-00897,RF VFD S/S
+pt-00898,Current Airflow
+pt-00899,Occupied Clg Setpoint
+pt-00900,Airflow sensor 2 (Cold)
+pt-00901,Current Airflow
+pt-00902,Occupied Htg Setpoint
+pt-00903,Airflow sensor 2 (Cold)
+pt-00904,Occupied Htg Setpoint
+pt-00905,Desired Airflow
+pt-00906,Desired Airflow - Cold
+pt-00907,Damper Command
+pt-00908,Discharge Air Temp
+pt-00909,Occupied status
+pt-00910,Space Temperature
+pt-00911,Occupied Clg Setpoint
+pt-00912,Unoccupied Clg Sp
+pt-00913,Damper Command
+pt-00914,Occupied Htg Setpoint
+pt-00915,Desired Airflow - Hot
+pt-00916,Heating Valve Signal
+pt-00917,Space Temperature
+pt-00918,Damper Command
+pt-00919,Evap Refrig Pressure
+pt-00920,Chilled Water Entering Temp
+pt-00921,Desired Airflow
+pt-00922,Heating Valve Signal
+pt-00923,Airflow sensor 1 (Hot)
+pt-00924,Occupied status
+pt-00925,Htg Dmpr Cmnd 0-100
+pt-00926,Current Airflow
+pt-00927,Clg Dmpr Pos. %
+pt-00928,Discharge Air Temp
+pt-00929,Unoccupied Htg Sp
+pt-00930,HHWP-4 Status
+pt-00931,Discharge Air Temp
+pt-00932,Occupied Clg Setpoint
+pt-00933,Occupied Htg Setpoint
+pt-00934,Desired Airflow - Cold
+pt-00935,Clg Dmpr Pos. %
+pt-00936,Unoccupied Htg Sp
+pt-00937,Occupied Clg Setpoint
+pt-00938,Energy
+pt-00939,CT-2 Status
+pt-00940,Airflow sensor 1 (Hot)
+pt-00941,Building Static_SP
+pt-00942,Occupied Clg Setpoint
+pt-00943,Desired Airflow
+pt-00944,Unoccupied Htg Sp
+pt-00945,Airflow sensor 2 (Cold)
+pt-00946,Occupied status
+pt-00947,Discharge Air Temp
+pt-00948,SF Status
+pt-00949,Space Temperature
+pt-00950,Damper Command
+pt-00951,Damper Command
+pt-00952,Current Airflow
+pt-00953,Damper Command
+pt-00954,Occupied Clg Setpoint
+pt-00955,Occupied Clg Setpoint
+pt-00956,Airflow sensor 1 (Hot)
+pt-00957,Clg SAT SP
+pt-00958,Occupied Htg Setpoint
+pt-00959,Heating Valve Signal
+pt-00960,Damper Command
+pt-00961,Desired Airflow
+pt-00962,Unoccupied Htg Sp
+pt-00963,Discharge Air Temp
+pt-00964,Volume
+pt-00965,Airflow sensor 1 (Hot)
+pt-00966,Current Airflow
+pt-00967,Current Airflow
+pt-00968,Occupied Clg Setpoint
+pt-00969,Cond Efficiency (CC)
+pt-00970,Discharge Air Temp
+pt-00971,Unoccupied Htg Sp
+pt-00972,Current Airflow
+pt-00973,Htg Dmpr Cmnd 0-100
+pt-00974,Occupied Clg Setpoint
+pt-00975,Occupied Htg Setpoint
+pt-00976,Occupied Htg Setpoint
+pt-00977,Current Airflow
+pt-00978,Damper Command
+pt-00979,Occupied Htg Setpoint
+pt-00980,Unoccupied Clg Sp
+pt-00981,Airflow sensor 2 (Cold)
+pt-00982,Unoccupied Htg Sp
+pt-00983,Damper Command
+pt-00984,SAT
+pt-00985,Unoccupied Htg Sp
+pt-00986,Current Airflow
+pt-00987,Unoccupied Clg Sp
+pt-00988,Heating Valve Signal
+pt-00989,Clg Dmpr Pos. %
+pt-00990,EF-3 Status
+pt-00991,Energy
+pt-00992,Occupied Htg Setpoint
+pt-00993,Unoccupied Clg Sp
+pt-00994,Occupied status
+pt-00995,Refrig Suction Superheat Delta Temp (CC)
+pt-00996,Discharge Air Temp
+pt-00997,Frequency
+pt-00998,Desired Airflow
+pt-00999,Relief Signal
+pt-01000,Space Temperature
+pt-01001,Mode_Occ
+pt-01002,Desired Airflow - Cold
+pt-01003,Occupied status
+pt-01004,RF VFD S/S
+pt-01005,Unoccupied Clg Sp
+pt-01006,Unoccupied Clg Sp
+pt-01007,RF Status
+pt-01008,Unoccupied Clg Sp
+pt-01009,Desired Airflow - Hot
+pt-01010,Current Airflow
+pt-01011,Damper Command
+pt-01012,Unoccupied Htg Sp
+pt-01013,Current Airflow
+pt-01014,Occupied Clg Setpoint
+pt-01015,Power
+pt-01016,Discharge Air Temp
+pt-01017,Desired Airflow
+pt-01018,Heating Valve Signal
+pt-01019,Discharge Air Temp
+pt-01020,Unoccupied Clg Sp
+pt-01021,Unoccupied Clg Sp
+pt-01022,Occupied Htg Setpoint
+pt-01023,Occupied status
+pt-01024,OAT
+pt-01025,Heating Valve Signal
+pt-01026,Space Temperature
+pt-01027,Heating Valve Signal
+pt-01028,Heating Valve Signal
+pt-01029,Discharge Air Temp
+pt-01030,Discharge Air Temp
+pt-01031,Damper Command
+pt-01032,Htg Dmpr Cmnd 0-100
+pt-01033,Occupied status
+pt-01034,Unoccupied Clg Sp
+pt-01035,Occupied Htg Setpoint
+pt-01036,Clg Dmpr Pos. %
+pt-01037,Occupied status
+pt-01038,Occupied Htg Setpoint
+pt-01039,Compressor Refrig Entering Temp (CC)
+pt-01040,Unoccupied Clg Sp
+pt-01041,Heating Valve Signal
+pt-01042,Building DP
+pt-01043,Unoccupied Htg Sp
+pt-01044,Airflow sensor 1 (Hot)
+pt-01045,Current Airflow
+pt-01046,EF-4 Status
+pt-01047,Desired Airflow
+pt-01048,Heating Valve Signal
+pt-01049,CWP-1 ISO Valve OPEN
+pt-01050,Clg_Valve_Cmd
+pt-01051,Clg Dmpr Pos. %
+pt-01052,Occupied Htg Setpoint
+pt-01053,Unoccupied Clg Sp
+pt-01054,CWP-2 Status
+pt-01055,Current Airflow
+pt-01056,Building Static_SP
+pt-01057,Htg_Valve_Cmd
+pt-01058,Discharge Air Temp
+pt-01059,Damper Command
+pt-01060,Discharge Air Temp
+pt-01061,Discharge Air Temp
+pt-01062,Heating Valve Signal
+pt-01063,B-3 Fire Rate
+pt-01064,Discharge Air Temp
+pt-01065,Unoccupied Htg Sp
+pt-01066,Space Temperature
+pt-01067,Space Temperature
+pt-01068,Heating Valve Signal
+pt-01069,Unoccupied Htg Sp
+pt-01070,Heating Valve Signal
+pt-01071,Current Airflow
+pt-01072,Occupied Clg Setpoint
+pt-01073,Heating Valve Signal
+pt-01074,Htg Dmpr Cmnd 0-100
+pt-01075,Discharge Air Temp
+pt-01076,Compressor Efficiency (CC)
+pt-01077,Unoccupied Clg Sp
+pt-01078,Space Temperature
+pt-01079,Desired Airflow
+pt-01080,Space Temperature
+pt-01081,Occupied status
+pt-01082,Occupied status
+pt-01083,Unoccupied Clg Sp
+pt-01084,Htg Dmpr Cmnd 0-100
+pt-01085,Energy
+pt-01086,Unoccupied Htg Sp
+pt-01087,Discharge Air Temp
+pt-01088,Boiler 1 Status
+pt-01089,RAT
+pt-01090,SF Status
+pt-01091,Occupied Htg Setpoint
+pt-01092,HHWP-4 S/S
+pt-01093,Occupied status
+pt-01094,HW Supply Temp
+pt-01095,Airflow sensor 2 (Cold)
+pt-01096,Occupied status
+pt-01097,Occupied Clg Setpoint
+pt-01098,Occupied status
+pt-01099,Damper Command
+pt-01100,Power Peak
+pt-01101,Current Airflow
+pt-01102,Unoccupied Htg Sp
+pt-01103,Heating Valve Signal
+pt-01104,DSP_SP_Curr_Value
+pt-01105,Unoccupied Clg Sp
+pt-01106,Airflow sensor 2 (Cold)
+pt-01107,Unoccupied Htg Sp
+pt-01108,Current Airflow
+pt-01109,Desired Airflow
+pt-01110,Damper Command
+pt-01111,Desired Airflow - Hot
+pt-01112,Current Airflow
+pt-01113,Airflow sensor 2 (Cold)
+pt-01114,Discharge Air Temp
+pt-01115,Space Temperature
+pt-01116,Occupied Clg Setpoint
+pt-01117,Heating Valve Signal
+pt-01118,Occupied Htg Setpoint
+pt-01119,Airflow sensor 1 (Hot)
+pt-01120,Airflow sensor 1 (Hot)
+pt-01121,EF-1 Status
+pt-01122,Damper Command
+pt-01123,Occupied Htg Setpoint
+pt-01124,Space Temperature
+pt-01125,Occupied Clg Setpoint
+pt-01126,Refrig Subcool Delta Temp (CC)
+pt-01127,Unoccupied Clg Sp
+pt-01128,Heating Valve Signal
+pt-01129,Unoccupied Clg Sp
+pt-01130,Unoccupied Htg Sp
+pt-01131,Heating Valve Signal
+pt-01132,Unoccupied Clg Sp
+pt-01133,Occupied Htg Setpoint
+pt-01134,Current Airflow
+pt-01135,Current Airflow
+pt-01136,Occupied Htg Setpoint
+pt-01137,Heating Valve Signal
+pt-01138,Desired Airflow - Hot
+pt-01139,Airflow sensor 2 (Cold)
+pt-01140,Space Temperature
+pt-01141,Space Temperature
+pt-01142,Heating Valve Signal
+pt-01143,Heating Valve Signal
+pt-01144,Compressor Frequency Status
+pt-01145,Occupied status
+pt-01146,Unoccupied Clg Sp
+pt-01147,Duct Static
+pt-01148,Discharge Air Temp
+pt-01149,Discharge Air Temp
+pt-01150,Heating Valve Signal
+pt-01151,Heating Valve Signal
+pt-01152,Current Airflow
+pt-01153,Occupied status
+pt-01154,Occupied Htg Setpoint
+pt-01155,Unoccupied Clg Sp
+pt-01156,Occupied Htg Setpoint
+pt-01157,Occupied Htg Setpoint
+pt-01158,Desired Airflow - Hot
+pt-01159,Discharge Air Temp
+pt-01160,Occupied Htg Setpoint
+pt-01161,Discharge Air Temp
+pt-01162,Desired Airflow
+pt-01163,Clg Dmpr Pos. %
+pt-01164,MAT
+pt-01165,Heating Valve Signal
+pt-01166,Frequency
+pt-01167,Occupied Htg Setpoint
+pt-01168,Occupied Clg Setpoint
+pt-01169,Space Temperature
+pt-01170,Space Temperature
+pt-01171,Occupied Clg Setpoint
+pt-01172,Space Temperature
+pt-01173,Occupied Htg Setpoint
+pt-01174,Airflow sensor 2 (Cold)
+pt-01175,Space Temperature
+pt-01176,Damper Command
+pt-01177,Unoccupied Clg Sp
+pt-01178,Occupied Clg Setpoint
+pt-01179,Occupied status
+pt-01180,Damper Command
+pt-01181,Occupied status
+pt-01182,PCHWP-1B Status
+pt-01183,Occupied Clg Setpoint
+pt-01184,Desired Airflow - Hot
+pt-01185,Heating Valve Signal
+pt-01186,Occupied Clg Setpoint
+pt-01187,Cond Refrig Saturation Temp (CC)
+pt-01188,CH-2 Evap ISO Valve OPEN
+pt-01189,Unoccupied Htg Sp
+pt-01190,CH-1 Evap ISO Valve OPEN
+pt-01191,Damper Command
+pt-01192,Unoccupied Clg Sp
+pt-01193,Occupied Clg Setpoint
+pt-01194,Unoccupied Htg Sp
+pt-01195,Space Temperature
+pt-01196,Occupied status
+pt-01197,Occupied status
+pt-01198,Occupied status
+pt-01199,Htg Dmpr Cmnd 0-100
+pt-01200,Occupied Htg Setpoint
+pt-01201,Unoccupied Htg Sp
+pt-01202,Occupied Htg Setpoint
+pt-01203,Occupied status
+pt-01204,Occupied status
+pt-01205,Desired Airflow
+pt-01206,Space Temperature
+pt-01207,Heating Valve Signal
+pt-01208,Desired Airflow
+pt-01209,Unoccupied Clg Sp
+pt-01210,Cond Water Entering Temp
+pt-01211,Airflow sensor 1 (Hot)
+pt-01212,RAT
+pt-01213,Unoccupied Clg Sp
+pt-01214,Htg Dmpr Cmnd 0-100
+pt-01215,Occupied Htg Setpoint
+pt-01216,Unoccupied Clg Sp
+pt-01217,Heating Valve Signal
+pt-01218,Discharge Air Temp
+pt-01219,Unoccupied Htg Sp
+pt-01220,Unoccupied Clg Sp
+pt-01221,PCHWP-1A Speed Command
+pt-01222,Unoccupied Clg Sp
+pt-01223,Occupied Clg Setpoint
+pt-01224,Space Temperature
+pt-01225,Damper Command
+pt-01226,Unoccupied Htg Sp
+pt-01227,OAT
+pt-01228,Occupied status
+pt-01229,Occupied status
+pt-01230,Transport Cost
+pt-01231,Heating Valve Signal
+pt-01232,Current Airflow
+pt-01233,Airflow sensor 1 (Hot)
+pt-01234,CT-1 Status
+pt-01235,Clg Dmpr Pos. %
+pt-01236,Cost
+pt-01237,Supply %RH
+pt-01238,Unoccupied Clg Sp
+pt-01239,Occupied Clg Setpoint
+pt-01240,Airflow sensor 2 (Cold)
+pt-01241,Occupied status
+pt-01242,Unoccupied Htg Sp
+pt-01243,Desired Airflow
+pt-01244,Discharge Air Temp
+pt-01245,Desired Airflow - Hot
+pt-01246,Occupied Clg Setpoint
+pt-01247,Discharge Air Temp
+pt-01248,Heating Valve Signal
+pt-01249,Unoccupied Htg Sp
+pt-01250,Occupied Clg Setpoint
+pt-01251,Space Temperature
+pt-01252,Desired Airflow
+pt-01253,Space Temperature
+pt-01254,Desired Airflow
+pt-01255,Occupied status
+pt-01256,Desired Airflow
+pt-01257,Unoccupied Htg Sp
+pt-01258,Space Temperature
+pt-01259,Discharge Air Temp
+pt-01260,HW Return Temp
+pt-01261,Heating Valve Signal
+pt-01262,IT Room Temp
+pt-01263,Unoccupied Htg Sp
+pt-01264,Discharge Air Temp
+pt-01265,Occupied status
+pt-01266,OSA Temperature
+pt-01267,Discharge Air Temp
+pt-01268,Occupied Htg Setpoint
+pt-01269,Steam Pressure
+pt-01270,Discharge Air Temp
+pt-01271,HW Supply Temp SP
+pt-01272,Space Temperature
+pt-01273,Occupied status
+pt-01274,Desired Airflow
+pt-01275,Airflow sensor 2 (Cold)
+pt-01276,Occupied Htg Setpoint
+pt-01277,Damper Command
+pt-01278,Unoccupied Clg Sp
+pt-01279,Space Temperature
+pt-01280,Unoccupied Clg Sp
+pt-01281,Discharge Air Temp
+pt-01282,2/3 Steam Valve Signal
+pt-01283,Occupied Clg Setpoint
+pt-01284,Cold Deck SAT
+pt-01285,Space Temperature
+pt-01286,Heating Valve Signal
+pt-01287,Occupied Htg Setpoint
+pt-01288,Desired Airflow - Cold
+pt-01289,Unoccupied Htg Sp
+pt-01290,Damper Command
+pt-01291,Discharge Air Temp
+pt-01292,Occupied Clg Setpoint
+pt-01293,Occupied Htg Setpoint
+pt-01294,Desired Airflow - Cold
+pt-01295,Occupied Htg Setpoint
+pt-01296,Discharge Air Temp
+pt-01297,Occupied Htg Setpoint
+pt-01298,Damper Command
+pt-01299,Airflow sensor 2 (Cold)
+pt-01300,Occupied Clg Setpoint
+pt-01301,Discharge Air Temp
+pt-01302,Unoccupied Htg Sp
+pt-01303,Occupied Clg Setpoint
+pt-01304,CWP-2 ISO Valve OPEN
+pt-01305,Airflow sensor 1 (Hot)
+pt-01306,Boiler 1 S/S
+pt-01307,Desired Airflow
+pt-01308,Occupied status
+pt-01309,Occupied Htg Setpoint
+pt-01310,Unoccupied Clg Sp
+pt-01311,Heating Valve Signal
+pt-01312,Desired Airflow
+pt-01313,Occupied Htg Setpoint
+pt-01314,Airflow sensor 2 (Cold)
+pt-01315,Exp Valve Refrig Entering Temp (CC)
+pt-01316,Htg SAT SP
+pt-01317,Occupied Clg Setpoint
+pt-01318,HW Sys DP SP
+pt-01319,Desired Airflow - Hot
+pt-01320,Damper Command
+pt-01321,Desired Airflow - Cold
+pt-01322,Current Airflow
+pt-01323,Occupied status
+pt-01324,Occupied status
+pt-01325,Heating Valve Signal
+pt-01326,Damper Command
+pt-01327,Discharge Air Temp
+pt-01328,Heating Valve Signal
+pt-01329,Unoccupied Htg Sp
+pt-01330,Occupied status
+pt-01331,Unoccupied Htg Sp
+pt-01332,Htg Dmpr Cmnd 0-100
+pt-01333,Space Temperature
+pt-01334,Current Airflow
+pt-01335,Occupied Clg Setpoint
+pt-01336,Desired Airflow
+pt-01337,Damper Command
+pt-01338,Occupied Htg Setpoint
+pt-01339,Occupied Clg Setpoint
+pt-01340,Unoccupied Clg Sp
+pt-01341,Desired Airflow
+pt-01342,Heating Valve Signal
+pt-01343,Occupied Htg Setpoint
+pt-01344,Damper Command
+pt-01345,Occupied Htg Setpoint
+pt-01346,Occupied status
+pt-01347,Occupied status
+pt-01348,Unoccupied Clg Sp
+pt-01349,CWP-1 ISO Valve
+pt-01350,Occupied status
+pt-01351,CH-3 Status
+pt-01352,Unoccupied Htg Sp
+pt-01353,Current Airflow
+pt-01354,Unoccupied Clg Sp
+pt-01355,Occupied Htg Setpoint
+pt-01356,Occupied Clg Setpoint
+pt-01357,Building Static_SP
+pt-01358,Current Airflow
+pt-01359,Occupied status
+pt-01360,Desired Airflow - Hot
+pt-01361,Unoccupied Clg Sp
+pt-01362,Chilled Water Temp Setpoint
+pt-01363,Occupied status
+pt-01364,Htg Dmpr Cmnd 0-100
+pt-01365,Rtn Damper Signal
+pt-01366,Current Airflow
+pt-01367,Unoccupied Clg Sp
+pt-01368,Occupied Clg Setpoint
+pt-01369,Space Temperature
+pt-01370,Unoccupied Clg Sp
+pt-01371,Unoccupied Clg Sp
+pt-01372,Desired Airflow
+pt-01373,OAT
+pt-01374,Space Temperature
+pt-01375,RF Status
+pt-01376,Occupied Clg Setpoint
+pt-01377,Htg_Valve_Cmd
+pt-01378,Occupied status
+pt-01379,Space Temperature
+pt-01380,Unoccupied Htg Sp
+pt-01381,Damper Command
+pt-01382,Clg Dmpr Pos. %
+pt-01383,Discharge Air Temp
+pt-01384,Current Airflow
+pt-01385,Heating Valve Signal
+pt-01386,Occupied Clg Setpoint
+pt-01387,Airflow sensor 2 (Cold)
+pt-01388,Damper Command
+pt-01389,Occupied status
+pt-01390,Boiler 3 S/S
+pt-01391,Desired Airflow - Hot
+pt-01392,Airflow sensor 1 (Hot)
+pt-01393,Unoccupied Clg Sp
+pt-01394,Occupied Clg Setpoint
+pt-01395,Heating Valve Signal
+pt-01396,Occupied status
+pt-01397,Unoccupied Htg Sp
+pt-01398,Airflow sensor 1 (Hot)
+pt-01399,Unoccupied Htg Sp
+pt-01400,PCHWP-1B Speed Command
+pt-01401,Occupied status
+pt-01402,Occupied status
+pt-01403,Unoccupied Htg Sp
+pt-01404,Space Temperature
+pt-01405,Space Temperature
+pt-01406,Occupied status
+pt-01407,CH-2 Cond ISO Valve
+pt-01408,Unoccupied Htg Sp
+pt-01409,Airflow sensor 2 (Cold)
+pt-01410,Heating Valve Signal
+pt-01411,Space Temperature
+pt-01412,Occupied Htg Setpoint
+pt-01413,Occupied status
+pt-01414,Unoccupied Clg Sp
+pt-01415,Discharge Air Temp
+pt-01416,Airflow sensor 2 (Cold)
+pt-01417,Damper Command
+pt-01418,Occupied Clg Setpoint
+pt-01419,OAT
+pt-01420,Occupied status
+pt-01421,Desired Airflow - Hot
+pt-01422,Damper Command
+pt-01423,Space Temperature
+pt-01424,Occupied Htg Setpoint
+pt-01425,Desired Airflow
+pt-01426,Damper Command
+pt-01427,2nd Floor HW Pump DP
+pt-01428,Space Temperature
+pt-01429,Heating Valve Signal
+pt-01430,Space Temperature
+pt-01431,Occupied Clg Setpoint
+pt-01432,Discharge Air Temp
+pt-01433,Unoccupied Clg Sp
+pt-01434,Unoccupied Clg Sp
+pt-01435,Occupied status
+pt-01436,Unoccupied Htg Sp
+pt-01437,Discharge Air Temp
+pt-01438,Discharge Air Temp
+pt-01439,Damper Command
+pt-01440,Unoccupied Htg Sp
+pt-01441,Heating Valve Signal
+pt-01442,Occupied Htg Setpoint
+pt-01443,Rtn Damper Signal
+pt-01444,Hot Deck SAT
+pt-01445,Occupied Htg Setpoint
+pt-01446,Space Temperature
+pt-01447,Space Temperature
+pt-01448,Space Temperature
+pt-01449,Desired Airflow
+pt-01450,Discharge Air Temp
+pt-01451,Desired Airflow - Cold
+pt-01452,Occupied Clg Setpoint
+pt-01453,Heating Valve Signal
+pt-01454,Unoccupied Htg Sp
+pt-01455,Discharge Air Temp
+pt-01456,Occupied status
+pt-01457,Discharge Air Temp
+pt-01458,Occupied status
+pt-01459,Unoccupied Clg Sp
+pt-01460,HX-1 1/3 Steam Valve Signal
+pt-01461,Airflow sensor 2 (Cold)
+pt-01462,Unoccupied Htg Sp
+pt-01463,Airflow sensor 1 (Hot)
+pt-01464,Damper Command
+pt-01465,Desired Airflow - Cold
+pt-01466,Unoccupied Htg Sp
+pt-01467,Unoccupied Clg Sp
+pt-01468,Damper Command
+pt-01469,Occupied Htg Setpoint
+pt-01470,Current Airflow
+pt-01471,Discharge Air Temp
+pt-01472,Occupied status
+pt-01473,Space Temperature
+pt-01474,Desired Airflow - Hot
+pt-01475,Unoccupied Clg Sp
+pt-01476,Unoccupied Htg Sp
+pt-01477,SF VFD Signal
+pt-01478,Occupied Htg Setpoint
+pt-01479,Current Airflow
+pt-01480,HHWP-1 S/S
+pt-01481,PHASE B MOTOR CURRENT
+pt-01482,Occupied Htg Setpoint
+pt-01483,Occupied Clg Setpoint
+pt-01484,Occupied Htg Setpoint
+pt-01485,Unoccupied Htg Sp
+pt-01486,Desired Airflow
+pt-01487,Desired Airflow
+pt-01488,Desired Airflow
+pt-01489,Space Temperature
+pt-01490,Unoccupied Htg Sp
+pt-01491,Current Airflow
+pt-01492,Current Airflow
+pt-01493,Damper Command
+pt-01494,Occupied Clg Setpoint
+pt-01495,Discharge Air Temp
+pt-01496,Current Airflow
+pt-01497,Occupied Clg Setpoint
+pt-01498,Mode_Occ
+pt-01499,Occupied Htg Setpoint
+pt-01500,Unoccupied Clg Sp
+pt-01501,Space Temperature
+pt-01502,Occupied Htg Setpoint
+pt-01503,Damper Command
+pt-01504,Discharge Air Temp
+pt-01505,Desired Airflow - Hot
+pt-01506,Heating Valve Signal
+pt-01507,Htg SAT SP
+pt-01508,Occupied Clg Setpoint
+pt-01509,Clg Dmpr Pos. %
+pt-01510,Relief Damper Signal
+pt-01511,Clg Dmpr Pos. %
+pt-01512,Occupied Clg Setpoint
+pt-01513,Space Temperature
+pt-01514,Space Temperature
+pt-01515,Unoccupied Htg Sp
+pt-01516,Desired Airflow
+pt-01517,Current Airflow
+pt-01518,CH-2 Evap ISO Valve
+pt-01519,Chilled Water Leaving Temp
+pt-01520,Damper Command
+pt-01521,Occupied Clg Setpoint
+pt-01522,Unoccupied Clg Sp
+pt-01523,Unoccupied Htg Sp
+pt-01524,Occupied Htg Setpoint
+pt-01525,Desired Airflow
+pt-01526,Damper Command
+pt-01527,Heating Valve Signal
+pt-01528,Current Airflow
+pt-01529,Desired Airflow - Cold
+pt-01530,Unoccupied Clg Sp
+pt-01531,Airflow sensor 2 (Cold)
+pt-01532,Desired Airflow - Hot
+pt-01533,Occupied Clg Setpoint
+pt-01534,Damper Command
+pt-01535,Desired Airflow - Cold
+pt-01536,Space Temperature
+pt-01537,CH-1 Cond ISO Valve
+pt-01538,Desired Airflow
+pt-01539,Htg Dmpr Cmnd 0-100
+pt-01540,Htg Dmpr Cmnd 0-100
+pt-01541,CH-3 Cond ISO Valve
+pt-01542,Occupied Clg Setpoint
+pt-01543,Unoccupied Htg Sp
+pt-01544,Unoccupied Clg Sp
+pt-01545,Discharge Air Temp
+pt-01546,Occupied Htg Setpoint
+pt-01547,Occupied status
+pt-01548,Unoccupied Htg Sp
+pt-01549,Unoccupied Htg Sp
+pt-01550,Unoccupied Htg Sp
+pt-01551,Space Temperature
+pt-01552,Space Temperature
+pt-01553,Occupied Htg Setpoint
+pt-01554,Occupied Htg Setpoint
+pt-01555,Space Temperature
+pt-01556,Occupied status
+pt-01557,Occupied Htg Setpoint
+pt-01558,CT-1 ISO Valve OPEN
+pt-01559,Discharge Air Temp
+pt-01560,Occupied Clg Setpoint
+pt-01561,Econ_Cmd
+pt-01562,Occupied Clg Setpoint
+pt-01563,Occupied Clg Setpoint
+pt-01564,Desired Airflow
+pt-01565,Unoccupied Htg Sp
+pt-01566,Occupied Clg Setpoint
+pt-01567,Occupied Htg Setpoint
+pt-01568,Space Temperature
+pt-01569,Occupied Clg Setpoint
+pt-01570,Desired Airflow
+pt-01571,Unoccupied Clg Sp
+pt-01572,Unoccupied Clg Sp
+pt-01573,Desired Airflow - Hot
+pt-01574,Chilled Water Entering Temp
+pt-01575,Desired Airflow - Cold
+pt-01576,Occupied Htg Setpoint
+pt-01577,Unoccupied Clg Sp
+pt-01578,Occupied status
+pt-01579,Airflow sensor 1 (Hot)
+pt-01580,Htg Dmpr Cmnd 0-100
+pt-01581,Unoccupied Clg Sp
+pt-01582,Occupied Htg Setpoint
+pt-01583,Clg Dmpr Pos. %
+pt-01584,Space Temperature
+pt-01585,Airflow sensor 2 (Cold)
+pt-01586,Desired Airflow - Cold
+pt-01587,Occupied status
+pt-01588,Current Airflow
+pt-01589,Space Temperature
+pt-01590,Discharge Air Temp
+pt-01591,Desired Airflow
+pt-01592,Fan Frequency
+pt-01593,Occupied status
+pt-01594,HW System DP
+pt-01595,Occupied Clg Setpoint
+pt-01596,Damper Command
+pt-01597,Occupied Clg Setpoint
+pt-01598,Discharge Air Temp
+pt-01599,Current Airflow
+pt-01600,Heating Valve Signal
+pt-01601,Occupied Htg Setpoint
+pt-01602,HX-1 2/3 Steam Valve Signal
+pt-01603,Occupied Clg Setpoint
+pt-01604,Occupied Clg Setpoint
+pt-01605,CWS Temp SP
+pt-01606,Htg Dmpr Cmnd 0-100
+pt-01607,Cost
+pt-01608,Current Airflow
+pt-01609,Unoccupied Htg Sp
+pt-01610,Unoccupied Htg Sp
+pt-01611,Occupied Htg Setpoint
+pt-01612,Unoccupied Clg Sp
+pt-01613,Airflow sensor 2 (Cold)
+pt-01614,Occupied Clg Setpoint
+pt-01615,Damper Command
+pt-01616,Discharge Air Temp
+pt-01617,Clg Dmpr Pos. %
+pt-01618,Current Airflow
+pt-01619,Occupied status
+pt-01620,Unoccupied Htg Sp
+pt-01621,Occupied Clg Setpoint
+pt-01622,Occupied Htg Setpoint
+pt-01623,HW Supply Temp SP
+pt-01624,Unoccupied Htg Sp
+pt-01625,SF Status
+pt-01626,Unoccupied Htg Sp
+pt-01627,Damper Command
+pt-01628,CH-3 Evap ISO Valve
+pt-01629,Discharge Air Temp
+pt-01630,Occupied Htg Setpoint
+pt-01631,Decon EF S/S
+pt-01632,Desired Airflow
+pt-01633,Discharge Air Temp
+pt-01634,Desired Airflow - Cold
+pt-01635,Cond Water Leaving Temp
+pt-01636,Occupied Htg Setpoint
+pt-01637,Occupied status
+pt-01638,Damper Command
+pt-01639,Desired Airflow
+pt-01640,Heating Valve Signal
+pt-01641,Unoccupied Clg Sp
+pt-01642,Unoccupied Clg Sp
+pt-01643,RF VFD S/S
+pt-01644,Chilled Water Temp Setpoint
+pt-01645,Occupied Htg Setpoint
+pt-01646,Airflow sensor 1 (Hot)
+pt-01647,Occupied Clg Setpoint
+pt-01648,Space Temperature
+pt-01649,Occupied status
+pt-01650,Unoccupied Htg Sp
+pt-01651,DAT_SP
+pt-01652,Desired Airflow
+pt-01653,Heating Valve Signal
+pt-01654,Cost
+pt-01655,Discharge Air Temp
+pt-01656,Unoccupied Htg Sp
+pt-01657,Unoccupied Htg Sp
+pt-01658,Desired Airflow
+pt-01659,Energy
+pt-01660,Unoccupied Clg Sp
+pt-01661,Unoccupied Clg Sp
+pt-01662,Occupied Clg Setpoint
+pt-01663,Unoccupied Clg Sp
+pt-01664,Unoccupied Htg Sp
+pt-01665,Occupied Htg Setpoint
+pt-01666,Heating Valve Signal
+pt-01667,Damper Command
+pt-01668,Unoccupied Htg Sp
+pt-01669,Clg_Valve_Cmd
+pt-01670,Desired Airflow
+pt-01671,Discharge Air Temp
+pt-01672,Desired Airflow
+pt-01673,Unoccupied Htg Sp
+pt-01674,Space Temperature
+pt-01675,Cost
+pt-01676,Building DP
+pt-01677,Clg Dmpr Pos. %
+pt-01678,Occupied status
+pt-01679,Desired Airflow - Hot
+pt-01680,Desired Airflow
+pt-01681,Occupied Clg Setpoint
+pt-01682,Desired Airflow - Hot
+pt-01683,Current Airflow
+pt-01684,Current Airflow
+pt-01685,Occupied Clg Setpoint
+pt-01686,Discharge Air Temp
+pt-01687,Discharge Air Temp
+pt-01688,Unoccupied Htg Sp
+pt-01689,SF Status
+pt-01690,Damper Command
+pt-01691,SAT
+pt-01692,Desired Airflow
+pt-01693,Unoccupied Htg Sp
+pt-01694,Desired Airflow
+pt-01695,Unoccupied Htg Sp
+pt-01696,Desired Airflow
+pt-01697,RAT
+pt-01698,Heating Valve Signal
+pt-01699,Occupied Clg Setpoint
+pt-01700,Htg Dmpr Cmnd 0-100
+pt-01701,Current Airflow
+pt-01702,Occupied Htg Setpoint
+pt-01703,Unoccupied Clg Sp
+pt-01704,Space Temperature
+pt-01705,HW Sys DP SP
+pt-01706,Occupied status
+pt-01707,Space Temperature
+pt-01708,Discharge Air Temp
+pt-01709,Occupied Htg Setpoint
+pt-01710,Space Temperature
+pt-01711,MAT
+pt-01712,Damper Command
+pt-01713,Unoccupied Clg Sp
+pt-01714,Occupied status
+pt-01715,Occupied Clg Setpoint
+pt-01716,Damper Command
+pt-01717,Heating Valve Signal
+pt-01718,Occupied Htg Setpoint
+pt-01719,Occupied Htg Setpoint
+pt-01720,Desired Airflow - Cold
+pt-01721,Occupied status
+pt-01722,Desired Airflow - Cold
+pt-01723,Occupied Clg Setpoint
+pt-01724,Current Airflow
+pt-01725,Damper Command
+pt-01726,CH-1 Cond ISO Valve OPEN
+pt-01727,Fan Frequency
+pt-01728,Space Temperature
+pt-01729,Desired Airflow
+pt-01730,Desired Airflow - Cold
+pt-01731,Unoccupied Htg Sp
+pt-01732,Desired Airflow
+pt-01733,Unoccupied Clg Sp
+pt-01734,Heating Valve Signal
+pt-01735,Return Fan Frequency
+pt-01736,Occupied Clg Setpoint
+pt-01737,Desired Airflow
+pt-01738,Unoccupied Htg Sp
+pt-01739,Desired Airflow
+pt-01740,Desired Airflow
+pt-01741,Occupied status
+pt-01742,Airflow sensor 1 (Hot)
+pt-01743,Desired Airflow
+pt-01744,Discharge Air Temp
+pt-01745,Current Airflow
+pt-01746,HW Pump Status
+pt-01747,Desired Airflow - Hot
+pt-01748,CT-2 ISO Valve
+pt-01749,Space Temperature
+pt-01750,Current Airflow
+pt-01751,Damper Command
+pt-01752,Occupied Htg Setpoint
+pt-01753,Occupied Htg Setpoint
+pt-01754,Current Airflow
+pt-01755,Return Fan Power
+pt-01756,OSA Damper Signal
+pt-01757,Occupied Htg Setpoint
+pt-01758,Damper Command
+pt-01759,Discharge Air Temp
+pt-01760,Space Temperature
+pt-01761,Unoccupied Clg Sp
+pt-01762,Space Temperature
+pt-01763,Frequency
+pt-01764,Occupied status
+pt-01765,Damper Command
+pt-01766,Htg Dmpr Cmnd 0-100
+pt-01767,SF VFD S/S
+pt-01768,Clg Dmpr Pos. %
+pt-01769,Desired Airflow
+pt-01770,Elec Power
+pt-01771,Occupied Htg Setpoint
+pt-01772,Htg Dmpr Cmnd 0-100
+pt-01773,Desired Airflow
+pt-01774,Occupied Htg Setpoint
+pt-01775,Current Airflow
+pt-01776,Occupied Clg Setpoint
+pt-01777,Space Temperature
+pt-01778,Unoccupied Htg Sp
+pt-01779,Occupied Htg Setpoint
+pt-01780,Unoccupied Clg Sp
+pt-01781,Space Temperature
+pt-01782,Heating Valve Signal
+pt-01783,Space Temperature
+pt-01784,Occupied status
+pt-01785,Occupied status
+pt-01786,Space Temperature
+pt-01787,Damper Command
+pt-01788,Damper Command
+pt-01789,CT-2 ISO Valve OPEN
+pt-01790,Occupied status
+pt-01791,Space Temperature
+pt-01792,Energy
+pt-01793,Desired Airflow - Hot
+pt-01794,Unoccupied Htg Sp
+pt-01795,Occupied Htg Setpoint
+pt-01796,Desired Airflow
+pt-01797,Desired Airflow
+pt-01798,Damper Command
+pt-01799,HW Return Temp
+pt-01800,Occupied Clg Setpoint
+pt-01801,Building Static_SP
+pt-01802,Discharge Air Temp
+pt-01803,Unoccupied Clg Sp
+pt-01804,Occupied Clg Setpoint
+pt-01805,Space Temperature
+pt-01806,Damper Command
+pt-01807,Airflow sensor 2 (Cold)
+pt-01808,Damper Command
+pt-01809,Current Airflow
+pt-01810,Frequency
+pt-01811,Clg_Valve_Cmd
+pt-01812,Steam SP
+pt-01813,Occupied Htg Setpoint
+pt-01814,Occupied status
+pt-01815,Discharge Air Temp
+pt-01816,Occupied Clg Setpoint
+pt-01817,Occupied Clg Setpoint
+pt-01818,Discharge Air Temp
+pt-01819,Space Temperature
+pt-01820,Unoccupied Htg Sp
+pt-01821,Occupied Htg Setpoint
+pt-01822,Occupied Clg Setpoint
+pt-01823,Unoccupied Htg Sp
+pt-01824,Damper Command
+pt-01825,SF VFD Signal
+pt-01826,Desired Airflow - Hot
+pt-01827,Discharge Air Temp
+pt-01828,Occupied Clg Setpoint
+pt-01829,Elec Power (BAS)
+pt-01830,Airflow sensor 2 (Cold)
+pt-01831,Occupied Htg Setpoint
+pt-01832,Occupied status
+pt-01833,Occupied status
+pt-01834,Unoccupied Clg Sp
+pt-01835,Htg_Valve_Cmd
+pt-01836,Damper Command
+pt-01837,Discharge Air Temp
+pt-01838,Damper Command
+pt-01839,PCHWP-1A Status
+pt-01840,Airflow sensor 1 (Hot)
+pt-01841,Heating Valve Signal
+pt-01842,Space Temperature
