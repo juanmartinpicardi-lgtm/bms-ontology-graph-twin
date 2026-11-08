@@ -90,6 +90,7 @@
   .pin[data-mode="far"] .pval { display: none; }
   .pin.ghost .dot { background: transparent; border: 1.5px dashed var(--muted); box-shadow: none; }
   .pin.ghost .pname { color: var(--muted); }
+  .pin.ghost .pcard { border: 1px dashed var(--muted); }
   .sdot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
   .s-proposed { background: var(--s-proposed); } .s-confirmed { background: var(--s-confirmed); } .s-rejected { background: var(--s-rejected); }
   .pval { font-size: 10.5px; padding: 1px 7px; border-radius: 999px; background: var(--pill); color: var(--pill-text);
@@ -174,10 +175,12 @@ const eq = DATA.equipment;
 document.title = `${eq.label} · Equipment 3D`;
 document.getElementById("eqName").textContent = eq.label;
 document.getElementById("eqSub").innerHTML =
-  `${esc(eq.cls)} · template <b>${esc(eq.template)}</b> · fit ${Math.round(eq.slot_fill * 100)}% · ${esc(DATA.project)}`;
+  [`${esc(eq.cls)} · template <b>${esc(eq.template)}</b>`,
+   ...Object.entries(DATA.variant || {}).filter(([, on]) => on).map(([k]) => esc(k.replace(/_/g, " "))),
+   `fit ${Math.round(eq.slot_fill * 100)}%`, esc(DATA.project)].join(" · ");
 
 const viewer = Core.createViewer(document.getElementById("view"), document.getElementById("labels"));
-const BUILD = { ahu: AHU.build };
+const BUILD = { ahu: AHU.build, vav: VAV.build };
 const model = BUILD[eq.template](DATA, viewer);
 viewer.scene.add(model.group);
 viewer.setModel(model);

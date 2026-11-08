@@ -3,11 +3,13 @@
 Usage:
   .venv/bin/python scripts/export_equipment3d.py alpha/names_paths --equip "eq:Airside AHU-2"
   .venv/bin/python scripts/export_equipment3d.py alpha/names_paths --all-ahus
+  .venv/bin/python scripts/export_equipment3d.py alpha/names_paths --all      (AHUs and VAVs)
 The page embeds the data and follows the system theme; it loads three.js from jsdelivr, so it needs a network
 connection.
 """
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -26,23 +28,25 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--equip", help='equipment id, e.g. "eq:Airside AHU-2"')
     g.add_argument("--all-ahus", action="store_true")
+    g.add_argument("--all", action="store_true", help="every equipment with a 3D model (AHUs and VAVs)")
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
     args = ap.parse_args()
     store, km, anchors = Store(args.db), load_knowledge_model(), load_anchors()
-    ids = [args.equip] if args.equip else sorted(
-        r["id"] for r in store.nodes(args.project, "equipment") if '"template": "ahu"' in r["attrs"])
+    models = {r["id"]: json.loads(r["attrs"]).get("template") for r in store.nodes(args.project, "equipment")}
+    models = {i: t for i, t in models.items() if t in anchors}
+    ids = [args.equip] if args.equip else sorted(i for i, t in models.items() if args.all or t == "ahu")
     if not ids:
-        sys.exit(f"project {args.project!r} has no AHUs; run the mapper first")
+        sys.exit(f"project {args.project!r} has no equipment with a 3D model; run the mapper first")
     out_dir = ROOT / "reports/equipment3d"
     out_dir.mkdir(parents=True, exist_ok=True)
-    # Pages link to each other by file name: every AHU of the project gets a link (export them with --all-ahus).
-    ahus = {r["id"]: r["label"] for r in store.nodes(args.project, "equipment") if '"template": "ahu"' in r["attrs"]}
-    name = lambda label: f"{args.project.replace('/', '_')}__{re.sub(r'[^A-Za-z0-9]+', '-', label).strip('-')}.html"  # noqa: E731
-    links = {i: name(label) for i, label in ahus.items()}
+    # Pages link to each other by file name (from the id, which is unique: "eq:Airside AHU-2/VAV 1-2-1"), for the
+    # pages written now and those already in the folder.
+    name = lambda i: f"{args.project.replace('/', '_')}__{re.sub(r'[^A-Za-z0-9]+', '-', i.removeprefix('eq:')).strip('-')}.html"  # noqa: E731
+    links = {i: name(i) for i in models if i in ids or (out_dir / name(i)).exists()}
     for eid in ids:
         payload = equipment_payload(store, args.project, eid, km, anchors)
         payload["links"] = {k: v for k, v in links.items() if k != eid}
-        out = out_dir / name(payload["equipment"]["label"])
+        out = out_dir / name(eid)
         out.write_text(render_html(payload))
         placed = sum(1 for p in payload["points"].values() if p["role"])
         print(f"{out.relative_to(ROOT)}  ({placed} placed, {len(payload['unplaced'])} unplaced)")

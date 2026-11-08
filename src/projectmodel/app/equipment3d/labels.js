@@ -103,9 +103,10 @@ const Labels = (() => {
         const w = f.el.offsetWidth, h = f.el.offsetHeight, x = (v3.x + 1) / 2 * W - w / 2, y = (1 - v3.y) / 2 * H - h / 2;
         if (v3.z <= 1) placed.push({ x, y, w, h });
       }
-      // screen chrome (details panel, component dock) counts as taken
-      for (const id of ["panel", "dock", "tools"]) {
-        const r = document.getElementById(id)?.getBoundingClientRect();
+      // screen chrome (details panel, component dock) and the model's own labels (air streams, links) are taken
+      for (const el of [...["panel", "dock", "tools"].map(id => document.getElementById(id)),
+                        ...viewer.labelLayer.querySelectorAll(".stream, .morechip")]) {
+        const r = el?.getBoundingClientRect();
         if (r?.width) placed.push({ x: r.left, y: r.top, w: r.width, h: r.height });
       }
       const vis = [];

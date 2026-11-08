@@ -130,6 +130,30 @@ def test_reheat_vav(store, km, anchors):
     assert AHU2 in [r["id"] for r in p["relations"]["fed_by"]]
 
 
+def test_vav_variants_on_alpha(store, km, anchors):
+    dd = equipment_payload(store, P, "eq:Airside AHU-4/DD 1-4-1", km, anchors)
+    assert dd["variant"] == {"reheat": False, "fan_powered": False, "dual_duct": True}
+    # each deck's damper and flow cross: the point names say which
+    decks = {x["label"]: (x["part"], x["at"]) for x in dd["points"].values() if x["part"] in ("damper", "flow_cross")}
+    assert decks == {"Airflow sensor 1 (Hot)": ("flow_cross", "hot"), "Airflow sensor 2 (Cold)": ("flow_cross", "cold"),
+                     "Desired Airflow - Hot": ("flow_cross", "hot"), "Desired Airflow - Cold": ("flow_cross", "cold"),
+                     "Htg Dmpr Cmnd 0-100": ("damper", "hot"), "Clg Dmpr Pos. %": ("damper", "cold")}
+    fpb = equipment_payload(store, P, "eq:Airside AHU-2/VAV 1-2-89", km, anchors)
+    assert fpb["variant"] == {"reheat": True, "fan_powered": True, "dual_duct": False}
+    plain = equipment_payload(store, P, "eq:Airside AHU-2/VAV 1-2-52", km, anchors)
+    assert not any(plain["variant"].values())
+    assert all(x["at"] is None for x in plain["points"].values() if x["part"] == "damper")  # decks only on DD
+
+
+def test_vav_without_flow_sensor_leaves_an_empty_required_slot(store, km, anchors):
+    pts = equipment_payload(store, P, VAV, km, anchors)["points"]
+    review.reject(store, P, [i for i, x in pts.items() if x["label"] == "Current Airflow"], "test")
+    p = equipment_payload(store, P, VAV, km, anchors)
+    airflow = next(s for s in p["slots"] if s["role"] == "airflow")
+    assert airflow["required"] and airflow["points"] == []  # the view draws the flow cross as a ghost
+    assert airflow["anchor"]["part"] == "flow_cross" and p["equipment"]["slot_fill"] < 1
+
+
 def test_rejected_points_are_left_out(store, km, anchors):
     pts = equipment_payload(store, P, AHU2, km, anchors)["points"]
     pid = next(i for i, x in pts.items() if x["label"] == "Relief Damper Signal")
@@ -153,8 +177,8 @@ def test_render_html_inlines_modules_and_data(store, km, anchors):
     html = render_html(p)
     assert "/*__DATA__*/" not in html and "/*__MODULES__*/" not in html
     assert '"label":"Airside AHU-2"' in html
-    for const in ("const Core", "const Parts", "const AHU", "const Labels", "const Panels"):
+    for const in ("const Core", "const Parts", "const AHU", "const VAV", "const Labels", "const Panels"):
         assert const in html
     assert html.count("</script>") == 2  # import map and the one module script: nothing inlined closes it early
-    assert "three@0.170.0" in html and len(MODULES) == 5
+    assert "three@0.170.0" in html and len(MODULES) == 6
     assert '<html lang="en" data-theme="dark">' in render_html(p, theme="dark")

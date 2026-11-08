@@ -7,7 +7,7 @@ const Panels = (() => {
     mixing_box: "Economizer", relief_outlet: "Relief", supply_duct: "Supply air", return_duct: "Return air",
     outside_air_inlet: "Outside air", controller: "Controller", building_ref: "Building", bag_filter: "Filters",
     pre_filter: "Filters", zone_sensor: "Zone", damper: "Damper", flow_cross: "Airflow", reheat_coil: "Reheat",
-    fan: "Fan", discharge_duct: "Discharge",
+    fan: "Fan", discharge_duct: "Discharge", inlet_duct: "Inlet", box: "Box",
   };
   const title = part => TITLE[part.split(".")[0]] || part.split(".")[0].replace(/_/g, " ");
   const isSetpoint = p => (p.cls || "").endsWith("_Setpoint");
@@ -85,7 +85,8 @@ const Panels = (() => {
       byComp.get(t).push(id);
     }
     const order = ["Supply fan", "Return fan", "Economizer", "Relief", "Cooling coil", "Heating coil", "Outside air",
-                   "Return air", "Supply air", "Building", "Controller"];
+                   "Return air", "Supply air", "Building", "Airflow", "Damper", "Fan", "Reheat", "Discharge", "Zone",
+                   "Controller"];
     const comps = [...byComp.keys()].sort((a, b) => ((order.indexOf(a) + 1) || 99) - ((order.indexOf(b) + 1) || 99));
     const row = id => `<tr class="crow" data-pt="${esc(id)}"><td>${esc(pts[id].label)}</td><td>${valueChip(pts[id])}</td></tr>`;
     const dock = document.getElementById("dock");
@@ -114,7 +115,7 @@ const Panels = (() => {
     function showEquipment(r, href) {
       open(`<h2>${esc(r.label)}</h2><span class="chip">${esc(r.cls)}</span>` +
            (href ? `<p><a class="nav" href="${esc(href)}">Open its 3D view</a></p>`
-                 : `<p class="muted">${r.template === "vav" ? "The 3D view for VAVs comes with step E3." : "No 3D model for this equipment type yet."}</p>`) +
+                 : `<p class="muted">${["ahu", "vav"].includes(r.template) ? "Its 3D page was not exported with this one (export with --all)." : "No 3D model for this equipment type yet."}</p>`) +
            `<div class="muted"><code>${esc(r.id)}</code></div>`);
     }
     return { showPoint, showFeeds, showUnplaced, showEquipment, highlight, close };

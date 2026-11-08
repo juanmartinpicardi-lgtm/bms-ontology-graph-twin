@@ -172,6 +172,7 @@ const Core = (() => {
     frame();
 
     return { scene, camera, renderer, controls, view, focus, setModel, applyTheme, onFrame: f => frameFns.push(f),
+             labelLayer,
              frames: () => frames,
              theme: () => P, label: (text, cls = "stream") => {
                const d = document.createElement("div");

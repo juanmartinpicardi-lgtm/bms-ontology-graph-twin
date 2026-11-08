@@ -176,7 +176,9 @@ const Parts = (() => {
     blade:  new THREE.MeshStandardMaterial({ color: 0xa7abb1, metalness: 0.75, roughness: 0.3 }),
     wheel:  new THREE.MeshStandardMaterial({ color: 0x23262a, metalness: 0.6, roughness: 0.4 }),
     screen: new THREE.MeshStandardMaterial({ color: 0x0b1a2a, emissive: 0x1c6fd1, emissiveIntensity: 0.6, roughness: 0.3 }),
-    ghost:  new THREE.MeshStandardMaterial({ color: 0x9aa3ad, transparent: true, opacity: 0.28, depthWrite: false }),
+    // expected but not in the source: translucent blue, so it reads as "should be here" against the metal
+    ghost:  new THREE.MeshStandardMaterial({ color: 0x8fb8e8, emissive: 0x2f6fc0, emissiveIntensity: 0.45, transparent: true,
+                                             opacity: 0.5, depthWrite: false }),
   };
   const MEDIUM = { chilled_water: 0x2f80d8, hot_water: 0xd6493f, condenser_water: 0x2fb39c };
 

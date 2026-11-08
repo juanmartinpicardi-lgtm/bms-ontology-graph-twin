@@ -21,7 +21,7 @@ from .tree import TreeNode, build_tree
 
 ANCHORS = KM_DIR / "templates" / "anchors.yaml"
 APP = Path(__file__).resolve().parent / "app"
-MODULES = ("core.js", "parts.js", "ahu.js", "labels.js", "panels.js")  # inlined in this order into equipment3d.html
+MODULES = ("core.js", "parts.js", "ahu.js", "vav.js", "labels.js", "panels.js")  # inlined in this order into equipment3d.html
 
 
 def load_anchors(path: Path = ANCHORS) -> dict:
@@ -99,6 +99,17 @@ def variant(template: Template, slots: dict[str, list[str]], name: str, sub_part
     return {}
 
 
+DECK_PARTS = ("damper", "flow_cross")
+DECK_WORDS = {"hot": {"hot", "heating"}, "cold": {"cold", "cooling", "chilled"}}
+
+
+def deck(name: str, km: KnowledgeModel) -> str | None:
+    """The deck of a dual-duct point from its name ("Clg Dmpr Pos" -> cold), None when it doesn't say."""
+    words = set(km.name_rules.words(name))
+    found = [d for d, ws in DECK_WORDS.items() if words & ws]
+    return found[0] if len(found) == 1 else None
+
+
 def sub_equipment_part(node: TreeNode, spec: dict, km: KnowledgeModel) -> str | None:
     """The part an untemplated child equipment is drawn as: by its class, else by its name ("SF VFD" -> supply fan)."""
     table = spec.get("sub_equipment") or {}
@@ -168,6 +179,11 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
             points[pid].update(role=role, part=part, at=a.get("at"))
     for pid in unplaced:
         points[pid].update(role=None, part=None, at=None)
+    var = variant(template, slots, eq.label, sub_parts, km)
+    if var.get("dual_duct"):  # each deck has its own damper and flow cross: "Htg Dmpr Cmnd" -> damper@hot
+        for p in points.values():
+            if p["part"] in DECK_PARTS:
+                p["at"] = deck(p["label"], km)
     for p in points.values():
         del p["context"]
 
@@ -181,7 +197,7 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
                       "slot_fill": round(sum(1 for s in required if slots.get(s.role)) / len(required), 4)
                       if required else 1.0,
                       "prov": eq.prov},
-        "variant": variant(template, slots, eq.label, sub_parts, km),
+        "variant": var,
         "slots": [{"role": s.role, "classes": list(s.classes), "required": s.required, "medium": s.medium or None,
                    "anchor": spec["anchors"][s.role], "points": slots.get(s.role, [])} for s in template.slots],
         "points": points,
