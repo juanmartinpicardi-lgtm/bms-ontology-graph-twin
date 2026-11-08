@@ -53,7 +53,7 @@ def build_site(site: str, src: Path, out_dir: Path, overrides_path: Path | None 
     matches: dict[str, BrickMatch] = {}
     method: dict[str, tuple[str, str]] = {}  # id -> (method, override_id)
     for e in points + equips:
-        m, how, rule_id = apply_overrides(e.kind, conv.classify(e), rules)
+        m, how, rule_id = apply_overrides(e.kind, conv.classify(e), rules, frozenset(e.markers))
         matches[e.id], method[e.id] = m, (how, rule_id)
     issues: list[dict] = []
     src_name = str(src)

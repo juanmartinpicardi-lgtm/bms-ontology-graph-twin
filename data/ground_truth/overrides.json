@@ -1,6 +1,6 @@
 {
-  "about": "Human decisions resolving brickschema ties in the ground truth. Each rule fires only when an entity's candidate set equals when_candidates exactly. Edit freely; rebuild with scripts/build_golden.py.",
-  "decided": "2026-11-08, proposed by Claude on the user's instruction; GT-001..GT-010 approved by the user as is on 2026-11-08",
+  "about": "Human decisions fixing brickschema's output in the ground truth. 'rules' break ties and fire only when an entity's candidate set equals when_candidates exactly. 'corrections' replace a single wrong match and fire only when brickschema returned when_class and the entity has every tag in when_tags_all. Edit freely; rebuild with scripts/build_golden.py.",
+  "decided": "2026-11-08, proposed by Claude on the user's instruction; GT-001..GT-010 approved by the user as is on 2026-11-08; GC-001..GC-002 requested by the user on 2026-11-08",
   "rules": [
     {
       "id": "GT-001",
@@ -73,6 +73,24 @@
       "when_candidates": ["Cooling_Command", "Valve_Command"],
       "choose": "Valve_Command",
       "rationale": "Same as GT-009 for chilled-water valves."
+    }
+  ],
+  "corrections": [
+    {
+      "id": "GC-001",
+      "applies_to": "point",
+      "when_class": "Zone_Occupied_Load_Shed_Command",
+      "when_tags_all": ["cmd", "occupied", "zone"],
+      "choose": "Occupancy_Command",
+      "rationale": "Plain zone occupancy commands ('Occupied status', 'Mode_Occ'); nothing in the tags or names is about load shedding. brickschema's tag table over-matches."
+    },
+    {
+      "id": "GC-002",
+      "applies_to": "point",
+      "when_class": "Unoccupied_Zone_Air_Temperature_Setpoint",
+      "when_tags_all": ["heating", "sp", "unocc", "zone"],
+      "choose": "Unoccupied_Heating_Zone_Air_Temperature_Setpoint",
+      "rationale": "brickschema's class is deprecated in Brick 1.4.4 and drops the heating tag; this is the exact class for unocc + heating + zone + air + temp + sp."
     }
   ]
 }

@@ -41,7 +41,8 @@ def test_ground_truth_invariants(site):
 
 
 def test_every_override_rule_is_used_somewhere():
-    rules = {r["id"] for r in json.loads((ROOT / "data/ground_truth/overrides.json").read_text())["rules"]}
+    data = json.loads((ROOT / "data/ground_truth/overrides.json").read_text())
+    rules = {r["id"] for r in data["rules"] + data.get("corrections", [])}
     unused = [
         set(json.loads((ROOT / "data/ground_truth" / s / "summary.json").read_text())["overrides_unused_here"])
         for s in ("alpha", "bravo")

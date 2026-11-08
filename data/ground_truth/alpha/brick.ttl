@@ -300,7 +300,7 @@ alpha:a-001d a brick:Pressure_Sensor ;
 alpha:a-001e a brick:Pressure_Setpoint ;
     rdfs:label "Alpha Airside AHU-2 Zone Air Static Pressure Setpoint" .
 
-alpha:a-001f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-001f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside AHU-2 Zone Occupancy Mode" .
 
 alpha:a-0021 a brick:Valve_Command ;
@@ -370,7 +370,7 @@ alpha:a-0036 a brick:Pressure_Sensor ;
 alpha:a-0037 a brick:Pressure_Setpoint ;
     rdfs:label "Alpha Airside AHU-3 Zone Air Static Pressure Setpoint" .
 
-alpha:a-0038 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0038 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside AHU-3 Zone Occupancy Mode" .
 
 alpha:a-003a a brick:Valve_Command ;
@@ -437,7 +437,7 @@ alpha:a-004e a brick:Pressure_Setpoint ;
 alpha:a-004f a brick:Zone_Air_Temperature_Sensor ;
     rdfs:label "Alpha Airside AHU-4 Zone Air Temp" .
 
-alpha:a-0050 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0050 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside AHU-4 Zone Occupancy Mode" .
 
 alpha:a-0052 a brick:Valve_Command ;
@@ -510,7 +510,7 @@ alpha:a-0068 a brick:Pressure_Sensor ;
 alpha:a-0069 a brick:Pressure_Setpoint ;
     rdfs:label "Alpha Airside AHU-5 Zone Air Static Pressure Setpoint" .
 
-alpha:a-006a a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-006a a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside AHU-5 Zone Occupancy Mode" .
 
 alpha:a-006c a brick:Damper_Command ;
@@ -545,10 +545,10 @@ alpha:a-0075 rdfs:label "Alpha Airside DD 1-4-1 Zone Air Temp Occ Heating Setpoi
 alpha:a-0076 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-1 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0077 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0077 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-1 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0078 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0078 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-1 Zone Occupancy Mode" .
 
 alpha:a-007a a brick:Damper_Command ;
@@ -583,10 +583,10 @@ alpha:a-0083 rdfs:label "Alpha Airside DD 1-4-10 Zone Air Temp Occ Heating Setpo
 alpha:a-0084 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-10 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0085 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0085 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-10 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0086 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0086 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-10 Zone Occupancy Mode" .
 
 alpha:a-0088 a brick:Damper_Command ;
@@ -621,10 +621,10 @@ alpha:a-0091 rdfs:label "Alpha Airside DD 1-4-11 Zone Air Temp Occ Heating Setpo
 alpha:a-0092 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-11 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0093 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0093 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-11 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0094 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0094 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-11 Zone Occupancy Mode" .
 
 alpha:a-0096 a brick:Damper_Command ;
@@ -659,10 +659,10 @@ alpha:a-009f rdfs:label "Alpha Airside DD 1-4-12 Zone Air Temp Occ Heating Setpo
 alpha:a-00a0 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-12 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-00a1 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-00a1 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-12 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-00a2 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-00a2 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-12 Zone Occupancy Mode" .
 
 alpha:a-00a4 a brick:Damper_Command ;
@@ -697,10 +697,10 @@ alpha:a-00ad rdfs:label "Alpha Airside DD 1-4-13 Zone Air Temp Occ Heating Setpo
 alpha:a-00ae a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-13 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-00af a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-00af a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-13 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-00b0 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-00b0 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-13 Zone Occupancy Mode" .
 
 alpha:a-00b2 a brick:Damper_Command ;
@@ -735,10 +735,10 @@ alpha:a-00bb rdfs:label "Alpha Airside DD 1-4-14 Zone Air Temp Occ Heating Setpo
 alpha:a-00bc a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-14 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-00bd a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-00bd a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-14 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-00be a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-00be a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-14 Zone Occupancy Mode" .
 
 alpha:a-00c0 a brick:Damper_Command ;
@@ -773,10 +773,10 @@ alpha:a-00c9 rdfs:label "Alpha Airside DD 1-4-2 Zone Air Temp Occ Heating Setpoi
 alpha:a-00ca a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-2 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-00cb a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-00cb a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-2 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-00cc a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-00cc a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-2 Zone Occupancy Mode" .
 
 alpha:a-00ce a brick:Damper_Command ;
@@ -811,10 +811,10 @@ alpha:a-00d7 rdfs:label "Alpha Airside DD 1-4-3 Zone Air Temp Occ Heating Setpoi
 alpha:a-00d8 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-3 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-00d9 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-00d9 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-3 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-00da a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-00da a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-3 Zone Occupancy Mode" .
 
 alpha:a-00dc a brick:Damper_Command ;
@@ -849,10 +849,10 @@ alpha:a-00e5 rdfs:label "Alpha Airside DD 1-4-4 Zone Air Temp Occ Heating Setpoi
 alpha:a-00e6 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-4 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-00e7 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-00e7 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-4 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-00e8 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-00e8 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-4 Zone Occupancy Mode" .
 
 alpha:a-00ea a brick:Damper_Command ;
@@ -887,10 +887,10 @@ alpha:a-00f3 rdfs:label "Alpha Airside DD 1-4-5 Zone Air Temp Occ Heating Setpoi
 alpha:a-00f4 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-5 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-00f5 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-00f5 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-5 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-00f6 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-00f6 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-5 Zone Occupancy Mode" .
 
 alpha:a-00f8 a brick:Damper_Command ;
@@ -925,10 +925,10 @@ alpha:a-0101 rdfs:label "Alpha Airside DD 1-4-6 Zone Air Temp Occ Heating Setpoi
 alpha:a-0102 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-6 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0103 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0103 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-6 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0104 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0104 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-6 Zone Occupancy Mode" .
 
 alpha:a-0106 a brick:Damper_Command ;
@@ -963,10 +963,10 @@ alpha:a-010f rdfs:label "Alpha Airside DD 1-4-7 Zone Air Temp Occ Heating Setpoi
 alpha:a-0110 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-7 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0111 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0111 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-7 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0112 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0112 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-7 Zone Occupancy Mode" .
 
 alpha:a-0114 a brick:Damper_Command ;
@@ -1001,10 +1001,10 @@ alpha:a-011d rdfs:label "Alpha Airside DD 1-4-8 Zone Air Temp Occ Heating Setpoi
 alpha:a-011e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-8 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-011f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-011f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-8 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0120 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0120 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-8 Zone Occupancy Mode" .
 
 alpha:a-0122 a brick:Damper_Command ;
@@ -1039,10 +1039,10 @@ alpha:a-012b rdfs:label "Alpha Airside DD 1-4-9 Zone Air Temp Occ Heating Setpoi
 alpha:a-012c a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-9 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-012d a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-012d a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-4-9 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-012e a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-012e a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-4-9 Zone Occupancy Mode" .
 
 alpha:a-0130 a brick:Damper_Command ;
@@ -1077,10 +1077,10 @@ alpha:a-0139 rdfs:label "Alpha Airside DD 1-5-1 Zone Air Temp Occ Heating Setpoi
 alpha:a-013a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-1 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-013b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-013b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-1 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-013c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-013c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-1 Zone Occupancy Mode" .
 
 alpha:a-013e a brick:Damper_Command ;
@@ -1115,10 +1115,10 @@ alpha:a-0147 rdfs:label "Alpha Airside DD 1-5-10 Zone Air Temp Occ Heating Setpo
 alpha:a-0148 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-10 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0149 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0149 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-10 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-014a a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-014a a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-10 Zone Occupancy Mode" .
 
 alpha:a-014c a brick:Damper_Command ;
@@ -1153,10 +1153,10 @@ alpha:a-0155 rdfs:label "Alpha Airside DD 1-5-11 Zone Air Temp Occ Heating Setpo
 alpha:a-0156 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-11 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0157 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0157 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-11 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0158 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0158 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-11 Zone Occupancy Mode" .
 
 alpha:a-015a a brick:Damper_Command ;
@@ -1191,10 +1191,10 @@ alpha:a-0163 rdfs:label "Alpha Airside DD 1-5-12 Zone Air Temp Occ Heating Setpo
 alpha:a-0164 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-12 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0165 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0165 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-12 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0166 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0166 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-12 Zone Occupancy Mode" .
 
 alpha:a-0168 a brick:Damper_Command ;
@@ -1229,10 +1229,10 @@ alpha:a-0171 rdfs:label "Alpha Airside DD 1-5-13 Zone Air Temp Occ Heating Setpo
 alpha:a-0172 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-13 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0173 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0173 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-13 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0174 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0174 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-13 Zone Occupancy Mode" .
 
 alpha:a-0176 a brick:Damper_Command ;
@@ -1267,10 +1267,10 @@ alpha:a-017f rdfs:label "Alpha Airside DD 1-5-14 Zone Air Temp Occ Heating Setpo
 alpha:a-0180 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-14 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0181 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0181 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-14 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0182 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0182 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-14 Zone Occupancy Mode" .
 
 alpha:a-0184 a brick:Damper_Command ;
@@ -1305,10 +1305,10 @@ alpha:a-018d rdfs:label "Alpha Airside DD 1-5-15 Zone Air Temp Occ Heating Setpo
 alpha:a-018e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-15 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-018f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-018f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-15 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0190 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0190 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-15 Zone Occupancy Mode" .
 
 alpha:a-0192 a brick:Damper_Command ;
@@ -1343,10 +1343,10 @@ alpha:a-019b rdfs:label "Alpha Airside DD 1-5-16 Zone Air Temp Occ Heating Setpo
 alpha:a-019c a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-16 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-019d a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-019d a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-16 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-019e a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-019e a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-16 Zone Occupancy Mode" .
 
 alpha:a-01a0 a brick:Damper_Command ;
@@ -1381,10 +1381,10 @@ alpha:a-01a9 rdfs:label "Alpha Airside DD 1-5-17 Zone Air Temp Occ Heating Setpo
 alpha:a-01aa a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-17 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-01ab a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-01ab a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-17 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-01ac a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-01ac a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-17 Zone Occupancy Mode" .
 
 alpha:a-01ae a brick:Damper_Command ;
@@ -1419,10 +1419,10 @@ alpha:a-01b7 rdfs:label "Alpha Airside DD 1-5-18 Zone Air Temp Occ Heating Setpo
 alpha:a-01b8 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-18 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-01b9 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-01b9 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-18 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-01ba a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-01ba a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-18 Zone Occupancy Mode" .
 
 alpha:a-01bc a brick:Damper_Command ;
@@ -1457,10 +1457,10 @@ alpha:a-01c5 rdfs:label "Alpha Airside DD 1-5-19 Zone Air Temp Occ Heating Setpo
 alpha:a-01c6 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-19 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-01c7 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-01c7 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-19 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-01c8 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-01c8 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-19 Zone Occupancy Mode" .
 
 alpha:a-01ca a brick:Damper_Command ;
@@ -1495,10 +1495,10 @@ alpha:a-01d3 rdfs:label "Alpha Airside DD 1-5-2 Zone Air Temp Occ Heating Setpoi
 alpha:a-01d4 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-2 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-01d5 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-01d5 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-2 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-01d6 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-01d6 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-2 Zone Occupancy Mode" .
 
 alpha:a-01d8 a brick:Damper_Command ;
@@ -1533,10 +1533,10 @@ alpha:a-01e1 rdfs:label "Alpha Airside DD 1-5-3 Zone Air Temp Occ Heating Setpoi
 alpha:a-01e2 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-3 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-01e3 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-01e3 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-3 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-01e4 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-01e4 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-3 Zone Occupancy Mode" .
 
 alpha:a-01e6 a brick:Damper_Command ;
@@ -1571,10 +1571,10 @@ alpha:a-01ef rdfs:label "Alpha Airside DD 1-5-4 Zone Air Temp Occ Heating Setpoi
 alpha:a-01f0 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-4 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-01f1 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-01f1 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-4 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-01f2 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-01f2 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-4 Zone Occupancy Mode" .
 
 alpha:a-01f4 a brick:Damper_Command ;
@@ -1609,10 +1609,10 @@ alpha:a-01fd rdfs:label "Alpha Airside DD 1-5-5 Zone Air Temp Occ Heating Setpoi
 alpha:a-01fe a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-5 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-01ff a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-01ff a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-5 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0200 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0200 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-5 Zone Occupancy Mode" .
 
 alpha:a-0202 a brick:Damper_Command ;
@@ -1647,10 +1647,10 @@ alpha:a-020b rdfs:label "Alpha Airside DD 1-5-6 Zone Air Temp Occ Heating Setpoi
 alpha:a-020c a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-6 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-020d a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-020d a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-6 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-020e a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-020e a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-6 Zone Occupancy Mode" .
 
 alpha:a-0210 a brick:Damper_Command ;
@@ -1685,10 +1685,10 @@ alpha:a-0219 rdfs:label "Alpha Airside DD 1-5-7 Zone Air Temp Occ Heating Setpoi
 alpha:a-021a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-7 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-021b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-021b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-7 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-021c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-021c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-7 Zone Occupancy Mode" .
 
 alpha:a-021e a brick:Damper_Command ;
@@ -1723,10 +1723,10 @@ alpha:a-0227 rdfs:label "Alpha Airside DD 1-5-8 Zone Air Temp Occ Heating Setpoi
 alpha:a-0228 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-8 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0229 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0229 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-8 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-022a a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-022a a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-8 Zone Occupancy Mode" .
 
 alpha:a-022c a brick:Damper_Command ;
@@ -1761,10 +1761,10 @@ alpha:a-0235 rdfs:label "Alpha Airside DD 1-5-9 Zone Air Temp Occ Heating Setpoi
 alpha:a-0236 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-9 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0237 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0237 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside DD 1-5-9 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0238 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0238 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside DD 1-5-9 Zone Occupancy Mode" .
 
 alpha:a-023a a brick:Sensor ;
@@ -1805,10 +1805,10 @@ alpha:a-0249 rdfs:label "Alpha Airside VAV 1-2-1 Zone Air Temp Occ Heating Setpo
 alpha:a-024a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-1 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-024b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-024b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-1 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-024c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-024c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-1 Zone Occupancy Mode" .
 
 alpha:a-024e a brick:Damper_Command ;
@@ -1837,10 +1837,10 @@ alpha:a-0255 rdfs:label "Alpha Airside VAV 1-2-10 Zone Air Temp Occ Heating Setp
 alpha:a-0256 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-10 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0257 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0257 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-10 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0258 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0258 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-10 Zone Occupancy Mode" .
 
 alpha:a-025a a brick:Damper_Command ;
@@ -1869,10 +1869,10 @@ alpha:a-0261 rdfs:label "Alpha Airside VAV 1-2-11 Zone Air Temp Occ Heating Setp
 alpha:a-0262 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-11 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0263 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0263 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-11 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0264 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0264 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-11 Zone Occupancy Mode" .
 
 alpha:a-0266 a brick:Damper_Command ;
@@ -1901,10 +1901,10 @@ alpha:a-026d rdfs:label "Alpha Airside VAV 1-2-12 Zone Air Temp Occ Heating Setp
 alpha:a-026e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-12 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-026f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-026f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-12 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0270 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0270 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-12 Zone Occupancy Mode" .
 
 alpha:a-0272 a brick:Damper_Command ;
@@ -1933,10 +1933,10 @@ alpha:a-0279 rdfs:label "Alpha Airside VAV 1-2-13 Zone Air Temp Occ Heating Setp
 alpha:a-027a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-13 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-027b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-027b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-13 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-027c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-027c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-13 Zone Occupancy Mode" .
 
 alpha:a-027e a brick:Damper_Command ;
@@ -1965,10 +1965,10 @@ alpha:a-0285 rdfs:label "Alpha Airside VAV 1-2-14 Zone Air Temp Occ Heating Setp
 alpha:a-0286 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-14 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0287 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0287 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-14 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0288 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0288 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-14 Zone Occupancy Mode" .
 
 alpha:a-028a a brick:Damper_Command ;
@@ -1997,10 +1997,10 @@ alpha:a-0291 rdfs:label "Alpha Airside VAV 1-2-15 Zone Air Temp Occ Heating Setp
 alpha:a-0292 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-15 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0293 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0293 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-15 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0294 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0294 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-15 Zone Occupancy Mode" .
 
 alpha:a-0296 a brick:Damper_Command ;
@@ -2029,10 +2029,10 @@ alpha:a-029d rdfs:label "Alpha Airside VAV 1-2-16 Zone Air Temp Occ Heating Setp
 alpha:a-029e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-16 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-029f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-029f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-16 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02a0 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02a0 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-16 Zone Occupancy Mode" .
 
 alpha:a-02a2 a brick:Damper_Command ;
@@ -2061,10 +2061,10 @@ alpha:a-02a9 rdfs:label "Alpha Airside VAV 1-2-17 Zone Air Temp Occ Heating Setp
 alpha:a-02aa a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-17 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02ab a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02ab a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-17 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02ac a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02ac a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-17 Zone Occupancy Mode" .
 
 alpha:a-02ae a brick:Damper_Command ;
@@ -2093,10 +2093,10 @@ alpha:a-02b5 rdfs:label "Alpha Airside VAV 1-2-18 Zone Air Temp Occ Heating Setp
 alpha:a-02b6 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-18 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02b7 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02b7 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-18 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02b8 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02b8 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-18 Zone Occupancy Mode" .
 
 alpha:a-02ba a brick:Damper_Command ;
@@ -2125,10 +2125,10 @@ alpha:a-02c1 rdfs:label "Alpha Airside VAV 1-2-19 Zone Air Temp Occ Heating Setp
 alpha:a-02c2 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-19 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02c3 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02c3 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-19 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02c4 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02c4 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-19 Zone Occupancy Mode" .
 
 alpha:a-02c6 a brick:Damper_Command ;
@@ -2157,10 +2157,10 @@ alpha:a-02cd rdfs:label "Alpha Airside VAV 1-2-20 Zone Air Temp Occ Heating Setp
 alpha:a-02ce a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-20 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02cf a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02cf a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-20 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02d0 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02d0 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-20 Zone Occupancy Mode" .
 
 alpha:a-02d2 a brick:Damper_Command ;
@@ -2189,10 +2189,10 @@ alpha:a-02d9 rdfs:label "Alpha Airside VAV 1-2-21 Zone Air Temp Occ Heating Setp
 alpha:a-02da a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-21 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02db a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02db a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-21 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02dc a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02dc a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-21 Zone Occupancy Mode" .
 
 alpha:a-02de a brick:Damper_Command ;
@@ -2221,10 +2221,10 @@ alpha:a-02e5 rdfs:label "Alpha Airside VAV 1-2-22 Zone Air Temp Occ Heating Setp
 alpha:a-02e6 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-22 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02e7 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02e7 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-22 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02e8 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02e8 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-22 Zone Occupancy Mode" .
 
 alpha:a-02ea a brick:Damper_Command ;
@@ -2253,10 +2253,10 @@ alpha:a-02f1 rdfs:label "Alpha Airside VAV 1-2-23 Zone Air Temp Occ Heating Setp
 alpha:a-02f2 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-23 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02f3 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02f3 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-23 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-02f4 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-02f4 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-23 Zone Occupancy Mode" .
 
 alpha:a-02f6 a brick:Damper_Command ;
@@ -2285,10 +2285,10 @@ alpha:a-02fd rdfs:label "Alpha Airside VAV 1-2-25 Zone Air Temp Occ Heating Setp
 alpha:a-02fe a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-25 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-02ff a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-02ff a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-25 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0300 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0300 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-25 Zone Occupancy Mode" .
 
 alpha:a-0302 a brick:Damper_Command ;
@@ -2317,10 +2317,10 @@ alpha:a-0309 rdfs:label "Alpha Airside VAV 1-2-26 Zone Air Temp Occ Heating Setp
 alpha:a-030a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-26 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-030b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-030b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-26 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-030c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-030c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-26 Zone Occupancy Mode" .
 
 alpha:a-030e a brick:Damper_Command ;
@@ -2349,10 +2349,10 @@ alpha:a-0315 rdfs:label "Alpha Airside VAV 1-2-27 Zone Air Temp Occ Heating Setp
 alpha:a-0316 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-27 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0317 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0317 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-27 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0318 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0318 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-27 Zone Occupancy Mode" .
 
 alpha:a-031a a brick:Damper_Command ;
@@ -2381,10 +2381,10 @@ alpha:a-0321 rdfs:label "Alpha Airside VAV 1-2-28 Zone Air Temp Occ Heating Setp
 alpha:a-0322 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-28 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0323 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0323 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-28 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0324 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0324 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-28 Zone Occupancy Mode" .
 
 alpha:a-0326 a brick:Damper_Command ;
@@ -2413,10 +2413,10 @@ alpha:a-032d rdfs:label "Alpha Airside VAV 1-2-29 Zone Air Temp Occ Heating Setp
 alpha:a-032e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-29 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-032f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-032f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-29 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0330 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0330 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-29 Zone Occupancy Mode" .
 
 alpha:a-0332 a brick:Damper_Command ;
@@ -2445,10 +2445,10 @@ alpha:a-0339 rdfs:label "Alpha Airside VAV 1-2-3 Zone Air Temp Occ Heating Setpo
 alpha:a-033a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-3 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-033b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-033b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-3 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-033c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-033c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-3 Zone Occupancy Mode" .
 
 alpha:a-033e a brick:Damper_Command ;
@@ -2477,10 +2477,10 @@ alpha:a-0345 rdfs:label "Alpha Airside VAV 1-2-30 Zone Air Temp Occ Heating Setp
 alpha:a-0346 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-30 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0347 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0347 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-30 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0348 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0348 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-30 Zone Occupancy Mode" .
 
 alpha:a-034a a brick:Damper_Command ;
@@ -2509,10 +2509,10 @@ alpha:a-0351 rdfs:label "Alpha Airside VAV 1-2-31 Zone Air Temp Occ Heating Setp
 alpha:a-0352 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-31 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0353 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0353 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-31 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0354 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0354 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-31 Zone Occupancy Mode" .
 
 alpha:a-0356 a brick:Damper_Command ;
@@ -2541,10 +2541,10 @@ alpha:a-035d rdfs:label "Alpha Airside VAV 1-2-32 Zone Air Temp Occ Heating Setp
 alpha:a-035e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-32 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-035f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-035f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-32 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0360 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0360 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-32 Zone Occupancy Mode" .
 
 alpha:a-0362 a brick:Damper_Command ;
@@ -2573,10 +2573,10 @@ alpha:a-0369 rdfs:label "Alpha Airside VAV 1-2-33 Zone Air Temp Occ Heating Setp
 alpha:a-036a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-33 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-036b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-036b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-33 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-036c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-036c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-33 Zone Occupancy Mode" .
 
 alpha:a-036e a brick:Damper_Command ;
@@ -2605,10 +2605,10 @@ alpha:a-0375 rdfs:label "Alpha Airside VAV 1-2-34 Zone Air Temp Occ Heating Setp
 alpha:a-0376 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-34 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0377 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0377 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-34 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0378 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0378 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-34 Zone Occupancy Mode" .
 
 alpha:a-037a a brick:Damper_Command ;
@@ -2637,10 +2637,10 @@ alpha:a-0381 rdfs:label "Alpha Airside VAV 1-2-35 Zone Air Temp Occ Heating Setp
 alpha:a-0382 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-35 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0383 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0383 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-35 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0384 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0384 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-35 Zone Occupancy Mode" .
 
 alpha:a-0386 a brick:Damper_Command ;
@@ -2669,10 +2669,10 @@ alpha:a-038d rdfs:label "Alpha Airside VAV 1-2-36 Zone Air Temp Occ Heating Setp
 alpha:a-038e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-36 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-038f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-038f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-36 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0390 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0390 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-36 Zone Occupancy Mode" .
 
 alpha:a-0392 a brick:Damper_Command ;
@@ -2701,10 +2701,10 @@ alpha:a-0399 rdfs:label "Alpha Airside VAV 1-2-37 Zone Air Temp Occ Heating Setp
 alpha:a-039a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-37 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-039b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-039b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-37 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-039c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-039c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-37 Zone Occupancy Mode" .
 
 alpha:a-039e a brick:Damper_Command ;
@@ -2733,10 +2733,10 @@ alpha:a-03a5 rdfs:label "Alpha Airside VAV 1-2-38 Zone Air Temp Occ Heating Setp
 alpha:a-03a6 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-38 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03a7 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03a7 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-38 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03a8 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03a8 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-38 Zone Occupancy Mode" .
 
 alpha:a-03aa a brick:Damper_Command ;
@@ -2765,10 +2765,10 @@ alpha:a-03b1 rdfs:label "Alpha Airside VAV 1-2-4 Zone Air Temp Occ Heating Setpo
 alpha:a-03b2 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-4 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03b3 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03b3 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-4 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03b4 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03b4 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-4 Zone Occupancy Mode" .
 
 alpha:a-03b6 a brick:Damper_Command ;
@@ -2797,10 +2797,10 @@ alpha:a-03bd rdfs:label "Alpha Airside VAV 1-2-40 Zone Air Temp Occ Heating Setp
 alpha:a-03be a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-40 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03bf a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03bf a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-40 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03c0 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03c0 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-40 Zone Occupancy Mode" .
 
 alpha:a-03c2 a brick:Damper_Command ;
@@ -2829,10 +2829,10 @@ alpha:a-03c9 rdfs:label "Alpha Airside VAV 1-2-41 Zone Air Temp Occ Heating Setp
 alpha:a-03ca a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-41 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03cb a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03cb a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-41 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03cc a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03cc a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-41 Zone Occupancy Mode" .
 
 alpha:a-03ce a brick:Damper_Command ;
@@ -2861,10 +2861,10 @@ alpha:a-03d5 rdfs:label "Alpha Airside VAV 1-2-42 Zone Air Temp Occ Heating Setp
 alpha:a-03d6 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-42 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03d7 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03d7 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-42 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03d8 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03d8 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-42 Zone Occupancy Mode" .
 
 alpha:a-03da a brick:Damper_Command ;
@@ -2893,10 +2893,10 @@ alpha:a-03e1 rdfs:label "Alpha Airside VAV 1-2-43 Zone Air Temp Occ Heating Setp
 alpha:a-03e2 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-43 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03e3 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03e3 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-43 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03e4 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03e4 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-43 Zone Occupancy Mode" .
 
 alpha:a-03e6 a brick:Damper_Command ;
@@ -2925,10 +2925,10 @@ alpha:a-03ed rdfs:label "Alpha Airside VAV 1-2-44 Zone Air Temp Occ Heating Setp
 alpha:a-03ee a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-44 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03ef a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03ef a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-44 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03f0 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03f0 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-44 Zone Occupancy Mode" .
 
 alpha:a-03f2 a brick:Damper_Command ;
@@ -2957,10 +2957,10 @@ alpha:a-03f9 rdfs:label "Alpha Airside VAV 1-2-45 Zone Air Temp Occ Heating Setp
 alpha:a-03fa a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-45 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-03fb a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-03fb a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-45 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-03fc a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-03fc a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-45 Zone Occupancy Mode" .
 
 alpha:a-03fe a brick:Damper_Command ;
@@ -2989,10 +2989,10 @@ alpha:a-0405 rdfs:label "Alpha Airside VAV 1-2-46 Zone Air Temp Occ Heating Setp
 alpha:a-0406 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-46 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0407 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0407 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-46 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0408 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0408 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-46 Zone Occupancy Mode" .
 
 alpha:a-040a a brick:Damper_Command ;
@@ -3021,10 +3021,10 @@ alpha:a-0411 rdfs:label "Alpha Airside VAV 1-2-47 Zone Air Temp Occ Heating Setp
 alpha:a-0412 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-47 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0413 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0413 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-47 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0414 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0414 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-47 Zone Occupancy Mode" .
 
 alpha:a-0416 a brick:Damper_Command ;
@@ -3053,10 +3053,10 @@ alpha:a-041d rdfs:label "Alpha Airside VAV 1-2-48 Zone Air Temp Occ Heating Setp
 alpha:a-041e a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-48 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-041f a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-041f a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-48 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0420 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0420 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-48 Zone Occupancy Mode" .
 
 alpha:a-0422 a brick:Damper_Command ;
@@ -3085,10 +3085,10 @@ alpha:a-0429 rdfs:label "Alpha Airside VAV 1-2-5 Zone Air Temp Occ Heating Setpo
 alpha:a-042a a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-5 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-042b a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-042b a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-5 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-042c a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-042c a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-5 Zone Occupancy Mode" .
 
 alpha:a-042e a brick:Damper_Command ;
@@ -3117,10 +3117,10 @@ alpha:a-0435 rdfs:label "Alpha Airside VAV 1-2-50 Zone Air Temp Occ Heating Setp
 alpha:a-0436 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-50 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0437 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0437 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-50 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0438 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0438 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-50 Zone Occupancy Mode" .
 
 alpha:a-043a a brick:Damper_Command ;
@@ -3149,10 +3149,10 @@ alpha:a-0441 rdfs:label "Alpha Airside VAV 1-2-51 Zone Air Temp Occ Heating Setp
 alpha:a-0442 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-51 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0443 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0443 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-51 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0444 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0444 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-51 Zone Occupancy Mode" .
 
 alpha:a-0446 a brick:Damper_Command ;
@@ -3178,10 +3178,10 @@ alpha:a-044c rdfs:label "Alpha Airside VAV 1-2-52 Zone Air Temp Occ Heating Setp
 alpha:a-044d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-52 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-044e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-044e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-52 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-044f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-044f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-52 Zone Occupancy Mode" .
 
 alpha:a-0451 a brick:Damper_Command ;
@@ -3210,10 +3210,10 @@ alpha:a-0458 rdfs:label "Alpha Airside VAV 1-2-53 Zone Air Temp Occ Heating Setp
 alpha:a-0459 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-53 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-045a a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-045a a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-53 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-045b a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-045b a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-53 Zone Occupancy Mode" .
 
 alpha:a-045d a brick:Damper_Command ;
@@ -3242,10 +3242,10 @@ alpha:a-0464 rdfs:label "Alpha Airside VAV 1-2-55 Zone Air Temp Occ Heating Setp
 alpha:a-0465 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-55 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0466 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0466 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-55 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0467 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0467 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-55 Zone Occupancy Mode" .
 
 alpha:a-0469 a brick:Damper_Command ;
@@ -3274,10 +3274,10 @@ alpha:a-0470 rdfs:label "Alpha Airside VAV 1-2-56 Zone Air Temp Occ Heating Setp
 alpha:a-0471 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-56 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0472 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0472 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-56 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0473 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0473 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-56 Zone Occupancy Mode" .
 
 alpha:a-0475 a brick:Damper_Command ;
@@ -3306,10 +3306,10 @@ alpha:a-047c rdfs:label "Alpha Airside VAV 1-2-58 Zone Air Temp Occ Heating Setp
 alpha:a-047d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-58 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-047e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-047e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-58 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-047f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-047f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-58 Zone Occupancy Mode" .
 
 alpha:a-0481 a brick:Damper_Command ;
@@ -3338,10 +3338,10 @@ alpha:a-0488 rdfs:label "Alpha Airside VAV 1-2-59 Zone Air Temp Occ Heating Setp
 alpha:a-0489 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-59 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-048a a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-048a a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-59 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-048b a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-048b a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-59 Zone Occupancy Mode" .
 
 alpha:a-048d a brick:Damper_Command ;
@@ -3370,10 +3370,10 @@ alpha:a-0494 rdfs:label "Alpha Airside VAV 1-2-6 Zone Air Temp Occ Heating Setpo
 alpha:a-0495 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-6 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0496 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0496 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-6 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0497 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0497 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-6 Zone Occupancy Mode" .
 
 alpha:a-0499 a brick:Damper_Command ;
@@ -3402,10 +3402,10 @@ alpha:a-04a0 rdfs:label "Alpha Airside VAV 1-2-61 Zone Air Temp Occ Heating Setp
 alpha:a-04a1 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-61 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04a2 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04a2 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-61 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04a3 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04a3 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-61 Zone Occupancy Mode" .
 
 alpha:a-04a5 a brick:Damper_Command ;
@@ -3434,10 +3434,10 @@ alpha:a-04ac rdfs:label "Alpha Airside VAV 1-2-62 Zone Air Temp Occ Heating Setp
 alpha:a-04ad a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-62 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04ae a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04ae a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-62 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04af a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04af a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-62 Zone Occupancy Mode" .
 
 alpha:a-04b1 a brick:Damper_Command ;
@@ -3466,10 +3466,10 @@ alpha:a-04b8 rdfs:label "Alpha Airside VAV 1-2-63 Zone Air Temp Occ Heating Setp
 alpha:a-04b9 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-63 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04ba a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04ba a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-63 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04bb a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04bb a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-63 Zone Occupancy Mode" .
 
 alpha:a-04bd a brick:Damper_Command ;
@@ -3498,10 +3498,10 @@ alpha:a-04c4 rdfs:label "Alpha Airside VAV 1-2-64 Zone Air Temp Occ Heating Setp
 alpha:a-04c5 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-64 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04c6 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04c6 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-64 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04c7 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04c7 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-64 Zone Occupancy Mode" .
 
 alpha:a-04c9 a brick:Damper_Command ;
@@ -3524,10 +3524,10 @@ alpha:a-04ce rdfs:label "Alpha Airside VAV 1-2-65 Zone Air Temp Occ Heating Setp
 alpha:a-04cf a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-65 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04d0 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04d0 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-65 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04d1 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04d1 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-65 Zone Occupancy Mode" .
 
 alpha:a-04d3 a brick:Damper_Command ;
@@ -3556,10 +3556,10 @@ alpha:a-04da rdfs:label "Alpha Airside VAV 1-2-66 Zone Air Temp Occ Heating Setp
 alpha:a-04db a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-66 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04dc a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04dc a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-66 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04dd a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04dd a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-66 Zone Occupancy Mode" .
 
 alpha:a-04df a brick:Damper_Command ;
@@ -3588,10 +3588,10 @@ alpha:a-04e6 rdfs:label "Alpha Airside VAV 1-2-67 Zone Air Temp Occ Heating Setp
 alpha:a-04e7 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-67 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04e8 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04e8 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-67 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04e9 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04e9 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-67 Zone Occupancy Mode" .
 
 alpha:a-04eb a brick:Damper_Command ;
@@ -3620,10 +3620,10 @@ alpha:a-04f2 rdfs:label "Alpha Airside VAV 1-2-68 Zone Air Temp Occ Heating Setp
 alpha:a-04f3 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-68 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-04f4 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-04f4 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-68 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-04f5 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-04f5 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-68 Zone Occupancy Mode" .
 
 alpha:a-04f7 a brick:Damper_Command ;
@@ -3652,10 +3652,10 @@ alpha:a-04fe rdfs:label "Alpha Airside VAV 1-2-69 Zone Air Temp Occ Heating Setp
 alpha:a-04ff a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-69 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0500 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0500 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-69 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0501 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0501 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-69 Zone Occupancy Mode" .
 
 alpha:a-0503 a brick:Damper_Command ;
@@ -3684,10 +3684,10 @@ alpha:a-050a rdfs:label "Alpha Airside VAV 1-2-7 Zone Air Temp Occ Heating Setpo
 alpha:a-050b a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-7 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-050c a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-050c a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-7 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-050d a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-050d a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-7 Zone Occupancy Mode" .
 
 alpha:a-050f a brick:Damper_Command ;
@@ -3716,10 +3716,10 @@ alpha:a-0516 rdfs:label "Alpha Airside VAV 1-2-70 Zone Air Temp Occ Heating Setp
 alpha:a-0517 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-70 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0518 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0518 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-70 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0519 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0519 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-70 Zone Occupancy Mode" .
 
 alpha:a-051b a brick:Damper_Command ;
@@ -3748,10 +3748,10 @@ alpha:a-0522 rdfs:label "Alpha Airside VAV 1-2-71 Zone Air Temp Occ Heating Setp
 alpha:a-0523 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-71 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0524 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0524 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-71 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0525 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0525 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-71 Zone Occupancy Mode" .
 
 alpha:a-0527 a brick:Damper_Command ;
@@ -3780,10 +3780,10 @@ alpha:a-052e rdfs:label "Alpha Airside VAV 1-2-72 Zone Air Temp Occ Heating Setp
 alpha:a-052f a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-72 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0530 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0530 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-72 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0531 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0531 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-72 Zone Occupancy Mode" .
 
 alpha:a-0533 a brick:Damper_Command ;
@@ -3812,10 +3812,10 @@ alpha:a-053a rdfs:label "Alpha Airside VAV 1-2-73 Zone Air Temp Occ Heating Setp
 alpha:a-053b a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-73 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-053c a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-053c a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-73 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-053d a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-053d a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-73 Zone Occupancy Mode" .
 
 alpha:a-053f a brick:Damper_Command ;
@@ -3844,10 +3844,10 @@ alpha:a-0546 rdfs:label "Alpha Airside VAV 1-2-74 Zone Air Temp Occ Heating Setp
 alpha:a-0547 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-74 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0548 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0548 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-74 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0549 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0549 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-74 Zone Occupancy Mode" .
 
 alpha:a-054b a brick:Damper_Command ;
@@ -3870,10 +3870,10 @@ alpha:a-0550 rdfs:label "Alpha Airside VAV 1-2-75 Zone Air Temp Occ Heating Setp
 alpha:a-0551 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-75 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0552 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0552 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-75 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0553 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0553 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-75 Zone Occupancy Mode" .
 
 alpha:a-0555 a brick:Damper_Command ;
@@ -3902,10 +3902,10 @@ alpha:a-055c rdfs:label "Alpha Airside VAV 1-2-76 Zone Air Temp Occ Heating Setp
 alpha:a-055d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-76 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-055e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-055e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-76 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-055f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-055f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-76 Zone Occupancy Mode" .
 
 alpha:a-0561 a brick:Damper_Command ;
@@ -3934,10 +3934,10 @@ alpha:a-0568 rdfs:label "Alpha Airside VAV 1-2-78 Zone Air Temp Occ Heating Setp
 alpha:a-0569 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-78 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-056a a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-056a a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-78 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-056b a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-056b a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-78 Zone Occupancy Mode" .
 
 alpha:a-056d a brick:Damper_Command ;
@@ -3966,10 +3966,10 @@ alpha:a-0574 rdfs:label "Alpha Airside VAV 1-2-79 Zone Air Temp Occ Heating Setp
 alpha:a-0575 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-79 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0576 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0576 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-79 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0577 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0577 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-79 Zone Occupancy Mode" .
 
 alpha:a-0579 a brick:Damper_Command ;
@@ -3998,10 +3998,10 @@ alpha:a-0580 rdfs:label "Alpha Airside VAV 1-2-8 Zone Air Temp Occ Heating Setpo
 alpha:a-0581 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-8 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0582 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0582 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-8 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0583 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0583 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-8 Zone Occupancy Mode" .
 
 alpha:a-0585 a brick:Damper_Command ;
@@ -4030,10 +4030,10 @@ alpha:a-058c rdfs:label "Alpha Airside VAV 1-2-80 Zone Air Temp Occ Heating Setp
 alpha:a-058d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-80 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-058e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-058e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-80 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-058f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-058f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-80 Zone Occupancy Mode" .
 
 alpha:a-0591 a brick:Damper_Command ;
@@ -4056,10 +4056,10 @@ alpha:a-0596 rdfs:label "Alpha Airside VAV 1-2-81 Zone Air Temp Occ Heating Setp
 alpha:a-0597 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-81 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0598 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0598 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-81 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0599 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0599 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-81 Zone Occupancy Mode" .
 
 alpha:a-059b a brick:Damper_Command ;
@@ -4088,10 +4088,10 @@ alpha:a-05a2 rdfs:label "Alpha Airside VAV 1-2-82 Zone Air Temp Occ Heating Setp
 alpha:a-05a3 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-82 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05a4 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05a4 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-82 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05a5 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05a5 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-82 Zone Occupancy Mode" .
 
 alpha:a-05a7 a brick:Damper_Command ;
@@ -4120,10 +4120,10 @@ alpha:a-05ae rdfs:label "Alpha Airside VAV 1-2-83 Zone Air Temp Occ Heating Setp
 alpha:a-05af a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-83 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05b0 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05b0 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-83 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05b1 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05b1 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-83 Zone Occupancy Mode" .
 
 alpha:a-05b3 a brick:Damper_Command ;
@@ -4152,10 +4152,10 @@ alpha:a-05ba rdfs:label "Alpha Airside VAV 1-2-84 Zone Air Temp Occ Heating Setp
 alpha:a-05bb a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-84 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05bc a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05bc a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-84 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05bd a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05bd a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-84 Zone Occupancy Mode" .
 
 alpha:a-05bf a brick:Damper_Command ;
@@ -4184,10 +4184,10 @@ alpha:a-05c6 rdfs:label "Alpha Airside VAV 1-2-85 Zone Air Temp Occ Heating Setp
 alpha:a-05c7 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-85 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05c8 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05c8 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-85 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05c9 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05c9 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-85 Zone Occupancy Mode" .
 
 alpha:a-05cb a brick:Damper_Command ;
@@ -4216,10 +4216,10 @@ alpha:a-05d2 rdfs:label "Alpha Airside VAV 1-2-86 Zone Air Temp Occ Heating Setp
 alpha:a-05d3 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-86 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05d4 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05d4 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-86 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05d5 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05d5 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-86 Zone Occupancy Mode" .
 
 alpha:a-05d7 a brick:Damper_Command ;
@@ -4248,10 +4248,10 @@ alpha:a-05de rdfs:label "Alpha Airside VAV 1-2-87 Zone Air Temp Occ Heating Setp
 alpha:a-05df a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-87 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05e0 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05e0 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-87 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05e1 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05e1 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-87 Zone Occupancy Mode" .
 
 alpha:a-05e3 a brick:Damper_Command ;
@@ -4280,10 +4280,10 @@ alpha:a-05ea rdfs:label "Alpha Airside VAV 1-2-88 Zone Air Temp Occ Heating Setp
 alpha:a-05eb a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-88 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05ec a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05ec a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-88 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05ed a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05ed a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-88 Zone Occupancy Mode" .
 
 alpha:a-05ef a brick:Damper_Command ;
@@ -4318,10 +4318,10 @@ alpha:a-05f8 rdfs:label "Alpha Airside VAV 1-2-89 Zone Air Temp Occ Heating Setp
 alpha:a-05f9 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-89 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-05fa a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-05fa a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-89 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-05fb a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-05fb a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-89 Zone Occupancy Mode" .
 
 alpha:a-05fd a brick:Damper_Command ;
@@ -4350,10 +4350,10 @@ alpha:a-0604 rdfs:label "Alpha Airside VAV 1-2-9 Zone Air Temp Occ Heating Setpo
 alpha:a-0605 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-9 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0606 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0606 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-9 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0607 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0607 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-9 Zone Occupancy Mode" .
 
 alpha:a-0609 a brick:Damper_Command ;
@@ -4382,10 +4382,10 @@ alpha:a-0610 rdfs:label "Alpha Airside VAV 1-2-90 Zone Air Temp Occ Heating Setp
 alpha:a-0611 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-90 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0612 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0612 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-90 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0613 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0613 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-90 Zone Occupancy Mode" .
 
 alpha:a-0615 a brick:Damper_Command ;
@@ -4414,10 +4414,10 @@ alpha:a-061c rdfs:label "Alpha Airside VAV 1-2-91 Zone Air Temp Occ Heating Setp
 alpha:a-061d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-91 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-061e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-061e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-91 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-061f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-061f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-91 Zone Occupancy Mode" .
 
 alpha:a-0621 a brick:Damper_Command ;
@@ -4446,10 +4446,10 @@ alpha:a-0628 rdfs:label "Alpha Airside VAV 1-2-92 Zone Air Temp Occ Heating Setp
 alpha:a-0629 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-92 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-062a a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-062a a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-92 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-062b a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-062b a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-92 Zone Occupancy Mode" .
 
 alpha:a-062d a brick:Damper_Command ;
@@ -4478,10 +4478,10 @@ alpha:a-0634 rdfs:label "Alpha Airside VAV 1-2-93 Zone Air Temp Occ Heating Setp
 alpha:a-0635 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-93 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0636 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0636 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-93 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0637 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0637 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-93 Zone Occupancy Mode" .
 
 alpha:a-0639 a brick:Damper_Command ;
@@ -4510,10 +4510,10 @@ alpha:a-0640 rdfs:label "Alpha Airside VAV 1-2-94 Zone Air Temp Occ Heating Setp
 alpha:a-0641 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-94 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0642 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0642 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-94 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0643 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0643 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-94 Zone Occupancy Mode" .
 
 alpha:a-0645 a brick:Damper_Command ;
@@ -4542,10 +4542,10 @@ alpha:a-064c rdfs:label "Alpha Airside VAV 1-2-95 Zone Air Temp Occ Heating Setp
 alpha:a-064d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-95 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-064e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-064e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-95 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-064f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-064f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-95 Zone Occupancy Mode" .
 
 alpha:a-0651 a brick:Damper_Command ;
@@ -4574,10 +4574,10 @@ alpha:a-0658 rdfs:label "Alpha Airside VAV 1-2-96 Zone Air Temp Occ Heating Setp
 alpha:a-0659 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-96 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-065a a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-065a a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-2-96 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-065b a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-065b a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-2-96 Zone Occupancy Mode" .
 
 alpha:a-065d a brick:Damper_Command ;
@@ -4606,10 +4606,10 @@ alpha:a-0664 rdfs:label "Alpha Airside VAV 1-3-1 Zone Air Temp Occ Heating Setpo
 alpha:a-0665 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-1 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0666 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0666 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-1 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0667 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0667 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-1 Zone Occupancy Mode" .
 
 alpha:a-0669 a brick:Damper_Command ;
@@ -4638,10 +4638,10 @@ alpha:a-0670 rdfs:label "Alpha Airside VAV 1-3-10 Zone Air Temp Occ Heating Setp
 alpha:a-0671 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-10 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0672 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0672 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-10 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0673 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0673 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-10 Zone Occupancy Mode" .
 
 alpha:a-0675 a brick:Damper_Command ;
@@ -4670,10 +4670,10 @@ alpha:a-067c rdfs:label "Alpha Airside VAV 1-3-11 Zone Air Temp Occ Heating Setp
 alpha:a-067d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-11 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-067e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-067e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-11 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-067f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-067f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-11 Zone Occupancy Mode" .
 
 alpha:a-0681 a brick:Damper_Command ;
@@ -4702,10 +4702,10 @@ alpha:a-0688 rdfs:label "Alpha Airside VAV 1-3-12 Zone Air Temp Occ Heating Setp
 alpha:a-0689 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-12 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-068a a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-068a a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-12 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-068b a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-068b a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-12 Zone Occupancy Mode" .
 
 alpha:a-068d a brick:Damper_Command ;
@@ -4734,10 +4734,10 @@ alpha:a-0694 rdfs:label "Alpha Airside VAV 1-3-13 Zone Air Temp Occ Heating Setp
 alpha:a-0695 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-13 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0696 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0696 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-13 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0697 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0697 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-13 Zone Occupancy Mode" .
 
 alpha:a-0699 a brick:Damper_Command ;
@@ -4766,10 +4766,10 @@ alpha:a-06a0 rdfs:label "Alpha Airside VAV 1-3-14 Zone Air Temp Occ Heating Setp
 alpha:a-06a1 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-14 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06a2 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06a2 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-14 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06a3 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06a3 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-14 Zone Occupancy Mode" .
 
 alpha:a-06a5 a brick:Damper_Command ;
@@ -4798,10 +4798,10 @@ alpha:a-06ac rdfs:label "Alpha Airside VAV 1-3-15 Zone Air Temp Occ Heating Setp
 alpha:a-06ad a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-15 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06ae a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06ae a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-15 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06af a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06af a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-15 Zone Occupancy Mode" .
 
 alpha:a-06b1 a brick:Damper_Command ;
@@ -4830,10 +4830,10 @@ alpha:a-06b8 rdfs:label "Alpha Airside VAV 1-3-16 Zone Air Temp Occ Heating Setp
 alpha:a-06b9 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-16 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06ba a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06ba a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-16 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06bb a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06bb a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-16 Zone Occupancy Mode" .
 
 alpha:a-06bd a brick:Damper_Command ;
@@ -4862,10 +4862,10 @@ alpha:a-06c4 rdfs:label "Alpha Airside VAV 1-3-17 Zone Air Temp Occ Heating Setp
 alpha:a-06c5 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-17 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06c6 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06c6 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-17 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06c7 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06c7 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-17 Zone Occupancy Mode" .
 
 alpha:a-06c9 a brick:Damper_Command ;
@@ -4894,10 +4894,10 @@ alpha:a-06d0 rdfs:label "Alpha Airside VAV 1-3-2 Zone Air Temp Occ Heating Setpo
 alpha:a-06d1 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-2 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06d2 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06d2 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-2 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06d3 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06d3 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-2 Zone Occupancy Mode" .
 
 alpha:a-06d5 a brick:Damper_Command ;
@@ -4926,10 +4926,10 @@ alpha:a-06dc rdfs:label "Alpha Airside VAV 1-3-3 Zone Air Temp Occ Heating Setpo
 alpha:a-06dd a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-3 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06de a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06de a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-3 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06df a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06df a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-3 Zone Occupancy Mode" .
 
 alpha:a-06e1 a brick:Damper_Command ;
@@ -4958,10 +4958,10 @@ alpha:a-06e8 rdfs:label "Alpha Airside VAV 1-3-4 Zone Air Temp Occ Heating Setpo
 alpha:a-06e9 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-4 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06ea a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06ea a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-4 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06eb a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06eb a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-4 Zone Occupancy Mode" .
 
 alpha:a-06ed a brick:Damper_Command ;
@@ -4990,10 +4990,10 @@ alpha:a-06f4 rdfs:label "Alpha Airside VAV 1-3-5 Zone Air Temp Occ Heating Setpo
 alpha:a-06f5 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-5 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-06f6 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-06f6 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-5 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-06f7 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-06f7 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-5 Zone Occupancy Mode" .
 
 alpha:a-06f9 a brick:Damper_Command ;
@@ -5022,10 +5022,10 @@ alpha:a-0700 rdfs:label "Alpha Airside VAV 1-3-6 Zone Air Temp Occ Heating Setpo
 alpha:a-0701 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-6 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0702 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0702 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-6 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0703 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0703 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-6 Zone Occupancy Mode" .
 
 alpha:a-0705 a brick:Damper_Command ;
@@ -5054,10 +5054,10 @@ alpha:a-070c rdfs:label "Alpha Airside VAV 1-3-7 Zone Air Temp Occ Heating Setpo
 alpha:a-070d a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-7 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-070e a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-070e a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-7 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-070f a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-070f a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-7 Zone Occupancy Mode" .
 
 alpha:a-0711 a brick:Damper_Command ;
@@ -5086,10 +5086,10 @@ alpha:a-0718 rdfs:label "Alpha Airside VAV 1-3-8 Zone Air Temp Occ Heating Setpo
 alpha:a-0719 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-8 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-071a a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-071a a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-8 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-071b a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-071b a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-8 Zone Occupancy Mode" .
 
 alpha:a-071d a brick:Damper_Command ;
@@ -5118,10 +5118,10 @@ alpha:a-0724 rdfs:label "Alpha Airside VAV 1-3-9 Zone Air Temp Occ Heating Setpo
 alpha:a-0725 a brick:Unoccupied_Cooling_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-9 Zone Air Temp Unocc Cooling Setpoint" .
 
-alpha:a-0726 a brick:Unoccupied_Zone_Air_Temperature_Setpoint ;
+alpha:a-0726 a brick:Unoccupied_Heating_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Alpha Airside VAV 1-3-9 Zone Air Temp Unocc Heating Setpoint" .
 
-alpha:a-0727 a brick:Zone_Occupied_Load_Shed_Command ;
+alpha:a-0727 a brick:Occupancy_Command ;
     rdfs:label "Alpha Airside VAV 1-3-9 Zone Occupancy Mode" .
 
 alpha:a-0729 a brick:Sensor ;
