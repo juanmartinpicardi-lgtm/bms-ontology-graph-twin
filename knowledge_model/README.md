@@ -16,3 +16,12 @@ template references an unknown class/template/relation or has a bad regex, an ab
 word outside the vocabulary or can never be produced by the tokenizer, or a worked example parses differently.
 
 Tuning rule: change these files based on the Alpha dev set only, never Bravo.
+
+## Modelling decisions
+
+- **Containment is `hasPart`, not `feeds`** (decided 2026-11-08). A plant or loop contains its chillers,
+  boilers, pumps and heat exchangers, and an AHU contains its fans: the graph records these as `hasPart`
+  only. `feeds` is kept for a medium actually flowing to other equipment (AHU → VAV air, hot water plant
+  → reheat VAV). Haystack's refs (`chilledWaterRef`, `hotWaterRef`, `airRef`) also express containment,
+  so the ground truth converted from them has `feeds` links we deliberately don't produce: on Alpha 23 of
+  270 (plant → its members 17, AHU → its own fans 6), which caps feeds recall there at 91.5%.
