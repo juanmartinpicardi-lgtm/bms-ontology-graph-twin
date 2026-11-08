@@ -2,14 +2,16 @@
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-bravo:b-0001 rdfs:label "Bravo BCU-1" ;
+bravo:b-0001 a brick:VAV ;
+    rdfs:label "Bravo BCU-1" ;
     brick:hasPoint bravo:b-0002,
         bravo:b-0003,
         bravo:b-0004,
         bravo:b-0005,
         bravo:b-0006 .
 
-bravo:b-0007 rdfs:label "Bravo BCU-2" ;
+bravo:b-0007 a brick:VAV ;
+    rdfs:label "Bravo BCU-2" ;
     brick:hasPoint bravo:b-0008,
         bravo:b-0009,
         bravo:b-000a,
@@ -297,7 +299,8 @@ bravo:b-00a8 a brick:Hot_Water_Pump ;
     brick:hasPoint bravo:b-00a9,
         bravo:b-00aa .
 
-bravo:b-00ac rdfs:label "Bravo RTU-1" ;
+bravo:b-00ac a brick:RTU ;
+    rdfs:label "Bravo RTU-1" ;
     brick:feeds bravo:b-013d,
         bravo:b-0144,
         bravo:b-014c,
@@ -352,7 +355,8 @@ bravo:b-00ac rdfs:label "Bravo RTU-1" ;
         bravo:b-00cc,
         bravo:b-00cd .
 
-bravo:b-00ce rdfs:label "Bravo RTU-2" ;
+bravo:b-00ce a brick:RTU ;
+    rdfs:label "Bravo RTU-2" ;
     brick:feeds bravo:b-01e1,
         bravo:b-01e9,
         bravo:b-01f1,
@@ -439,7 +443,8 @@ bravo:b-00ce rdfs:label "Bravo RTU-2" ;
         bravo:b-00f0,
         bravo:b-00f1 .
 
-bravo:b-00f2 rdfs:label "Bravo RTU-3" ;
+bravo:b-00f2 a brick:RTU ;
+    rdfs:label "Bravo RTU-3" ;
     brick:feeds bravo:b-0371,
         bravo:b-0379,
         bravo:b-0381,
@@ -501,7 +506,8 @@ bravo:b-00f2 rdfs:label "Bravo RTU-3" ;
         bravo:b-0111,
         bravo:b-0112 .
 
-bravo:b-0113 rdfs:label "Bravo RTU-4" ;
+bravo:b-0113 a brick:RTU ;
+    rdfs:label "Bravo RTU-4" ;
     brick:hasPoint bravo:b-0114,
         bravo:b-0115,
         bravo:b-0116,
@@ -853,7 +859,8 @@ bravo:b-008d rdfs:label "Bravo EF-9 Exhaust Fan Enable" .
 bravo:b-008e a brick:Sensor ;
     rdfs:label "Bravo EF-9 Exhaust Fan Status" .
 
-bravo:b-008f rdfs:label "Bravo FCU-1" ;
+bravo:b-008f a brick:FCU ;
+    rdfs:label "Bravo FCU-1" ;
     brick:hasPoint bravo:b-0090,
         bravo:b-0091,
         bravo:b-0092,
@@ -870,7 +877,8 @@ bravo:b-0092 a brick:Zone_Air_Temperature_Sensor ;
 bravo:b-0093 a brick:Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo FCU-1 Zone Temperature Setpoint" .
 
-bravo:b-0094 rdfs:label "Bravo FCU-2" ;
+bravo:b-0094 a brick:FCU ;
+    rdfs:label "Bravo FCU-2" ;
     brick:hasPoint bravo:b-0095,
         bravo:b-0096,
         bravo:b-0097,
@@ -887,7 +895,8 @@ bravo:b-0097 a brick:Zone_Air_Temperature_Sensor ;
 bravo:b-0098 a brick:Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo FCU-2 Zone Temperature Setpoint" .
 
-bravo:b-0099 rdfs:label "Bravo FCU-3" ;
+bravo:b-0099 a brick:FCU ;
+    rdfs:label "Bravo FCU-3" ;
     brick:hasPoint bravo:b-009a,
         bravo:b-009b,
         bravo:b-009c,
@@ -904,7 +913,8 @@ bravo:b-009c a brick:Zone_Air_Temperature_Sensor ;
 bravo:b-009d a brick:Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo FCU-3 Zone Temperature Setpoint" .
 
-bravo:b-009e rdfs:label "Bravo FCU-4" ;
+bravo:b-009e a brick:FCU ;
+    rdfs:label "Bravo FCU-4" ;
     brick:hasPoint bravo:b-009f,
         bravo:b-00a0,
         bravo:b-00a1,
@@ -934,7 +944,8 @@ bravo:b-00aa a brick:Speed_Sensor ;
 bravo:b-00ad a brick:Sensor ;
     rdfs:label "Bravo RTU-1 AHU Operation Mode" .
 
-bravo:b-00ae rdfs:label "Bravo RTU-1 Cooling Valve Output" .
+bravo:b-00ae a brick:Valve_Command ;
+    rdfs:label "Bravo RTU-1 Cooling Valve Output" .
 
 bravo:b-00af a brick:Sensor ;
     rdfs:label "Bravo RTU-1 Exhaust Air Damper Output" .
@@ -1033,7 +1044,8 @@ bravo:b-00cf a brick:Sensor ;
 bravo:b-00d0 a brick:Outside_Air_Flow_Setpoint ;
     rdfs:label "Bravo RTU-2 Calculated Outdoor Air Flow Setpoint" .
 
-bravo:b-00d1 rdfs:label "Bravo RTU-2 Cooling Valve Output" .
+bravo:b-00d1 a brick:Valve_Command ;
+    rdfs:label "Bravo RTU-2 Cooling Valve Output" .
 
 bravo:b-00d2 a brick:Sensor ;
     rdfs:label "Bravo RTU-2 Exhaust Air Damper Output" .
@@ -1132,7 +1144,8 @@ bravo:b-00f1 a brick:Air_Flow_Sensor ;
 bravo:b-00f3 a brick:Sensor ;
     rdfs:label "Bravo RTU-3 AHU Operation Mode" .
 
-bravo:b-00f4 rdfs:label "Bravo RTU-3 Cooling Valve Output" .
+bravo:b-00f4 a brick:Valve_Command ;
+    rdfs:label "Bravo RTU-3 Cooling Valve Output" .
 
 bravo:b-00f5 a brick:Sensor ;
     rdfs:label "Bravo RTU-3 Exhaust Air Damper Output" .
@@ -1225,7 +1238,8 @@ bravo:b-0112 a brick:Air_Flow_Sensor ;
 bravo:b-0114 a brick:Sensor ;
     rdfs:label "Bravo RTU-4 AHU Operation Mode" .
 
-bravo:b-0115 rdfs:label "Bravo RTU-4 Cooling Valve Output" .
+bravo:b-0115 a brick:Valve_Command ;
+    rdfs:label "Bravo RTU-4 Cooling Valve Output" .
 
 bravo:b-0116 a brick:Sensor ;
     rdfs:label "Bravo RTU-4 Exhaust Air Damper Output" .
@@ -1336,7 +1350,8 @@ bravo:b-013f a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0140 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-1 Discharge Air Flow Setpoint" .
 
-bravo:b-0141 rdfs:label "Bravo VAV 1-1 Heating Valve Output" .
+bravo:b-0141 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-1 Heating Valve Output" .
 
 bravo:b-0142 a brick:Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-1 Zone Air Temp Setpoint" .
@@ -1353,7 +1368,8 @@ bravo:b-0146 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0147 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-10 Discharge Air Flow Setpoint" .
 
-bravo:b-0148 rdfs:label "Bravo VAV 1-10 Heating Valve Output" .
+bravo:b-0148 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-10 Heating Valve Output" .
 
 bravo:b-0149 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-10 Supply Air Temperature" .
@@ -1373,7 +1389,8 @@ bravo:b-014e a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-014f a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-11 Discharge Air Flow Setpoint" .
 
-bravo:b-0150 rdfs:label "Bravo VAV 1-11 Heating Valve Output" .
+bravo:b-0150 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-11 Heating Valve Output" .
 
 bravo:b-0151 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-11 Supply Air Temperature" .
@@ -1393,7 +1410,8 @@ bravo:b-0156 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0157 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-12 Discharge Air Flow Setpoint" .
 
-bravo:b-0158 rdfs:label "Bravo VAV 1-12 Heating Valve Output" .
+bravo:b-0158 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-12 Heating Valve Output" .
 
 bravo:b-0159 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-12 Supply Air Temperature" .
@@ -1413,7 +1431,8 @@ bravo:b-015e a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-015f a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-13 Discharge Air Flow Setpoint" .
 
-bravo:b-0160 rdfs:label "Bravo VAV 1-13 Heating Valve" .
+bravo:b-0160 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-13 Heating Valve" .
 
 bravo:b-0161 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-13 Supply Air Temperature" .
@@ -1433,7 +1452,8 @@ bravo:b-0166 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0167 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-14 Discharge Air Flow Setpoint" .
 
-bravo:b-0168 rdfs:label "Bravo VAV 1-14 Heating Valve Output" .
+bravo:b-0168 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-14 Heating Valve Output" .
 
 bravo:b-0169 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-14 Supply Air Temperature" .
@@ -1453,7 +1473,8 @@ bravo:b-016e a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-016f a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-15 Discharge Air Flow Setpoint" .
 
-bravo:b-0170 rdfs:label "Bravo VAV 1-15 Heating Valve Output" .
+bravo:b-0170 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-15 Heating Valve Output" .
 
 bravo:b-0171 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-15 Supply Air Temperature" .
@@ -1473,7 +1494,8 @@ bravo:b-0176 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0177 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-16 Discharge Air Flow Setpoint" .
 
-bravo:b-0178 rdfs:label "Bravo VAV 1-16 Heating Valve Output" .
+bravo:b-0178 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-16 Heating Valve Output" .
 
 bravo:b-0179 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-16 Supply Air Temperature" .
@@ -1493,7 +1515,8 @@ bravo:b-017e a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-017f a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-17 Discharge Air Flow Setpoint" .
 
-bravo:b-0180 rdfs:label "Bravo VAV 1-17 Heating Valve Output" .
+bravo:b-0180 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-17 Heating Valve Output" .
 
 bravo:b-0181 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-17 Supply Air Temperature" .
@@ -1513,7 +1536,8 @@ bravo:b-0186 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0187 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-18 Discharge Air Flow Setpoint" .
 
-bravo:b-0188 rdfs:label "Bravo VAV 1-18 Heating Valve Output" .
+bravo:b-0188 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-18 Heating Valve Output" .
 
 bravo:b-0189 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-18 Supply Air Temperature" .
@@ -1533,7 +1557,8 @@ bravo:b-018e a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-018f a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-19 Discharge Air Flow Setpoint" .
 
-bravo:b-0190 rdfs:label "Bravo VAV 1-19 Heating Valve Output" .
+bravo:b-0190 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-19 Heating Valve Output" .
 
 bravo:b-0191 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-19 Supply Air Temperature" .
@@ -1556,7 +1581,8 @@ bravo:b-0197 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0198 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-2 Discharge Air Flow Setpoint" .
 
-bravo:b-0199 rdfs:label "Bravo VAV 1-2 Heating Valve Output" .
+bravo:b-0199 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-2 Heating Valve Output" .
 
 bravo:b-019a a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-2 Supply Air Temperature" .
@@ -1576,7 +1602,8 @@ bravo:b-019f a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01a0 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-20 Discharge Air Flow Setpoint" .
 
-bravo:b-01a1 rdfs:label "Bravo VAV 1-20 Heating Valve Output" .
+bravo:b-01a1 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-20 Heating Valve Output" .
 
 bravo:b-01a2 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-20 Supply Air Temperature" .
@@ -1596,7 +1623,8 @@ bravo:b-01a7 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01a8 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-3 Discharge Air Flow Setpoint" .
 
-bravo:b-01a9 rdfs:label "Bravo VAV 1-3 Heating Valve Output" .
+bravo:b-01a9 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-3 Heating Valve Output" .
 
 bravo:b-01aa a brick:Discharge_Air_Humidity_Sensor ;
     rdfs:label "Bravo VAV 1-3 Supply Air Humidity" .
@@ -1622,7 +1650,8 @@ bravo:b-01b1 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01b2 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-4 Discharge Air Flow Setpoint" .
 
-bravo:b-01b3 rdfs:label "Bravo VAV 1-4 Heating Valve Output" .
+bravo:b-01b3 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-4 Heating Valve Output" .
 
 bravo:b-01b4 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-4 Supply Air Temperature" .
@@ -1642,7 +1671,8 @@ bravo:b-01b9 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01ba a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-5 Discharge Air Flow Setpoint" .
 
-bravo:b-01bb rdfs:label "Bravo VAV 1-5 Heating Valve Output" .
+bravo:b-01bb a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-5 Heating Valve Output" .
 
 bravo:b-01bc a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-5 Supply Air Temperature" .
@@ -1662,7 +1692,8 @@ bravo:b-01c1 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01c2 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-6 Discharge Air Flow Setpoint" .
 
-bravo:b-01c3 rdfs:label "Bravo VAV 1-6 Heating Valve Output" .
+bravo:b-01c3 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-6 Heating Valve Output" .
 
 bravo:b-01c4 a brick:Discharge_Air_Humidity_Sensor ;
     rdfs:label "Bravo VAV 1-6 Supply Air Humidity" .
@@ -1688,7 +1719,8 @@ bravo:b-01cb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01cc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-7 Discharge Air Flow Setpoint" .
 
-bravo:b-01cd rdfs:label "Bravo VAV 1-7 Heating Valve Output" .
+bravo:b-01cd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-7 Heating Valve Output" .
 
 bravo:b-01ce a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-7 Supply Air Temperature" .
@@ -1708,7 +1740,8 @@ bravo:b-01d3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01d4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-8 Discharge Air Flow Setpoint" .
 
-bravo:b-01d5 rdfs:label "Bravo VAV 1-8 Heating Valve Output" .
+bravo:b-01d5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-8 Heating Valve Output" .
 
 bravo:b-01d6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-8 Supply Air Temperature" .
@@ -1728,7 +1761,8 @@ bravo:b-01db a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01dc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 1-9 Discharge Air Flow Setpoint" .
 
-bravo:b-01dd rdfs:label "Bravo VAV 1-9 Heating Valve Output" .
+bravo:b-01dd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 1-9 Heating Valve Output" .
 
 bravo:b-01de a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-9 Supply Air Temperature" .
@@ -1748,7 +1782,8 @@ bravo:b-01e3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01e4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-1 Discharge Air Flow Setpoint" .
 
-bravo:b-01e5 rdfs:label "Bravo VAV 2-1 Heating Valve Output" .
+bravo:b-01e5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-1 Heating Valve Output" .
 
 bravo:b-01e6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-1 Supply Air Temperature" .
@@ -1768,7 +1803,8 @@ bravo:b-01eb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01ec a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-10 Discharge Air Flow Setpoint" .
 
-bravo:b-01ed rdfs:label "Bravo VAV 2-10 Heating Valve Output" .
+bravo:b-01ed a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-10 Heating Valve Output" .
 
 bravo:b-01ee a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-10 Supply Air Temperature" .
@@ -1788,7 +1824,8 @@ bravo:b-01f3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01f4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-11 Discharge Air Flow Setpoint" .
 
-bravo:b-01f5 rdfs:label "Bravo VAV 2-11 Heating Valve Output" .
+bravo:b-01f5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-11 Heating Valve Output" .
 
 bravo:b-01f6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-11 Supply Air Temperature" .
@@ -1808,7 +1845,8 @@ bravo:b-01fb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-01fc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-12 Discharge Air Flow Setpoint" .
 
-bravo:b-01fd rdfs:label "Bravo VAV 2-12 Heating Valve Output" .
+bravo:b-01fd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-12 Heating Valve Output" .
 
 bravo:b-01fe a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-12 Supply Air Temperature" .
@@ -1828,7 +1866,8 @@ bravo:b-0203 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0204 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-13 Discharge Air Flow Setpoint" .
 
-bravo:b-0205 rdfs:label "Bravo VAV 2-13 Heating Valve Output" .
+bravo:b-0205 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-13 Heating Valve Output" .
 
 bravo:b-0206 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-13 Supply Air Temperature" .
@@ -1848,7 +1887,8 @@ bravo:b-020b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-020c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-14 Discharge Air Flow Setpoint" .
 
-bravo:b-020d rdfs:label "Bravo VAV 2-14 Heating Valve Output" .
+bravo:b-020d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-14 Heating Valve Output" .
 
 bravo:b-020e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-14 Supply Air Temperature" .
@@ -1868,7 +1908,8 @@ bravo:b-0213 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0214 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-15 Discharge Air Flow Setpoint" .
 
-bravo:b-0215 rdfs:label "Bravo VAV 2-15 Heating Valve Output" .
+bravo:b-0215 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-15 Heating Valve Output" .
 
 bravo:b-0216 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-15 Supply Air Temperature" .
@@ -1888,7 +1929,8 @@ bravo:b-021b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-021c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-16 Discharge Air Flow Setpoint" .
 
-bravo:b-021d rdfs:label "Bravo VAV 2-16 Heating Valve Output" .
+bravo:b-021d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-16 Heating Valve Output" .
 
 bravo:b-021e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-16 Supply Air Temperature" .
@@ -1908,7 +1950,8 @@ bravo:b-0223 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0224 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-17 Discharge Air Flow Setpoint" .
 
-bravo:b-0225 rdfs:label "Bravo VAV 2-17 Heating Valve Output" .
+bravo:b-0225 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-17 Heating Valve Output" .
 
 bravo:b-0226 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-17 Supply Air Temperature" .
@@ -1928,7 +1971,8 @@ bravo:b-022b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-022c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-18 Discharge Air Flow Setpoint" .
 
-bravo:b-022d rdfs:label "Bravo VAV 2-18 Heating Valve Output" .
+bravo:b-022d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-18 Heating Valve Output" .
 
 bravo:b-022e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-18 Supply Air Temperature" .
@@ -1948,7 +1992,8 @@ bravo:b-0233 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0234 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-19 Discharge Air Flow Setpoint" .
 
-bravo:b-0235 rdfs:label "Bravo VAV 2-19 Heating Valve Output" .
+bravo:b-0235 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-19 Heating Valve Output" .
 
 bravo:b-0236 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-19 Supply Air Temperature" .
@@ -1968,7 +2013,8 @@ bravo:b-023b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-023c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-2 Discharge Air Flow Setpoint" .
 
-bravo:b-023d rdfs:label "Bravo VAV 2-2 Heating Valve Output" .
+bravo:b-023d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-2 Heating Valve Output" .
 
 bravo:b-023e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-2 Supply Air Temperature" .
@@ -1988,7 +2034,8 @@ bravo:b-0243 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0244 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-20 Discharge Air Flow Setpoint" .
 
-bravo:b-0245 rdfs:label "Bravo VAV 2-20 Heating Valve Output" .
+bravo:b-0245 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-20 Heating Valve Output" .
 
 bravo:b-0246 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-20 Supply Air Temperature" .
@@ -2008,7 +2055,8 @@ bravo:b-024b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-024c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-21 Discharge Air Flow Setpoint" .
 
-bravo:b-024d rdfs:label "Bravo VAV 2-21 Heating Valve Output" .
+bravo:b-024d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-21 Heating Valve Output" .
 
 bravo:b-024e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-21 Supply Air Temperature" .
@@ -2028,7 +2076,8 @@ bravo:b-0253 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0254 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-22 Discharge Air Flow Setpoint" .
 
-bravo:b-0255 rdfs:label "Bravo VAV 2-22 Heating Valve Output" .
+bravo:b-0255 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-22 Heating Valve Output" .
 
 bravo:b-0256 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-22 Supply Air Temperature" .
@@ -2048,7 +2097,8 @@ bravo:b-025b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-025c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-23 Discharge Air Flow Setpoint" .
 
-bravo:b-025d rdfs:label "Bravo VAV 2-23 Heating Valve Output" .
+bravo:b-025d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-23 Heating Valve Output" .
 
 bravo:b-025e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-23 Supply Air Temperature" .
@@ -2068,7 +2118,8 @@ bravo:b-0263 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0264 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-24 Discharge Air Flow Setpoint" .
 
-bravo:b-0265 rdfs:label "Bravo VAV 2-24 Heating Valve" .
+bravo:b-0265 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-24 Heating Valve" .
 
 bravo:b-0266 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-24 Supply Air Temperature" .
@@ -2088,7 +2139,8 @@ bravo:b-026b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-026c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-25 Discharge Air Flow Setpoint" .
 
-bravo:b-026d rdfs:label "Bravo VAV 2-25 Heating Valve Output" .
+bravo:b-026d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-25 Heating Valve Output" .
 
 bravo:b-026e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-25 Supply Air Temperature" .
@@ -2108,7 +2160,8 @@ bravo:b-0273 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0274 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-26 Discharge Air Flow Setpoint" .
 
-bravo:b-0275 rdfs:label "Bravo VAV 2-26 Heating Valve Output" .
+bravo:b-0275 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-26 Heating Valve Output" .
 
 bravo:b-0276 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-26 Supply Air Temperature" .
@@ -2128,7 +2181,8 @@ bravo:b-027b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-027c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-27 Discharge Air Flow Setpoint" .
 
-bravo:b-027d rdfs:label "Bravo VAV 2-27 Heating Valve Output" .
+bravo:b-027d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-27 Heating Valve Output" .
 
 bravo:b-027e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-27 Supply Air Temperature" .
@@ -2148,7 +2202,8 @@ bravo:b-0283 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0284 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-28 Discharge Air Flow Setpoint" .
 
-bravo:b-0285 rdfs:label "Bravo VAV 2-28 Heating Valve Output" .
+bravo:b-0285 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-28 Heating Valve Output" .
 
 bravo:b-0286 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-28 Supply Air Temperature" .
@@ -2168,7 +2223,8 @@ bravo:b-028b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-028c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-29 Discharge Air Flow Setpoint" .
 
-bravo:b-028d rdfs:label "Bravo VAV 2-29 Heating Valve Output" .
+bravo:b-028d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-29 Heating Valve Output" .
 
 bravo:b-028e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-29 Supply Air Temperature" .
@@ -2188,7 +2244,8 @@ bravo:b-0293 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0294 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-3 Discharge Air Flow Setpoint" .
 
-bravo:b-0295 rdfs:label "Bravo VAV 2-3 Heating Valve Output" .
+bravo:b-0295 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-3 Heating Valve Output" .
 
 bravo:b-0296 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-3 Supply Air Temperature" .
@@ -2208,7 +2265,8 @@ bravo:b-029b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-029c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-30 Discharge Air Flow Setpoint" .
 
-bravo:b-029d rdfs:label "Bravo VAV 2-30 Heating Valve Output" .
+bravo:b-029d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-30 Heating Valve Output" .
 
 bravo:b-029e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-30 Supply Air Temperature" .
@@ -2228,7 +2286,8 @@ bravo:b-02a3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02a4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-31 Discharge Air Flow Setpoint" .
 
-bravo:b-02a5 rdfs:label "Bravo VAV 2-31 Heating Valve Output" .
+bravo:b-02a5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-31 Heating Valve Output" .
 
 bravo:b-02a6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-31 Supply Air Temperature" .
@@ -2248,7 +2307,8 @@ bravo:b-02ab a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02ac a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-32 Discharge Air Flow Setpoint" .
 
-bravo:b-02ad rdfs:label "Bravo VAV 2-32 Heating Valve Output" .
+bravo:b-02ad a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-32 Heating Valve Output" .
 
 bravo:b-02ae a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-32 Supply Air Temperature" .
@@ -2268,7 +2328,8 @@ bravo:b-02b3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02b4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-33 Discharge Air Flow Setpoint" .
 
-bravo:b-02b5 rdfs:label "Bravo VAV 2-33 Heating Valve Output" .
+bravo:b-02b5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-33 Heating Valve Output" .
 
 bravo:b-02b6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-33 Supply Air Temperature" .
@@ -2288,7 +2349,8 @@ bravo:b-02bb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02bc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-34 Discharge Air Flow Setpoint" .
 
-bravo:b-02bd rdfs:label "Bravo VAV 2-34 Heating Valve Output" .
+bravo:b-02bd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-34 Heating Valve Output" .
 
 bravo:b-02be a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-34 Supply Air Temperature" .
@@ -2308,7 +2370,8 @@ bravo:b-02c3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02c4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-35 Discharge Air Flow Setpoint" .
 
-bravo:b-02c5 rdfs:label "Bravo VAV 2-35 Heating Valve Output" .
+bravo:b-02c5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-35 Heating Valve Output" .
 
 bravo:b-02c6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-35 Supply Air Temperature" .
@@ -2328,7 +2391,8 @@ bravo:b-02cb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02cc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-36 Discharge Air Flow Setpoint" .
 
-bravo:b-02cd rdfs:label "Bravo VAV 2-36 Heating Valve Output" .
+bravo:b-02cd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-36 Heating Valve Output" .
 
 bravo:b-02ce a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-36 Supply Air Temperature" .
@@ -2348,7 +2412,8 @@ bravo:b-02d3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02d4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-37 Discharge Air Flow Setpoint" .
 
-bravo:b-02d5 rdfs:label "Bravo VAV 2-37 Heating Valve Output" .
+bravo:b-02d5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-37 Heating Valve Output" .
 
 bravo:b-02d6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-37 Supply Air Temperature" .
@@ -2368,7 +2433,8 @@ bravo:b-02db a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02dc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-38 Discharge Air Flow Setpoint" .
 
-bravo:b-02dd rdfs:label "Bravo VAV 2-38 Heating Valve Output" .
+bravo:b-02dd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-38 Heating Valve Output" .
 
 bravo:b-02de a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-38 Supply Air Temperature" .
@@ -2388,7 +2454,8 @@ bravo:b-02e3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02e4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-39 Discharge Air Flow Setpoint" .
 
-bravo:b-02e5 rdfs:label "Bravo VAV 2-39 Heating Valve Output" .
+bravo:b-02e5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-39 Heating Valve Output" .
 
 bravo:b-02e6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-39 Supply Air Temperature" .
@@ -2408,7 +2475,8 @@ bravo:b-02eb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02ec a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-4 Discharge Air Flow Setpoint" .
 
-bravo:b-02ed rdfs:label "Bravo VAV 2-4 Heating Valve Output" .
+bravo:b-02ed a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-4 Heating Valve Output" .
 
 bravo:b-02ee a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-4 Supply Air Temperature" .
@@ -2428,7 +2496,8 @@ bravo:b-02f3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02f4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-40 Discharge Air Flow Setpoint" .
 
-bravo:b-02f5 rdfs:label "Bravo VAV 2-40 Heating Valve Output" .
+bravo:b-02f5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-40 Heating Valve Output" .
 
 bravo:b-02f6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-40 Supply Air Temperature" .
@@ -2448,7 +2517,8 @@ bravo:b-02fb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-02fc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-41 Discharge Air Flow Setpoint" .
 
-bravo:b-02fd rdfs:label "Bravo VAV 2-41 Heating Valve Output" .
+bravo:b-02fd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-41 Heating Valve Output" .
 
 bravo:b-02fe a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-41 Supply Air Temperature" .
@@ -2468,7 +2538,8 @@ bravo:b-0303 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0304 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-42 Discharge Air Flow Setpoint" .
 
-bravo:b-0305 rdfs:label "Bravo VAV 2-42 Heating Valve Output" .
+bravo:b-0305 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-42 Heating Valve Output" .
 
 bravo:b-0306 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-42 Supply Air Temperature" .
@@ -2488,7 +2559,8 @@ bravo:b-030b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-030c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-43 Discharge Air Flow Setpoint" .
 
-bravo:b-030d rdfs:label "Bravo VAV 2-43 Heating Valve Output" .
+bravo:b-030d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-43 Heating Valve Output" .
 
 bravo:b-030e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-43 Supply Air Temperature" .
@@ -2508,7 +2580,8 @@ bravo:b-0313 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0314 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-44 Discharge Air Flow Setpoint" .
 
-bravo:b-0315 rdfs:label "Bravo VAV 2-44 Heating Valve Output" .
+bravo:b-0315 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-44 Heating Valve Output" .
 
 bravo:b-0316 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-44 Supply Air Temperature" .
@@ -2528,7 +2601,8 @@ bravo:b-031b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-031c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-45 Discharge Air Flow Setpoint" .
 
-bravo:b-031d rdfs:label "Bravo VAV 2-45 Heating Valve Output" .
+bravo:b-031d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-45 Heating Valve Output" .
 
 bravo:b-031e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-45 Supply Air Temperature" .
@@ -2548,7 +2622,8 @@ bravo:b-0323 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0324 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-46 Discharge Air Flow Setpoint" .
 
-bravo:b-0325 rdfs:label "Bravo VAV 2-46 Heating Valve Output" .
+bravo:b-0325 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-46 Heating Valve Output" .
 
 bravo:b-0326 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-46 Supply Air Temperature" .
@@ -2568,7 +2643,8 @@ bravo:b-032b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-032c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-47 Discharge Air Flow Setpoint" .
 
-bravo:b-032d rdfs:label "Bravo VAV 2-47 Heating Valve Output" .
+bravo:b-032d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-47 Heating Valve Output" .
 
 bravo:b-032e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-47 Supply Air Temperature" .
@@ -2588,7 +2664,8 @@ bravo:b-0333 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0334 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-48 Discharge Air Flow Setpoint" .
 
-bravo:b-0335 rdfs:label "Bravo VAV 2-48 Heating Valve Output" .
+bravo:b-0335 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-48 Heating Valve Output" .
 
 bravo:b-0336 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-48 Supply Air Temperature" .
@@ -2608,7 +2685,8 @@ bravo:b-033b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-033c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-49 Discharge Air Flow Setpoint" .
 
-bravo:b-033d rdfs:label "Bravo VAV 2-49 Heating Valve Output" .
+bravo:b-033d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-49 Heating Valve Output" .
 
 bravo:b-033e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-49 Supply Air Temperature" .
@@ -2628,7 +2706,8 @@ bravo:b-0343 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0344 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-5 Discharge Air Flow Setpoint" .
 
-bravo:b-0345 rdfs:label "Bravo VAV 2-5 Heating Valve Output" .
+bravo:b-0345 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-5 Heating Valve Output" .
 
 bravo:b-0346 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-5 Supply Air Temperature" .
@@ -2648,7 +2727,8 @@ bravo:b-034b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-034c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-50 Discharge Air Flow Setpoint" .
 
-bravo:b-034d rdfs:label "Bravo VAV 2-50 Heating Valve Output" .
+bravo:b-034d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-50 Heating Valve Output" .
 
 bravo:b-034e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-50 Supply Air Temperature" .
@@ -2668,7 +2748,8 @@ bravo:b-0353 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0354 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-6 Discharge Air Flow Setpoint" .
 
-bravo:b-0355 rdfs:label "Bravo VAV 2-6 Heating Valve Output" .
+bravo:b-0355 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-6 Heating Valve Output" .
 
 bravo:b-0356 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-6 Supply Air Temperature" .
@@ -2688,7 +2769,8 @@ bravo:b-035b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-035c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-7 Discharge Air Flow Setpoint" .
 
-bravo:b-035d rdfs:label "Bravo VAV 2-7 Heating Valve Output" .
+bravo:b-035d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-7 Heating Valve Output" .
 
 bravo:b-035e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-7 Supply Air Temperature" .
@@ -2708,7 +2790,8 @@ bravo:b-0363 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0364 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-8 Discharge Air Flow Setpoint" .
 
-bravo:b-0365 rdfs:label "Bravo VAV 2-8 Heating Valve Output" .
+bravo:b-0365 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-8 Heating Valve Output" .
 
 bravo:b-0366 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-8 Supply Air Temperature" .
@@ -2728,7 +2811,8 @@ bravo:b-036b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-036c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 2-9 Discharge Air Flow Setpoint" .
 
-bravo:b-036d rdfs:label "Bravo VAV 2-9 Heating Valve Output" .
+bravo:b-036d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 2-9 Heating Valve Output" .
 
 bravo:b-036e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-9 Supply Air Temperature" .
@@ -2748,7 +2832,8 @@ bravo:b-0373 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0374 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-1 Discharge Air Flow Setpoint" .
 
-bravo:b-0375 rdfs:label "Bravo VAV 3-1 Heating Valve Output" .
+bravo:b-0375 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-1 Heating Valve Output" .
 
 bravo:b-0376 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-1 Supply Air Temperature" .
@@ -2768,7 +2853,8 @@ bravo:b-037b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-037c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-10 Discharge Air Flow Setpoint" .
 
-bravo:b-037d rdfs:label "Bravo VAV 3-10 Heating Valve Output" .
+bravo:b-037d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-10 Heating Valve Output" .
 
 bravo:b-037e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-10 Supply Air Temperature" .
@@ -2788,7 +2874,8 @@ bravo:b-0383 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0384 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-11 Discharge Air Flow Setpoint" .
 
-bravo:b-0385 rdfs:label "Bravo VAV 3-11 Heating Valve Output" .
+bravo:b-0385 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-11 Heating Valve Output" .
 
 bravo:b-0386 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-11 Supply Air Temperature" .
@@ -2808,7 +2895,8 @@ bravo:b-038b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-038c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-12 Discharge Air Flow Setpoint" .
 
-bravo:b-038d rdfs:label "Bravo VAV 3-12 Heating Valve Output" .
+bravo:b-038d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-12 Heating Valve Output" .
 
 bravo:b-038e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-12 Supply Air Temperature" .
@@ -2828,7 +2916,8 @@ bravo:b-0393 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0394 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-13 Discharge Air Flow Setpoint" .
 
-bravo:b-0395 rdfs:label "Bravo VAV 3-13 Heating Valve Output" .
+bravo:b-0395 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-13 Heating Valve Output" .
 
 bravo:b-0396 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-13 Supply Air Temperature" .
@@ -2848,7 +2937,8 @@ bravo:b-039b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-039c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-14 Discharge Air Flow Setpoint" .
 
-bravo:b-039d rdfs:label "Bravo VAV 3-14 Heating Valve Output" .
+bravo:b-039d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-14 Heating Valve Output" .
 
 bravo:b-039e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-14 Supply Air Temperature" .
@@ -2868,7 +2958,8 @@ bravo:b-03a3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03a4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-15 Discharge Air Flow Setpoint" .
 
-bravo:b-03a5 rdfs:label "Bravo VAV 3-15 Heating Valve Output" .
+bravo:b-03a5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-15 Heating Valve Output" .
 
 bravo:b-03a6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-15 Supply Air Temperature" .
@@ -2888,7 +2979,8 @@ bravo:b-03ab a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03ac a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-16 Discharge Air Flow Setpoint" .
 
-bravo:b-03ad rdfs:label "Bravo VAV 3-16 Heating Valve Output" .
+bravo:b-03ad a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-16 Heating Valve Output" .
 
 bravo:b-03ae a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-16 Supply Air Temperature" .
@@ -2908,7 +3000,8 @@ bravo:b-03b3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03b4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-17 Discharge Air Flow Setpoint" .
 
-bravo:b-03b5 rdfs:label "Bravo VAV 3-17 Heating Valve Output" .
+bravo:b-03b5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-17 Heating Valve Output" .
 
 bravo:b-03b6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-17 Supply Air Temperature" .
@@ -2928,7 +3021,8 @@ bravo:b-03bb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03bc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-18 Discharge Air Flow Setpoint" .
 
-bravo:b-03bd rdfs:label "Bravo VAV 3-18 Heating Valve Output" .
+bravo:b-03bd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-18 Heating Valve Output" .
 
 bravo:b-03be a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-18 Supply Air Temperature" .
@@ -2948,7 +3042,8 @@ bravo:b-03c3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03c4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-19 Discharge Air Flow Setpoint" .
 
-bravo:b-03c5 rdfs:label "Bravo VAV 3-19 Heating Valve Output" .
+bravo:b-03c5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-19 Heating Valve Output" .
 
 bravo:b-03c6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-19 Supply Air Temperature" .
@@ -2968,7 +3063,8 @@ bravo:b-03cb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03cc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-2 Discharge Air Flow Setpoint" .
 
-bravo:b-03cd rdfs:label "Bravo VAV 3-2 Heating Valve Output" .
+bravo:b-03cd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-2 Heating Valve Output" .
 
 bravo:b-03ce a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-2 Supply Air Temperature" .
@@ -2988,7 +3084,8 @@ bravo:b-03d3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03d4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-20 Discharge Air Flow Setpoint" .
 
-bravo:b-03d5 rdfs:label "Bravo VAV 3-20 Heating Valve Output" .
+bravo:b-03d5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-20 Heating Valve Output" .
 
 bravo:b-03d6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-20 Supply Air Temperature" .
@@ -3008,7 +3105,8 @@ bravo:b-03db a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03dc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-21 Discharge Air Flow Setpoint" .
 
-bravo:b-03dd rdfs:label "Bravo VAV 3-21 Heating Valve Output" .
+bravo:b-03dd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-21 Heating Valve Output" .
 
 bravo:b-03de a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-21 Supply Air Temperature" .
@@ -3028,7 +3126,8 @@ bravo:b-03e3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03e4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-22 Discharge Air Flow Setpoint" .
 
-bravo:b-03e5 rdfs:label "Bravo VAV 3-22 Heating Valve Output" .
+bravo:b-03e5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-22 Heating Valve Output" .
 
 bravo:b-03e6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-22 Supply Air Temperature" .
@@ -3048,7 +3147,8 @@ bravo:b-03eb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03ec a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-23 Discharge Air Flow Setpoint" .
 
-bravo:b-03ed rdfs:label "Bravo VAV 3-23 Heating Valve Output" .
+bravo:b-03ed a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-23 Heating Valve Output" .
 
 bravo:b-03ee a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-23 Supply Air Temperature" .
@@ -3068,7 +3168,8 @@ bravo:b-03f3 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03f4 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-24 Discharge Air Flow Setpoint" .
 
-bravo:b-03f5 rdfs:label "Bravo VAV 3-24 Heating Valve Output" .
+bravo:b-03f5 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-24 Heating Valve Output" .
 
 bravo:b-03f6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-24 Supply Air Temperature" .
@@ -3088,7 +3189,8 @@ bravo:b-03fb a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-03fc a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-25 Discharge Air Flow Setpoint" .
 
-bravo:b-03fd rdfs:label "Bravo VAV 3-25 Heating Valve Output" .
+bravo:b-03fd a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-25 Heating Valve Output" .
 
 bravo:b-03fe a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-25 Supply Air Temperature" .
@@ -3108,7 +3210,8 @@ bravo:b-0403 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0404 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-26 Discharge Air Flow Setpoint" .
 
-bravo:b-0405 rdfs:label "Bravo VAV 3-26 Heating Valve Output" .
+bravo:b-0405 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-26 Heating Valve Output" .
 
 bravo:b-0406 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-26 Supply Air Temperature" .
@@ -3128,7 +3231,8 @@ bravo:b-040b a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-040c a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-27 Discharge Air Flow Setpoint" .
 
-bravo:b-040d rdfs:label "Bravo VAV 3-27 Heating Valve Output" .
+bravo:b-040d a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-27 Heating Valve Output" .
 
 bravo:b-040e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-27 Supply Air Temperature" .
@@ -3148,7 +3252,8 @@ bravo:b-0413 a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-0414 a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-28 Discharge Air Flow Setpoint" .
 
-bravo:b-0415 rdfs:label "Bravo VAV 3-28 Heating Valve Output" .
+bravo:b-0415 a brick:Valve_Command ;
+    rdfs:label "Bravo VAV 3-28 Heating Valve Output" .
 
 bravo:b-0416 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-28 Supply Air Temperature" .
@@ -3236,7 +3341,8 @@ bravo:b-042c a brick:Discharge_Air_Flow_Sensor ;
 bravo:b-042d a brick:Discharge_Air_Flow_Setpoint ;
     rdfs:label "Bravo VAV 3-9 Supply Air Flow Setpoint" .
 
-bravo:b-013d rdfs:label "Bravo VAV 1-1" ;
+bravo:b-013d a brick:VAV ;
+    rdfs:label "Bravo VAV 1-1" ;
     brick:hasPoint bravo:b-013e,
         bravo:b-013f,
         bravo:b-0140,
@@ -3244,7 +3350,8 @@ bravo:b-013d rdfs:label "Bravo VAV 1-1" ;
         bravo:b-0142,
         bravo:b-0143 .
 
-bravo:b-0144 rdfs:label "Bravo VAV 1-10" ;
+bravo:b-0144 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-10" ;
     brick:hasPoint bravo:b-0145,
         bravo:b-0146,
         bravo:b-0147,
@@ -3253,7 +3360,8 @@ bravo:b-0144 rdfs:label "Bravo VAV 1-10" ;
         bravo:b-014a,
         bravo:b-014b .
 
-bravo:b-014c rdfs:label "Bravo VAV 1-11" ;
+bravo:b-014c a brick:VAV ;
+    rdfs:label "Bravo VAV 1-11" ;
     brick:hasPoint bravo:b-014d,
         bravo:b-014e,
         bravo:b-014f,
@@ -3262,7 +3370,8 @@ bravo:b-014c rdfs:label "Bravo VAV 1-11" ;
         bravo:b-0152,
         bravo:b-0153 .
 
-bravo:b-0154 rdfs:label "Bravo VAV 1-12" ;
+bravo:b-0154 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-12" ;
     brick:hasPoint bravo:b-0155,
         bravo:b-0156,
         bravo:b-0157,
@@ -3271,7 +3380,8 @@ bravo:b-0154 rdfs:label "Bravo VAV 1-12" ;
         bravo:b-015a,
         bravo:b-015b .
 
-bravo:b-015c rdfs:label "Bravo VAV 1-13" ;
+bravo:b-015c a brick:VAV ;
+    rdfs:label "Bravo VAV 1-13" ;
     brick:hasPoint bravo:b-015d,
         bravo:b-015e,
         bravo:b-015f,
@@ -3280,7 +3390,8 @@ bravo:b-015c rdfs:label "Bravo VAV 1-13" ;
         bravo:b-0162,
         bravo:b-0163 .
 
-bravo:b-0164 rdfs:label "Bravo VAV 1-14" ;
+bravo:b-0164 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-14" ;
     brick:hasPoint bravo:b-0165,
         bravo:b-0166,
         bravo:b-0167,
@@ -3289,7 +3400,8 @@ bravo:b-0164 rdfs:label "Bravo VAV 1-14" ;
         bravo:b-016a,
         bravo:b-016b .
 
-bravo:b-016c rdfs:label "Bravo VAV 1-15" ;
+bravo:b-016c a brick:VAV ;
+    rdfs:label "Bravo VAV 1-15" ;
     brick:hasPoint bravo:b-016d,
         bravo:b-016e,
         bravo:b-016f,
@@ -3298,7 +3410,8 @@ bravo:b-016c rdfs:label "Bravo VAV 1-15" ;
         bravo:b-0172,
         bravo:b-0173 .
 
-bravo:b-0174 rdfs:label "Bravo VAV 1-16" ;
+bravo:b-0174 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-16" ;
     brick:hasPoint bravo:b-0175,
         bravo:b-0176,
         bravo:b-0177,
@@ -3307,7 +3420,8 @@ bravo:b-0174 rdfs:label "Bravo VAV 1-16" ;
         bravo:b-017a,
         bravo:b-017b .
 
-bravo:b-017c rdfs:label "Bravo VAV 1-17" ;
+bravo:b-017c a brick:VAV ;
+    rdfs:label "Bravo VAV 1-17" ;
     brick:hasPoint bravo:b-017d,
         bravo:b-017e,
         bravo:b-017f,
@@ -3316,7 +3430,8 @@ bravo:b-017c rdfs:label "Bravo VAV 1-17" ;
         bravo:b-0182,
         bravo:b-0183 .
 
-bravo:b-0184 rdfs:label "Bravo VAV 1-18" ;
+bravo:b-0184 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-18" ;
     brick:hasPoint bravo:b-0185,
         bravo:b-0186,
         bravo:b-0187,
@@ -3325,7 +3440,8 @@ bravo:b-0184 rdfs:label "Bravo VAV 1-18" ;
         bravo:b-018a,
         bravo:b-018b .
 
-bravo:b-018c rdfs:label "Bravo VAV 1-19" ;
+bravo:b-018c a brick:VAV ;
+    rdfs:label "Bravo VAV 1-19" ;
     brick:hasPoint bravo:b-018d,
         bravo:b-018e,
         bravo:b-018f,
@@ -3335,7 +3451,8 @@ bravo:b-018c rdfs:label "Bravo VAV 1-19" ;
         bravo:b-0193,
         bravo:b-0194 .
 
-bravo:b-0195 rdfs:label "Bravo VAV 1-2" ;
+bravo:b-0195 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-2" ;
     brick:hasPoint bravo:b-0196,
         bravo:b-0197,
         bravo:b-0198,
@@ -3344,7 +3461,8 @@ bravo:b-0195 rdfs:label "Bravo VAV 1-2" ;
         bravo:b-019b,
         bravo:b-019c .
 
-bravo:b-019d rdfs:label "Bravo VAV 1-20" ;
+bravo:b-019d a brick:VAV ;
+    rdfs:label "Bravo VAV 1-20" ;
     brick:hasPoint bravo:b-019e,
         bravo:b-019f,
         bravo:b-01a0,
@@ -3353,7 +3471,8 @@ bravo:b-019d rdfs:label "Bravo VAV 1-20" ;
         bravo:b-01a3,
         bravo:b-01a4 .
 
-bravo:b-01a5 rdfs:label "Bravo VAV 1-3" ;
+bravo:b-01a5 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-3" ;
     brick:hasPoint bravo:b-01a6,
         bravo:b-01a7,
         bravo:b-01a8,
@@ -3364,7 +3483,8 @@ bravo:b-01a5 rdfs:label "Bravo VAV 1-3" ;
         bravo:b-01ad,
         bravo:b-01ae .
 
-bravo:b-01af rdfs:label "Bravo VAV 1-4" ;
+bravo:b-01af a brick:VAV ;
+    rdfs:label "Bravo VAV 1-4" ;
     brick:hasPoint bravo:b-01b0,
         bravo:b-01b1,
         bravo:b-01b2,
@@ -3373,7 +3493,8 @@ bravo:b-01af rdfs:label "Bravo VAV 1-4" ;
         bravo:b-01b5,
         bravo:b-01b6 .
 
-bravo:b-01b7 rdfs:label "Bravo VAV 1-5" ;
+bravo:b-01b7 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-5" ;
     brick:hasPoint bravo:b-01b8,
         bravo:b-01b9,
         bravo:b-01ba,
@@ -3382,7 +3503,8 @@ bravo:b-01b7 rdfs:label "Bravo VAV 1-5" ;
         bravo:b-01bd,
         bravo:b-01be .
 
-bravo:b-01bf rdfs:label "Bravo VAV 1-6" ;
+bravo:b-01bf a brick:VAV ;
+    rdfs:label "Bravo VAV 1-6" ;
     brick:hasPoint bravo:b-01c0,
         bravo:b-01c1,
         bravo:b-01c2,
@@ -3393,7 +3515,8 @@ bravo:b-01bf rdfs:label "Bravo VAV 1-6" ;
         bravo:b-01c7,
         bravo:b-01c8 .
 
-bravo:b-01c9 rdfs:label "Bravo VAV 1-7" ;
+bravo:b-01c9 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-7" ;
     brick:hasPoint bravo:b-01ca,
         bravo:b-01cb,
         bravo:b-01cc,
@@ -3402,7 +3525,8 @@ bravo:b-01c9 rdfs:label "Bravo VAV 1-7" ;
         bravo:b-01cf,
         bravo:b-01d0 .
 
-bravo:b-01d1 rdfs:label "Bravo VAV 1-8" ;
+bravo:b-01d1 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-8" ;
     brick:hasPoint bravo:b-01d2,
         bravo:b-01d3,
         bravo:b-01d4,
@@ -3411,7 +3535,8 @@ bravo:b-01d1 rdfs:label "Bravo VAV 1-8" ;
         bravo:b-01d7,
         bravo:b-01d8 .
 
-bravo:b-01d9 rdfs:label "Bravo VAV 1-9" ;
+bravo:b-01d9 a brick:VAV ;
+    rdfs:label "Bravo VAV 1-9" ;
     brick:hasPoint bravo:b-01da,
         bravo:b-01db,
         bravo:b-01dc,
@@ -3420,7 +3545,8 @@ bravo:b-01d9 rdfs:label "Bravo VAV 1-9" ;
         bravo:b-01df,
         bravo:b-01e0 .
 
-bravo:b-01e1 rdfs:label "Bravo VAV 2-1" ;
+bravo:b-01e1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-1" ;
     brick:hasPoint bravo:b-01e2,
         bravo:b-01e3,
         bravo:b-01e4,
@@ -3429,7 +3555,8 @@ bravo:b-01e1 rdfs:label "Bravo VAV 2-1" ;
         bravo:b-01e7,
         bravo:b-01e8 .
 
-bravo:b-01e9 rdfs:label "Bravo VAV 2-10" ;
+bravo:b-01e9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-10" ;
     brick:hasPoint bravo:b-01ea,
         bravo:b-01eb,
         bravo:b-01ec,
@@ -3438,7 +3565,8 @@ bravo:b-01e9 rdfs:label "Bravo VAV 2-10" ;
         bravo:b-01ef,
         bravo:b-01f0 .
 
-bravo:b-01f1 rdfs:label "Bravo VAV 2-11" ;
+bravo:b-01f1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-11" ;
     brick:hasPoint bravo:b-01f2,
         bravo:b-01f3,
         bravo:b-01f4,
@@ -3447,7 +3575,8 @@ bravo:b-01f1 rdfs:label "Bravo VAV 2-11" ;
         bravo:b-01f7,
         bravo:b-01f8 .
 
-bravo:b-01f9 rdfs:label "Bravo VAV 2-12" ;
+bravo:b-01f9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-12" ;
     brick:hasPoint bravo:b-01fa,
         bravo:b-01fb,
         bravo:b-01fc,
@@ -3456,7 +3585,8 @@ bravo:b-01f9 rdfs:label "Bravo VAV 2-12" ;
         bravo:b-01ff,
         bravo:b-0200 .
 
-bravo:b-0201 rdfs:label "Bravo VAV 2-13" ;
+bravo:b-0201 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-13" ;
     brick:hasPoint bravo:b-0202,
         bravo:b-0203,
         bravo:b-0204,
@@ -3465,7 +3595,8 @@ bravo:b-0201 rdfs:label "Bravo VAV 2-13" ;
         bravo:b-0207,
         bravo:b-0208 .
 
-bravo:b-0209 rdfs:label "Bravo VAV 2-14" ;
+bravo:b-0209 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-14" ;
     brick:hasPoint bravo:b-020a,
         bravo:b-020b,
         bravo:b-020c,
@@ -3474,7 +3605,8 @@ bravo:b-0209 rdfs:label "Bravo VAV 2-14" ;
         bravo:b-020f,
         bravo:b-0210 .
 
-bravo:b-0211 rdfs:label "Bravo VAV 2-15" ;
+bravo:b-0211 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-15" ;
     brick:hasPoint bravo:b-0212,
         bravo:b-0213,
         bravo:b-0214,
@@ -3483,7 +3615,8 @@ bravo:b-0211 rdfs:label "Bravo VAV 2-15" ;
         bravo:b-0217,
         bravo:b-0218 .
 
-bravo:b-0219 rdfs:label "Bravo VAV 2-16" ;
+bravo:b-0219 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-16" ;
     brick:hasPoint bravo:b-021a,
         bravo:b-021b,
         bravo:b-021c,
@@ -3492,7 +3625,8 @@ bravo:b-0219 rdfs:label "Bravo VAV 2-16" ;
         bravo:b-021f,
         bravo:b-0220 .
 
-bravo:b-0221 rdfs:label "Bravo VAV 2-17" ;
+bravo:b-0221 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-17" ;
     brick:hasPoint bravo:b-0222,
         bravo:b-0223,
         bravo:b-0224,
@@ -3501,7 +3635,8 @@ bravo:b-0221 rdfs:label "Bravo VAV 2-17" ;
         bravo:b-0227,
         bravo:b-0228 .
 
-bravo:b-0229 rdfs:label "Bravo VAV 2-18" ;
+bravo:b-0229 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-18" ;
     brick:hasPoint bravo:b-022a,
         bravo:b-022b,
         bravo:b-022c,
@@ -3510,7 +3645,8 @@ bravo:b-0229 rdfs:label "Bravo VAV 2-18" ;
         bravo:b-022f,
         bravo:b-0230 .
 
-bravo:b-0231 rdfs:label "Bravo VAV 2-19" ;
+bravo:b-0231 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-19" ;
     brick:hasPoint bravo:b-0232,
         bravo:b-0233,
         bravo:b-0234,
@@ -3519,7 +3655,8 @@ bravo:b-0231 rdfs:label "Bravo VAV 2-19" ;
         bravo:b-0237,
         bravo:b-0238 .
 
-bravo:b-0239 rdfs:label "Bravo VAV 2-2" ;
+bravo:b-0239 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-2" ;
     brick:hasPoint bravo:b-023a,
         bravo:b-023b,
         bravo:b-023c,
@@ -3528,7 +3665,8 @@ bravo:b-0239 rdfs:label "Bravo VAV 2-2" ;
         bravo:b-023f,
         bravo:b-0240 .
 
-bravo:b-0241 rdfs:label "Bravo VAV 2-20" ;
+bravo:b-0241 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-20" ;
     brick:hasPoint bravo:b-0242,
         bravo:b-0243,
         bravo:b-0244,
@@ -3537,7 +3675,8 @@ bravo:b-0241 rdfs:label "Bravo VAV 2-20" ;
         bravo:b-0247,
         bravo:b-0248 .
 
-bravo:b-0249 rdfs:label "Bravo VAV 2-21" ;
+bravo:b-0249 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-21" ;
     brick:hasPoint bravo:b-024a,
         bravo:b-024b,
         bravo:b-024c,
@@ -3546,7 +3685,8 @@ bravo:b-0249 rdfs:label "Bravo VAV 2-21" ;
         bravo:b-024f,
         bravo:b-0250 .
 
-bravo:b-0251 rdfs:label "Bravo VAV 2-22" ;
+bravo:b-0251 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-22" ;
     brick:hasPoint bravo:b-0252,
         bravo:b-0253,
         bravo:b-0254,
@@ -3555,7 +3695,8 @@ bravo:b-0251 rdfs:label "Bravo VAV 2-22" ;
         bravo:b-0257,
         bravo:b-0258 .
 
-bravo:b-0259 rdfs:label "Bravo VAV 2-23" ;
+bravo:b-0259 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-23" ;
     brick:hasPoint bravo:b-025a,
         bravo:b-025b,
         bravo:b-025c,
@@ -3564,7 +3705,8 @@ bravo:b-0259 rdfs:label "Bravo VAV 2-23" ;
         bravo:b-025f,
         bravo:b-0260 .
 
-bravo:b-0261 rdfs:label "Bravo VAV 2-24" ;
+bravo:b-0261 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-24" ;
     brick:hasPoint bravo:b-0262,
         bravo:b-0263,
         bravo:b-0264,
@@ -3573,7 +3715,8 @@ bravo:b-0261 rdfs:label "Bravo VAV 2-24" ;
         bravo:b-0267,
         bravo:b-0268 .
 
-bravo:b-0269 rdfs:label "Bravo VAV 2-25" ;
+bravo:b-0269 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-25" ;
     brick:hasPoint bravo:b-026a,
         bravo:b-026b,
         bravo:b-026c,
@@ -3582,7 +3725,8 @@ bravo:b-0269 rdfs:label "Bravo VAV 2-25" ;
         bravo:b-026f,
         bravo:b-0270 .
 
-bravo:b-0271 rdfs:label "Bravo VAV 2-26" ;
+bravo:b-0271 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-26" ;
     brick:hasPoint bravo:b-0272,
         bravo:b-0273,
         bravo:b-0274,
@@ -3591,7 +3735,8 @@ bravo:b-0271 rdfs:label "Bravo VAV 2-26" ;
         bravo:b-0277,
         bravo:b-0278 .
 
-bravo:b-0279 rdfs:label "Bravo VAV 2-27" ;
+bravo:b-0279 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-27" ;
     brick:hasPoint bravo:b-027a,
         bravo:b-027b,
         bravo:b-027c,
@@ -3600,7 +3745,8 @@ bravo:b-0279 rdfs:label "Bravo VAV 2-27" ;
         bravo:b-027f,
         bravo:b-0280 .
 
-bravo:b-0281 rdfs:label "Bravo VAV 2-28" ;
+bravo:b-0281 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-28" ;
     brick:hasPoint bravo:b-0282,
         bravo:b-0283,
         bravo:b-0284,
@@ -3609,7 +3755,8 @@ bravo:b-0281 rdfs:label "Bravo VAV 2-28" ;
         bravo:b-0287,
         bravo:b-0288 .
 
-bravo:b-0289 rdfs:label "Bravo VAV 2-29" ;
+bravo:b-0289 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-29" ;
     brick:hasPoint bravo:b-028a,
         bravo:b-028b,
         bravo:b-028c,
@@ -3618,7 +3765,8 @@ bravo:b-0289 rdfs:label "Bravo VAV 2-29" ;
         bravo:b-028f,
         bravo:b-0290 .
 
-bravo:b-0291 rdfs:label "Bravo VAV 2-3" ;
+bravo:b-0291 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-3" ;
     brick:hasPoint bravo:b-0292,
         bravo:b-0293,
         bravo:b-0294,
@@ -3627,7 +3775,8 @@ bravo:b-0291 rdfs:label "Bravo VAV 2-3" ;
         bravo:b-0297,
         bravo:b-0298 .
 
-bravo:b-0299 rdfs:label "Bravo VAV 2-30" ;
+bravo:b-0299 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-30" ;
     brick:hasPoint bravo:b-029a,
         bravo:b-029b,
         bravo:b-029c,
@@ -3636,7 +3785,8 @@ bravo:b-0299 rdfs:label "Bravo VAV 2-30" ;
         bravo:b-029f,
         bravo:b-02a0 .
 
-bravo:b-02a1 rdfs:label "Bravo VAV 2-31" ;
+bravo:b-02a1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-31" ;
     brick:hasPoint bravo:b-02a2,
         bravo:b-02a3,
         bravo:b-02a4,
@@ -3645,7 +3795,8 @@ bravo:b-02a1 rdfs:label "Bravo VAV 2-31" ;
         bravo:b-02a7,
         bravo:b-02a8 .
 
-bravo:b-02a9 rdfs:label "Bravo VAV 2-32" ;
+bravo:b-02a9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-32" ;
     brick:hasPoint bravo:b-02aa,
         bravo:b-02ab,
         bravo:b-02ac,
@@ -3654,7 +3805,8 @@ bravo:b-02a9 rdfs:label "Bravo VAV 2-32" ;
         bravo:b-02af,
         bravo:b-02b0 .
 
-bravo:b-02b1 rdfs:label "Bravo VAV 2-33" ;
+bravo:b-02b1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-33" ;
     brick:hasPoint bravo:b-02b2,
         bravo:b-02b3,
         bravo:b-02b4,
@@ -3663,7 +3815,8 @@ bravo:b-02b1 rdfs:label "Bravo VAV 2-33" ;
         bravo:b-02b7,
         bravo:b-02b8 .
 
-bravo:b-02b9 rdfs:label "Bravo VAV 2-34" ;
+bravo:b-02b9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-34" ;
     brick:hasPoint bravo:b-02ba,
         bravo:b-02bb,
         bravo:b-02bc,
@@ -3672,7 +3825,8 @@ bravo:b-02b9 rdfs:label "Bravo VAV 2-34" ;
         bravo:b-02bf,
         bravo:b-02c0 .
 
-bravo:b-02c1 rdfs:label "Bravo VAV 2-35" ;
+bravo:b-02c1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-35" ;
     brick:hasPoint bravo:b-02c2,
         bravo:b-02c3,
         bravo:b-02c4,
@@ -3681,7 +3835,8 @@ bravo:b-02c1 rdfs:label "Bravo VAV 2-35" ;
         bravo:b-02c7,
         bravo:b-02c8 .
 
-bravo:b-02c9 rdfs:label "Bravo VAV 2-36" ;
+bravo:b-02c9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-36" ;
     brick:hasPoint bravo:b-02ca,
         bravo:b-02cb,
         bravo:b-02cc,
@@ -3690,7 +3845,8 @@ bravo:b-02c9 rdfs:label "Bravo VAV 2-36" ;
         bravo:b-02cf,
         bravo:b-02d0 .
 
-bravo:b-02d1 rdfs:label "Bravo VAV 2-37" ;
+bravo:b-02d1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-37" ;
     brick:hasPoint bravo:b-02d2,
         bravo:b-02d3,
         bravo:b-02d4,
@@ -3699,7 +3855,8 @@ bravo:b-02d1 rdfs:label "Bravo VAV 2-37" ;
         bravo:b-02d7,
         bravo:b-02d8 .
 
-bravo:b-02d9 rdfs:label "Bravo VAV 2-38" ;
+bravo:b-02d9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-38" ;
     brick:hasPoint bravo:b-02da,
         bravo:b-02db,
         bravo:b-02dc,
@@ -3708,7 +3865,8 @@ bravo:b-02d9 rdfs:label "Bravo VAV 2-38" ;
         bravo:b-02df,
         bravo:b-02e0 .
 
-bravo:b-02e1 rdfs:label "Bravo VAV 2-39" ;
+bravo:b-02e1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-39" ;
     brick:hasPoint bravo:b-02e2,
         bravo:b-02e3,
         bravo:b-02e4,
@@ -3717,7 +3875,8 @@ bravo:b-02e1 rdfs:label "Bravo VAV 2-39" ;
         bravo:b-02e7,
         bravo:b-02e8 .
 
-bravo:b-02e9 rdfs:label "Bravo VAV 2-4" ;
+bravo:b-02e9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-4" ;
     brick:hasPoint bravo:b-02ea,
         bravo:b-02eb,
         bravo:b-02ec,
@@ -3726,7 +3885,8 @@ bravo:b-02e9 rdfs:label "Bravo VAV 2-4" ;
         bravo:b-02ef,
         bravo:b-02f0 .
 
-bravo:b-02f1 rdfs:label "Bravo VAV 2-40" ;
+bravo:b-02f1 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-40" ;
     brick:hasPoint bravo:b-02f2,
         bravo:b-02f3,
         bravo:b-02f4,
@@ -3735,7 +3895,8 @@ bravo:b-02f1 rdfs:label "Bravo VAV 2-40" ;
         bravo:b-02f7,
         bravo:b-02f8 .
 
-bravo:b-02f9 rdfs:label "Bravo VAV 2-41" ;
+bravo:b-02f9 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-41" ;
     brick:hasPoint bravo:b-02fa,
         bravo:b-02fb,
         bravo:b-02fc,
@@ -3744,7 +3905,8 @@ bravo:b-02f9 rdfs:label "Bravo VAV 2-41" ;
         bravo:b-02ff,
         bravo:b-0300 .
 
-bravo:b-0301 rdfs:label "Bravo VAV 2-42" ;
+bravo:b-0301 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-42" ;
     brick:hasPoint bravo:b-0302,
         bravo:b-0303,
         bravo:b-0304,
@@ -3753,7 +3915,8 @@ bravo:b-0301 rdfs:label "Bravo VAV 2-42" ;
         bravo:b-0307,
         bravo:b-0308 .
 
-bravo:b-0309 rdfs:label "Bravo VAV 2-43" ;
+bravo:b-0309 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-43" ;
     brick:hasPoint bravo:b-030a,
         bravo:b-030b,
         bravo:b-030c,
@@ -3762,7 +3925,8 @@ bravo:b-0309 rdfs:label "Bravo VAV 2-43" ;
         bravo:b-030f,
         bravo:b-0310 .
 
-bravo:b-0311 rdfs:label "Bravo VAV 2-44" ;
+bravo:b-0311 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-44" ;
     brick:hasPoint bravo:b-0312,
         bravo:b-0313,
         bravo:b-0314,
@@ -3771,7 +3935,8 @@ bravo:b-0311 rdfs:label "Bravo VAV 2-44" ;
         bravo:b-0317,
         bravo:b-0318 .
 
-bravo:b-0319 rdfs:label "Bravo VAV 2-45" ;
+bravo:b-0319 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-45" ;
     brick:hasPoint bravo:b-031a,
         bravo:b-031b,
         bravo:b-031c,
@@ -3780,7 +3945,8 @@ bravo:b-0319 rdfs:label "Bravo VAV 2-45" ;
         bravo:b-031f,
         bravo:b-0320 .
 
-bravo:b-0321 rdfs:label "Bravo VAV 2-46" ;
+bravo:b-0321 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-46" ;
     brick:hasPoint bravo:b-0322,
         bravo:b-0323,
         bravo:b-0324,
@@ -3789,7 +3955,8 @@ bravo:b-0321 rdfs:label "Bravo VAV 2-46" ;
         bravo:b-0327,
         bravo:b-0328 .
 
-bravo:b-0329 rdfs:label "Bravo VAV 2-47" ;
+bravo:b-0329 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-47" ;
     brick:hasPoint bravo:b-032a,
         bravo:b-032b,
         bravo:b-032c,
@@ -3798,7 +3965,8 @@ bravo:b-0329 rdfs:label "Bravo VAV 2-47" ;
         bravo:b-032f,
         bravo:b-0330 .
 
-bravo:b-0331 rdfs:label "Bravo VAV 2-48" ;
+bravo:b-0331 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-48" ;
     brick:hasPoint bravo:b-0332,
         bravo:b-0333,
         bravo:b-0334,
@@ -3807,7 +3975,8 @@ bravo:b-0331 rdfs:label "Bravo VAV 2-48" ;
         bravo:b-0337,
         bravo:b-0338 .
 
-bravo:b-0339 rdfs:label "Bravo VAV 2-49" ;
+bravo:b-0339 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-49" ;
     brick:hasPoint bravo:b-033a,
         bravo:b-033b,
         bravo:b-033c,
@@ -3816,7 +3985,8 @@ bravo:b-0339 rdfs:label "Bravo VAV 2-49" ;
         bravo:b-033f,
         bravo:b-0340 .
 
-bravo:b-0341 rdfs:label "Bravo VAV 2-5" ;
+bravo:b-0341 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-5" ;
     brick:hasPoint bravo:b-0342,
         bravo:b-0343,
         bravo:b-0344,
@@ -3825,7 +3995,8 @@ bravo:b-0341 rdfs:label "Bravo VAV 2-5" ;
         bravo:b-0347,
         bravo:b-0348 .
 
-bravo:b-0349 rdfs:label "Bravo VAV 2-50" ;
+bravo:b-0349 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-50" ;
     brick:hasPoint bravo:b-034a,
         bravo:b-034b,
         bravo:b-034c,
@@ -3834,7 +4005,8 @@ bravo:b-0349 rdfs:label "Bravo VAV 2-50" ;
         bravo:b-034f,
         bravo:b-0350 .
 
-bravo:b-0351 rdfs:label "Bravo VAV 2-6" ;
+bravo:b-0351 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-6" ;
     brick:hasPoint bravo:b-0352,
         bravo:b-0353,
         bravo:b-0354,
@@ -3843,7 +4015,8 @@ bravo:b-0351 rdfs:label "Bravo VAV 2-6" ;
         bravo:b-0357,
         bravo:b-0358 .
 
-bravo:b-0359 rdfs:label "Bravo VAV 2-7" ;
+bravo:b-0359 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-7" ;
     brick:hasPoint bravo:b-035a,
         bravo:b-035b,
         bravo:b-035c,
@@ -3852,7 +4025,8 @@ bravo:b-0359 rdfs:label "Bravo VAV 2-7" ;
         bravo:b-035f,
         bravo:b-0360 .
 
-bravo:b-0361 rdfs:label "Bravo VAV 2-8" ;
+bravo:b-0361 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-8" ;
     brick:hasPoint bravo:b-0362,
         bravo:b-0363,
         bravo:b-0364,
@@ -3861,7 +4035,8 @@ bravo:b-0361 rdfs:label "Bravo VAV 2-8" ;
         bravo:b-0367,
         bravo:b-0368 .
 
-bravo:b-0369 rdfs:label "Bravo VAV 2-9" ;
+bravo:b-0369 a brick:VAV ;
+    rdfs:label "Bravo VAV 2-9" ;
     brick:hasPoint bravo:b-036a,
         bravo:b-036b,
         bravo:b-036c,
@@ -3870,7 +4045,8 @@ bravo:b-0369 rdfs:label "Bravo VAV 2-9" ;
         bravo:b-036f,
         bravo:b-0370 .
 
-bravo:b-0371 rdfs:label "Bravo VAV 3-1" ;
+bravo:b-0371 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-1" ;
     brick:hasPoint bravo:b-0372,
         bravo:b-0373,
         bravo:b-0374,
@@ -3879,7 +4055,8 @@ bravo:b-0371 rdfs:label "Bravo VAV 3-1" ;
         bravo:b-0377,
         bravo:b-0378 .
 
-bravo:b-0379 rdfs:label "Bravo VAV 3-10" ;
+bravo:b-0379 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-10" ;
     brick:hasPoint bravo:b-037a,
         bravo:b-037b,
         bravo:b-037c,
@@ -3888,7 +4065,8 @@ bravo:b-0379 rdfs:label "Bravo VAV 3-10" ;
         bravo:b-037f,
         bravo:b-0380 .
 
-bravo:b-0381 rdfs:label "Bravo VAV 3-11" ;
+bravo:b-0381 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-11" ;
     brick:hasPoint bravo:b-0382,
         bravo:b-0383,
         bravo:b-0384,
@@ -3897,7 +4075,8 @@ bravo:b-0381 rdfs:label "Bravo VAV 3-11" ;
         bravo:b-0387,
         bravo:b-0388 .
 
-bravo:b-0389 rdfs:label "Bravo VAV 3-12" ;
+bravo:b-0389 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-12" ;
     brick:hasPoint bravo:b-038a,
         bravo:b-038b,
         bravo:b-038c,
@@ -3906,7 +4085,8 @@ bravo:b-0389 rdfs:label "Bravo VAV 3-12" ;
         bravo:b-038f,
         bravo:b-0390 .
 
-bravo:b-0391 rdfs:label "Bravo VAV 3-13" ;
+bravo:b-0391 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-13" ;
     brick:hasPoint bravo:b-0392,
         bravo:b-0393,
         bravo:b-0394,
@@ -3915,7 +4095,8 @@ bravo:b-0391 rdfs:label "Bravo VAV 3-13" ;
         bravo:b-0397,
         bravo:b-0398 .
 
-bravo:b-0399 rdfs:label "Bravo VAV 3-14" ;
+bravo:b-0399 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-14" ;
     brick:hasPoint bravo:b-039a,
         bravo:b-039b,
         bravo:b-039c,
@@ -3924,7 +4105,8 @@ bravo:b-0399 rdfs:label "Bravo VAV 3-14" ;
         bravo:b-039f,
         bravo:b-03a0 .
 
-bravo:b-03a1 rdfs:label "Bravo VAV 3-15" ;
+bravo:b-03a1 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-15" ;
     brick:hasPoint bravo:b-03a2,
         bravo:b-03a3,
         bravo:b-03a4,
@@ -3933,7 +4115,8 @@ bravo:b-03a1 rdfs:label "Bravo VAV 3-15" ;
         bravo:b-03a7,
         bravo:b-03a8 .
 
-bravo:b-03a9 rdfs:label "Bravo VAV 3-16" ;
+bravo:b-03a9 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-16" ;
     brick:hasPoint bravo:b-03aa,
         bravo:b-03ab,
         bravo:b-03ac,
@@ -3942,7 +4125,8 @@ bravo:b-03a9 rdfs:label "Bravo VAV 3-16" ;
         bravo:b-03af,
         bravo:b-03b0 .
 
-bravo:b-03b1 rdfs:label "Bravo VAV 3-17" ;
+bravo:b-03b1 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-17" ;
     brick:hasPoint bravo:b-03b2,
         bravo:b-03b3,
         bravo:b-03b4,
@@ -3951,7 +4135,8 @@ bravo:b-03b1 rdfs:label "Bravo VAV 3-17" ;
         bravo:b-03b7,
         bravo:b-03b8 .
 
-bravo:b-03b9 rdfs:label "Bravo VAV 3-18" ;
+bravo:b-03b9 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-18" ;
     brick:hasPoint bravo:b-03ba,
         bravo:b-03bb,
         bravo:b-03bc,
@@ -3960,7 +4145,8 @@ bravo:b-03b9 rdfs:label "Bravo VAV 3-18" ;
         bravo:b-03bf,
         bravo:b-03c0 .
 
-bravo:b-03c1 rdfs:label "Bravo VAV 3-19" ;
+bravo:b-03c1 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-19" ;
     brick:hasPoint bravo:b-03c2,
         bravo:b-03c3,
         bravo:b-03c4,
@@ -3969,7 +4155,8 @@ bravo:b-03c1 rdfs:label "Bravo VAV 3-19" ;
         bravo:b-03c7,
         bravo:b-03c8 .
 
-bravo:b-03c9 rdfs:label "Bravo VAV 3-2" ;
+bravo:b-03c9 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-2" ;
     brick:hasPoint bravo:b-03ca,
         bravo:b-03cb,
         bravo:b-03cc,
@@ -3978,7 +4165,8 @@ bravo:b-03c9 rdfs:label "Bravo VAV 3-2" ;
         bravo:b-03cf,
         bravo:b-03d0 .
 
-bravo:b-03d1 rdfs:label "Bravo VAV 3-20" ;
+bravo:b-03d1 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-20" ;
     brick:hasPoint bravo:b-03d2,
         bravo:b-03d3,
         bravo:b-03d4,
@@ -3987,7 +4175,8 @@ bravo:b-03d1 rdfs:label "Bravo VAV 3-20" ;
         bravo:b-03d7,
         bravo:b-03d8 .
 
-bravo:b-03d9 rdfs:label "Bravo VAV 3-21" ;
+bravo:b-03d9 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-21" ;
     brick:hasPoint bravo:b-03da,
         bravo:b-03db,
         bravo:b-03dc,
@@ -3996,7 +4185,8 @@ bravo:b-03d9 rdfs:label "Bravo VAV 3-21" ;
         bravo:b-03df,
         bravo:b-03e0 .
 
-bravo:b-03e1 rdfs:label "Bravo VAV 3-22" ;
+bravo:b-03e1 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-22" ;
     brick:hasPoint bravo:b-03e2,
         bravo:b-03e3,
         bravo:b-03e4,
@@ -4005,7 +4195,8 @@ bravo:b-03e1 rdfs:label "Bravo VAV 3-22" ;
         bravo:b-03e7,
         bravo:b-03e8 .
 
-bravo:b-03e9 rdfs:label "Bravo VAV 3-23" ;
+bravo:b-03e9 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-23" ;
     brick:hasPoint bravo:b-03ea,
         bravo:b-03eb,
         bravo:b-03ec,
@@ -4014,7 +4205,8 @@ bravo:b-03e9 rdfs:label "Bravo VAV 3-23" ;
         bravo:b-03ef,
         bravo:b-03f0 .
 
-bravo:b-03f1 rdfs:label "Bravo VAV 3-24" ;
+bravo:b-03f1 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-24" ;
     brick:hasPoint bravo:b-03f2,
         bravo:b-03f3,
         bravo:b-03f4,
@@ -4023,7 +4215,8 @@ bravo:b-03f1 rdfs:label "Bravo VAV 3-24" ;
         bravo:b-03f7,
         bravo:b-03f8 .
 
-bravo:b-03f9 rdfs:label "Bravo VAV 3-25" ;
+bravo:b-03f9 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-25" ;
     brick:hasPoint bravo:b-03fa,
         bravo:b-03fb,
         bravo:b-03fc,
@@ -4032,7 +4225,8 @@ bravo:b-03f9 rdfs:label "Bravo VAV 3-25" ;
         bravo:b-03ff,
         bravo:b-0400 .
 
-bravo:b-0401 rdfs:label "Bravo VAV 3-26" ;
+bravo:b-0401 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-26" ;
     brick:hasPoint bravo:b-0402,
         bravo:b-0403,
         bravo:b-0404,
@@ -4041,7 +4235,8 @@ bravo:b-0401 rdfs:label "Bravo VAV 3-26" ;
         bravo:b-0407,
         bravo:b-0408 .
 
-bravo:b-0409 rdfs:label "Bravo VAV 3-27" ;
+bravo:b-0409 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-27" ;
     brick:hasPoint bravo:b-040a,
         bravo:b-040b,
         bravo:b-040c,
@@ -4050,7 +4245,8 @@ bravo:b-0409 rdfs:label "Bravo VAV 3-27" ;
         bravo:b-040f,
         bravo:b-0410 .
 
-bravo:b-0411 rdfs:label "Bravo VAV 3-28" ;
+bravo:b-0411 a brick:VAV ;
+    rdfs:label "Bravo VAV 3-28" ;
     brick:hasPoint bravo:b-0412,
         bravo:b-0413,
         bravo:b-0414,

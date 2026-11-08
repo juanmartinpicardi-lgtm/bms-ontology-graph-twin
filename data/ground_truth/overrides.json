@@ -1,0 +1,78 @@
+{
+  "about": "Human decisions resolving brickschema ties in the ground truth. Each rule fires only when an entity's candidate set equals when_candidates exactly. Edit freely; rebuild with scripts/build_golden.py.",
+  "decided": "2026-11-08, proposed by Claude on the user's instruction; review the rationale of each rule",
+  "rules": [
+    {
+      "id": "GT-001",
+      "applies_to": "equip",
+      "when_candidates": ["Thermostat", "VAV"],
+      "choose": "VAV",
+      "rationale": "Entity is tagged vav; the thermostat tag marks that the box does zone temperature control, not that it is a thermostat."
+    },
+    {
+      "id": "GT-002",
+      "applies_to": "equip",
+      "when_candidates": ["FCU", "Thermostat"],
+      "choose": "FCU",
+      "rationale": "Same pattern as GT-001: fcu is the equipment type, thermostat describes its control."
+    },
+    {
+      "id": "GT-003",
+      "applies_to": "equip",
+      "when_candidates": ["AHU", "RTU"],
+      "choose": "RTU",
+      "rationale": "Tagged both ahu and rtu; RTU is the more specific type (a packaged rooftop air handler)."
+    },
+    {
+      "id": "GT-004",
+      "applies_to": "equip",
+      "when_candidates": ["AHU", "Electrical_Equipment"],
+      "choose": "AHU",
+      "rationale": "The elec tag means the unit is electrically powered; it does not make it electrical-distribution equipment."
+    },
+    {
+      "id": "GT-005",
+      "applies_to": "equip",
+      "when_candidates": ["Chiller", "Electrical_Equipment"],
+      "choose": "Chiller",
+      "rationale": "Same pattern as GT-004."
+    },
+    {
+      "id": "GT-006",
+      "applies_to": "equip",
+      "when_candidates": ["Electrical_Equipment", "Pump"],
+      "choose": "Pump",
+      "rationale": "Same pattern as GT-004."
+    },
+    {
+      "id": "GT-007",
+      "applies_to": "point",
+      "when_candidates": ["Occupied_Air_Temperature_Cooling_Setpoint", "Zone_Air_Cooling_Temperature_Setpoint"],
+      "choose": "Occupied_Cooling_Zone_Air_Temperature_Setpoint",
+      "outside_candidates": true,
+      "rationale": "Tags are occupied + cooling + zone + air + temp + sp; Brick 1.4.4 has this exact class, which brickschema's tag table missed."
+    },
+    {
+      "id": "GT-008",
+      "applies_to": "point",
+      "when_candidates": ["Unoccupied_Air_Temperature_Cooling_Setpoint", "Zone_Air_Cooling_Temperature_Setpoint"],
+      "choose": "Unoccupied_Cooling_Zone_Air_Temperature_Setpoint",
+      "outside_candidates": true,
+      "rationale": "Same as GT-007 for the unoccupied setpoint."
+    },
+    {
+      "id": "GT-009",
+      "applies_to": "point",
+      "when_candidates": ["Heating_Command", "Valve_Command"],
+      "choose": "Valve_Command",
+      "rationale": "The point drives a (reheat) valve. Brick 1.4.4 has no heating-valve command class; the heating role is carried by the equipment and the hot-water feed."
+    },
+    {
+      "id": "GT-010",
+      "applies_to": "point",
+      "when_candidates": ["Cooling_Command", "Valve_Command"],
+      "choose": "Valve_Command",
+      "rationale": "Same as GT-009 for chilled-water valves."
+    }
+  ]
+}

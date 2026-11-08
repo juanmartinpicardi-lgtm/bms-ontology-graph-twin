@@ -26,6 +26,7 @@ BRICK = rdflib.Namespace("https://brickschema.org/schema/Brick#")
 
 from .brick_convert import MAPPED, GENERIC, BrickConverter, BrickMatch
 from .load import EQUIP_RELATION_REFS, Entity, load_grid
+from .overrides import apply_overrides, load_overrides
 
 
 def raw_name(e: Entity) -> str:
@@ -40,15 +41,20 @@ def _write_csv(path: Path, rows: list[dict], fields: list[str]) -> None:
         w.writerows(rows)
 
 
-def build_site(site: str, src: Path, out_dir: Path) -> dict:
+def build_site(site: str, src: Path, out_dir: Path, overrides_path: Path | None = None) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
     meta, entities = load_grid(src)
     by_id = {e.id: e for e in entities}
     points = [e for e in entities if e.kind == "point"]
     equips = [e for e in entities if e.kind == "equip"]
     conv = BrickConverter(f"urn:{site}#")
+    rules = load_overrides(overrides_path, conv) if overrides_path else []
 
-    matches: dict[str, BrickMatch] = {e.id: conv.classify(e) for e in points + equips}
+    matches: dict[str, BrickMatch] = {}
+    method: dict[str, tuple[str, str]] = {}  # id -> (method, override_id)
+    for e in points + equips:
+        m, how, rule_id = apply_overrides(e.kind, conv.classify(e), rules)
+        matches[e.id], method[e.id] = m, (how, rule_id)
     issues: list[dict] = []
     src_name = str(src)
 
@@ -77,8 +83,8 @@ def build_site(site: str, src: Path, out_dir: Path) -> dict:
             "point_id": p.id, "source_row": p.row, "raw_name": raw_name(p), "dis": p.tags.get("dis", ""),
             "equip_id": equip_id, "equip_dis": by_id[equip_id].tags.get("dis", "") if equip_id else "",
             "haystack_tags": " ".join(p.markers), "kind": p.tags.get("kind", ""), "unit": p.tags.get("unit", ""),
-            "brick_class": m.brick_class, "map_status": m.status, "candidates": " ".join(m.candidates),
-            "leftover_tags": " ".join(m.leftover),
+            "brick_class": m.brick_class, "map_status": m.status, "method": method[p.id][0],
+            "override_id": method[p.id][1], "candidates": " ".join(m.candidates), "leftover_tags": " ".join(m.leftover),
         })
 
     equip_rows, rel_rows = [], []
@@ -88,6 +94,7 @@ def build_site(site: str, src: Path, out_dir: Path) -> dict:
         equip_rows.append({
             "equip_id": q.id, "source_row": q.row, "dis": q.tags.get("dis", ""), "parent_equip_id": parent,
             "haystack_tags": " ".join(q.markers), "brick_class": m.brick_class, "map_status": m.status,
+            "method": method[q.id][0], "override_id": method[q.id][1],
             "candidates": " ".join(m.candidates), "leftover_tags": " ".join(m.leftover),
         })
         if parent:
@@ -142,6 +149,10 @@ def build_site(site: str, src: Path, out_dir: Path) -> dict:
         "equip_map_status": dict(Counter(r["map_status"] for r in equip_rows)),
         "relations": dict(Counter(f'{r["rel"]} ({r["source_tag"]})' for r in rel_rows)),
         "points_with_equipment": sum(1 for r in point_rows if r["equip_id"]),
+        "overrides_applied": dict(Counter(r["override_id"] for r in point_rows + equip_rows if r["override_id"])),
+        "overrides_unused_here": sorted(
+            {o.id for o in rules} - {r["override_id"] for r in point_rows + equip_rows}
+        ),
         "issues": len(issues),
     }
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")

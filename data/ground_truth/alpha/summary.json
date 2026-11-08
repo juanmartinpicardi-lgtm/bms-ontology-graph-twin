@@ -12,14 +12,14 @@
   "weather_points_excluded": 4,
   "equipment": 184,
   "point_map_status": {
-    "ambiguous": 398,
-    "mapped": 1236,
+    "mapped": 1622,
+    "ambiguous": 12,
     "generic": 60,
     "unmapped": 148
   },
   "equip_map_status": {
-    "ambiguous": 151,
-    "mapped": 22,
+    "mapped": 168,
+    "ambiguous": 5,
     "generic": 11
   },
   "relations": {
@@ -29,5 +29,19 @@
     "feeds (airRef)": 144
   },
   "points_with_equipment": 1842,
+  "overrides_applied": {
+    "GT-010": 4,
+    "GT-009": 106,
+    "GT-007": 138,
+    "GT-008": 138,
+    "GT-004": 4,
+    "GT-001": 138,
+    "GT-005": 2,
+    "GT-006": 2
+  },
+  "overrides_unused_here": [
+    "GT-002",
+    "GT-003"
+  ],
   "issues": 0
 }

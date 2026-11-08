@@ -84,7 +84,6 @@ b-009f,point,Bravo FCU-4 Cooling Valve Output,chilled cool cur his point sensor 
 b-00a6,point,Bravo HHW Pump 1 HHW Pump Status,cur his hot point pump sensor water,unmapped,
 b-00a9,point,Bravo HHW Pump 2 HHW Pump Status,cur his hot point pump sensor water,unmapped,
 b-00ad,point,Bravo RTU-1 AHU Operation Mode,computed his point sensor,generic,Sensor
-b-00ae,point,Bravo RTU-1 Cooling Valve Output,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
 b-00af,point,Bravo RTU-1 Exhaust Air Damper Output,air cur damper exhaust his point sensor,generic,Sensor
 b-00b0,point,Bravo RTU-1 Fan Power (Auto-computed),his point sp,generic,Setpoint
 b-00b1,point,Bravo RTU-1 Heating/Cooling Load (Auto-computed),his point sp,generic,Setpoint
@@ -97,7 +96,6 @@ b-00c8,point,Bravo RTU-1 Supply Air Static Pressure,air cur discharge his point 
 b-00cb,point,Bravo RTU-1 Supply Fan Status,air cur discharge fan his point run sensor,generic,Sensor
 b-00cc,point,Bravo RTU-1 TU Air Flow (Auto-computed),his point sp,generic,Setpoint
 b-00cf,point,Bravo RTU-2 AHU Operation Mode,computed his point sensor,generic,Sensor
-b-00d1,point,Bravo RTU-2 Cooling Valve Output,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
 b-00d2,point,Bravo RTU-2 Exhaust Air Damper Output,air cur damper exhaust his point sensor,generic,Sensor
 b-00d3,point,Bravo RTU-2 Fan Power (Auto-computed),his point sp,generic,Setpoint
 b-00d4,point,Bravo RTU-2 Heating/Cooling Load (Auto-computed),his point sp,generic,Setpoint
@@ -110,7 +108,6 @@ b-00eb,point,Bravo RTU-2 Supply Air Static Pressure Setpoint,air cur discharge h
 b-00ee,point,Bravo RTU-2 Supply Fan Status,air cur discharge fan his point run sensor,generic,Sensor
 b-00f0,point,Bravo RTU-2 TU Air Flow (Auto-computed),his point sp,generic,Setpoint
 b-00f3,point,Bravo RTU-3 AHU Operation Mode,computed his point sensor,generic,Sensor
-b-00f4,point,Bravo RTU-3 Cooling Valve Output,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
 b-00f5,point,Bravo RTU-3 Exhaust Air Damper Output,air cur damper exhaust his point sensor,generic,Sensor
 b-00f6,point,Bravo RTU-3 Fan Power (Auto-computed),his point sp,generic,Setpoint
 b-00f7,point,Bravo RTU-3 Heating/Cooling Load (Auto-computed),his point sp,generic,Setpoint
@@ -122,7 +119,6 @@ b-010c,point,Bravo RTU-3 Supply Air Static Pressure,air cur discharge his point 
 b-010f,point,Bravo RTU-3 Supply Fan Status,air cur discharge fan his point run sensor,generic,Sensor
 b-0111,point,Bravo RTU-3 TU Air Flow (Auto-computed),his point sp,generic,Setpoint
 b-0114,point,Bravo RTU-4 AHU Operation Mode,computed his point sensor,generic,Sensor
-b-0115,point,Bravo RTU-4 Cooling Valve Output,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
 b-0116,point,Bravo RTU-4 Exhaust Air Damper Output,air cur damper exhaust his point sensor,generic,Sensor
 b-0117,point,Bravo RTU-4 Fan Power (Auto-computed),his point sp,generic,Setpoint
 b-0118,point,Bravo RTU-4 Heating/Cooling Load (Auto-computed),his point sp,generic,Setpoint
@@ -137,198 +133,6 @@ b-0133,point,Bravo RTU-4 TU Air Flow (Auto-computed),his point sp,generic,Setpoi
 b-0137,point,Bravo Steam Boiler A Boiler Status,boiler cur his point run sensor,generic,Sensor
 b-0139,point,Bravo Steam Boiler B Boiler Status,boiler cur his point run sensor,generic,Sensor
 b-013b,point,Bravo Steam Boiler C Boiler Status,boiler cur his point run sensor,generic,Sensor
-b-0141,point,Bravo VAV 1-1 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0148,point,Bravo VAV 1-10 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0150,point,Bravo VAV 1-11 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0158,point,Bravo VAV 1-12 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0160,point,Bravo VAV 1-13 Heating Valve,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0168,point,Bravo VAV 1-14 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0170,point,Bravo VAV 1-15 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0178,point,Bravo VAV 1-16 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0180,point,Bravo VAV 1-17 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0188,point,Bravo VAV 1-18 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0190,point,Bravo VAV 1-19 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0199,point,Bravo VAV 1-2 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01a1,point,Bravo VAV 1-20 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01a9,point,Bravo VAV 1-3 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01b3,point,Bravo VAV 1-4 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01bb,point,Bravo VAV 1-5 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01c3,point,Bravo VAV 1-6 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01cd,point,Bravo VAV 1-7 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01d5,point,Bravo VAV 1-8 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01dd,point,Bravo VAV 1-9 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01e5,point,Bravo VAV 2-1 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01ed,point,Bravo VAV 2-10 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01f5,point,Bravo VAV 2-11 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-01fd,point,Bravo VAV 2-12 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0205,point,Bravo VAV 2-13 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-020d,point,Bravo VAV 2-14 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0215,point,Bravo VAV 2-15 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-021d,point,Bravo VAV 2-16 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0225,point,Bravo VAV 2-17 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-022d,point,Bravo VAV 2-18 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0235,point,Bravo VAV 2-19 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-023d,point,Bravo VAV 2-2 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0245,point,Bravo VAV 2-20 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-024d,point,Bravo VAV 2-21 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0255,point,Bravo VAV 2-22 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-025d,point,Bravo VAV 2-23 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0265,point,Bravo VAV 2-24 Heating Valve,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-026d,point,Bravo VAV 2-25 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0275,point,Bravo VAV 2-26 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-027d,point,Bravo VAV 2-27 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0285,point,Bravo VAV 2-28 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-028d,point,Bravo VAV 2-29 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0295,point,Bravo VAV 2-3 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-029d,point,Bravo VAV 2-30 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02a5,point,Bravo VAV 2-31 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02ad,point,Bravo VAV 2-32 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02b5,point,Bravo VAV 2-33 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02bd,point,Bravo VAV 2-34 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02c5,point,Bravo VAV 2-35 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02cd,point,Bravo VAV 2-36 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02d5,point,Bravo VAV 2-37 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02dd,point,Bravo VAV 2-38 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02e5,point,Bravo VAV 2-39 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02ed,point,Bravo VAV 2-4 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02f5,point,Bravo VAV 2-40 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-02fd,point,Bravo VAV 2-41 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0305,point,Bravo VAV 2-42 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-030d,point,Bravo VAV 2-43 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0315,point,Bravo VAV 2-44 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-031d,point,Bravo VAV 2-45 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0325,point,Bravo VAV 2-46 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-032d,point,Bravo VAV 2-47 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0335,point,Bravo VAV 2-48 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-033d,point,Bravo VAV 2-49 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0345,point,Bravo VAV 2-5 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-034d,point,Bravo VAV 2-50 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0355,point,Bravo VAV 2-6 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-035d,point,Bravo VAV 2-7 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0365,point,Bravo VAV 2-8 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-036d,point,Bravo VAV 2-9 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0375,point,Bravo VAV 3-1 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-037d,point,Bravo VAV 3-10 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0385,point,Bravo VAV 3-11 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-038d,point,Bravo VAV 3-12 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0395,point,Bravo VAV 3-13 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-039d,point,Bravo VAV 3-14 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03a5,point,Bravo VAV 3-15 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03ad,point,Bravo VAV 3-16 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03b5,point,Bravo VAV 3-17 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03bd,point,Bravo VAV 3-18 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03c5,point,Bravo VAV 3-19 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03cd,point,Bravo VAV 3-2 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03d5,point,Bravo VAV 3-20 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03dd,point,Bravo VAV 3-21 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03e5,point,Bravo VAV 3-22 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03ed,point,Bravo VAV 3-23 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03f5,point,Bravo VAV 3-24 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-03fd,point,Bravo VAV 3-25 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0405,point,Bravo VAV 3-26 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-040d,point,Bravo VAV 3-27 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
-b-0415,point,Bravo VAV 3-28 Heating Valve Output,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
 b-0434,point,Points Not Syncing,his point sensor,generic,Sensor
-b-0001,equip,Bravo BCU-1,chilledWaterCooling equip hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0007,equip,Bravo BCU-2,chilledWaterCooling equip hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
 b-0012,equip,Bravo Boiler Plant,equip hot hvac plant water,generic,HVAC_Equipment
 b-001e,equip,Bravo Chilled Water Plant,chilled equip hvac plant water,generic,HVAC_Equipment
-b-008f,equip,Bravo FCU-1,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,ambiguous,FCU Thermostat
-b-0094,equip,Bravo FCU-2,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,ambiguous,FCU Thermostat
-b-0099,equip,Bravo FCU-3,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,ambiguous,FCU Thermostat
-b-009e,equip,Bravo FCU-4,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,ambiguous,FCU Thermostat
-b-00ac,equip,Bravo RTU-1,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,ambiguous,AHU RTU
-b-00ce,equip,Bravo RTU-2,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,ambiguous,AHU RTU
-b-00f2,equip,Bravo RTU-3,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,ambiguous,AHU RTU
-b-0113,equip,Bravo RTU-4,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,ambiguous,AHU RTU
-b-013d,equip,Bravo VAV 1-1,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0144,equip,Bravo VAV 1-10,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-014c,equip,Bravo VAV 1-11,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0154,equip,Bravo VAV 1-12,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-015c,equip,Bravo VAV 1-13,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0164,equip,Bravo VAV 1-14,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-016c,equip,Bravo VAV 1-15,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0174,equip,Bravo VAV 1-16,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-017c,equip,Bravo VAV 1-17,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0184,equip,Bravo VAV 1-18,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-018c,equip,Bravo VAV 1-19,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0195,equip,Bravo VAV 1-2,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-019d,equip,Bravo VAV 1-20,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01a5,equip,Bravo VAV 1-3,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01af,equip,Bravo VAV 1-4,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01b7,equip,Bravo VAV 1-5,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01bf,equip,Bravo VAV 1-6,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01c9,equip,Bravo VAV 1-7,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01d1,equip,Bravo VAV 1-8,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01d9,equip,Bravo VAV 1-9,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01e1,equip,Bravo VAV 2-1,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01e9,equip,Bravo VAV 2-10,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01f1,equip,Bravo VAV 2-11,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-01f9,equip,Bravo VAV 2-12,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0201,equip,Bravo VAV 2-13,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0209,equip,Bravo VAV 2-14,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0211,equip,Bravo VAV 2-15,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0219,equip,Bravo VAV 2-16,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0221,equip,Bravo VAV 2-17,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0229,equip,Bravo VAV 2-18,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0231,equip,Bravo VAV 2-19,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0239,equip,Bravo VAV 2-2,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0241,equip,Bravo VAV 2-20,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0249,equip,Bravo VAV 2-21,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0251,equip,Bravo VAV 2-22,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0259,equip,Bravo VAV 2-23,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0261,equip,Bravo VAV 2-24,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0269,equip,Bravo VAV 2-25,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0271,equip,Bravo VAV 2-26,equip hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0279,equip,Bravo VAV 2-27,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0281,equip,Bravo VAV 2-28,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0289,equip,Bravo VAV 2-29,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0291,equip,Bravo VAV 2-3,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0299,equip,Bravo VAV 2-30,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02a1,equip,Bravo VAV 2-31,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02a9,equip,Bravo VAV 2-32,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02b1,equip,Bravo VAV 2-33,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02b9,equip,Bravo VAV 2-34,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02c1,equip,Bravo VAV 2-35,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02c9,equip,Bravo VAV 2-36,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02d1,equip,Bravo VAV 2-37,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02d9,equip,Bravo VAV 2-38,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02e1,equip,Bravo VAV 2-39,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02e9,equip,Bravo VAV 2-4,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02f1,equip,Bravo VAV 2-40,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-02f9,equip,Bravo VAV 2-41,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0301,equip,Bravo VAV 2-42,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0309,equip,Bravo VAV 2-43,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0311,equip,Bravo VAV 2-44,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0319,equip,Bravo VAV 2-45,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0321,equip,Bravo VAV 2-46,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0329,equip,Bravo VAV 2-47,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0331,equip,Bravo VAV 2-48,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0339,equip,Bravo VAV 2-49,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0341,equip,Bravo VAV 2-5,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0349,equip,Bravo VAV 2-50,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0351,equip,Bravo VAV 2-6,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0359,equip,Bravo VAV 2-7,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0361,equip,Bravo VAV 2-8,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0369,equip,Bravo VAV 2-9,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0371,equip,Bravo VAV 3-1,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0379,equip,Bravo VAV 3-10,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0381,equip,Bravo VAV 3-11,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0389,equip,Bravo VAV 3-12,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0391,equip,Bravo VAV 3-13,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0399,equip,Bravo VAV 3-14,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03a1,equip,Bravo VAV 3-15,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03a9,equip,Bravo VAV 3-16,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03b1,equip,Bravo VAV 3-17,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03b9,equip,Bravo VAV 3-18,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03c1,equip,Bravo VAV 3-19,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03c9,equip,Bravo VAV 3-2,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03d1,equip,Bravo VAV 3-20,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03d9,equip,Bravo VAV 3-21,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03e1,equip,Bravo VAV 3-22,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03e9,equip,Bravo VAV 3-23,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03f1,equip,Bravo VAV 3-24,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-03f9,equip,Bravo VAV 3-25,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0401,equip,Bravo VAV 3-26,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0409,equip,Bravo VAV 3-27,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV
-b-0411,equip,Bravo VAV 3-28,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,ambiguous,Thermostat VAV

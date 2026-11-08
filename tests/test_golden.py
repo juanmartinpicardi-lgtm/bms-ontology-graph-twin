@@ -33,5 +33,17 @@ def test_ground_truth_invariants(site):
         assert p["map_status"] in STATUSES
         assert bool(p["brick_class"]) == (p["map_status"] in {"mapped", "generic"})
         assert not p["equip_id"] or p["equip_id"] in equips
+    for r in points + list(equips.values()):
+        assert r["method"] in {"brickschema", "human"}
+        assert bool(r["override_id"]) == (r["method"] == "human")
     for r in csv.DictReader((gt / "equip_relations.csv").open()):
         assert r["src"] in equips and r["dst"] in equips
+
+
+def test_every_override_rule_is_used_somewhere():
+    rules = {r["id"] for r in json.loads((ROOT / "data/ground_truth/overrides.json").read_text())["rules"]}
+    unused = [
+        set(json.loads((ROOT / "data/ground_truth" / s / "summary.json").read_text())["overrides_unused_here"])
+        for s in ("alpha", "bravo")
+    ]
+    assert rules and not set.intersection(*unused)
