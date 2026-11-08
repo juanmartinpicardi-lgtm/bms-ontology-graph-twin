@@ -93,6 +93,7 @@ class Slot:
     classes: tuple[str, ...]
     required: bool
     medium: str = ""  # a filled slot is evidence the equipment uses this medium (e.g. a heating valve -> hot_water)
+    words: tuple[str, ...] = ()  # name words that pick this slot over an earlier one with the same class
 
 
 @dataclass(frozen=True)
@@ -289,6 +290,8 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
     templates: dict[str, Template] = {}
     raw_templates = {}
     for path in sorted((km_dir / "templates").glob("*.yaml")):
+        if path.name == "anchors.yaml":  # 3D anchor map, checked by scripts/validate_km.py
+            continue
         t = yaml.safe_load(path.read_text())
         where = f"templates/{path.name}"
         if t.get("id") != path.stem:
@@ -314,7 +317,8 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
             for c in s["classes"]:
                 if classes.get(c, ClassInfo("", "", "", "")).kind != "point":
                     problems.append(f"{where}: slot {s['role']} uses {c}, which is not a point class in the model")
-            slots.append(Slot(s["role"], tuple(s["classes"]), bool(s.get("required", False)), s.get("medium", "")))
+            slots.append(Slot(s["role"], tuple(s["classes"]), bool(s.get("required", False)), s.get("medium", ""),
+                              tuple(str(w) for w in s.get("words", []))))
         if not any(s.required for s in slots):
             problems.append(f"{where}: needs at least one required point slot")
         rels = []
@@ -356,6 +360,11 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
     for text, token in name_rules.phrases.items():
         if sep.search(token) or name_rules.expand(token) is None:
             problems.append(f"abbreviations: phrase {text!r} -> {token!r} must be a single known token")
+    for t in templates.values():
+        for slot in t.slots:
+            for w in slot.words:
+                if w not in vocabulary:
+                    problems.append(f"templates/{t.id}.yaml: slot {slot.role} word {w!r} is not in the vocabulary")
     for name, expected in name_rules.examples.items():
         got = name_rules.words(name)
         if got != expected:

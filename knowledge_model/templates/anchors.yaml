@@ -1,0 +1,65 @@
+# Anchor map: where each template slot role sits on the 3D model of its equipment type
+# (docs/spec-equipment-3d.md §3.2). Per type, not per project.
+#
+#   parts:          named objects the geometry code builds; every anchor part must be one of them
+#   sub_equipment:  class of an untemplated part (e.g. "SF VFD" typed Supply_Fan) -> the part its points attach to.
+#                   An anchor on a fan part (supply_fan.vfd) moves to the sub-equipment's part (return_fan.vfd).
+#   anchors:        role -> {part, at (0-1 along a duct or pipe), label_side}
+#
+# Setpoints sit with the sensor they control, so they stack in one label card.
+# scripts/validate_km.py checks that every slot role of a type here has an anchor, and the reverse.
+
+ahu:
+  parts: [casing, outside_air_inlet, mixing_box, mixing_box.oa_damper, mixing_box.ra_damper,
+          relief_outlet, relief_outlet.damper, pre_filter, bag_filter,
+          cooling_coil, cooling_coil.valve, heating_coil, heating_coil.valve,
+          supply_fan, supply_fan.vfd, return_fan, return_fan.vfd,
+          return_duct, supply_duct, building_ref, controller]
+  sub_equipment:
+    Supply_Fan: supply_fan
+    Return_Fan: return_fan
+    Relief_Fan: return_fan
+  anchors:
+    supply_temp:        {part: supply_duct, at: 0.3, label_side: up}
+    supply_temp_sp:     {part: supply_duct, at: 0.3, label_side: up}
+    return_temp:        {part: return_duct, at: 0.5}
+    mixed_temp:         {part: mixing_box, at: 0.8}
+    outside_temp:       {part: outside_air_inlet, at: 0.2}
+    static_pressure:    {part: supply_duct, at: 0.8}
+    static_pressure_sp: {part: supply_duct, at: 0.8}
+    cooling_valve:      {part: cooling_coil.valve}
+    heating_valve:      {part: heating_coil.valve}
+    economizer_damper:  {part: mixing_box.oa_damper}
+    supply_fan_cmd:     {part: supply_fan}
+    supply_fan_speed:   {part: supply_fan.vfd}
+    supply_fan_status:  {part: supply_fan}
+    occupancy:          {part: controller}
+    return_fan_cmd:     {part: return_fan}
+    return_fan_speed:   {part: return_fan.vfd}
+    return_fan_status:  {part: return_fan}
+    relief_damper:      {part: relief_outlet.damper}
+    vfd_frequency:      {part: supply_fan.vfd}
+    vfd_power:          {part: supply_fan.vfd}
+    building_pressure:  {part: building_ref}
+    filter_status:      {part: bag_filter}
+    filter_dp:          {part: bag_filter}
+    return_humidity:    {part: return_duct, at: 0.5}
+    oa_flow:            {part: outside_air_inlet, at: 0.5}
+
+vav:
+  parts: [inlet_duct, inlet_duct_2, damper, flow_cross, box, reheat_coil, reheat_coil.valve, fan,
+          discharge_duct, zone_sensor, controller]
+  sub_equipment: {}
+  anchors:
+    zone_temp:          {part: zone_sensor}
+    airflow:            {part: flow_cross}
+    airflow_sp:         {part: flow_cross}
+    damper:             {part: damper}
+    discharge_temp:     {part: discharge_duct, at: 0.5}
+    reheat_valve:       {part: reheat_coil.valve}
+    occ_cooling_sp:     {part: zone_sensor}
+    unocc_cooling_sp:   {part: zone_sensor}
+    occ_heating_sp:     {part: zone_sensor}
+    unocc_heating_sp:   {part: zone_sensor}
+    occupancy:          {part: zone_sensor}
+    fan_cmd:            {part: fan}

@@ -15,6 +15,21 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.knowledge_model import KnowledgeModelError, load_knowledge_model  # noqa: E402
 
+
+def check_anchors(km) -> bool:
+    """3D anchor map: every slot role of a drawn equipment type has an anchor, and every anchor a real role and part."""
+    from projectmodel.equipment_view import anchor_problems, load_anchors
+
+    anchors = load_anchors()
+    problems = anchor_problems(km, anchors)
+    for p in problems:
+        print(f"  {p}")
+    undrawn = sorted(set(km.templates) - set(anchors))
+    print(f"\n3D anchors: {'OK' if not problems else f'{len(problems)} problem(s)'} for {', '.join(sorted(anchors))}"
+          f"{'; no 3D model yet: ' + ', '.join(undrawn) if undrawn else ''}")
+    return not problems
+
+
 if __name__ == "__main__":
     try:
         km = load_knowledge_model()
@@ -47,3 +62,6 @@ if __name__ == "__main__":
     unknown = Counter(t for n in names for t in km.name_rules.unknown_tokens(n))
     print(f"Alpha name tokens understood: {len(tokens) - sum(unknown.values())}/{len(tokens)}")
     print("  most common unknown: " + ", ".join(f"{t} ({n})" for t, n in unknown.most_common(15)))
+
+    if not check_anchors(km):
+        sys.exit(1)
