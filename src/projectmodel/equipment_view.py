@@ -18,10 +18,11 @@ import yaml
 from .db.store import Store
 from .knowledge_model import KM_DIR, KnowledgeModel, Slot, Template
 from .tree import TreeNode, build_tree
+from .value_model import describe
 
 ANCHORS = KM_DIR / "templates" / "anchors.yaml"
 APP = Path(__file__).resolve().parent / "app"
-MODULES = ("core.js", "parts.js", "ahu.js", "vav.js", "labels.js", "panels.js")  # inlined in this order into equipment3d.html
+MODULES = ("core.js", "parts.js", "sim.js", "ahu.js", "vav.js", "labels.js", "panels.js")  # inlined in this order into equipment3d.html
 
 
 def load_anchors(path: Path = ANCHORS) -> dict:
@@ -186,6 +187,7 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
                 p["at"] = deck(p["label"], km)
     for p in points.values():
         del p["context"]
+        p["sim"] = describe(p["cls"], p["role"], p["part"], p["at"] if p["part"] in DECK_PARTS else None)
 
     required = [s for s in template.slots if s.required]
     def _rel(nid):

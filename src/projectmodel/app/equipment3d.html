@@ -97,6 +97,14 @@
     font-variant-numeric: tabular-nums; }
   .pval.st-ok { color: #3fd17a; }
   .pval.muted { background: none; color: var(--muted); font-style: italic; }
+  .pval.sim { min-width: 44px; text-align: center; }
+  .pval.st-off { color: var(--muted); }
+  .pval.st-warn { color: #f2b134; }
+  .simbar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .simbar b { color: var(--text); font-weight: 600; }
+  #simClock { font-variant-numeric: tabular-nums; }
+  #scenario { background: var(--chip); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+    font: inherit; padding: 1px 4px; }
   /* Details panel (right) and component / setpoint panels (bottom-left) */
   #panel { top: 64px; right: 12px; bottom: 12px; width: 360px; padding: 14px; overflow: auto; display: none; z-index: 4; }
   #panel h2 { font-size: 16px; margin: 0 0 4px; word-break: break-word; }
@@ -138,6 +146,8 @@
   <h1><span id="eqName"></span><span class="badge" title="Values are simulated: the public datasets have no readings">SIMULATED</span></h1>
   <div class="sub" id="eqSub"></div>
   <div class="sub" id="eqRel"></div>
+  <div class="sub simbar"><b>Simulated values</b> · <span id="simClock"></span>
+    <select id="scenario" aria-label="Scenario"></select></div>
 </div>
 <div id="tools" class="card">
   <button data-view="hero">Hero</button>
@@ -202,9 +212,40 @@ function openEquipment(id) {
   const r = rels.find(r => r.id === id);
   if (r) panels.showEquipment(r, null);
 }
-labels = Labels.create(viewer, model, DATA, { onSelect: selectPoint });
-panels = Panels.create(DATA, { onSelectPoint: selectPoint, onOpenEquipment: openEquipment });
+// simulated values: ?seed=, ?scenario= and ?hour= (start time) pick the demo; the same seed gives the same values
+// at the same time
+const params = new URLSearchParams(location.search), hour = parseFloat(params.get("hour"));
+const sim = Sim.create(DATA, { seed: params.get("seed"), scenario: params.get("scenario") || "normal",
+                               hour: Number.isFinite(hour) ? hour : null });
+let simSeconds = 0, simState = sim.sample(sim.hourAt(0)), sinceTick = 1;
+const value = id => simState.values[id];
+labels = Labels.create(viewer, model, DATA, { onSelect: selectPoint, value });
+panels = Panels.create(DATA, { onSelectPoint: selectPoint, onOpenEquipment: openEquipment, value });
 viewer.onFrame(labels.layout);
+const scenarioSel = document.getElementById("scenario");
+scenarioSel.innerHTML = sim.scenarios.map(s => `<option value="${s.key}">${esc(s.label)}</option>`).join("");
+scenarioSel.value = sim.scenario();
+scenarioSel.onchange = () => { sim.setScenario(scenarioSel.value); simSeconds = 0; sinceTick = 1; };
+function tick() {
+  simState = sim.sample(sim.hourAt(simSeconds));
+  model.setState?.(simState);
+  let resized = false;
+  for (const el of document.querySelectorAll(".pval[data-v]")) {
+    const v = simState.values[el.dataset.v];
+    if (!v || el.textContent === v.text) continue;
+    resized ||= el.textContent.length !== v.text.length;
+    el.textContent = v.text;
+    el.className = `pval sim ${v.state ? "st-" + v.state : ""}`;
+  }
+  if (resized) labels.remeasure();
+  const a = simState.ahu;
+  document.getElementById("simClock").textContent =
+    `${Sim.clock(simState.h)} · outdoor ${a.oat.toFixed(1)} °F · ${a.occ ? "occupied" : "unoccupied"}`;
+}
+// the simulated clock runs with the render loop, so it pauses with it when the tab is hidden
+viewer.onFrame((t, dt) => { simSeconds += dt; sinceTick += dt; if (sinceTick >= 0.25) { sinceTick = 0; tick(); } });
+tick();
+window.__sim = { sim, state: () => simState, seconds: () => simSeconds };
 document.getElementById("pinsBtn").onclick = e => {
   const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
   e.currentTarget.setAttribute("aria-pressed", on);

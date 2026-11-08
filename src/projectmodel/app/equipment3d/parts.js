@@ -135,7 +135,9 @@ const Parts = (() => {
     }
     update(0, 0);
     return { mesh: inst, update, setColor: c => { mat.color.set(c); mat.emissive.set(c); },
-             setSpeed: r => { rate = r; } };
+             setSpeed: r => { rate = r; },
+             // a stopped stream stays in place, dimmed, so the path still reads
+             setActive: on => { mat.opacity = on ? 1 : 0.22; mat.emissiveIntensity = on ? 1.15 : 0.15; } };
   }
 
   // --- components ------------------------------------------------------------------------------------
@@ -413,6 +415,49 @@ const Parts = (() => {
     return g;
   }
 
+  // Pipe run along a polyline (plant connections), translucent and tinted by medium so the water particles show.
+  function pipeRun(pts, medium, r = 0.05) {
+    const g = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({ color: MEDIUM[medium] ?? 0x888888, metalness: 0.1, roughness: 0.3,
+                                                 transparent: true, opacity: 0.42, depthWrite: false });
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i], c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, a.distanceTo(b), 16, 1, true), mat);
+      c.position.copy(a).add(b).multiplyScalar(0.5);
+      c.quaternion.setFromUnitVectors(V(0, 1, 0), b.clone().sub(a).normalize());
+      g.add(c);
+    }
+    for (const p of pts.slice(1, -1)) g.add(new THREE.Mesh(new THREE.SphereGeometry(r, 16, 10), mat).translateX(p.x).translateY(p.y).translateZ(p.z));
+    return g;
+  }
+
+  // Water particles: glowing beads moving along a polyline; setSpeed in m/s (0 stops them, and they dim).
+  function particles(points, color, { spacing = 0.13, size = 0.024 } = {}) {
+    const pts = points.map(p => p.clone()), seg = [];
+    let L = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const len = pts[i].distanceTo(pts[i - 1]);
+      seg.push({ a: pts[i - 1], dir: pts[i].clone().sub(pts[i - 1]).normalize(), s0: L, len });
+      L += len;
+    }
+    const n = Math.max(2, Math.floor(L / spacing));
+    const mat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.4, roughness: 0.4, transparent: true });
+    const inst = new THREE.InstancedMesh(new THREE.SphereGeometry(size, 10, 8), mat, n);
+    inst.frustumCulled = false;
+    const m = new THREE.Matrix4(), p = V(0, 0, 0);
+    let rate = 0, phase = 0;
+    function update(t, dt) {
+      phase = (phase + dt * rate) % L;
+      for (let i = 0; i < n; i++) {
+        const s = (i * spacing + phase) % L, k = seg.find(k => s <= k.s0 + k.len) || seg[seg.length - 1];
+        p.copy(k.a).addScaledVector(k.dir, s - k.s0);
+        inst.setMatrixAt(i, m.makeTranslation(p.x, p.y, p.z));
+      }
+      inst.instanceMatrix.needsUpdate = true;
+    }
+    update(0, 0);
+    return { mesh: inst, update, setSpeed: r => { rate = r; mat.opacity = r > 0 ? 1 : 0.3; mat.emissiveIntensity = r > 0 ? 1.4 : 0.1; } };
+  }
+
   // Flow measuring station: a grid of pitot tubes across the duct section (y-z plane).
   function flowStation(h, d) {
     const g = new THREE.Group();
@@ -423,5 +468,5 @@ const Parts = (() => {
   }
 
   return { V, MAT, C, MEDIUM, mesh, box, duct, joint, flow, pleatedFilter, bagFilter, coil, valve, damper, fan, motor,
-           vfd, sensor, flowStation };
+           vfd, sensor, flowStation, pipeRun, particles };
 })();

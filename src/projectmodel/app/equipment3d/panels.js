@@ -1,7 +1,7 @@
 // Screen panels: header relations, the details panel (point provenance, unplaced points, fed-by / feeds lists) and
 // the component + setpoint panels pinned to the bottom-left corner.
 const Panels = (() => {
-  const { esc, staticValue } = Labels;
+  const { esc, chip } = Labels;
   const TITLE = {
     supply_fan: "Supply fan", return_fan: "Return fan", cooling_coil: "Cooling coil", heating_coil: "Heating coil",
     mixing_box: "Economizer", relief_outlet: "Relief", supply_duct: "Supply air", return_duct: "Return air",
@@ -11,9 +11,9 @@ const Panels = (() => {
   };
   const title = part => TITLE[part.split(".")[0]] || part.split(".")[0].replace(/_/g, " ");
   const isSetpoint = p => (p.cls || "").endsWith("_Setpoint");
-  const valueChip = p => { const v = staticValue(p); return `<span class="pval ${v.state ? "st-" + v.state : ""}">${esc(v.text)}</span>`; };
 
-  function create(data, { onSelectPoint, onOpenEquipment }) {
+  function create(data, { onSelectPoint, onOpenEquipment, value = () => null }) {
+    const valueChip = id => chip(id, value(id));
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
     const pts = data.points, eq = data.equipment;
     const rel = data.relations || { fed_by: [], feeds: [] };
@@ -43,9 +43,14 @@ const Panels = (() => {
       if (!p) return;
       const slot = (data.slots || []).find(s => s.role === p.role);
       let h = `<div class="muted" style="font-size:12px">${esc(eq.label)}${p.sub_equipment ? " › " + esc(p.sub_equipment.split("/").pop()) : ""}</div>`;
-      h += `<h2>${esc(p.label)}</h2><span class="chip">${esc(p.cls || "no class")}</span>${valueChip(p)} <span class="badge">SIMULATED</span>`;
+      h += `<h2>${esc(p.label)}</h2><span class="chip">${esc(p.cls || "no class")}</span>${valueChip(id)} <span class="badge">SIMULATED</span>`;
       h += `<h3>On the model</h3>` + table({ "slot role": p.role || "(unplaced)", part: p.part, "at": p.at,
                                               "slot classes": slot?.classes.join(", "), medium: slot?.medium });
+      const sp = p.sim;
+      if (sp) h += `<h3>Simulated value</h3>` + table({ kind: sp.kind + (sp.generic ? " (generic)" : ""),
+            unit: sp.unit ? `${sp.unit} (inferred from ${sp.from_class || "no class"})` : "none",
+            follows: sp.driver === "constant" ? "constant setpoint" : sp.driver.replace(/_/g, " ") + (sp.fan ? ` (${sp.fan} fan)` : "") + (sp.deck ? ` (${sp.deck} deck)` : ""),
+            "typical range": sp.kind === "binary" ? sp.states.join(" / ") : `${sp.range[0]}–${sp.range[1]}` });
       h += `<h3>Provenance of this point</h3>` + table({ method: p.prov.method, confidence: p.prov.confidence, status: p.prov.status,
             "source file": p.prov.source_file, "source row": p.prov.source_ref, revision: p.prov.revision,
             review: p.prov.review ? `${p.prov.review.action} by ${p.prov.review.by}` : undefined });
@@ -88,7 +93,7 @@ const Panels = (() => {
                    "Return air", "Supply air", "Building", "Airflow", "Damper", "Fan", "Reheat", "Discharge", "Zone",
                    "Controller"];
     const comps = [...byComp.keys()].sort((a, b) => ((order.indexOf(a) + 1) || 99) - ((order.indexOf(b) + 1) || 99));
-    const row = id => `<tr class="crow" data-pt="${esc(id)}"><td>${esc(pts[id].label)}</td><td>${valueChip(pts[id])}</td></tr>`;
+    const row = id => `<tr class="crow" data-pt="${esc(id)}"><td>${esc(pts[id].label)}</td><td>${valueChip(id)}</td></tr>`;
     const dock = document.getElementById("dock");
     dock.innerHTML =
       `<div class="card cpanel collapsed" id="compPanel"><div class="chead">Components <span class="muted">${comps.length}</span></div><div class="cbody">` +

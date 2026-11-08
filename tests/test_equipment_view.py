@@ -177,8 +177,8 @@ def test_render_html_inlines_modules_and_data(store, km, anchors):
     html = render_html(p)
     assert "/*__DATA__*/" not in html and "/*__MODULES__*/" not in html
     assert '"label":"Airside AHU-2"' in html
-    for const in ("const Core", "const Parts", "const AHU", "const VAV", "const Labels", "const Panels"):
+    for const in ("const Core", "const Parts", "const Sim", "const AHU", "const VAV", "const Labels", "const Panels"):
         assert const in html
     assert html.count("</script>") == 2  # import map and the one module script: nothing inlined closes it early
-    assert "three@0.170.0" in html and len(MODULES) == 6
+    assert "three@0.170.0" in html and len(MODULES) == 7
     assert '<html lang="en" data-theme="dark">' in render_html(p, theme="dark")

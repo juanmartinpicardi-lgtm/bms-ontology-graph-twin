@@ -82,7 +82,8 @@ const VAV = (() => {
 
   function build(data, viewer) {
     const v = data.variant || {};
-    const group = new THREE.Group(), parts = {}, paths = {}, flows = [], spinners = [];
+    const group = new THREE.Group(), parts = {}, paths = {}, flows = [], water = [];
+    let fan = null;
     const add = (name, obj) => { obj.name = name; parts[name] = obj; group.add(obj); return obj; };
     const label = (text, p, cls) => { const l = viewer.label(text, cls); l.position.copy(p); group.add(l); return l; };
     const stream = (key, pts, opts) => { const f = flow(pts, viewer.theme().air[key], opts); f.key = key; flows.push(f); group.add(f.mesh); return f; };
@@ -108,7 +109,7 @@ const VAV = (() => {
       const dm = butterfly(r, 0.55);
       dm.position.set(xDmp, y, 0);
       add(key("damper"), dm);
-      stream(air, [V(x0 - 1.2, y, 0), V(0.3, y, 0)], { size: dd ? 0.55 : 0.65, spacing: 0.36, groups: 2, gap: 0.12 });
+      stream(air, [V(x0 - 1.2, y, 0), V(0.3, y, 0)], { size: dd ? 0.55 : 0.65, spacing: 0.36, groups: 2, gap: 0.12 }).tag = deck || "primary";
       const what = deck ? `${deck === "cold" ? "Cold" : "Hot"} deck` : "Primary air";
       navLabel(ahu ? `${what} · from ${ahu.label}` : what, ahu, V(x0 - 0.3, y + r + 0.32, 0));
     }
@@ -129,8 +130,7 @@ const VAV = (() => {
       const fx = 0.2 + fanLen / 2;
       const f = Parts.fan({ r: 0.28, width: 0.4, housing: [0.8, 0.8, 0.7] });
       f.group.position.set(fx, yc, -0.1);
-      f.setStatus("on");
-      spinners.push(f.wheel);
+      fan = f;
       add("fan", f.group);
       // plenum inlet on the roof: induced room air drawn in over the fan
       const gr = new THREE.Group();
@@ -138,7 +138,7 @@ const VAV = (() => {
       for (let i = 0; i < 6; i++) gr.add(box(V(-0.34 + i * 0.13, 0.05, -0.36), V(-0.3 + i * 0.13, 0.08, 0.36), MAT.trim));
       gr.position.set(fx, yb, 0);
       group.add(gr);
-      stream("return", [V(fx, yb + 1.2, 0.48), V(fx, yb + 0.15, 0.48)], { size: 0.5, spacing: 0.3, groups: 2, gap: 0.11 });
+      stream("return", [V(fx, yb + 1.2, 0.48), V(fx, yb + 0.15, 0.48)], { size: 0.5, spacing: 0.3, groups: 2, gap: 0.11 }).tag = "induced";
       xIn = 0.2 + fanLen;
     }
     if (v.reheat) {
@@ -151,7 +151,17 @@ const VAV = (() => {
       vl.rotation.y = Math.PI / 2;
       vl.position.copy(st).add(V(0, 0, -0.2));
       add("reheat_coil.valve", vl);
-      if (plant) navLabel(`Hot water · ${plant.label}`, plant, st.clone().add(V(0.15, -0.3, 0.3)));
+      // plant connection: hot water pipes down under the box and out towards the viewer, particles while open
+      const zOut = 1.7, ends = { supply: st, return: k.userData.stubs.return.clone().add(kp) };
+      for (const [side, e] of Object.entries(ends)) {
+        const y = ya - 0.35 - (side === "return" ? 0.12 : 0);
+        const run = [e.clone(), V(e.x, y, e.z), V(e.x, y, zOut)];
+        group.add(Parts.pipeRun(run, "hot_water", 0.035));
+        const pr = Parts.particles(side === "supply" ? run.slice().reverse() : run, Parts.MEDIUM.hot_water, { size: 0.02, spacing: 0.1 });
+        group.add(pr.mesh);
+        water.push(pr);
+      }
+      navLabel(plant ? `HW · ${plant.label}` : "HW", plant, V(st.x, ya - 0.6, zOut + 0.3));
     }
     stream("supply", [V(xIn, yc, 0.42), V(BL - (v.reheat ? 0.5 : 0.1), yc, 0.42)], { size: 0.55, spacing: 0.32, groups: 2, gap: 0.11 });
 
@@ -231,7 +241,26 @@ const VAV = (() => {
       group, parts, paths, bounds, anchor, pinPoint, ghosts: [...ghosts],
       update: (t, dt) => {
         flows.forEach(f => f.update(t, dt));
-        for (const w of spinners) w.rotation.z -= dt * 6;  // nominal speed until E4 drives it
+        water.forEach(w => w.update(t, dt));
+        if (fan) fan.wheel.rotation.z -= dt * 7 * (fan.speed || 0);
+      },
+      // Move with the simulated state: damper(s), reheat valve and water, terminal fan, air streams by damper %.
+      setState: s => {
+        const st = s.vav;
+        if (!st) return;
+        const open = (name, pct) => parts[name]?.userData.setOpen?.(pct / 100);
+        if (dd) { open("damper@cold", st.deck.cold.damper); open("damper@hot", st.deck.hot.damper); }
+        else open("damper", st.damper);
+        parts["reheat_coil.valve"]?.userData.setCommand?.(st.reheat / 100);
+        for (const w of water) w.setSpeed(0.5 * st.reheat / 100);
+        if (fan) { fan.speed = st.run ? 1 : 0; fan.setStatus(st.run ? "on" : "off"); }
+        const pct = { primary: st.damper, cold: st.deck.cold.damper, hot: st.deck.hot.damper, induced: st.run && fan ? 60 : 0 };
+        const out = dd ? (st.deck.cold.damper + st.deck.hot.damper) / 2 : st.damper;
+        for (const f of flows) {
+          const r = 1.4 * (pct[f.tag] ?? out) / 100;
+          f.setSpeed(r);
+          f.setActive(r > 0.01);
+        }
       },
       applyTheme: P => flows.forEach(f => f.setColor(P.air[f.key])),
       setFrontWall: on => { cs.front.visible = on; },

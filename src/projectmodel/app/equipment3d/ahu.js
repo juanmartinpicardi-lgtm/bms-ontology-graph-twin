@@ -86,8 +86,10 @@ const AHU = (() => {
     const yc = y0 + H / 2, hIn = H - 2 * t - 0.12, dIn = D - 2 * t - 0.1, zc = (zb + t + zf) / 2 - 0.03;
     const mid = name => (at[name][0] + at[name][1]) / 2;
     const place = (name, obj, p) => { obj.position.copy(p).sub(parts[name].position); parts[name].add(obj); return obj; };
-    const slotPoints = role => (data.slots || []).find(s => s.role === role)?.points || [];
-    const spinners = [];
+    const fans = {}, water = [];
+    // the upstream plant for a coil, from the fed-by links ("Waterside Chilled Water Plant")
+    const plantFor = medium => (data.relations?.fed_by || []).find(r => r.template !== "ahu" &&
+      (medium === "chilled_water" ? /chill|chw/i : /hot|hw|boiler/i).test(`${r.label} ${r.cls}`));
 
     place("pre_filter", Parts.pleatedFilter(hIn, dIn), V(mid("pre_filter"), yc, zc));
     place("bag_filter", Parts.bagFilter(hIn, dIn, { length: at.bag_filter[1] - at.bag_filter[0] - 0.4 }),
@@ -103,13 +105,27 @@ const AHU = (() => {
       vl.rotation.y = Math.PI / 2;
       vl.position.copy(st).add(V(0, 0, -0.2));
       add(`${c}.valve`, vl);
+      // plant connection: supply and return pipes from the stubs down to the floor and out towards the viewer,
+      // with water particles that run while the valve is open
+      const color = Parts.MEDIUM[medium], zOut = zf + (medium === "chilled_water" ? 1.6 : 0.85);  // staggered, labels apart
+      const ends = { supply: st, return: k.userData.stubs.return.clone().add(kp) };
+      for (const [side, e] of Object.entries(ends)) {
+        const run = [e.clone(), V(e.x, 0.12 + (side === "return" ? 0.12 : 0), e.z), V(e.x, 0.12 + (side === "return" ? 0.12 : 0), zOut)];
+        group.add(Parts.pipeRun(run, medium));
+        const pr = Parts.particles(side === "supply" ? run.slice().reverse() : run, color);
+        group.add(pr.mesh);
+        water.push({ valve: `${c}.valve`, p: pr });
+      }
+      const plant = plantFor(medium);
+      const pl = label(`${medium === "chilled_water" ? "CHW" : "HW"}${plant ? " · " + plant.label : ""}`,
+                       V(ends.supply.x, 0.2, zOut + 0.35), plant ? "stream nav" : "stream");
+      if (plant) pl.element.dataset.eq = plant.id;
     }
     {
       const x = mid("supply_fan") - 0.25;
       const f = Parts.fan({ r: 0.66, width: 0.9, housing: [1.75, 1.9, 1.5] });
       place("supply_fan", f.group, V(x, yc + 0.02, zc - 0.2));
-      f.setStatus("on");  // static until the simulator (E4) drives it from Fan_Status
-      spinners.push(f.wheel);
+      fans.supply = f;
       place("supply_fan", Parts.motor(), V(at.supply_fan[1] - 0.42, y0 + t + 0.3, zc + 0.25));
       const d = Parts.vfd();
       d.position.set(mid("discharge"), y0 + 1.25, zb + t + 0.11);
@@ -147,8 +163,7 @@ const AHU = (() => {
       if (v.return_fan) {
         const fx = L * 0.62, rf = Parts.fan({ r: 0.5, width: 0.7, housing: [1.5, 1.44, 1.9] });
         rf.group.position.set(fx, yR, 0);
-        rf.setStatus("on");
-        spinners.push(rf.wheel);
+        fans.return = rf;
         add("return_fan", rf.group);
         const d = Parts.vfd();
         d.position.set(fx + 1.25, yR - 0.05, 0.75 + 0.1);
@@ -280,7 +295,30 @@ const AHU = (() => {
       group, parts, paths, bounds, anchor, pinPoint, sensors,
       update: (t, dt) => {
         flows.forEach(f => f.update(t, dt));
-        for (const w of spinners) w.rotation.z -= dt * 4.5;  // nominal speed until E4 drives it
+        water.forEach(w => w.p.update(t, dt));
+        for (const k in fans) fans[k].wheel.rotation.z -= dt * 7 * (fans[k].speed || 0);
+      },
+      // Move with the simulated state (sim.js): fan spin and status glow, damper blades, valve needles, air
+      // streams (speed from fan speed x damper, stopped when the fan is off) and water particles (valve %).
+      setState: s => {
+        const a = s.ahu;
+        for (const [k, f] of Object.entries(fans)) {
+          const st = a.fan[k];
+          f.speed = st.run ? st.speed / 100 : 0;
+          f.setStatus(st.run ? "on" : "off");
+        }
+        const open = (name, pct) => parts[name]?.userData.setOpen?.(pct / 100);
+        open("mixing_box.oa_damper", a.oa); open("mixing_box.ra_damper", a.ra); open("relief_outlet.damper", a.relief);
+        const valve = { "cooling_coil.valve": a.cool, "heating_coil.valve": a.heat };
+        for (const [name, pct] of Object.entries(valve)) parts[name]?.userData.setCommand?.(pct / 100);
+        for (const w of water) w.p.setSpeed(0.6 * (valve[w.valve] || 0) / 100);
+        const sf = a.fan.supply.speed / 100, rf = (fans.return ? a.fan.return.speed : a.fan.supply.speed) / 100;
+        const rate = { outside: sf * (0.3 + a.oa / 100), return: rf * (0.3 + Math.max(a.ra, a.relief) / 100), mixed: sf, supply: sf };
+        for (const f of flows) {
+          const r = 1.3 * (rate[f.key] ?? sf);
+          f.setSpeed(r);
+          f.setActive(r > 0.01);
+        }
       },
       applyTheme: P => flows.forEach(f => f.setColor(P.air[f.key])),
       setFrontWall: on => { front.visible = on; },

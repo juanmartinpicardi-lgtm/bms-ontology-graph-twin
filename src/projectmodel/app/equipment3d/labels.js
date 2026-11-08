@@ -4,34 +4,11 @@
 const Labels = (() => {
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  // Static placeholder values by class family, so the layout is real. E4 replaces these with sim.js.
-  const ROLE_TEMP = { supply_temp: 55.2, return_temp: 72.4, mixed_temp: 63.1, outside_temp: 78.5, discharge_temp: 56.0, zone_temp: 72.8 };
-  function staticValue(p) {
-    const c = p.cls || "", r = p.role || "";
-    const has = w => c.includes(w);
-    if (c.endsWith("_Setpoint")) {
-      if (has("Temperature")) return { text: has("Heating") ? "70.0 °F" : has("Cooling") ? "74.0 °F" : "55.0 °F" };
-      if (has("Pressure")) return { text: "1.50 inH₂O" };
-      if (has("Flow")) return { text: "800 cfm" };
-      return { text: "—" };
-    }
-    if (has("Temperature_Sensor")) return { text: `${(ROLE_TEMP[r] ?? 70).toFixed(1)} °F` };
-    if (has("Humidity")) return { text: "45 %RH" };
-    if (has("Building_Air_Static")) return { text: "0.03 inH₂O" };
-    if (has("Pressure_Sensor")) return { text: "1.48 inH₂O" };
-    if (has("Flow_Sensor")) return { text: "620 cfm" };
-    if (has("Valve") || has("Damper")) return { text: "45 %" };
-    if (has("Speed_Command")) return { text: "72 %" };
-    if (has("Frequency")) return { text: "43.2 Hz" };
-    if (has("Power")) return { text: "7.8 kW" };
-    if (has("Speed_Sensor")) return { text: "1290 rpm" };
-    if (has("Status")) return has("Filter") ? { text: "CLEAN", state: "ok" } : { text: "RUN", state: "ok" };
-    if (has("Fan_Command") || has("Start_Stop") || has("Enable")) return { text: "ON", state: "ok" };
-    if (has("Occupancy") || has("Mode")) return { text: "OCC" };
-    return { text: "—" };
-  }
+  // A value chip, refreshed in place by the page (`.pval[data-v]`); `v` is {text, state} from sim.js.
+  const chip = (id, v) => `<span class="pval sim ${v?.state ? "st-" + v.state : ""}" data-v="${esc(id)}" ` +
+    `title="Simulated value; unit inferred from the class">${esc(v?.text ?? "—")}</span>`;
 
-  function create(viewer, model, data, { onSelect } = {}) {
+  function create(viewer, model, data, { onSelect, value = () => null } = {}) {
     const pins = [], byPoint = new Map();
     // Group placed points by their (possibly sub-equipment-shifted) anchor.
     const groups = new Map();
@@ -59,9 +36,9 @@ const Labels = (() => {
       card.innerHTML = g.ghost
         ? `<div class="prow"><span class="pname">${esc(g.ghost.replace(/_/g, " "))}</span><span class="pval muted">expected, not found</span></div>`
         : g.ids.map(id => {
-            const p = data.points[id], v = staticValue(p);
+            const p = data.points[id];
             return `<div class="prow" data-id="${esc(id)}"><span class="sdot s-${esc(p.status)}" title="${esc(p.status)}"></span>` +
-                   `<span class="pname">${esc(p.label)}</span><span class="pval ${v.state ? "st-" + v.state : ""}">${esc(v.text)}</span>` +
+                   `<span class="pname">${esc(p.label)}</span>${chip(id, value(id))}` +
                    `<span class="pcls">${esc(p.cls)} · ${(p.confidence ?? 0).toFixed(2)}</span></div>`;
           }).join("");
       const obj = new CSS2DObject(el);
@@ -147,8 +124,10 @@ const Labels = (() => {
     }
     function setVisible(on) { for (const p of pins) p.obj.visible = on; }
 
-    return { pins, layout, select, setVisible, pinOf: id => byPoint.get(id), staticValue };
+    // values changed: cards may change width, so measure again on the next layout
+    const remeasure = () => { for (const p of pins) p.w = 0; };
+    return { pins, layout, select, setVisible, remeasure, pinOf: id => byPoint.get(id) };
   }
 
-  return { create, staticValue, esc };
+  return { create, esc, chip };
 })();
