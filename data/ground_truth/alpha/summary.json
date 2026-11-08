@@ -1,0 +1,33 @@
+{
+  "site": "alpha",
+  "source_file": "/Users/baptman/Desktop/bms-ontology, graph, twin/data/raw/haystack/alpha.json",
+  "source_sha256": "bbcf0d957c6e36e494fa8a5ebc6eaf12a3c1ab03d89d950467be5dbae010276d",
+  "brick_version": "1.4.4 (bundled with brickschema 0.8.0)",
+  "grid_meta": {
+    "numPoints": 1842,
+    "numEquips": 184,
+    "numWeathers": 4
+  },
+  "points": 1842,
+  "weather_points_excluded": 4,
+  "equipment": 184,
+  "point_map_status": {
+    "ambiguous": 398,
+    "mapped": 1236,
+    "generic": 60,
+    "unmapped": 148
+  },
+  "equip_map_status": {
+    "ambiguous": 151,
+    "mapped": 22,
+    "generic": 11
+  },
+  "relations": {
+    "feeds (chilledWaterRef)": 13,
+    "feeds (hotWaterRef)": 113,
+    "hasPart (equipRef)": 165,
+    "feeds (airRef)": 144
+  },
+  "points_with_equipment": 1842,
+  "issues": 0
+}

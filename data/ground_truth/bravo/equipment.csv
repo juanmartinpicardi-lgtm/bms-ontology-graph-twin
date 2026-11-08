@@ -1,0 +1,150 @@
+equip_id,source_row,dis,parent_equip_id,haystack_tags,brick_class,map_status,candidates,leftover_tags
+b-0001,1,Bravo BCU-1,,chilledWaterCooling equip hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0007,7,Bravo BCU-2,,chilledWaterCooling equip hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-000e,14,Bravo Boiler 1,,boiler equip hvac,Boiler,mapped,Boiler,Equip HVAC
+b-0010,16,Bravo Boiler 2,,boiler equip hvac,Boiler,mapped,Boiler,Equip HVAC
+b-0012,18,Bravo Boiler Plant,,equip hot hvac plant water,HVAC_Equipment,generic,HVAC_Equipment,Equip Hot Plant Water
+b-0018,24,Bravo CHWP-1,,chilled equip hvac pump water,Chilled_Water_Pump,mapped,Chilled_Water_Pump,Equip HVAC
+b-001b,27,Bravo CHWP-2,,chilled equip hvac pump water,Chilled_Water_Pump,mapped,Chilled_Water_Pump,Equip HVAC
+b-001e,30,Bravo Chilled Water Plant,,chilled equip hvac plant water,HVAC_Equipment,generic,HVAC_Equipment,Chilled Equip Plant Water
+b-002c,44,Bravo Chiller 1,,airCooling chiller equip hvac,Chiller,mapped,Chiller,Aircooling Chiller Equip
+b-0034,52,Bravo Chiller 2,,airCooling chiller equip hvac,Chiller,mapped,Chiller,Aircooling Chiller Equip
+b-003c,60,Bravo EF-1,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-003f,63,Bravo EF-10,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0042,66,Bravo EF-11,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0045,69,Bravo EF-12,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0048,72,Bravo EF-13,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-004b,75,Bravo EF-14,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-004e,78,Bravo EF-15,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0051,81,Bravo EF-16,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0054,84,Bravo EF-17,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0057,87,Bravo EF-18,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-005a,90,Bravo EF-19,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-005d,93,Bravo EF-2,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0060,96,Bravo EF-20,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0063,99,Bravo EF-21,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0066,102,Bravo EF-22,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0069,105,Bravo EF-23,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-006c,108,Bravo EF-24,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-006f,111,Bravo EF-25,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0072,114,Bravo EF-26,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0075,117,Bravo EF-27,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0078,120,Bravo EF-28,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-007a,122,Bravo EF-3,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-007d,125,Bravo EF-4,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0080,128,Bravo EF-5,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0083,131,Bravo EF-6,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0086,134,Bravo EF-7,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-0089,137,Bravo EF-8,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-008c,140,Bravo EF-9,,equip fan hvac,Fan,mapped,Fan,Equip Fan
+b-008f,143,Bravo FCU-1,,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,,ambiguous,FCU Thermostat,
+b-0094,148,Bravo FCU-2,,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,,ambiguous,FCU Thermostat,
+b-0099,153,Bravo FCU-3,,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,,ambiguous,FCU Thermostat,
+b-009e,158,Bravo FCU-4,,chilledWaterCooling directZone elecHeating equip fcu hvac singleDuct thermostat zone,,ambiguous,FCU Thermostat,
+b-00a5,165,Bravo HHW Pump 1,,equip hot hvac pump water,Hot_Water_Pump,mapped,Hot_Water_Pump,Equip HVAC
+b-00a8,168,Bravo HHW Pump 2,,equip hot hvac pump water,Hot_Water_Pump,mapped,Hot_Water_Pump,Equip HVAC
+b-00ac,172,Bravo RTU-1,,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,,ambiguous,AHU RTU,
+b-00ce,206,Bravo RTU-2,,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,,ambiguous,AHU RTU,
+b-00f2,242,Bravo RTU-3,,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,,ambiguous,AHU RTU,
+b-0113,275,Bravo RTU-4,,ahu chilledWaterCooling equip hotWaterHeating hvac rtu singleDuct vavZone,,ambiguous,AHU RTU,
+b-0136,310,Bravo Steam Boiler A,,boiler equip hvac,Boiler,mapped,Boiler,Equip HVAC
+b-0138,312,Bravo Steam Boiler B,,boiler equip hvac,Boiler,mapped,Boiler,Equip HVAC
+b-013a,314,Bravo Steam Boiler C,,boiler equip hvac,Boiler,mapped,Boiler,Equip HVAC
+b-013d,317,Bravo VAV 1-1,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0144,324,Bravo VAV 1-10,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-014c,332,Bravo VAV 1-11,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0154,340,Bravo VAV 1-12,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-015c,348,Bravo VAV 1-13,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0164,356,Bravo VAV 1-14,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-016c,364,Bravo VAV 1-15,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0174,372,Bravo VAV 1-16,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-017c,380,Bravo VAV 1-17,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0184,388,Bravo VAV 1-18,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-018c,396,Bravo VAV 1-19,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0195,405,Bravo VAV 1-2,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-019d,413,Bravo VAV 1-20,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01a5,421,Bravo VAV 1-3,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01af,431,Bravo VAV 1-4,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01b7,439,Bravo VAV 1-5,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01bf,447,Bravo VAV 1-6,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01c9,457,Bravo VAV 1-7,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01d1,465,Bravo VAV 1-8,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01d9,473,Bravo VAV 1-9,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01e1,481,Bravo VAV 2-1,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01e9,489,Bravo VAV 2-10,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01f1,497,Bravo VAV 2-11,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-01f9,505,Bravo VAV 2-12,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0201,513,Bravo VAV 2-13,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0209,521,Bravo VAV 2-14,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0211,529,Bravo VAV 2-15,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0219,537,Bravo VAV 2-16,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0221,545,Bravo VAV 2-17,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0229,553,Bravo VAV 2-18,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0231,561,Bravo VAV 2-19,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0239,569,Bravo VAV 2-2,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0241,577,Bravo VAV 2-20,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0249,585,Bravo VAV 2-21,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0251,593,Bravo VAV 2-22,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0259,601,Bravo VAV 2-23,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0261,609,Bravo VAV 2-24,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0269,617,Bravo VAV 2-25,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0271,625,Bravo VAV 2-26,,equip hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0279,633,Bravo VAV 2-27,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0281,641,Bravo VAV 2-28,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0289,649,Bravo VAV 2-29,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0291,657,Bravo VAV 2-3,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0299,665,Bravo VAV 2-30,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02a1,673,Bravo VAV 2-31,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02a9,681,Bravo VAV 2-32,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02b1,689,Bravo VAV 2-33,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02b9,697,Bravo VAV 2-34,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02c1,705,Bravo VAV 2-35,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02c9,713,Bravo VAV 2-36,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02d1,721,Bravo VAV 2-37,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02d9,729,Bravo VAV 2-38,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02e1,737,Bravo VAV 2-39,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02e9,745,Bravo VAV 2-4,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02f1,753,Bravo VAV 2-40,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-02f9,761,Bravo VAV 2-41,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0301,769,Bravo VAV 2-42,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0309,777,Bravo VAV 2-43,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0311,785,Bravo VAV 2-44,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0319,793,Bravo VAV 2-45,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0321,801,Bravo VAV 2-46,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0329,809,Bravo VAV 2-47,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0331,817,Bravo VAV 2-48,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0339,825,Bravo VAV 2-49,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0341,833,Bravo VAV 2-5,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0349,841,Bravo VAV 2-50,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0351,849,Bravo VAV 2-6,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0359,857,Bravo VAV 2-7,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0361,865,Bravo VAV 2-8,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0369,873,Bravo VAV 2-9,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0371,881,Bravo VAV 3-1,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0379,889,Bravo VAV 3-10,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0381,897,Bravo VAV 3-11,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0389,905,Bravo VAV 3-12,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0391,913,Bravo VAV 3-13,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0399,921,Bravo VAV 3-14,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03a1,929,Bravo VAV 3-15,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03a9,937,Bravo VAV 3-16,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03b1,945,Bravo VAV 3-17,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03b9,953,Bravo VAV 3-18,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03c1,961,Bravo VAV 3-19,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03c9,969,Bravo VAV 3-2,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03d1,977,Bravo VAV 3-20,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03d9,985,Bravo VAV 3-21,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03e1,993,Bravo VAV 3-22,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03e9,1001,Bravo VAV 3-23,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03f1,1009,Bravo VAV 3-24,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-03f9,1017,Bravo VAV 3-25,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0401,1025,Bravo VAV 3-26,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0409,1033,Bravo VAV 3-27,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0411,1041,Bravo VAV 3-28,,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav zone,,ambiguous,Thermostat VAV,
+b-0419,1049,Bravo VAV 3-3,,equip hotWaterHeating hvac singleDuct vav,VAV,mapped,VAV,Equip Hotwaterheating Singleduct VAV
+b-041c,1052,Bravo VAV 3-4,,equip hotWaterHeating hvac singleDuct vav,VAV,mapped,VAV,Equip Hotwaterheating Singleduct VAV
+b-041f,1055,Bravo VAV 3-5,,equip hotWaterHeating hvac singleDuct vav,VAV,mapped,VAV,Equip Hotwaterheating Singleduct VAV
+b-0422,1058,Bravo VAV 3-6,,equip hotWaterHeating hvac singleDuct vav,VAV,mapped,VAV,Equip Hotwaterheating Singleduct VAV
+b-0425,1061,Bravo VAV 3-7,,equip hotWaterHeating hvac singleDuct vav,VAV,mapped,VAV,Equip Hotwaterheating Singleduct VAV
+b-0428,1064,Bravo VAV 3-8,,equip hotWaterHeating hvac singleDuct vav,VAV,mapped,VAV,Equip Hotwaterheating Singleduct VAV
+b-042b,1067,Bravo VAV 3-9,,equip hotWaterHeating hvac singleDuct vav,VAV,mapped,VAV,Equip Hotwaterheating Singleduct VAV

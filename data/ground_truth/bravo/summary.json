@@ -1,0 +1,32 @@
+{
+  "site": "bravo",
+  "source_file": "/Users/baptman/Desktop/bms-ontology, graph, twin/data/raw/haystack/bravo.json",
+  "source_sha256": "f0b428c0379fb975a556adb154d8f386cdfbab05a17af12afeb11b27fce7f4ba",
+  "brick_version": "1.4.4 (bundled with brickschema 0.8.0)",
+  "grid_meta": {
+    "numPoints": 914,
+    "numEquips": 149,
+    "numWeathers": 4
+  },
+  "points": 914,
+  "weather_points_excluded": 4,
+  "equipment": 149,
+  "point_map_status": {
+    "unmapped": 14,
+    "mapped": 684,
+    "generic": 89,
+    "ambiguous": 127
+  },
+  "equip_map_status": {
+    "ambiguous": 101,
+    "mapped": 46,
+    "generic": 2
+  },
+  "relations": {
+    "feeds (hotWaterRef)": 93,
+    "feeds (chilledWaterRef)": 6,
+    "feeds (airRef)": 98
+  },
+  "points_with_equipment": 913,
+  "issues": 1
+}

@@ -1,0 +1,769 @@
+entity_id,entity_kind,raw_name,haystack_tags,map_status,candidates
+a-0002,point,Clg_Valve_Cmd,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
+a-0004,point,Htg_Valve_Cmd,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0007,point,Enthalpy,air cur his outside point sensor,ambiguous,Outside_Air_CO2_Sensor Outside_Air_CO_Sensor Outside_Air_Dewpoint_Sensor Outside_Air_Enthalpy_Sensor Outside_Air_Flow_Sensor Outside_Air_Grains_Sensor Outside_Air_Temperature_Sensor
+a-000c,point,Alpha Airside AHU-2 RF VFD Return Fan Status,air cur fan his point return run sensor,generic,Sensor
+a-0012,point,RF Status,air cur fan his point return run sensor,generic,Sensor
+a-0016,point,Alpha Airside AHU-2 SF VFD Supply Fan Status,air cur discharge fan his point run sensor,generic,Sensor
+a-0018,point,Duct Static,air cur discharge his point pressure sensor,ambiguous,Discharge_Air_Differential_Pressure_Sensor Discharge_Air_Static_Pressure_Sensor Discharge_Air_Velocity_Pressure_Sensor
+a-0019,point,DSP_SP_Curr_Value,air cur discharge his point pressure sp,ambiguous,Discharge_Air_Differential_Pressure_Setpoint Discharge_Air_Static_Pressure_Setpoint
+a-001c,point,SF Status,air cur discharge fan his point run sensor,generic,Sensor
+a-0021,point,Clg_Valve_Cmd,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
+a-0023,point,Htg_Valve_Cmd,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-002d,point,RF Status,air cur fan his point return run sensor,generic,Sensor
+a-0031,point,Duct Static,air cur discharge his point pressure sensor,ambiguous,Discharge_Air_Differential_Pressure_Sensor Discharge_Air_Static_Pressure_Sensor Discharge_Air_Velocity_Pressure_Sensor
+a-0032,point,DSP_SP_Curr_Value,air cur discharge his point pressure sp,ambiguous,Discharge_Air_Differential_Pressure_Setpoint Discharge_Air_Static_Pressure_Setpoint
+a-0035,point,SF Status,air cur discharge fan his point run sensor,generic,Sensor
+a-003a,point,Clg_Valve_Cmd,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
+a-0040,point,Htg_Valve_Cmd,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0046,point,RF Status,air cur exhaust fan his point run sensor,generic,Sensor
+a-0049,point,Duct Static,air cur discharge his point pressure sensor,ambiguous,Discharge_Air_Differential_Pressure_Sensor Discharge_Air_Static_Pressure_Sensor Discharge_Air_Velocity_Pressure_Sensor
+a-004a,point,DSP_SP_Curr_Value,air cur discharge his point pressure sp,ambiguous,Discharge_Air_Differential_Pressure_Setpoint Discharge_Air_Static_Pressure_Setpoint
+a-004b,point,SF Status,air cur discharge fan his point run sensor,generic,Sensor
+a-0052,point,Clg_Valve_Cmd,chilled cmd cool cur his point valve water,ambiguous,Cooling_Command Valve_Command
+a-0059,point,Htg_Valve_Cmd,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-005a,point,Htg_Valve_Cmd,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0063,point,RF Status,air cur fan his point return run sensor,generic,Sensor
+a-0065,point,Duct Static,air cur discharge his point pressure sensor,ambiguous,Discharge_Air_Differential_Pressure_Sensor Discharge_Air_Static_Pressure_Sensor Discharge_Air_Velocity_Pressure_Sensor
+a-0066,point,DSP_SP_Curr_Value,air cur discharge his point pressure sp,ambiguous,Discharge_Air_Differential_Pressure_Setpoint Discharge_Air_Static_Pressure_Setpoint
+a-0067,point,SF Status,air cur discharge fan his point run sensor,generic,Sensor
+a-0074,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0075,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0076,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0082,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0083,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0084,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0090,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0091,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0092,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-009e,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-009f,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-00a0,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00ac,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00ad,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-00ae,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00ba,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00bb,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-00bc,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00c8,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00c9,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-00ca,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00d6,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00d7,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-00d8,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00e4,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00e5,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-00e6,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00f2,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-00f3,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-00f4,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0100,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0101,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0102,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-010e,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-010f,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0110,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-011c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-011d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-011e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-012a,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-012b,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-012c,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0138,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0139,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-013a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0146,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0147,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0148,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0154,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0155,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0156,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0162,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0163,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0164,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0170,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0171,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0172,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-017e,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-017f,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0180,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-018c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-018d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-018e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-019a,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-019b,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-019c,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01a8,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01a9,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-01aa,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01b6,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01b7,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-01b8,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01c4,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01c5,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-01c6,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01d2,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01d3,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-01d4,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01e0,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01e1,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-01e2,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01ee,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01ef,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-01f0,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01fc,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-01fd,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-01fe,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-020a,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-020b,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-020c,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0218,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0219,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-021a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0226,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0227,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0228,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0234,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0235,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0236,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-023a,point,EF-1 Status,air cur fan his point run sensor,generic,Sensor
+a-023c,point,EF-2 Status,air cur fan his point run sensor,generic,Sensor
+a-023e,point,EF-3 Status,air cur fan his point run sensor,generic,Sensor
+a-0240,point,EF-4 Status,air cur fan his point run sensor,generic,Sensor
+a-0246,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0248,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0249,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-024a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0252,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0254,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0255,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0256,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-025e,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0260,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0261,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0262,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-026a,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-026c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-026d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-026e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0276,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0278,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0279,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-027a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0282,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0284,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0285,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0286,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-028e,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0290,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0291,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0292,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-029a,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-029c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-029d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-029e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02a6,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02a8,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02a9,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02aa,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02b2,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02b4,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02b5,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02b6,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02be,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02c0,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02c1,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02c2,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02ca,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02cc,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02cd,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02ce,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02d6,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02d8,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02d9,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02da,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02e2,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02e4,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02e5,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02e6,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02ee,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02f0,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02f1,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02f2,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02fa,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-02fc,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-02fd,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-02fe,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0306,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0308,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0309,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-030a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0312,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0314,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0315,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0316,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-031e,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0320,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0321,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0322,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-032a,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-032c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-032d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-032e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0336,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0338,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0339,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-033a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0342,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0344,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0345,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0346,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-034e,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0350,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0351,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0352,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-035a,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-035c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-035d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-035e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0366,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0368,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0369,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-036a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0372,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0374,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0375,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0376,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-037e,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0380,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0381,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0382,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-038a,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-038c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-038d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-038e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0396,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0398,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0399,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-039a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03a2,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03a4,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03a5,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03a6,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03ae,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03b0,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03b1,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03b2,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03ba,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03bc,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03bd,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03be,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03c6,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03c8,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03c9,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03ca,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03d2,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03d4,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03d5,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03d6,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03de,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03e0,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03e1,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03e2,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03ea,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03ec,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03ed,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03ee,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03f6,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-03f8,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-03f9,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-03fa,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0402,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0404,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0405,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0406,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-040e,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0410,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0411,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0412,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-041a,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-041c,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-041d,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-041e,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0426,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0428,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0429,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-042a,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0432,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0434,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0435,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0436,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-043e,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0440,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0441,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0442,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-044b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-044c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-044d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0455,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0457,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0458,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0459,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0461,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0463,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0464,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0465,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-046d,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-046f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0470,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0471,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0479,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-047b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-047c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-047d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0485,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0487,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0488,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0489,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0491,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0493,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0494,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0495,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-049d,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-049f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04a0,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04a1,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04a9,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-04ab,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04ac,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04ad,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04b5,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-04b7,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04b8,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04b9,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04c1,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-04c3,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04c4,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04c5,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04cd,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04ce,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04cf,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04d7,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-04d9,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04da,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04db,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04e3,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-04e5,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04e6,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04e7,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04ef,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-04f1,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04f2,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04f3,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04fb,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-04fd,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-04fe,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-04ff,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0507,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0509,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-050a,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-050b,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0513,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0515,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0516,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0517,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-051f,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0521,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0522,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0523,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-052b,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-052d,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-052e,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-052f,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0537,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0539,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-053a,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-053b,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0543,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0545,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0546,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0547,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-054f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0550,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0551,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0559,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-055b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-055c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-055d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0565,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0567,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0568,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0569,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0571,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0573,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0574,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0575,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-057d,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-057f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0580,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0581,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0589,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-058b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-058c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-058d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0595,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0596,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0597,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-059f,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05a1,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05a2,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05a3,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05ab,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05ad,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05ae,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05af,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05b7,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05b9,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05ba,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05bb,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05c3,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05c5,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05c6,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05c7,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05cf,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05d1,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05d2,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05d3,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05db,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05dd,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05de,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05df,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05e7,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05e9,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05ea,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05eb,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05f3,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-05f5,point,Decon EF Status,air cur exhaust fan his point run sensor,generic,Sensor
+a-05f7,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-05f8,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-05f9,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0601,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0603,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0604,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0605,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-060d,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-060f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0610,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0611,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0619,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-061b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-061c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-061d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0625,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0627,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0628,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0629,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0631,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0633,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0634,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0635,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-063d,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-063f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0640,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0641,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0649,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-064b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-064c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-064d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0655,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0657,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0658,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0659,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0661,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0663,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0664,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0665,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-066d,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-066f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0670,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0671,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0679,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-067b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-067c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-067d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0685,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0687,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0688,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0689,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0691,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0693,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0694,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0695,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-069d,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-069f,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06a0,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06a1,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06a9,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06ab,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06ac,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06ad,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06b5,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06b7,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06b8,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06b9,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06c1,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06c3,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06c4,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06c5,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06cd,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06cf,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06d0,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06d1,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06d9,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06db,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06dc,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06dd,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06e5,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06e7,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06e8,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06e9,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06f1,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06f3,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06f4,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-06f5,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-06fd,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-06ff,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0700,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0701,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0709,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-070b,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-070c,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-070d,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0715,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0717,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0718,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0719,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0721,point,Heating Valve Signal,cmd cur heat his hot point valve water,ambiguous,Heating_Command Valve_Command
+a-0723,point,Occupied Clg Setpoint,air cooling cur his occ point sp temp zone,ambiguous,Occupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0724,point,Occupied Htg Setpoint,air cur heating his occ point sp temp zone,unmapped,
+a-0725,point,Unoccupied Clg Sp,air cooling cur his point sp temp unocc zone,ambiguous,Unoccupied_Air_Temperature_Cooling_Setpoint Zone_Air_Cooling_Temperature_Setpoint
+a-0729,point,Alpha Utility Bills Elec Meter 1 Cost,his point sensor,generic,Sensor
+a-072d,point,Alpha Utility Bills Elec Meter 2 Cost,his point sensor,generic,Sensor
+a-0731,point,Alpha Utility Bills Gas Meter 1 Cost,his point sensor,generic,Sensor
+a-0732,point,Alpha Utility Bills Gas Meter 1 Energy,energy gas his point sensor,ambiguous,Energy_Sensor Gas_Sensor
+a-0734,point,Alpha Utility Bills Gas Meter 2 Cost,his point sensor,generic,Sensor
+a-0735,point,Alpha Utility Bills Gas Meter 2 Energy,energy gas his point sensor,ambiguous,Energy_Sensor Gas_Sensor
+a-0736,point,Alpha Utility Bills Gas Meter 2 Transport Cost,his point sensor,generic,Sensor
+a-0738,point,Alpha Utility Bills Gas Meter 3 Cost,his point sensor,generic,Sensor
+a-0739,point,Alpha Utility Bills Gas Meter 3 Energy,energy gas his point sensor,ambiguous,Energy_Sensor Gas_Sensor
+a-073b,point,Alpha Utility Bills Water Meter 1 Cost,his point sensor,generic,Sensor
+a-073c,point,Alpha Utility Bills Water Meter 1 Volume,domestic his point sensor volume water,generic,Sensor
+a-073e,point,Alpha Utility Bills Water Meter 2 Cost,his point sensor,generic,Sensor
+a-073f,point,Alpha Utility Bills Water Meter 2 Volume,domestic his point sensor volume water,generic,Sensor
+a-0741,point,Alpha Utility Bills Water Meter 3 Cost,his point sensor,generic,Sensor
+a-0742,point,Alpha Utility Bills Water Meter 3 Volume,domestic his point sensor volume water,generic,Sensor
+a-0744,point,Alpha Utility Bills Water Meter 4 Cost,his point sensor,generic,Sensor
+a-0745,point,Alpha Utility Bills Water Meter 4 Volume,domestic his point sensor volume water,generic,Sensor
+a-0747,point,Alpha Utility Bills Water Meter 5 Cost,his point sensor,generic,Sensor
+a-0748,point,Alpha Utility Bills Water Meter 5 Volume,domestic his point sensor volume water,generic,Sensor
+a-074a,point,Alpha Utility Bills Water Meter 6 Cost,his point sensor,generic,Sensor
+a-074b,point,Alpha Utility Bills Water Meter 6 Volume,domestic his point sensor volume water,generic,Sensor
+a-074d,point,Alpha Utility Bills Water Meter 7 Cost,his point sensor,generic,Sensor
+a-074e,point,Alpha Utility Bills Water Meter 7 Volume,domestic his point sensor volume water,generic,Sensor
+a-0750,point,Alpha Utility Bills Water Meter 8 Cost,his point sensor,generic,Sensor
+a-0751,point,Alpha Utility Bills Water Meter 8 Volume,domestic his point sensor volume water,generic,Sensor
+a-0754,point,B-1 Fire Rate,cur his point sensor,generic,Sensor
+a-0758,point,B-2 Fire Rate,cur his point sensor,generic,Sensor
+a-075c,point,B-3 Fire Rate,cur his point sensor,generic,Sensor
+a-075f,point,HW Pump Status,cur his point sensor,generic,Sensor
+a-0760,point,HW Supply Temp SP,cur his point sp,generic,Setpoint
+a-0765,point,Steam Valve Control Signal,cur his point sp,generic,Setpoint
+a-076a,point,CH-1 Evap ISO Valve OPEN,chilled cur his point sensor valve water,unmapped,
+a-076f,point,Alpha Waterside CH-1 Compressor Efficiency (CC),cur efficiency his point sensor,generic,Sensor
+a-0773,point,Alpha Waterside CH-1 Cond Efficiency (CC),condenser cur efficiency his point sensor,generic,Sensor
+a-0778,point,CH-1 Cond ISO Valve OPEN,condenser cur his point sensor valve water,unmapped,
+a-077b,point,Alpha Waterside CH-1 Efficiency (CC),cur efficiency his point sensor,generic,Sensor
+a-077d,point,Alpha Waterside CH-1 Evap Efficiency (CC),cur efficiency evaporator his point sensor,generic,Sensor
+a-0781,point,Alpha Waterside CH-1 Full Load Amp Percentage,cur his point sensor,generic,Sensor
+a-0782,point,Alpha Waterside CH-1 PHASE B MOTOR CURRENT,cur current elec his point sensor,generic,Sensor
+a-0783,point,Alpha Waterside CH-1 Refrig Cycle Efficiency (CC),cur efficiency his point sensor,generic,Sensor
+a-0789,point,CH-2 Evap ISO Valve OPEN,chilled cur his point sensor valve water,unmapped,
+a-078f,point,CH-2 Cond ISO Valve OPEN,condenser cur his point sensor valve water,unmapped,
+a-0795,point,CH-3 Evap ISO Valve OPEN,chilled cur his point sensor valve water,unmapped,
+a-0799,point,CH-3 Cond ISO Valve OPEN,condenser cur his point sensor valve water,unmapped,
+a-07a1,point,CT-1 Status,cur fan his point run sensor,generic,Sensor
+a-07a2,point,CT-1 ISO Valve OPEN,condenser cur his point sensor valve water,unmapped,
+a-07a9,point,CT-2 Status,cur fan his point run sensor,generic,Sensor
+a-07aa,point,CT-2 ISO Valve OPEN,condenser cur his point sensor valve water,unmapped,
+a-07ae,point,CWP-1 ISO Valve OPEN,condenser cur his point sensor valve water,unmapped,
+a-07b1,point,CWP-1 Status,condenser cur his point pump run sensor,generic,Sensor
+a-07b5,point,CWP-2 ISO Valve OPEN,condenser cur his point sensor valve water,unmapped,
+a-07b7,point,CWP-2 Status,condenser cur his point pump run sensor,generic,Sensor
+a-07c6,point,HHWP-2 Status,cur his hot point pump run secondaryLoop sensor,generic,Sensor
+a-07cb,point,HHWP-3 Status,cur his hot point pump run secondaryLoop sensor,generic,Sensor
+a-07d0,point,HHWP-4 Status,cur his hot point pump run secondaryLoop sensor,generic,Sensor
+a-07e0,point,PCHWP-1A Status,chilled cur his point primaryLoop pump run sensor,generic,Sensor
+a-07e4,point,PCHWP-1B Status,chilled cur his point primaryLoop pump run sensor,generic,Sensor
+a-07e6,point,HW Supply Temp SP,cur his point sp,generic,Setpoint
+a-0001,equip,Alpha Airside AHU-2,ahu chilledWaterCooling elec equip hotWaterHeating hvac singleDuct vavZone,ambiguous,AHU Electrical_Equipment
+a-0009,equip,Alpha Airside AHU-2 RF VFD,elec equip fan hvac meter return,ambiguous,Electrical_Meter Return_Fan
+a-0013,equip,Alpha Airside AHU-2 SF VFD,discharge elec equip fan hvac meter,ambiguous,Discharge_Fan Electrical_Meter
+a-0020,equip,Alpha Airside AHU-3,ahu chilledWaterCooling elec equip hotWaterHeating hvac singleDuct vavZone,ambiguous,AHU Electrical_Equipment
+a-0039,equip,Alpha Airside AHU-4,ahu chilledWaterCooling dualDuct elec equip hotWaterHeating hvac vavZone,ambiguous,AHU Electrical_Equipment
+a-0051,equip,Alpha Airside AHU-5,ahu chilledWaterCooling dualDuct elec equip hotWaterHeating hvac vavZone,ambiguous,AHU Electrical_Equipment
+a-006b,equip,Alpha Airside DD 1-4-1,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-0079,equip,Alpha Airside DD 1-4-10,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-0087,equip,Alpha Airside DD 1-4-11,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-0095,equip,Alpha Airside DD 1-4-12,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-00a3,equip,Alpha Airside DD 1-4-13,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-00b1,equip,Alpha Airside DD 1-4-14,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-00bf,equip,Alpha Airside DD 1-4-2,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-00cd,equip,Alpha Airside DD 1-4-3,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-00db,equip,Alpha Airside DD 1-4-4,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-00e9,equip,Alpha Airside DD 1-4-5,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-00f7,equip,Alpha Airside DD 1-4-6,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-0105,equip,Alpha Airside DD 1-4-7,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-0113,equip,Alpha Airside DD 1-4-8,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-0121,equip,Alpha Airside DD 1-4-9,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-012f,equip,Alpha Airside DD 1-5-1,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-013d,equip,Alpha Airside DD 1-5-10,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-014b,equip,Alpha Airside DD 1-5-11,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-0159,equip,Alpha Airside DD 1-5-12,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-0167,equip,Alpha Airside DD 1-5-13,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-0175,equip,Alpha Airside DD 1-5-14,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-0183,equip,Alpha Airside DD 1-5-15,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-0191,equip,Alpha Airside DD 1-5-16,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-019f,equip,Alpha Airside DD 1-5-17,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-01ad,equip,Alpha Airside DD 1-5-18,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-01bb,equip,Alpha Airside DD 1-5-19,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-01c9,equip,Alpha Airside DD 1-5-2,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-01d7,equip,Alpha Airside DD 1-5-3,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-01e5,equip,Alpha Airside DD 1-5-4,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-01f3,equip,Alpha Airside DD 1-5-5,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-0201,equip,Alpha Airside DD 1-5-6,dualDuct equip fanPowered hvac thermostat vav,ambiguous,Thermostat VAV
+a-020f,equip,Alpha Airside DD 1-5-7,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-021d,equip,Alpha Airside DD 1-5-8,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-022b,equip,Alpha Airside DD 1-5-9,dualDuct equip hvac thermostat vav,ambiguous,Thermostat VAV
+a-0241,equip,Alpha Airside VAV 1-2-1,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-024d,equip,Alpha Airside VAV 1-2-10,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0259,equip,Alpha Airside VAV 1-2-11,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0265,equip,Alpha Airside VAV 1-2-12,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0271,equip,Alpha Airside VAV 1-2-13,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-027d,equip,Alpha Airside VAV 1-2-14,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0289,equip,Alpha Airside VAV 1-2-15,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0295,equip,Alpha Airside VAV 1-2-16,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02a1,equip,Alpha Airside VAV 1-2-17,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02ad,equip,Alpha Airside VAV 1-2-18,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02b9,equip,Alpha Airside VAV 1-2-19,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02c5,equip,Alpha Airside VAV 1-2-20,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02d1,equip,Alpha Airside VAV 1-2-21,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02dd,equip,Alpha Airside VAV 1-2-22,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02e9,equip,Alpha Airside VAV 1-2-23,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-02f5,equip,Alpha Airside VAV 1-2-25,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0301,equip,Alpha Airside VAV 1-2-26,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-030d,equip,Alpha Airside VAV 1-2-27,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0319,equip,Alpha Airside VAV 1-2-28,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0325,equip,Alpha Airside VAV 1-2-29,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0331,equip,Alpha Airside VAV 1-2-3,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-033d,equip,Alpha Airside VAV 1-2-30,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0349,equip,Alpha Airside VAV 1-2-31,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0355,equip,Alpha Airside VAV 1-2-32,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0361,equip,Alpha Airside VAV 1-2-33,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-036d,equip,Alpha Airside VAV 1-2-34,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0379,equip,Alpha Airside VAV 1-2-35,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0385,equip,Alpha Airside VAV 1-2-36,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0391,equip,Alpha Airside VAV 1-2-37,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-039d,equip,Alpha Airside VAV 1-2-38,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03a9,equip,Alpha Airside VAV 1-2-4,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03b5,equip,Alpha Airside VAV 1-2-40,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03c1,equip,Alpha Airside VAV 1-2-41,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03cd,equip,Alpha Airside VAV 1-2-42,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03d9,equip,Alpha Airside VAV 1-2-43,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03e5,equip,Alpha Airside VAV 1-2-44,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03f1,equip,Alpha Airside VAV 1-2-45,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-03fd,equip,Alpha Airside VAV 1-2-46,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0409,equip,Alpha Airside VAV 1-2-47,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0415,equip,Alpha Airside VAV 1-2-48,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0421,equip,Alpha Airside VAV 1-2-5,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-042d,equip,Alpha Airside VAV 1-2-50,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0439,equip,Alpha Airside VAV 1-2-51,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0445,equip,Alpha Airside VAV 1-2-52,equip fanPowered hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0450,equip,Alpha Airside VAV 1-2-53,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-045c,equip,Alpha Airside VAV 1-2-55,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0468,equip,Alpha Airside VAV 1-2-56,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0474,equip,Alpha Airside VAV 1-2-58,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0480,equip,Alpha Airside VAV 1-2-59,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-048c,equip,Alpha Airside VAV 1-2-6,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0498,equip,Alpha Airside VAV 1-2-61,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04a4,equip,Alpha Airside VAV 1-2-62,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04b0,equip,Alpha Airside VAV 1-2-63,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04bc,equip,Alpha Airside VAV 1-2-64,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04c8,equip,Alpha Airside VAV 1-2-65,equip hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04d2,equip,Alpha Airside VAV 1-2-66,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04de,equip,Alpha Airside VAV 1-2-67,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04ea,equip,Alpha Airside VAV 1-2-68,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-04f6,equip,Alpha Airside VAV 1-2-69,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0502,equip,Alpha Airside VAV 1-2-7,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-050e,equip,Alpha Airside VAV 1-2-70,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-051a,equip,Alpha Airside VAV 1-2-71,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0526,equip,Alpha Airside VAV 1-2-72,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0532,equip,Alpha Airside VAV 1-2-73,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-053e,equip,Alpha Airside VAV 1-2-74,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-054a,equip,Alpha Airside VAV 1-2-75,equip hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0554,equip,Alpha Airside VAV 1-2-76,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0560,equip,Alpha Airside VAV 1-2-78,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-056c,equip,Alpha Airside VAV 1-2-79,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0578,equip,Alpha Airside VAV 1-2-8,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0584,equip,Alpha Airside VAV 1-2-80,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0590,equip,Alpha Airside VAV 1-2-81,equip hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-059a,equip,Alpha Airside VAV 1-2-82,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05a6,equip,Alpha Airside VAV 1-2-83,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05b2,equip,Alpha Airside VAV 1-2-84,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05be,equip,Alpha Airside VAV 1-2-85,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05ca,equip,Alpha Airside VAV 1-2-86,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05d6,equip,Alpha Airside VAV 1-2-87,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05e2,equip,Alpha Airside VAV 1-2-88,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05ee,equip,Alpha Airside VAV 1-2-89,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-05fc,equip,Alpha Airside VAV 1-2-9,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0608,equip,Alpha Airside VAV 1-2-90,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0614,equip,Alpha Airside VAV 1-2-91,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0620,equip,Alpha Airside VAV 1-2-92,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-062c,equip,Alpha Airside VAV 1-2-93,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0638,equip,Alpha Airside VAV 1-2-94,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0644,equip,Alpha Airside VAV 1-2-95,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0650,equip,Alpha Airside VAV 1-2-96,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-065c,equip,Alpha Airside VAV 1-3-1,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0668,equip,Alpha Airside VAV 1-3-10,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0674,equip,Alpha Airside VAV 1-3-11,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0680,equip,Alpha Airside VAV 1-3-12,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-068c,equip,Alpha Airside VAV 1-3-13,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0698,equip,Alpha Airside VAV 1-3-14,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06a4,equip,Alpha Airside VAV 1-3-15,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06b0,equip,Alpha Airside VAV 1-3-16,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06bc,equip,Alpha Airside VAV 1-3-17,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06c8,equip,Alpha Airside VAV 1-3-2,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06d4,equip,Alpha Airside VAV 1-3-3,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06e0,equip,Alpha Airside VAV 1-3-4,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06ec,equip,Alpha Airside VAV 1-3-5,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-06f8,equip,Alpha Airside VAV 1-3-6,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0704,equip,Alpha Airside VAV 1-3-7,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-0710,equip,Alpha Airside VAV 1-3-8,equip fanPowered hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-071c,equip,Alpha Airside VAV 1-3-9,equip hotWaterHeating hvac singleDuct thermostat vav,ambiguous,Thermostat VAV
+a-073a,equip,Alpha Utility Bills Water Meter 1,equip water,generic,Equipment
+a-073d,equip,Alpha Utility Bills Water Meter 2,equip water,generic,Equipment
+a-0740,equip,Alpha Utility Bills Water Meter 3,equip water,generic,Equipment
+a-0743,equip,Alpha Utility Bills Water Meter 4,equip water,generic,Equipment
+a-0746,equip,Alpha Utility Bills Water Meter 5,equip water,generic,Equipment
+a-0749,equip,Alpha Utility Bills Water Meter 6,equip water,generic,Equipment
+a-074c,equip,Alpha Utility Bills Water Meter 7,equip water,generic,Equipment
+a-074f,equip,Alpha Utility Bills Water Meter 8,equip water,generic,Equipment
+a-075e,equip,Alpha Waterside Boiler Room HW Sys,equip hot hvac secondaryLoop,generic,HVAC_Equipment
+a-0787,equip,Alpha Waterside CH-2,chiller elec equip hvac waterCooling,ambiguous,Chiller Electrical_Equipment
+a-0792,equip,Alpha Waterside CH-3,chiller elec equip hvac waterCooling,ambiguous,Chiller Electrical_Equipment
+a-079d,equip,Alpha Waterside CT-1,coolingTower elec equip hvac meter,ambiguous,Cooling_Tower Electrical_Meter
+a-07a4,equip,Alpha Waterside CT-2,coolingTower elec equip hvac meter,ambiguous,Cooling_Tower Electrical_Meter
+a-07b8,equip,Alpha Waterside Chilled Water Plant,chilled elec equip hvac plant water,ambiguous,Electrical_Equipment HVAC_Equipment
+a-07da,equip,Alpha Waterside Hot Water Plant,equip hot hvac plant water,generic,HVAC_Equipment
+a-07dd,equip,Alpha Waterside PCHWP-1A,chilled elec equip hvac pump,ambiguous,Electrical_Equipment Pump
+a-07e1,equip,Alpha Waterside PCHWP-1B,chilled elec equip hvac pump,ambiguous,Electrical_Equipment Pump
+a-07e5,equip,Alpha Waterside Penthouse HW Sys,equip hot hvac secondaryLoop,generic,HVAC_Equipment
