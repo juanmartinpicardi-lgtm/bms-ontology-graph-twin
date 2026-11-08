@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipment 3D</title>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<style>
+  /* Same tokens as graph3d.html, plus scene tokens (--air-*, --metal-*). The scene reads them, so it always
+     matches the page theme. The app sets data-theme; the standalone page follows the system. */
+  :root {
+    color-scheme: light;
+    --bg: #ffffff; --panel: rgba(255, 255, 255, 0.94); --line: #dcdad6; --text: #2f2d2b; --muted: #74706b;
+    --accent: #0969da; --chip: #f8f8f7;
+    --s-proposed: #bf8700; --s-confirmed: #2da44e; --s-rejected: #cf222e;
+    --air-outside: #1f9d55; --air-return: #d1453b; --air-mixed: #c98a12; --air-supply: #1f8fe0;
+    --pill: #2b2d31; --pill-text: #f2f3f5;
+    --shadow: 0.16; --bloom: 0; --exposure: 1.0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e1117; --panel: rgba(22, 27, 34, 0.94); --line: #30363d; --text: #e6edf3; --muted: #8b949e;
+      --accent: #58a6ff; --chip: #262730;
+      --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149;
+      --air-outside: #3fd17a; --air-return: #ff5a4e; --air-mixed: #f2b134; --air-supply: #3fb4ff;
+      --pill: #1d1f23; --pill-text: #e6edf3;
+      --shadow: 0.55; --bloom: 0.5; --exposure: 1.05;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #171614; --panel: rgba(33, 32, 29, 0.94); --line: #3b3935; --text: #edebe8; --muted: #a29e98;
+    --accent: #58a6ff; --chip: #2a2925;
+    --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149;
+    --air-outside: #3fd17a; --air-return: #ff5a4e; --air-mixed: #f2b134; --air-supply: #3fb4ff;
+    --pill: #1d1f23; --pill-text: #edebe8;
+    --shadow: 0.55; --bloom: 0.5; --exposure: 1.05;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  #view, #labels { position: absolute; inset: 0; }
+  #labels { pointer-events: none; }
+  .card { position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    backdrop-filter: blur(6px); z-index: 3; }
+  #header { top: 12px; left: 12px; padding: 10px 14px; max-width: calc(100% - 24px); }
+  #header h1 { font-size: 15px; margin: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #header .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .badge { font-size: 10px; font-weight: 600; letter-spacing: .06em; padding: 2px 7px; border-radius: 999px;
+    border: 1px solid var(--s-proposed); color: var(--s-proposed); }
+  #tools { top: 12px; right: 12px; padding: 6px; display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  button { background: var(--chip); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+    padding: 4px 9px; font: inherit; font-size: 12px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  #help { left: 12px; bottom: 12px; padding: 5px 10px; font-size: 11px; color: var(--muted); }
+  /* Labels drawn in the scene (CSS2D) */
+  .stream { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap;
+    text-shadow: 0 0 6px var(--bg), 0 0 2px var(--bg); }
+  .stream.vav { font-size: 12px; transform-origin: left; }
+  .tag { font-size: 11px; color: var(--muted); white-space: nowrap; text-shadow: 0 0 4px var(--bg); }
+  @media (max-width: 760px) {
+    #tools { top: auto; bottom: 12px; }
+    #help { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="view"></div>
+<div id="labels"></div>
+<div id="header" class="card">
+  <h1><span id="eqName"></span><span class="badge" title="Values are simulated: the public datasets have no readings">SIMULATED</span></h1>
+  <div class="sub" id="eqSub"></div>
+</div>
+<div id="tools" class="card">
+  <button data-view="hero">Hero</button>
+  <button data-view="front">Front</button>
+  <button data-view="top">Top</button>
+  <button id="fit">Fit</button>
+  <button id="frontWall" aria-pressed="false" title="Show the front wall (translucent)">Front wall</button>
+</div>
+<div id="help" class="card">Drag to rotate · scroll to zoom · right-drag to pan</div>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+const DATA = /*__DATA__*/null;
+
+/*__MODULES__*/
+
+// --- page -------------------------------------------------------------------------------------
+const q = new URLSearchParams(location.search).get("theme");
+if (q === "light" || q === "dark") document.documentElement.dataset.theme = q;
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const eq = DATA.equipment;
+document.title = `${eq.label} · Equipment 3D`;
+document.getElementById("eqName").textContent = eq.label;
+document.getElementById("eqSub").innerHTML =
+  `${esc(eq.cls)} · template <b>${esc(eq.template)}</b> · fit ${Math.round(eq.slot_fill * 100)}% · ${esc(DATA.project)}`;
+
+const viewer = Core.createViewer(document.getElementById("view"), document.getElementById("labels"));
+const BUILD = { ahu: AHU.build };
+const model = BUILD[eq.template](DATA, viewer);
+viewer.scene.add(model.group);
+viewer.setModel(model);
+viewer.view("hero", false);
+
+for (const b of document.querySelectorAll("[data-view]")) b.onclick = () => viewer.view(b.dataset.view);
+document.getElementById("fit").onclick = () => viewer.view("fit");
+document.getElementById("frontWall").onclick = e => {
+  const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+  e.currentTarget.setAttribute("aria-pressed", on);
+  model.setFrontWall(on);
+};
+// Standalone page: follow the system theme as it changes (the app passes its theme instead).
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => viewer.applyTheme());
+new MutationObserver(() => viewer.applyTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+window.__eq3d = viewer;  // for debugging and visual checks
+</script>
+</body>
+</html>

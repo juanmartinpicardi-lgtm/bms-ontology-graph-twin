@@ -9,6 +9,8 @@ attach to the part the anchor map names for its class. Rejected points and rejec
 
 from __future__ import annotations
 
+import json
+import re
 from pathlib import Path
 
 import yaml
@@ -18,6 +20,8 @@ from .knowledge_model import KM_DIR, KnowledgeModel, Slot, Template
 from .tree import TreeNode, build_tree
 
 ANCHORS = KM_DIR / "templates" / "anchors.yaml"
+APP = Path(__file__).resolve().parent / "app"
+MODULES = ("core.js", "parts.js", "ahu.js")  # inlined in this order into equipment3d.html
 
 
 def load_anchors(path: Path = ANCHORS) -> dict:
@@ -109,6 +113,11 @@ def sub_equipment_part(node: TreeNode, spec: dict, km: KnowledgeModel) -> str | 
     return None
 
 
+def _natural(label: str) -> list:
+    """Sort key that orders "VAV 1-2-2" before "VAV 1-2-10"."""
+    return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", label)]
+
+
 def _point(p: TreeNode) -> dict:
     return {"label": p.label, "cls": p.cls, "confidence": p.prov.get("confidence"), "status": p.prov.get("status"),
             "prov": p.prov, "via": p.via}
@@ -177,7 +186,19 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
                    "anchor": spec["anchors"][s.role], "points": slots.get(s.role, [])} for s in template.slots],
         "points": points,
         "unplaced": sorted(unplaced, key=lambda i: points[i]["label"]),
-        "relations": {"fed_by": sorted((_rel(s) for s, _ in tree.fed_by(eq.id)), key=lambda r: r["label"]),
-                      "feeds": sorted((_rel(d) for d, _ in tree.feeds_to(eq.id)), key=lambda r: r["label"])},
+        "relations": {"fed_by": sorted((_rel(s) for s, _ in tree.fed_by(eq.id)), key=lambda r: _natural(r["label"])),
+                      "feeds": sorted((_rel(d) for d, _ in tree.feeds_to(eq.id)), key=lambda r: _natural(r["label"]))},
         "value_source": "simulated",
     }
+
+
+def render_html(payload: dict, theme: str | None = None) -> str:
+    """The 3D equipment page with the payload and the JS modules inlined, so it works in Streamlit's iframe and as a
+    standalone file (three.js comes from the CDN). `theme` ("light" / "dark") pins the colours to the host app's
+    theme; without it the page follows the system setting."""
+    data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
+    modules = "\n".join((APP / "equipment3d" / m).read_text() for m in MODULES)
+    html = (APP / "equipment3d.html").read_text().replace("/*__MODULES__*/", modules).replace("/*__DATA__*/null", data)
+    if theme in ("light", "dark"):
+        html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
+    return html

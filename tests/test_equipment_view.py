@@ -6,7 +6,8 @@ import pytest
 from projectmodel import review
 from projectmodel.adapters.haystack import read_blind_export
 from projectmodel.db.store import Store
-from projectmodel.equipment_view import anchor_problems, assign_slots, equipment_payload, load_anchors
+from projectmodel.equipment_view import (MODULES, anchor_problems, assign_slots, equipment_payload, load_anchors,
+                                         render_html)
 from projectmodel.knowledge_model import load_knowledge_model
 from projectmodel.mapper.pipeline import Mapper
 
@@ -112,6 +113,7 @@ def test_ahu2_places_return_fan_and_relief_points(store, km, anchors):
     assert placed.isdisjoint(p["unplaced"]) and placed | set(p["unplaced"]) == set(p["points"])
     assert len(p["unplaced"]) <= 3
     assert len(p["relations"]["feeds"]) == 88 and all(r["template"] == "vav" for r in p["relations"]["feeds"])
+    assert [r["label"] for r in p["relations"]["feeds"][:2]] == ["VAV 1-2-1", "VAV 1-2-3"]  # natural order
     assert p["value_source"] == "simulated"
     assert pts["SAT"]["prov"]["method"] and pts["SAT"]["via"]["source_ref"]
 
@@ -141,3 +143,17 @@ def test_untemplated_equipment_has_no_model(store, km, anchors):
         equipment_payload(store, P, "eq:Airside AHU-2/SF VFD", km, anchors)
     with pytest.raises(KeyError):
         equipment_payload(store, P, "eq:nope", km, anchors)
+
+
+# page ---------------------------------------------------------------------------------------------
+
+def test_render_html_inlines_modules_and_data(store, km, anchors):
+    p = equipment_payload(store, P, AHU2, km, anchors)
+    html = render_html(p)
+    assert "/*__DATA__*/" not in html and "/*__MODULES__*/" not in html
+    assert '"label":"Airside AHU-2"' in html
+    for const in ("const Core", "const Parts", "const AHU"):
+        assert const in html
+    assert html.count("</script>") == 2  # import map and the one module script: nothing inlined closes it early
+    assert "three@0.170.0" in html and len(MODULES) == 3
+    assert '<html lang="en" data-theme="dark">' in render_html(p, theme="dark")
