@@ -113,7 +113,7 @@ const Core = (() => {
     }
     let lastView = "hero", userMoved = false;
     controls.addEventListener("start", () => { userMoved = true; fly = null; });
-    addEventListener("resize", () => { if (model && !userMoved) view(lastView, false); });
+    addEventListener("resize", () => { if (model && !userMoved && lastView) view(lastView, false); });
     function view(name, animate = true) {
       lastView = name;
       userMoved = false;
@@ -127,9 +127,17 @@ const Core = (() => {
       fly = { from: camera.position.clone(), fromT: controls.target.clone(), to, t: 0 };
     }
 
+    // Fly to a point, keeping the current viewing direction, close enough to read its labels.
+    function focus(p, dist = 7) {
+      const dir = camera.position.clone().sub(controls.target).normalize();
+      lastView = null;
+      fly = { from: camera.position.clone(), fromT: controls.target.clone(), to: { pos: p.clone().addScaledVector(dir, dist), target: p.clone() }, t: 0 };
+    }
+
     function setModel(m) {
       model = m;
       model.bounds ??= new THREE.Box3().setFromObject(model.group);
+      model.heroDistance = preset("hero").pos.distanceTo(preset("hero").target);
       const s = model.bounds.getSize(new THREE.Vector3()).length();
       controls.maxDistance = s * 2.5;
       controls.minDistance = 1.5;
@@ -163,7 +171,7 @@ const Core = (() => {
     });
     frame();
 
-    return { scene, camera, renderer, controls, view, setModel, applyTheme, onFrame: f => frameFns.push(f),
+    return { scene, camera, renderer, controls, view, focus, setModel, applyTheme, onFrame: f => frameFns.push(f),
              frames: () => frames,
              theme: () => P, label: (text, cls = "stream") => {
                const d = document.createElement("div");

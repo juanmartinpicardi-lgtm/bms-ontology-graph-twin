@@ -206,7 +206,12 @@ const AHU = (() => {
       sup.add(duct(V(bx1 + 0.9, y, 0), V(bx1 + 1.4, y, 0), 0.7, 0.4));
       stream("supply", [V(bx0 + 0.1, y, 0.42), V(bx1 - 0.1, y, 0.42)], { size: 0.6, spacing: 0.4, groups: 2, gap: 0.12 });
       stream("supply", [V(bx1 + 1.55, y, 0), V(bx1 + 2.5, y, 0)], { size: 0.8, spacing: 0.3, groups: 3 });
-      label(f ? f.label.split("/").pop() : "VAV", V(bx1 + 3.1, y, 0), "stream vav");
+      const l = label(f ? f.label.split("/").pop() : "VAV", V(bx1 + 3.1, y, 0), "stream vav nav");
+      if (f) l.element.dataset.eq = f.id;
+    }
+    if (feeds.length > n) {
+      const more = label(`+${feeds.length - n} more`, V(bx1 + 3.1, lvl(0) - 0.75, 0), "morechip");
+      more.element.dataset.show = "feeds";
     }
 
     // --- anchors and sensors ------------------------------------------------------------------------------
@@ -230,6 +235,19 @@ const AHU = (() => {
       return { p, n: V(0, 1, 0) };
     }
     group.updateMatrixWorld(true);
+    // Where a pin's dot sits: on the sensor head for a duct anchor, else on the front of the part.
+    function pinPoint(part, a) {
+      if (paths[part] && a != null) {
+        const m = anchor(part, a);
+        return m.p.clone().addScaledVector(m.n, 0.36);
+      }
+      const o = parts[part];
+      if (!o) return null;
+      const b = new THREE.Box3().setFromObject(o);
+      if (b.isEmpty()) return o.getWorldPosition(V(0, 0, 0));
+      const c = b.getCenter(V(0, 0, 0));
+      return V(c.x, c.y, Math.min(b.max.z, zf + 0.6));
+    }
     const mounted = new Map(), sensors = [];
     for (const slot of data.slots || []) {
       const pts = slot.points.map(id => data.points[id]).filter(Boolean);
@@ -259,7 +277,7 @@ const AHU = (() => {
     bounds.expandByPoint(V(-4.8, 0, 0)).expandByPoint(V(bx1 + 3.9, 0, 0));
 
     return {
-      group, parts, paths, bounds, anchor, sensors,
+      group, parts, paths, bounds, anchor, pinPoint, sensors,
       update: (t, dt) => {
         flows.forEach(f => f.update(t, dt));
         for (const w of spinners) w.rotation.z -= dt * 4.5;  // nominal speed until E4 drives it

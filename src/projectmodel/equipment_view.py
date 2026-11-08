@@ -21,7 +21,7 @@ from .tree import TreeNode, build_tree
 
 ANCHORS = KM_DIR / "templates" / "anchors.yaml"
 APP = Path(__file__).resolve().parent / "app"
-MODULES = ("core.js", "parts.js", "ahu.js")  # inlined in this order into equipment3d.html
+MODULES = ("core.js", "parts.js", "ahu.js", "labels.js", "panels.js")  # inlined in this order into equipment3d.html
 
 
 def load_anchors(path: Path = ANCHORS) -> dict:

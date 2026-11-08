@@ -35,10 +35,14 @@ def main():
         sys.exit(f"project {args.project!r} has no AHUs; run the mapper first")
     out_dir = ROOT / "reports/equipment3d"
     out_dir.mkdir(parents=True, exist_ok=True)
+    # Pages link to each other by file name: every AHU of the project gets a link (export them with --all-ahus).
+    ahus = {r["id"]: r["label"] for r in store.nodes(args.project, "equipment") if '"template": "ahu"' in r["attrs"]}
+    name = lambda label: f"{args.project.replace('/', '_')}__{re.sub(r'[^A-Za-z0-9]+', '-', label).strip('-')}.html"  # noqa: E731
+    links = {i: name(label) for i, label in ahus.items()}
     for eid in ids:
         payload = equipment_payload(store, args.project, eid, km, anchors)
-        slug = re.sub(r"[^A-Za-z0-9]+", "-", payload["equipment"]["label"]).strip("-")
-        out = out_dir / f"{args.project.replace('/', '_')}__{slug}.html"
+        payload["links"] = {k: v for k, v in links.items() if k != eid}
+        out = out_dir / name(payload["equipment"]["label"])
         out.write_text(render_html(payload))
         placed = sum(1 for p in payload["points"].values() if p["role"])
         print(f"{out.relative_to(ROOT)}  ({placed} placed, {len(payload['unplaced'])} unplaced)")
