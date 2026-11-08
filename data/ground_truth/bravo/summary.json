@@ -28,6 +28,8 @@
   },
   "points_with_equipment": 913,
   "overrides_applied": {
+    "GC-003": 97,
+    "GC-004": 4,
     "GT-010": 4,
     "GT-009": 91,
     "GT-001": 93,

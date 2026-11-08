@@ -568,7 +568,7 @@ bravo:b-0004 a brick:Discharge_Air_Temperature_Sensor ;
 bravo:b-0005 a brick:Zone_Air_Temperature_Sensor ;
     rdfs:label "Bravo BCU-1 Zone Temperature" .
 
-bravo:b-0006 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0006 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo BCU-1 Zone Temperature Setpoint" .
 
 bravo:b-0008 rdfs:label "Bravo BCU-2 Cooling Valve Output" .
@@ -582,7 +582,7 @@ bravo:b-000a a brick:Discharge_Air_Temperature_Sensor ;
 bravo:b-000b a brick:Zone_Air_Temperature_Sensor ;
     rdfs:label "Bravo BCU-2 Zone Temperature" .
 
-bravo:b-000c a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-000c a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo BCU-2 Zone Temperature Setpoint" .
 
 bravo:b-000e a brick:Boiler ;
@@ -868,13 +868,13 @@ bravo:b-008f a brick:FCU ;
 
 bravo:b-0090 rdfs:label "Bravo FCU-1 Cooling Valve Output" .
 
-bravo:b-0091 a brick:Heat_Sensor ;
+bravo:b-0091 a brick:Valve_Command ;
     rdfs:label "Bravo FCU-1 Heating Valve Output" .
 
 bravo:b-0092 a brick:Zone_Air_Temperature_Sensor ;
     rdfs:label "Bravo FCU-1 Zone Temperature" .
 
-bravo:b-0093 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0093 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo FCU-1 Zone Temperature Setpoint" .
 
 bravo:b-0094 a brick:FCU ;
@@ -886,13 +886,13 @@ bravo:b-0094 a brick:FCU ;
 
 bravo:b-0095 rdfs:label "Bravo FCU-2 Cooling Valve Output" .
 
-bravo:b-0096 a brick:Heat_Sensor ;
+bravo:b-0096 a brick:Valve_Command ;
     rdfs:label "Bravo FCU-2 Heating Valve Output" .
 
 bravo:b-0097 a brick:Zone_Air_Temperature_Sensor ;
     rdfs:label "Bravo FCU-2 Zone Temperature" .
 
-bravo:b-0098 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0098 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo FCU-2 Zone Temperature Setpoint" .
 
 bravo:b-0099 a brick:FCU ;
@@ -904,13 +904,13 @@ bravo:b-0099 a brick:FCU ;
 
 bravo:b-009a rdfs:label "Bravo FCU-3 Cooling Valve Output" .
 
-bravo:b-009b a brick:Heat_Sensor ;
+bravo:b-009b a brick:Valve_Command ;
     rdfs:label "Bravo FCU-3 Heating Valve Output" .
 
 bravo:b-009c a brick:Zone_Air_Temperature_Sensor ;
     rdfs:label "Bravo FCU-3 Zone Temperature" .
 
-bravo:b-009d a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-009d a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo FCU-3 Zone Temperature Setpoint" .
 
 bravo:b-009e a brick:FCU ;
@@ -922,13 +922,13 @@ bravo:b-009e a brick:FCU ;
 
 bravo:b-009f rdfs:label "Bravo FCU-4 Cooling Valve Output" .
 
-bravo:b-00a0 a brick:Heat_Sensor ;
+bravo:b-00a0 a brick:Valve_Command ;
     rdfs:label "Bravo FCU-4 Heating Valve Output" .
 
 bravo:b-00a1 a brick:Zone_Air_Temperature_Sensor ;
     rdfs:label "Bravo FCU-4 Zone Temperature" .
 
-bravo:b-00a2 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-00a2 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo FCU-4 Zone Temperature Setpoint" .
 
 bravo:b-00a6 rdfs:label "Bravo HHW Pump 1 HHW Pump Status" .
@@ -1353,7 +1353,7 @@ bravo:b-0140 a brick:Discharge_Air_Flow_Setpoint ;
 bravo:b-0141 a brick:Valve_Command ;
     rdfs:label "Bravo VAV 1-1 Heating Valve Output" .
 
-bravo:b-0142 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0142 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-1 Zone Air Temp Setpoint" .
 
 bravo:b-0143 a brick:Zone_Air_Temperature_Sensor ;
@@ -1374,7 +1374,7 @@ bravo:b-0148 a brick:Valve_Command ;
 bravo:b-0149 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-10 Supply Air Temperature" .
 
-bravo:b-014a a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-014a a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-10 Zone Air Temp Setpoint" .
 
 bravo:b-014b a brick:Zone_Air_Temperature_Sensor ;
@@ -1395,7 +1395,7 @@ bravo:b-0150 a brick:Valve_Command ;
 bravo:b-0151 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-11 Supply Air Temperature" .
 
-bravo:b-0152 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0152 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-11 Zone Air Temp Setpoint" .
 
 bravo:b-0153 a brick:Zone_Air_Temperature_Sensor ;
@@ -1416,7 +1416,7 @@ bravo:b-0158 a brick:Valve_Command ;
 bravo:b-0159 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-12 Supply Air Temperature" .
 
-bravo:b-015a a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-015a a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-12 Zone Air Temp Setpoint" .
 
 bravo:b-015b a brick:Zone_Air_Temperature_Sensor ;
@@ -1437,7 +1437,7 @@ bravo:b-0160 a brick:Valve_Command ;
 bravo:b-0161 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-13 Supply Air Temperature" .
 
-bravo:b-0162 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0162 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-13 Zone Air Temp Setpoint" .
 
 bravo:b-0163 a brick:Zone_Air_Temperature_Sensor ;
@@ -1458,7 +1458,7 @@ bravo:b-0168 a brick:Valve_Command ;
 bravo:b-0169 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-14 Supply Air Temperature" .
 
-bravo:b-016a a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-016a a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-14 Zone Air Temp Setpoint" .
 
 bravo:b-016b a brick:Zone_Air_Temperature_Sensor ;
@@ -1479,7 +1479,7 @@ bravo:b-0170 a brick:Valve_Command ;
 bravo:b-0171 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-15 Supply Air Temperature" .
 
-bravo:b-0172 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0172 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-15 Zone Air Temp Setpoint" .
 
 bravo:b-0173 a brick:Zone_Air_Temperature_Sensor ;
@@ -1500,7 +1500,7 @@ bravo:b-0178 a brick:Valve_Command ;
 bravo:b-0179 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-16 Supply Air Temperature" .
 
-bravo:b-017a a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-017a a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-16 Zone Air Temp Setpoint" .
 
 bravo:b-017b a brick:Zone_Air_Temperature_Sensor ;
@@ -1521,7 +1521,7 @@ bravo:b-0180 a brick:Valve_Command ;
 bravo:b-0181 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-17 Supply Air Temperature" .
 
-bravo:b-0182 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0182 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-17 Zone Air Temp Setpoint" .
 
 bravo:b-0183 a brick:Zone_Air_Temperature_Sensor ;
@@ -1542,7 +1542,7 @@ bravo:b-0188 a brick:Valve_Command ;
 bravo:b-0189 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-18 Supply Air Temperature" .
 
-bravo:b-018a a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-018a a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-18 Zone Air Temp Setpoint" .
 
 bravo:b-018b a brick:Zone_Air_Temperature_Sensor ;
@@ -1566,7 +1566,7 @@ bravo:b-0191 a brick:Discharge_Air_Temperature_Sensor ;
 bravo:b-0192 a brick:Zone_Air_Humidity_Sensor ;
     rdfs:label "Bravo VAV 1-19 Zone Air Humidity" .
 
-bravo:b-0193 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0193 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-19 Zone Air Temp Setpoint" .
 
 bravo:b-0194 a brick:Zone_Air_Temperature_Sensor ;
@@ -1587,7 +1587,7 @@ bravo:b-0199 a brick:Valve_Command ;
 bravo:b-019a a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-2 Supply Air Temperature" .
 
-bravo:b-019b a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-019b a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-2 Zone Air Temp Setpoint" .
 
 bravo:b-019c a brick:Zone_Air_Temperature_Sensor ;
@@ -1608,7 +1608,7 @@ bravo:b-01a1 a brick:Valve_Command ;
 bravo:b-01a2 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-20 Supply Air Temperature" .
 
-bravo:b-01a3 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01a3 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-20 Zone Air Temp Setpoint" .
 
 bravo:b-01a4 a brick:Zone_Air_Temperature_Sensor ;
@@ -1632,7 +1632,7 @@ bravo:b-01aa a brick:Discharge_Air_Humidity_Sensor ;
 bravo:b-01ab a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-3 Supply Air Temperature" .
 
-bravo:b-01ac a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01ac a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-3 Zone Air Temp Setpoint" .
 
 bravo:b-01ad a brick:Zone_Air_Humidity_Sensor ;
@@ -1656,7 +1656,7 @@ bravo:b-01b3 a brick:Valve_Command ;
 bravo:b-01b4 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-4 Supply Air Temperature" .
 
-bravo:b-01b5 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01b5 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-4 Zone Air Temp Setpoint" .
 
 bravo:b-01b6 a brick:Zone_Air_Temperature_Sensor ;
@@ -1677,7 +1677,7 @@ bravo:b-01bb a brick:Valve_Command ;
 bravo:b-01bc a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-5 Supply Air Temperature" .
 
-bravo:b-01bd a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01bd a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-5 Zone Air Temp Setpoint" .
 
 bravo:b-01be a brick:Zone_Air_Temperature_Sensor ;
@@ -1701,7 +1701,7 @@ bravo:b-01c4 a brick:Discharge_Air_Humidity_Sensor ;
 bravo:b-01c5 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-6 Supply Air Temperature" .
 
-bravo:b-01c6 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01c6 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-6 Zone Air Temp Setpoint" .
 
 bravo:b-01c7 a brick:Zone_Air_Humidity_Sensor ;
@@ -1725,7 +1725,7 @@ bravo:b-01cd a brick:Valve_Command ;
 bravo:b-01ce a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-7 Supply Air Temperature" .
 
-bravo:b-01cf a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01cf a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-7 Zone Air Temp Setpoint" .
 
 bravo:b-01d0 a brick:Zone_Air_Temperature_Sensor ;
@@ -1746,7 +1746,7 @@ bravo:b-01d5 a brick:Valve_Command ;
 bravo:b-01d6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-8 Supply Air Temperature" .
 
-bravo:b-01d7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01d7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-8 Zone Air Temp Setpoint" .
 
 bravo:b-01d8 a brick:Zone_Air_Temperature_Sensor ;
@@ -1767,7 +1767,7 @@ bravo:b-01dd a brick:Valve_Command ;
 bravo:b-01de a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 1-9 Supply Air Temperature" .
 
-bravo:b-01df a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01df a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 1-9 Zone Air Temp Setpoint" .
 
 bravo:b-01e0 a brick:Zone_Air_Temperature_Sensor ;
@@ -1788,7 +1788,7 @@ bravo:b-01e5 a brick:Valve_Command ;
 bravo:b-01e6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-1 Supply Air Temperature" .
 
-bravo:b-01e7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01e7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-1 Zone Air Temp Setpoint" .
 
 bravo:b-01e8 a brick:Zone_Air_Temperature_Sensor ;
@@ -1809,7 +1809,7 @@ bravo:b-01ed a brick:Valve_Command ;
 bravo:b-01ee a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-10 Supply Air Temperature" .
 
-bravo:b-01ef a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01ef a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-10 Zone Air Temp Setpoint" .
 
 bravo:b-01f0 a brick:Zone_Air_Temperature_Sensor ;
@@ -1830,7 +1830,7 @@ bravo:b-01f5 a brick:Valve_Command ;
 bravo:b-01f6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-11 Supply Air Temperature" .
 
-bravo:b-01f7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01f7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-11 Zone Air Temp Setpoint" .
 
 bravo:b-01f8 a brick:Zone_Air_Temperature_Sensor ;
@@ -1851,7 +1851,7 @@ bravo:b-01fd a brick:Valve_Command ;
 bravo:b-01fe a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-12 Supply Air Temperature" .
 
-bravo:b-01ff a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-01ff a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-12 Zone Air Temp Setpoint" .
 
 bravo:b-0200 a brick:Zone_Air_Temperature_Sensor ;
@@ -1872,7 +1872,7 @@ bravo:b-0205 a brick:Valve_Command ;
 bravo:b-0206 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-13 Supply Air Temperature" .
 
-bravo:b-0207 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0207 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-13 Zone Air Temp Setpoint" .
 
 bravo:b-0208 a brick:Zone_Air_Temperature_Sensor ;
@@ -1893,7 +1893,7 @@ bravo:b-020d a brick:Valve_Command ;
 bravo:b-020e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-14 Supply Air Temperature" .
 
-bravo:b-020f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-020f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-14 Zone Air Temp Setpoint" .
 
 bravo:b-0210 a brick:Zone_Air_Temperature_Sensor ;
@@ -1914,7 +1914,7 @@ bravo:b-0215 a brick:Valve_Command ;
 bravo:b-0216 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-15 Supply Air Temperature" .
 
-bravo:b-0217 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0217 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-15 Zone Air Temp Setpoint" .
 
 bravo:b-0218 a brick:Zone_Air_Temperature_Sensor ;
@@ -1935,7 +1935,7 @@ bravo:b-021d a brick:Valve_Command ;
 bravo:b-021e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-16 Supply Air Temperature" .
 
-bravo:b-021f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-021f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-16 Zone Air Temp Setpoint" .
 
 bravo:b-0220 a brick:Zone_Air_Temperature_Sensor ;
@@ -1956,7 +1956,7 @@ bravo:b-0225 a brick:Valve_Command ;
 bravo:b-0226 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-17 Supply Air Temperature" .
 
-bravo:b-0227 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0227 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-17 Zone Air Temp Setpoint" .
 
 bravo:b-0228 a brick:Zone_Air_Temperature_Sensor ;
@@ -1977,7 +1977,7 @@ bravo:b-022d a brick:Valve_Command ;
 bravo:b-022e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-18 Supply Air Temperature" .
 
-bravo:b-022f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-022f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-18 Zone Air Temp Setpoint" .
 
 bravo:b-0230 a brick:Zone_Air_Temperature_Sensor ;
@@ -1998,7 +1998,7 @@ bravo:b-0235 a brick:Valve_Command ;
 bravo:b-0236 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-19 Supply Air Temperature" .
 
-bravo:b-0237 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0237 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-19 Zone Air Temp Setpoint" .
 
 bravo:b-0238 a brick:Zone_Air_Temperature_Sensor ;
@@ -2019,7 +2019,7 @@ bravo:b-023d a brick:Valve_Command ;
 bravo:b-023e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-2 Supply Air Temperature" .
 
-bravo:b-023f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-023f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-2 Zone Air Temp Setpoint" .
 
 bravo:b-0240 a brick:Zone_Air_Temperature_Sensor ;
@@ -2040,7 +2040,7 @@ bravo:b-0245 a brick:Valve_Command ;
 bravo:b-0246 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-20 Supply Air Temperature" .
 
-bravo:b-0247 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0247 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-20 Zone Air Temp Setpoint" .
 
 bravo:b-0248 a brick:Zone_Air_Temperature_Sensor ;
@@ -2061,7 +2061,7 @@ bravo:b-024d a brick:Valve_Command ;
 bravo:b-024e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-21 Supply Air Temperature" .
 
-bravo:b-024f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-024f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-21 Zone Air Temp Setpoint" .
 
 bravo:b-0250 a brick:Zone_Air_Temperature_Sensor ;
@@ -2082,7 +2082,7 @@ bravo:b-0255 a brick:Valve_Command ;
 bravo:b-0256 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-22 Supply Air Temperature" .
 
-bravo:b-0257 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0257 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-22 Zone Air Temp Setpoint" .
 
 bravo:b-0258 a brick:Zone_Air_Temperature_Sensor ;
@@ -2103,7 +2103,7 @@ bravo:b-025d a brick:Valve_Command ;
 bravo:b-025e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-23 Supply Air Temperature" .
 
-bravo:b-025f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-025f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-23 Zone Air Temp Setpoint" .
 
 bravo:b-0260 a brick:Zone_Air_Temperature_Sensor ;
@@ -2124,7 +2124,7 @@ bravo:b-0265 a brick:Valve_Command ;
 bravo:b-0266 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-24 Supply Air Temperature" .
 
-bravo:b-0267 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0267 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-24 Zone Air Temp Setpoint" .
 
 bravo:b-0268 a brick:Zone_Air_Temperature_Sensor ;
@@ -2145,7 +2145,7 @@ bravo:b-026d a brick:Valve_Command ;
 bravo:b-026e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-25 Supply Air Temperature" .
 
-bravo:b-026f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-026f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-25 Zone Air Temp Setpoint" .
 
 bravo:b-0270 a brick:Zone_Air_Temperature_Sensor ;
@@ -2166,7 +2166,7 @@ bravo:b-0275 a brick:Valve_Command ;
 bravo:b-0276 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-26 Supply Air Temperature" .
 
-bravo:b-0277 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0277 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-26 Zone Air Temp Setpoint" .
 
 bravo:b-0278 a brick:Zone_Air_Temperature_Sensor ;
@@ -2187,7 +2187,7 @@ bravo:b-027d a brick:Valve_Command ;
 bravo:b-027e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-27 Supply Air Temperature" .
 
-bravo:b-027f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-027f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-27 Zone Air Temp Setpoint" .
 
 bravo:b-0280 a brick:Zone_Air_Temperature_Sensor ;
@@ -2208,7 +2208,7 @@ bravo:b-0285 a brick:Valve_Command ;
 bravo:b-0286 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-28 Supply Air Temperature" .
 
-bravo:b-0287 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0287 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-28 Zone Air Temp Setpoint" .
 
 bravo:b-0288 a brick:Zone_Air_Temperature_Sensor ;
@@ -2229,7 +2229,7 @@ bravo:b-028d a brick:Valve_Command ;
 bravo:b-028e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-29 Supply Air Temperature" .
 
-bravo:b-028f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-028f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-29 Zone Air Temp Setpoint" .
 
 bravo:b-0290 a brick:Zone_Air_Temperature_Sensor ;
@@ -2250,7 +2250,7 @@ bravo:b-0295 a brick:Valve_Command ;
 bravo:b-0296 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-3 Supply Air Temperature" .
 
-bravo:b-0297 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0297 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-3 Zone Air Temp Setpoint" .
 
 bravo:b-0298 a brick:Zone_Air_Temperature_Sensor ;
@@ -2271,7 +2271,7 @@ bravo:b-029d a brick:Valve_Command ;
 bravo:b-029e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-30 Supply Air Temperature" .
 
-bravo:b-029f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-029f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-30 Zone Air Temp Setpoint" .
 
 bravo:b-02a0 a brick:Zone_Air_Temperature_Sensor ;
@@ -2292,7 +2292,7 @@ bravo:b-02a5 a brick:Valve_Command ;
 bravo:b-02a6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-31 Supply Air Temperature" .
 
-bravo:b-02a7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02a7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-31 Zone Air Temp Setpoint" .
 
 bravo:b-02a8 a brick:Zone_Air_Temperature_Sensor ;
@@ -2313,7 +2313,7 @@ bravo:b-02ad a brick:Valve_Command ;
 bravo:b-02ae a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-32 Supply Air Temperature" .
 
-bravo:b-02af a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02af a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-32 Zone Air Temp Setpoint" .
 
 bravo:b-02b0 a brick:Zone_Air_Temperature_Sensor ;
@@ -2334,7 +2334,7 @@ bravo:b-02b5 a brick:Valve_Command ;
 bravo:b-02b6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-33 Supply Air Temperature" .
 
-bravo:b-02b7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02b7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-33 Zone Air Temp Setpoint" .
 
 bravo:b-02b8 a brick:Zone_Air_Temperature_Sensor ;
@@ -2355,7 +2355,7 @@ bravo:b-02bd a brick:Valve_Command ;
 bravo:b-02be a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-34 Supply Air Temperature" .
 
-bravo:b-02bf a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02bf a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-34 Zone Air Temp Setpoint" .
 
 bravo:b-02c0 a brick:Zone_Air_Temperature_Sensor ;
@@ -2376,7 +2376,7 @@ bravo:b-02c5 a brick:Valve_Command ;
 bravo:b-02c6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-35 Supply Air Temperature" .
 
-bravo:b-02c7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02c7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-35 Zone Air Temp Setpoint" .
 
 bravo:b-02c8 a brick:Zone_Air_Temperature_Sensor ;
@@ -2397,7 +2397,7 @@ bravo:b-02cd a brick:Valve_Command ;
 bravo:b-02ce a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-36 Supply Air Temperature" .
 
-bravo:b-02cf a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02cf a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-36 Zone Air Temp Setpoint" .
 
 bravo:b-02d0 a brick:Zone_Air_Temperature_Sensor ;
@@ -2418,7 +2418,7 @@ bravo:b-02d5 a brick:Valve_Command ;
 bravo:b-02d6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-37 Supply Air Temperature" .
 
-bravo:b-02d7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02d7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-37 Zone Air Temp Setpoint" .
 
 bravo:b-02d8 a brick:Zone_Air_Temperature_Sensor ;
@@ -2439,7 +2439,7 @@ bravo:b-02dd a brick:Valve_Command ;
 bravo:b-02de a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-38 Supply Air Temperature" .
 
-bravo:b-02df a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02df a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-38 Zone Air Temp Setpoint" .
 
 bravo:b-02e0 a brick:Zone_Air_Temperature_Sensor ;
@@ -2460,7 +2460,7 @@ bravo:b-02e5 a brick:Valve_Command ;
 bravo:b-02e6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-39 Supply Air Temperature" .
 
-bravo:b-02e7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02e7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-39 Zone Air Temp Setpoint" .
 
 bravo:b-02e8 a brick:Zone_Air_Temperature_Sensor ;
@@ -2481,7 +2481,7 @@ bravo:b-02ed a brick:Valve_Command ;
 bravo:b-02ee a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-4 Supply Air Temperature" .
 
-bravo:b-02ef a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02ef a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-4 Zone Air Temp Setpoint" .
 
 bravo:b-02f0 a brick:Zone_Air_Temperature_Sensor ;
@@ -2502,7 +2502,7 @@ bravo:b-02f5 a brick:Valve_Command ;
 bravo:b-02f6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-40 Supply Air Temperature" .
 
-bravo:b-02f7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02f7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-40 Zone Air Temp Setpoint" .
 
 bravo:b-02f8 a brick:Zone_Air_Temperature_Sensor ;
@@ -2523,7 +2523,7 @@ bravo:b-02fd a brick:Valve_Command ;
 bravo:b-02fe a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-41 Supply Air Temperature" .
 
-bravo:b-02ff a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-02ff a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-41 Zone Air Temp Setpoint" .
 
 bravo:b-0300 a brick:Zone_Air_Temperature_Sensor ;
@@ -2544,7 +2544,7 @@ bravo:b-0305 a brick:Valve_Command ;
 bravo:b-0306 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-42 Supply Air Temperature" .
 
-bravo:b-0307 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0307 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-42 Zone Air Temp Setpoint" .
 
 bravo:b-0308 a brick:Zone_Air_Temperature_Sensor ;
@@ -2565,7 +2565,7 @@ bravo:b-030d a brick:Valve_Command ;
 bravo:b-030e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-43 Supply Air Temperature" .
 
-bravo:b-030f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-030f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-43 Zone Air Temp Setpoint" .
 
 bravo:b-0310 a brick:Zone_Air_Temperature_Sensor ;
@@ -2586,7 +2586,7 @@ bravo:b-0315 a brick:Valve_Command ;
 bravo:b-0316 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-44 Supply Air Temperature" .
 
-bravo:b-0317 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0317 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-44 Zone Air Temp Setpoint" .
 
 bravo:b-0318 a brick:Zone_Air_Temperature_Sensor ;
@@ -2607,7 +2607,7 @@ bravo:b-031d a brick:Valve_Command ;
 bravo:b-031e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-45 Supply Air Temperature" .
 
-bravo:b-031f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-031f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-45 Zone Air Temp Setpoint" .
 
 bravo:b-0320 a brick:Zone_Air_Temperature_Sensor ;
@@ -2628,7 +2628,7 @@ bravo:b-0325 a brick:Valve_Command ;
 bravo:b-0326 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-46 Supply Air Temperature" .
 
-bravo:b-0327 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0327 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-46 Zone Air Temp Setpoint" .
 
 bravo:b-0328 a brick:Zone_Air_Temperature_Sensor ;
@@ -2649,7 +2649,7 @@ bravo:b-032d a brick:Valve_Command ;
 bravo:b-032e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-47 Supply Air Temperature" .
 
-bravo:b-032f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-032f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-47 Zone Air Temp Setpoint" .
 
 bravo:b-0330 a brick:Zone_Air_Temperature_Sensor ;
@@ -2670,7 +2670,7 @@ bravo:b-0335 a brick:Valve_Command ;
 bravo:b-0336 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-48 Supply Air Temperature" .
 
-bravo:b-0337 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0337 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-48 Zone Air Temp Setpoint" .
 
 bravo:b-0338 a brick:Zone_Air_Temperature_Sensor ;
@@ -2691,7 +2691,7 @@ bravo:b-033d a brick:Valve_Command ;
 bravo:b-033e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-49 Supply Air Temperature" .
 
-bravo:b-033f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-033f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-49 Zone Air Temp Setpoint" .
 
 bravo:b-0340 a brick:Zone_Air_Temperature_Sensor ;
@@ -2712,7 +2712,7 @@ bravo:b-0345 a brick:Valve_Command ;
 bravo:b-0346 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-5 Supply Air Temperature" .
 
-bravo:b-0347 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0347 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-5 Zone Air Temp Setpoint" .
 
 bravo:b-0348 a brick:Zone_Air_Temperature_Sensor ;
@@ -2733,7 +2733,7 @@ bravo:b-034d a brick:Valve_Command ;
 bravo:b-034e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-50 Supply Air Temperature" .
 
-bravo:b-034f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-034f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-50 Zone Air Temp Setpoint" .
 
 bravo:b-0350 a brick:Zone_Air_Temperature_Sensor ;
@@ -2754,7 +2754,7 @@ bravo:b-0355 a brick:Valve_Command ;
 bravo:b-0356 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-6 Supply Air Temperature" .
 
-bravo:b-0357 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0357 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-6 Zone Air Temp Setpoint" .
 
 bravo:b-0358 a brick:Zone_Air_Temperature_Sensor ;
@@ -2775,7 +2775,7 @@ bravo:b-035d a brick:Valve_Command ;
 bravo:b-035e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-7 Supply Air Temperature" .
 
-bravo:b-035f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-035f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-7 Zone Air Temp Setpoint" .
 
 bravo:b-0360 a brick:Zone_Air_Temperature_Sensor ;
@@ -2796,7 +2796,7 @@ bravo:b-0365 a brick:Valve_Command ;
 bravo:b-0366 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-8 Supply Air Temperature" .
 
-bravo:b-0367 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0367 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-8 Zone Air Temp Setpoint" .
 
 bravo:b-0368 a brick:Zone_Air_Temperature_Sensor ;
@@ -2817,7 +2817,7 @@ bravo:b-036d a brick:Valve_Command ;
 bravo:b-036e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 2-9 Supply Air Temperature" .
 
-bravo:b-036f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-036f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 2-9 Zone Air Temp Setpoint" .
 
 bravo:b-0370 a brick:Zone_Air_Temperature_Sensor ;
@@ -2838,7 +2838,7 @@ bravo:b-0375 a brick:Valve_Command ;
 bravo:b-0376 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-1 Supply Air Temperature" .
 
-bravo:b-0377 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0377 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-1 Zone Air Temp Setpoint" .
 
 bravo:b-0378 a brick:Zone_Air_Temperature_Sensor ;
@@ -2859,7 +2859,7 @@ bravo:b-037d a brick:Valve_Command ;
 bravo:b-037e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-10 Supply Air Temperature" .
 
-bravo:b-037f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-037f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-10 Zone Air Temp Setpoint" .
 
 bravo:b-0380 a brick:Zone_Air_Temperature_Sensor ;
@@ -2880,7 +2880,7 @@ bravo:b-0385 a brick:Valve_Command ;
 bravo:b-0386 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-11 Supply Air Temperature" .
 
-bravo:b-0387 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0387 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-11 Zone Air Temp Setpoint" .
 
 bravo:b-0388 a brick:Zone_Air_Temperature_Sensor ;
@@ -2901,7 +2901,7 @@ bravo:b-038d a brick:Valve_Command ;
 bravo:b-038e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-12 Supply Air Temperature" .
 
-bravo:b-038f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-038f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-12 Zone Air Temp Setpoint" .
 
 bravo:b-0390 a brick:Zone_Air_Temperature_Sensor ;
@@ -2922,7 +2922,7 @@ bravo:b-0395 a brick:Valve_Command ;
 bravo:b-0396 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-13 Supply Air Temperature" .
 
-bravo:b-0397 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0397 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-13 Zone Air Temp Setpoint" .
 
 bravo:b-0398 a brick:Zone_Air_Temperature_Sensor ;
@@ -2943,7 +2943,7 @@ bravo:b-039d a brick:Valve_Command ;
 bravo:b-039e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-14 Supply Air Temperature" .
 
-bravo:b-039f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-039f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-14 Zone Air Temp Setpoint" .
 
 bravo:b-03a0 a brick:Zone_Air_Temperature_Sensor ;
@@ -2964,7 +2964,7 @@ bravo:b-03a5 a brick:Valve_Command ;
 bravo:b-03a6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-15 Supply Air Temperature" .
 
-bravo:b-03a7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03a7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-15 Zone Air Temp Setpoint" .
 
 bravo:b-03a8 a brick:Zone_Air_Temperature_Sensor ;
@@ -2985,7 +2985,7 @@ bravo:b-03ad a brick:Valve_Command ;
 bravo:b-03ae a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-16 Supply Air Temperature" .
 
-bravo:b-03af a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03af a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-16 Zone Air Temp Setpoint" .
 
 bravo:b-03b0 a brick:Zone_Air_Temperature_Sensor ;
@@ -3006,7 +3006,7 @@ bravo:b-03b5 a brick:Valve_Command ;
 bravo:b-03b6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-17 Supply Air Temperature" .
 
-bravo:b-03b7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03b7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-17 Zone Air Temp Setpoint" .
 
 bravo:b-03b8 a brick:Zone_Air_Temperature_Sensor ;
@@ -3027,7 +3027,7 @@ bravo:b-03bd a brick:Valve_Command ;
 bravo:b-03be a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-18 Supply Air Temperature" .
 
-bravo:b-03bf a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03bf a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-18 Zone Air Temp Setpoint" .
 
 bravo:b-03c0 a brick:Zone_Air_Temperature_Sensor ;
@@ -3048,7 +3048,7 @@ bravo:b-03c5 a brick:Valve_Command ;
 bravo:b-03c6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-19 Supply Air Temperature" .
 
-bravo:b-03c7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03c7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-19 Zone Air Temp Setpoint" .
 
 bravo:b-03c8 a brick:Zone_Air_Temperature_Sensor ;
@@ -3069,7 +3069,7 @@ bravo:b-03cd a brick:Valve_Command ;
 bravo:b-03ce a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-2 Supply Air Temperature" .
 
-bravo:b-03cf a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03cf a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-2 Zone Air Temp Setpoint" .
 
 bravo:b-03d0 a brick:Zone_Air_Temperature_Sensor ;
@@ -3090,7 +3090,7 @@ bravo:b-03d5 a brick:Valve_Command ;
 bravo:b-03d6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-20 Supply Air Temperature" .
 
-bravo:b-03d7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03d7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-20 Zone Air Temp Setpoint" .
 
 bravo:b-03d8 a brick:Zone_Air_Temperature_Sensor ;
@@ -3111,7 +3111,7 @@ bravo:b-03dd a brick:Valve_Command ;
 bravo:b-03de a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-21 Supply Air Temperature" .
 
-bravo:b-03df a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03df a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-21 Zone Air Temp Setpoint" .
 
 bravo:b-03e0 a brick:Zone_Air_Temperature_Sensor ;
@@ -3132,7 +3132,7 @@ bravo:b-03e5 a brick:Valve_Command ;
 bravo:b-03e6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-22 Supply Air Temperature" .
 
-bravo:b-03e7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03e7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-22 Zone Air Temp Setpoint" .
 
 bravo:b-03e8 a brick:Zone_Air_Temperature_Sensor ;
@@ -3153,7 +3153,7 @@ bravo:b-03ed a brick:Valve_Command ;
 bravo:b-03ee a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-23 Supply Air Temperature" .
 
-bravo:b-03ef a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03ef a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-23 Zone Air Temp Setpoint" .
 
 bravo:b-03f0 a brick:Zone_Air_Temperature_Sensor ;
@@ -3174,7 +3174,7 @@ bravo:b-03f5 a brick:Valve_Command ;
 bravo:b-03f6 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-24 Supply Air Temperature" .
 
-bravo:b-03f7 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03f7 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-24 Zone Air Temp Setpoint" .
 
 bravo:b-03f8 a brick:Zone_Air_Temperature_Sensor ;
@@ -3195,7 +3195,7 @@ bravo:b-03fd a brick:Valve_Command ;
 bravo:b-03fe a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-25 Supply Air Temperature" .
 
-bravo:b-03ff a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-03ff a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-25 Zone Air Temp Setpoint" .
 
 bravo:b-0400 a brick:Zone_Air_Temperature_Sensor ;
@@ -3216,7 +3216,7 @@ bravo:b-0405 a brick:Valve_Command ;
 bravo:b-0406 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-26 Supply Air Temperature" .
 
-bravo:b-0407 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0407 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-26 Zone Air Temp Setpoint" .
 
 bravo:b-0408 a brick:Zone_Air_Temperature_Sensor ;
@@ -3237,7 +3237,7 @@ bravo:b-040d a brick:Valve_Command ;
 bravo:b-040e a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-27 Supply Air Temperature" .
 
-bravo:b-040f a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-040f a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-27 Zone Air Temp Setpoint" .
 
 bravo:b-0410 a brick:Zone_Air_Temperature_Sensor ;
@@ -3258,7 +3258,7 @@ bravo:b-0415 a brick:Valve_Command ;
 bravo:b-0416 a brick:Discharge_Air_Temperature_Sensor ;
     rdfs:label "Bravo VAV 3-28 Supply Air Temperature" .
 
-bravo:b-0417 a brick:Zone_Air_Temperature_Setpoint ;
+bravo:b-0417 a brick:Target_Zone_Air_Temperature_Setpoint ;
     rdfs:label "Bravo VAV 3-28 Zone Air Temp Setpoint" .
 
 bravo:b-0418 a brick:Zone_Air_Temperature_Sensor ;

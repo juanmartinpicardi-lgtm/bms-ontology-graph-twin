@@ -4,7 +4,8 @@
 # its nearest ancestor inside this subset (used later for "close enough" scoring).
 #
 # Chosen from HVAC basics plus the classes in the Alpha ground truth (dev set only), minus
-#   - deprecated classes (Zone_Air_Temperature_Setpoint, Unoccupied_Zone_Air_Temperature_Setpoint, Heat_Sensor)
+#   - deprecated classes (Zone_Air_Temperature_Setpoint, Unoccupied_Zone_Air_Temperature_Setpoint, Heat_Sensor);
+#     Target_Zone_Air_Temperature_Setpoint, Brick's replacement for the first, is included
 #   - Zone_Occupied_Load_Shed_Command, which brickschema assigns to plain occupancy points by mistake.
 
 brick_version: "1.4.4"
@@ -22,7 +23,7 @@ equipment:
 
 points:
   generic: [Point, Sensor, Setpoint, Command, Status, Alarm, Temperature_Sensor, Temperature_Setpoint, Pressure_Sensor, Pressure_Setpoint, Flow_Sensor, Humidity_Sensor]
-  zone: [Zone_Air_Temperature_Sensor, Zone_Air_Humidity_Sensor,
+  zone: [Zone_Air_Temperature_Sensor, Zone_Air_Humidity_Sensor, Target_Zone_Air_Temperature_Setpoint,
          Occupied_Cooling_Zone_Air_Temperature_Setpoint, Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,
          Occupied_Heating_Zone_Air_Temperature_Setpoint, Unoccupied_Heating_Zone_Air_Temperature_Setpoint,
          Occupancy_Command, Occupancy_Status, Occupancy_Sensor]

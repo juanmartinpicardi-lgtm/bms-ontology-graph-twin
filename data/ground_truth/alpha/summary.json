@@ -42,6 +42,8 @@
     "GT-006": 2
   },
   "overrides_unused_here": [
+    "GC-003",
+    "GC-004",
     "GT-002",
     "GT-003"
   ],

@@ -1,6 +1,6 @@
 {
   "about": "Human decisions fixing brickschema's output in the ground truth. 'rules' break ties and fire only when an entity's candidate set equals when_candidates exactly. 'corrections' replace a single wrong match and fire only when brickschema returned when_class and the entity has every tag in when_tags_all. Edit freely; rebuild with scripts/build_golden.py.",
-  "decided": "2026-11-08, proposed by Claude on the user's instruction; GT-001..GT-010 approved by the user as is on 2026-11-08; GC-001..GC-002 requested by the user on 2026-11-08",
+  "decided": "2026-11-08, proposed by Claude on the user's instruction; GT-001..GT-010 approved by the user as is on 2026-11-08; GC-001..GC-004 requested by the user on 2026-11-08 (GC-003/004 class choices proposed by Claude, pending review)",
   "rules": [
     {
       "id": "GT-001",
@@ -91,6 +91,22 @@
       "when_tags_all": ["heating", "sp", "unocc", "zone"],
       "choose": "Unoccupied_Heating_Zone_Air_Temperature_Setpoint",
       "rationale": "brickschema's class is deprecated in Brick 1.4.4 and drops the heating tag; this is the exact class for unocc + heating + zone + air + temp + sp."
+    },
+    {
+      "id": "GC-003",
+      "applies_to": "point",
+      "when_class": "Zone_Air_Temperature_Setpoint",
+      "when_tags_all": ["air", "sp", "temp", "zone"],
+      "choose": "Target_Zone_Air_Temperature_Setpoint",
+      "rationale": "brickschema's class is deprecated in Brick 1.4.4; this is Brick's own replacement (isReplacedBy). The tags carry no heating/cooling or occupancy qualifier, so the plain target setpoint fits."
+    },
+    {
+      "id": "GC-004",
+      "applies_to": "point",
+      "when_class": "Heat_Sensor",
+      "when_tags_all": ["heat", "valve"],
+      "choose": "Valve_Command",
+      "rationale": "Four FCU 'Heating Valve Output' points tagged sensor where every other 'Heating Valve Output' on the site is tagged cmd (and is Valve_Command via GT-009); treated as a tagging slip. Brick's own replacement for the deprecated Heat_Sensor, Temperature_Sensor, does not fit. Alternative if following the tags literally: Valve_Position_Sensor."
     }
   ]
 }
