@@ -1,0 +1,15 @@
+id: pump
+brick_class: Pump
+description: Moves chilled, hot or condenser water; often on a VFD.
+name_patterns: ['\bP[-_ ]?\d', '\bPMP\b', '\bPUMP\b', '\b(CHW|HHW|HW|CW|PCHW|SCHW)P[-_ ]?\d', '\bCWP\b', '\bHHWP\b']
+point_count: [1, 15]
+points:
+  - {role: cmd, classes: [Pump_Command, Start_Stop_Command, Run_Enable_Command, Enable_Command], required: true}
+  - {role: status, classes: [Run_Status, On_Off_Status, Status], required: false}
+  - {role: speed, classes: [Speed_Sensor, Frequency_Sensor, Fan_Speed_Command], required: false}
+  - {role: dp, classes: [Chilled_Water_Differential_Pressure_Sensor, Hot_Water_Differential_Pressure_Sensor], required: false}
+  - {role: dp_sp, classes: [Chilled_Water_Differential_Pressure_Setpoint, Hot_Water_Differential_Pressure_Setpoint], required: false}
+  - {role: power, classes: [Power_Sensor, Current_Sensor], required: false}
+relations:
+  - {rel: feeds, target: chiller, medium: chilled_water, required: false}
+  - {rel: feeds, target: boiler, medium: hot_water, required: false}

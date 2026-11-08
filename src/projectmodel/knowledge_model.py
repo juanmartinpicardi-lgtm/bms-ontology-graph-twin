@@ -1,0 +1,323 @@
+"""Load and validate the knowledge model in /knowledge_model.
+
+    km = load_knowledge_model()          # raises KnowledgeModelError listing every problem
+    km.is_a("VAV", "Terminal_Unit")      # class reasoning over Brick 1.4.4 + BA extension
+    km.name_rules.words("Clg_Valve_Cmd") # ['cooling', 'valve', 'command']
+    km.templates["vav"].slots            # point slots for template matching
+
+Brick is pinned to 1.4.4, the version the ground truth was built with.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+
+import brickschema
+import rdflib
+import yaml
+from rdflib.namespace import OWL, RDF, RDFS, SKOS
+
+ROOT = Path(__file__).resolve().parents[2]
+KM_DIR = ROOT / "knowledge_model"
+BRICK_VERSION = "1.4"
+BRICK = rdflib.Namespace("https://brickschema.org/schema/Brick#")
+BA = rdflib.Namespace("urn:projectmodel:ba#")
+
+
+class KnowledgeModelError(ValueError):
+    def __init__(self, problems: list[str]):
+        super().__init__("knowledge model is invalid:\n  - " + "\n  - ".join(problems))
+        self.problems = problems
+
+
+# --- Name rules -------------------------------------------------------------------------------
+
+_CAMEL = re.compile(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
+_LETTER_DIGIT = re.compile(r"(?<=[A-Za-z])(?=\d)|(?<=\d)(?=[A-Za-z])")
+
+
+@dataclass
+class NameRules:
+    separators: re.Pattern
+    split_camel_case: bool
+    split_letter_digit: bool
+    lowercase: bool
+    vocabulary: set[str]
+    abbreviations: dict[str, list[list[str]]]  # token -> alternatives, most likely first
+    examples: dict[str, list[str]]
+    phrases: dict[str, str] = field(default_factory=dict)  # "s/s" -> "ss", applied before splitting
+
+    def _apply_phrases(self, name: str) -> str:
+        for text, token in self.phrases.items():
+            name = re.sub(rf"(?<![A-Za-z0-9]){re.escape(text)}(?![A-Za-z0-9])", f" {token} ", name, flags=re.I)
+        return name
+
+    def tokenize(self, name: str) -> list[str]:
+        tokens = []
+        for chunk in self.separators.split(self._apply_phrases(name)):
+            if not chunk:
+                continue
+            parts = _CAMEL.split(chunk) if self.split_camel_case else [chunk]
+            for part in parts:
+                tokens.extend(p for p in (_LETTER_DIGIT.split(part) if self.split_letter_digit else [part]) if p)
+        return [t.lower() for t in tokens] if self.lowercase else tokens
+
+    def expand(self, token: str) -> list[list[str]] | None:
+        """Alternatives for one token, or None if unknown. Abbreviations win over vocabulary
+        so that ambiguous words ("current") can list their meanings."""
+        if token in self.abbreviations:
+            return self.abbreviations[token]
+        if token in self.vocabulary:
+            return [[token]]
+        return None
+
+    def words(self, name: str) -> list[str]:
+        """Canonical words using the first alternative; unknown tokens pass through unchanged."""
+        out = []
+        for t in self.tokenize(name):
+            alts = self.expand(t)
+            out.extend(alts[0] if alts else [t])
+        return out
+
+    def unknown_tokens(self, name: str) -> list[str]:
+        return [t for t in self.tokenize(name) if self.expand(t) is None and not t.isdigit()]
+
+
+# --- Templates --------------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class Slot:
+    role: str
+    classes: tuple[str, ...]
+    required: bool
+
+
+@dataclass(frozen=True)
+class Relation:
+    rel: str
+    target: str
+    medium: str
+    required: bool
+
+
+@dataclass
+class Template:
+    id: str
+    brick_class: str
+    description: str
+    name_patterns: list[re.Pattern]
+    point_count: tuple[int, int]
+    slots: list[Slot]
+    relations: list[Relation]
+
+    def matches_name(self, name: str) -> bool:
+        return any(p.search(name) for p in self.name_patterns)
+
+
+# --- Knowledge model --------------------------------------------------------------------------
+
+@dataclass
+class ClassInfo:
+    name: str
+    kind: str  # "equipment" | "point" | "other"
+    group: str  # section in brick_subset.yaml, or "ba_extension"
+    source: str  # "brick" | "ba"
+    subset_parent: str | None = None  # nearest ancestor that is also in the model
+
+
+@dataclass
+class KnowledgeModel:
+    brick_version: str
+    classes: dict[str, ClassInfo]
+    relations: list[str]
+    ba_relations: list[str]
+    templates: dict[str, Template]
+    name_rules: NameRules
+    graph: rdflib.Graph = field(repr=False)  # Brick 1.4.4 + BA extension
+
+    def uri(self, cls: str) -> rdflib.URIRef:
+        return BA[cls] if self.classes.get(cls, None) and self.classes[cls].source == "ba" else BRICK[cls]
+
+    def is_a(self, cls: str, ancestor: str) -> bool:
+        return cls == ancestor or _is_subclass(self.graph, self.uri(cls), self.uri(ancestor))
+
+    def by_kind(self, kind: str) -> list[str]:
+        return sorted(c for c, i in self.classes.items() if i.kind == kind)
+
+
+_ANCESTORS: dict[tuple[int, rdflib.URIRef], frozenset] = {}
+
+
+def _is_subclass(graph: rdflib.Graph, sub: rdflib.URIRef, sup: rdflib.URIRef) -> bool:
+    """Strict rdfs:subClassOf+ test, with each class's ancestor set computed once per graph."""
+    key = (id(graph), sub)
+    if key not in _ANCESTORS:
+        _ANCESTORS[key] = frozenset(a for a in graph.transitive_objects(sub, RDFS.subClassOf) if a != sub)
+    return sup in _ANCESTORS[key]
+
+
+def _load_brick() -> rdflib.Graph:
+    return brickschema.Graph(load_brick=True, brick_version=BRICK_VERSION)
+
+
+def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = None) -> KnowledgeModel:
+    km_dir = Path(km_dir)
+    problems: list[str] = []
+    g = brick if brick is not None else _load_brick()
+
+    def brick_has(uri: rdflib.URIRef, rdf_type: rdflib.URIRef) -> bool:
+        return (uri, RDF.type, rdf_type) in g
+
+    def deprecated(uri: rdflib.URIRef) -> bool:
+        return (uri, OWL.deprecated, rdflib.Literal(True)) in g
+
+    # Brick subset
+    subset = yaml.safe_load((km_dir / "brick_subset.yaml").read_text())
+    version = str(subset.get("brick_version"))
+    loaded = {str(v) for v in g.objects(None, OWL.versionInfo)}
+    if version not in loaded:
+        problems.append(f"brick_subset.yaml says Brick {version}, loaded Brick is {sorted(loaded)}")
+    classes: dict[str, ClassInfo] = {}
+    for kind in ("equipment", "points"):
+        for group, names in subset[kind].items():
+            for name in names:
+                uri = BRICK[name]
+                if name in classes:
+                    problems.append(f"brick_subset: {name} listed twice")
+                elif not brick_has(uri, OWL.Class):
+                    problems.append(f"brick_subset: {name} is not a Brick {version} class")
+                elif deprecated(uri):
+                    problems.append(f"brick_subset: {name} is deprecated in Brick {version}")
+                else:
+                    root = BRICK.Equipment if kind == "equipment" else BRICK.Point
+                    if uri != root and not _is_subclass(g, uri, root):
+                        problems.append(f"brick_subset: {name} is listed under {kind} but is not a {root.split('#')[1]}")
+                    classes[name] = ClassInfo(name, "equipment" if kind == "equipment" else "point", group, "brick")
+    relations = list(subset.get("relations", []))
+    for rel in relations:
+        if not any(g.triples((BRICK[rel], RDF.type, None))):
+            problems.append(f"brick_subset: relation {rel} is not in Brick {version}")
+
+    # BA extension: parse into its own graph first to validate, then merge
+    ext = rdflib.Graph()
+    try:
+        ext.parse(km_dir / "ba_extension.ttl", format="turtle")
+    except Exception as e:  # noqa: BLE001 - report any parse failure as a problem
+        problems.append(f"ba_extension.ttl does not parse: {e}")
+    ba_relations = []
+    for s in sorted(ext.subjects(RDF.type, OWL.Class)):
+        name = str(s).split("#")[-1]
+        if not str(s).startswith(str(BA)):
+            problems.append(f"ba_extension: {s} is outside the ba: namespace")
+            continue
+        if brick_has(BRICK[name], OWL.Class):
+            problems.append(f"ba_extension: {name} clashes with Brick class of the same name")
+        if not ext.value(s, RDFS.label) or not ext.value(s, SKOS.definition):
+            problems.append(f"ba_extension: {name} needs rdfs:label and skos:definition")
+        for parent in ext.objects(s, RDFS.subClassOf):
+            if not ((parent, RDF.type, OWL.Class) in ext or brick_has(parent, OWL.Class)):
+                problems.append(f"ba_extension: parent {parent} of {name} is unknown")
+            elif deprecated(parent):
+                problems.append(f"ba_extension: parent {parent} of {name} is deprecated")
+        if name in classes:
+            problems.append(f"ba_extension: {name} defined twice")
+        classes[name] = ClassInfo(name, "other", "ba_extension", "ba")
+    for p in sorted(ext.subjects(RDF.type, OWL.ObjectProperty)):
+        ba_relations.append(str(p).split("#")[-1])
+        for rng in list(ext.objects(p, RDFS.range)) + list(ext.objects(p, RDFS.domain)):
+            if not ((rng, RDF.type, OWL.Class) in ext or brick_has(rng, OWL.Class)):
+                problems.append(f"ba_extension: domain/range {rng} of {p} is unknown")
+    merged = g + ext
+
+    def km_uri(name: str) -> rdflib.URIRef:
+        return BA[name] if classes.get(name) and classes[name].source == "ba" else BRICK[name]
+
+    for name, info in classes.items():
+        if info.source == "ba":
+            if _is_subclass(merged, km_uri(name), BRICK.Point):
+                info.kind = "point"
+            elif _is_subclass(merged, km_uri(name), BRICK.Equipment):
+                info.kind = "equipment"
+        ancestors = [o for o in classes if o != name and _is_subclass(merged, km_uri(name), km_uri(o))]
+        # nearest = the ancestor that is a subclass of every other ancestor
+        nearest = [a for a in ancestors if all(a == b or _is_subclass(merged, km_uri(a), km_uri(b)) for b in ancestors)]
+        info.subset_parent = nearest[0] if nearest else None
+
+    # Templates
+    templates: dict[str, Template] = {}
+    raw_templates = {}
+    for path in sorted((km_dir / "templates").glob("*.yaml")):
+        t = yaml.safe_load(path.read_text())
+        where = f"templates/{path.name}"
+        if t.get("id") != path.stem:
+            problems.append(f"{where}: id {t.get('id')!r} must equal the file name")
+        raw_templates[path.stem] = (t, where)
+    for tid, (t, where) in raw_templates.items():
+        if classes.get(t.get("brick_class"), ClassInfo("", "", "", "")).kind != "equipment":
+            problems.append(f"{where}: brick_class {t.get('brick_class')} is not an equipment class in the model")
+        patterns = []
+        for p in t.get("name_patterns", []):
+            try:
+                patterns.append(re.compile(p, re.I))
+            except re.error as e:
+                problems.append(f"{where}: bad name pattern {p!r}: {e}")
+        lo, hi = t.get("point_count", [0, 0])
+        if not (0 < lo <= hi):
+            problems.append(f"{where}: point_count must be [min, max] with 0 < min <= max")
+        slots, roles = [], set()
+        for s in t.get("points", []):
+            if s["role"] in roles:
+                problems.append(f"{where}: role {s['role']} repeated")
+            roles.add(s["role"])
+            for c in s["classes"]:
+                if classes.get(c, ClassInfo("", "", "", "")).kind != "point":
+                    problems.append(f"{where}: slot {s['role']} uses {c}, which is not a point class in the model")
+            slots.append(Slot(s["role"], tuple(s["classes"]), bool(s.get("required", False))))
+        if not any(s.required for s in slots):
+            problems.append(f"{where}: needs at least one required point slot")
+        rels = []
+        for r in t.get("relations", []):
+            if r["rel"] not in relations:
+                problems.append(f"{where}: relation {r['rel']} is not in the subset")
+            if r["target"] not in raw_templates:
+                problems.append(f"{where}: relation target {r['target']} is not a template")
+            rels.append(Relation(r["rel"], r["target"], r.get("medium", ""), bool(r.get("required", False))))
+        templates[tid] = Template(tid, t.get("brick_class", ""), t.get("description", ""), patterns,
+                                  (lo, hi), slots, rels)
+
+    # Name rules
+    nr = yaml.safe_load((km_dir / "name_rules" / "abbreviations.yaml").read_text())
+    tok = nr["tokenizer"]
+    vocabulary = {str(w) for w in nr["vocabulary"]}
+    if len(vocabulary) != len(nr["vocabulary"]):
+        problems.append("abbreviations.yaml: vocabulary has duplicates")
+    abbreviations: dict[str, list[list[str]]] = {}
+    sep = re.compile(tok["separators"])
+    for key, val in nr["abbreviations"].items():
+        key = str(key)
+        alts = val if val and isinstance(val[0], list) else [val]
+        alts = [[str(w) for w in a] for a in alts]
+        for a in alts:
+            for w in a:
+                if w not in vocabulary:
+                    problems.append(f"abbreviations: {key} expands to {w!r}, which is not in the vocabulary")
+        if sep.search(key):
+            problems.append(f"abbreviations: key {key!r} contains a separator, so the tokenizer can never produce it")
+        abbreviations[key.lower()] = alts
+    name_rules = NameRules(sep, bool(tok["split_camel_case"]), bool(tok["split_letter_digit"]),
+                           bool(tok["lowercase"]), vocabulary, abbreviations,
+                           {str(k): [str(w) for w in v] for k, v in (nr.get("examples") or {}).items()},
+                           {str(k).lower(): str(v).lower() for k, v in (tok.get("phrases") or {}).items()})
+    for text, token in name_rules.phrases.items():
+        if sep.search(token) or name_rules.expand(token) is None:
+            problems.append(f"abbreviations: phrase {text!r} -> {token!r} must be a single known token")
+    for name, expected in name_rules.examples.items():
+        got = name_rules.words(name)
+        if got != expected:
+            problems.append(f"abbreviations: example {name!r} parses to {got}, expected {expected}")
+
+    if problems:
+        raise KnowledgeModelError(problems)
+    return KnowledgeModel(version, classes, relations, ba_relations, templates, name_rules, merged)

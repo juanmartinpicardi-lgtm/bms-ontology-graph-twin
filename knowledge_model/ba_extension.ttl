@@ -1,0 +1,91 @@
+@prefix ba:    <urn:projectmodel:ba#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+
+# BA extension v0: building-automation things Brick does not model, which show up in
+# Niagara / CPO exports. Each class subclasses a Brick class when one fits, else stands alone.
+# The loader checks: every class has a label and definition, no name clashes with Brick,
+# and every parent exists in Brick 1.4.4 or in this file.
+
+<urn:projectmodel:ba> a owl:Ontology ;
+    rdfs:label "BA extension to Brick" ;
+    owl:versionInfo "0.1" .
+
+# --- Control hardware and networks ----------------------------------------------------------
+
+ba:Supervisory_Controller a owl:Class ;
+    rdfs:subClassOf brick:Controller ;
+    rdfs:label "Supervisory controller" ;
+    skos:definition "A controller that hosts a BA station and integrates field networks, e.g. a Niagara JACE or supervisor." .
+
+ba:Field_Controller a owl:Class ;
+    rdfs:subClassOf brick:Controller ;
+    rdfs:label "Field controller" ;
+    skos:definition "A DDC controller on a field network that runs control logic for one or more pieces of equipment." .
+
+ba:IO_Module a owl:Class ;
+    rdfs:subClassOf brick:Equipment ;
+    rdfs:label "I/O module" ;
+    skos:definition "Expansion hardware that adds physical inputs or outputs to a controller, with no logic of its own." .
+
+ba:Field_Network a owl:Class ;
+    rdfs:subClassOf brick:Collection ;
+    rdfs:label "Field network" ;
+    skos:definition "A communication trunk (BACnet MS/TP, BACnet/IP, Modbus, LON) grouping the devices on it." .
+
+# --- Point kinds that are about the BA system, not the building ----------------------------
+
+ba:Software_Point a owl:Class ;
+    rdfs:subClassOf brick:Point ;
+    rdfs:label "Software point" ;
+    skos:definition "A value that exists only in control software (virtual, calculated or network variable), with no physical I/O." .
+
+ba:Calculated_Point a owl:Class ;
+    rdfs:subClassOf ba:Software_Point ;
+    rdfs:label "Calculated point" ;
+    skos:definition "A software point computed from other points, e.g. efficiency, delta-T, kW/ton." .
+
+ba:Diagnostic_Point a owl:Class ;
+    rdfs:subClassOf brick:Point ;
+    rdfs:label "Diagnostic point" ;
+    skos:definition "Health of the BA system itself: device online status, communication errors, points not syncing." .
+
+ba:Utility_Cost_Point a owl:Class ;
+    rdfs:subClassOf brick:Point ;
+    rdfs:label "Utility cost point" ;
+    skos:definition "A monetary value from utility billing or tariff calculation, e.g. monthly gas cost." .
+
+# --- Objects that attach to points ----------------------------------------------------------
+
+ba:Schedule a owl:Class ;
+    rdfs:label "Schedule" ;
+    skos:definition "A time-based schedule object (e.g. BACnet Schedule) that drives occupancy or enable commands." .
+
+ba:Trend_Log a owl:Class ;
+    rdfs:label "Trend log" ;
+    skos:definition "A history collection attached to a point (e.g. Niagara history extension, BACnet Trend Log)." .
+
+ba:Alarm_Definition a owl:Class ;
+    rdfs:label "Alarm definition" ;
+    skos:definition "Alarm limits and routing configured on a point (e.g. Niagara alarm extension), as opposed to an alarm point." .
+
+# --- Relations ------------------------------------------------------------------------------
+
+ba:isHostedBy a owl:ObjectProperty ;
+    rdfs:label "is hosted by" ;
+    skos:definition "Point or schedule lives in this controller." ;
+    rdfs:range brick:Controller .
+
+ba:isOnNetwork a owl:ObjectProperty ;
+    rdfs:label "is on network" ;
+    skos:definition "Controller communicates on this field network." ;
+    rdfs:domain brick:Controller ;
+    rdfs:range ba:Field_Network .
+
+ba:controls a owl:ObjectProperty ;
+    rdfs:label "controls" ;
+    skos:definition "Controller runs the control logic for this equipment." ;
+    rdfs:domain brick:Controller ;
+    rdfs:range brick:Equipment .

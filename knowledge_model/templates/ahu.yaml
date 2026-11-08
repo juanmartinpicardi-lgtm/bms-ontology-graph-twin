@@ -1,0 +1,24 @@
+id: ahu
+brick_class: AHU
+description: Air handling unit. Conditions and moves air to terminal units or directly to zones.
+name_patterns: ['\bAHU\b', '\bAH[-_ ]?\d', '\bRTU\b', '\bMAU\b', '\bDOAS\b']
+point_count: [8, 60]
+points:
+  - {role: supply_temp, classes: [Discharge_Air_Temperature_Sensor, Supply_Air_Temperature_Sensor], required: true}
+  - {role: supply_temp_sp, classes: [Discharge_Air_Temperature_Setpoint, Supply_Air_Temperature_Setpoint], required: false}
+  - {role: return_temp, classes: [Return_Air_Temperature_Sensor], required: false}
+  - {role: mixed_temp, classes: [Mixed_Air_Temperature_Sensor], required: false}
+  - {role: outside_temp, classes: [Outside_Air_Temperature_Sensor], required: false}
+  - {role: static_pressure, classes: [Supply_Air_Static_Pressure_Sensor, Discharge_Air_Static_Pressure_Sensor], required: false}
+  - {role: static_pressure_sp, classes: [Supply_Air_Static_Pressure_Setpoint, Discharge_Air_Static_Pressure_Setpoint], required: false}
+  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false}
+  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false}
+  - {role: economizer_damper, classes: [Damper_Command, Damper_Position_Command], required: false}
+  - {role: supply_fan_cmd, classes: [Fan_Command, Run_Enable_Command, Start_Stop_Command], required: false}
+  - {role: supply_fan_speed, classes: [Fan_Speed_Command], required: false}
+  - {role: supply_fan_status, classes: [Fan_Status, Run_Status, On_Off_Status], required: false}
+  - {role: occupancy, classes: [Occupancy_Command, Occupancy_Status, Mode_Command], required: false}
+relations:
+  - {rel: isFedBy, target: chiller, medium: chilled_water, required: false}
+  - {rel: isFedBy, target: boiler, medium: hot_water, required: false}
+  - {rel: feeds, target: vav, medium: air, required: false}

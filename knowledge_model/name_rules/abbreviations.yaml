@@ -1,0 +1,292 @@
+# Name-parsing rules v0: how to turn a BMS point name into canonical words.
+#
+# Built from general BMS naming conventions and the Alpha dev set only. Bravo (test set) was not
+# used. A few Bravo names were visible in earlier pipeline output, but none were added here because of that.
+#
+# Pipeline: tokenize -> lowercase -> look up each token -> canonical words.
+#   - A token that is itself in `vocabulary` maps to itself.
+#   - `abbreviations` values are either one expansion (list of words) or, for ambiguous tokens,
+#     a list of alternatives (list of lists), most likely first; the mapper resolves them by context.
+#   - Every expansion word must be in `vocabulary` (checked by the loader).
+
+tokenizer:
+  split_camel_case: true          # DisAirTemp -> Dis Air Temp ; EFStatus -> EF Status (acronym runs stay together)
+  separators: '[^A-Za-z0-9%]+'    # spaces, _ - . / ( ) : etc.
+  split_letter_digit: true        # AHU1 -> AHU 1 ; keep "1-2-21" style numbers as separate tokens
+  lowercase: true
+  # Applied before splitting, case-insensitive, on whole words: text -> single token.
+  phrases:
+    "s/s": ss          # start/stop
+    "o/a": oa
+    "r/a": ra
+    "e/a": ea
+
+vocabulary:
+  # medium / substance
+  - air
+  - water
+  - steam
+  - gas
+  - refrigerant
+  - chilled
+  - hot
+  - condenser
+  - domestic
+  # position in the system
+  - supply
+  - discharge
+  - return
+  - mixed
+  - outside
+  - exhaust
+  - relief
+  - zone
+  - space
+  - entering
+  - leaving
+  - inlet
+  - outlet
+  - cold
+  - deck
+  - duct
+  - building
+  - evaporator
+  - compressor
+  # quantity
+  - temperature
+  - pressure
+  - static
+  - differential
+  - flow
+  - humidity
+  - enthalpy
+  - dewpoint
+  - co2
+  - power
+  - energy
+  - current
+  - voltage
+  - frequency
+  - speed
+  - position
+  - load
+  - efficiency
+  - value
+  - peak
+  - rate
+  - firing
+  - electric
+  - isolation
+  - runtime
+  - cost
+  - volume
+  - percent
+  - saturation
+  - superheat
+  - subcooling
+  # point function
+  - sensor
+  - setpoint
+  - command
+  - status
+  - alarm
+  - signal
+  - enable
+  - disable
+  - mode
+  - output
+  - feedback
+  - desired
+  - actual
+  - minimum
+  - maximum
+  - high
+  - low
+  - effective
+  # equipment / component words
+  - fan
+  - pump
+  - damper
+  - valve
+  - coil
+  - filter
+  - vfd
+  - chiller
+  - boiler
+  - cooling_tower
+  - heat_exchanger
+  - meter
+  - economizer
+  - humidifier
+  - reheat
+  - box
+  # conditions
+  - cooling
+  - heating
+  - occupied
+  - unoccupied
+  - standby
+  - start
+  - stop
+  - "on"
+  - "off"
+  - open
+  - close
+
+abbreviations:
+  # functions
+  sp: [[setpoint], [static, pressure]]     # "Clg Sp" vs "Duct SP"; mapper decides from neighbours
+  stpt: [setpoint]
+  spt: [setpoint]
+  setpt: [setpoint]
+  set: [setpoint]
+  cmd: [command]
+  cmnd: [command]
+  sts: [status]
+  stat: [[status], [zone, temperature, sensor]]   # "Fan Stat" vs room "Stat" (thermostat)
+  st: [status]
+  fb: [feedback]
+  alm: [alarm]
+  en: [enable]
+  ena: [enable]
+  enbl: [enable]
+  sig: [signal]
+  pos: [position]
+  out: [output]
+  op: [output]
+  req: [desired]
+  des: [desired]
+  act: [actual]
+  curr: [actual]
+  current: [[actual], [current]]           # "Current Airflow" = actual airflow; also electrical current
+  min: [minimum]
+  max: [maximum]
+  hi: [high]
+  lo: [low]
+  eff: [[efficiency], [effective]]
+  # quantities
+  temp: [temperature]
+  tmp: [temperature]
+  t: [temperature]
+  press: [pressure]
+  prs: [pressure]
+  p: [[pressure], [pump]]
+  dp: [differential, pressure]
+  rh: [[humidity], [reheat]]
+  "%rh": [humidity]
+  hum: [humidity]
+  enth: [enthalpy]
+  dpt: [dewpoint]
+  kw: [power]
+  kwh: [energy]
+  amp: [current]
+  amps: [current]
+  hz: [frequency]
+  freq: [frequency]
+  spd: [speed]
+  cfm: [air, flow]
+  airflow: [air, flow]
+  gpm: [water, flow]
+  "%": [percent]
+  pct: [percent]
+  hrs: [runtime]
+  rt: [[runtime], [return]]
+  vol: [volume]
+  # positions / media
+  sa: [supply, air]
+  da: [discharge, air]
+  dis: [[discharge], [disable]]
+  disch: [discharge]
+  ra: [return, air]
+  rtn: [return]
+  ret: [return]
+  ma: [mixed, air]
+  mix: [mixed]
+  oa: [outside, air]
+  osa: [outside, air]
+  ea: [exhaust, air]
+  exh: [exhaust]
+  rel: [relief]
+  zn: [zone]
+  rm: [space]
+  room: [space]
+  ent: [entering]
+  lvg: [leaving]
+  lv: [leaving]
+  chw: [chilled, water]
+  chws: [chilled, water, supply]
+  chwr: [chilled, water, return]
+  hw: [hot, water]
+  hhw: [hot, water]
+  hws: [hot, water, supply]
+  hwr: [hot, water, return]
+  cw: [condenser, water]
+  cws: [condenser, water, supply]
+  cwr: [condenser, water, return]
+  cond: [condenser]
+  evap: [evaporator]
+  refrig: [refrigerant]
+  ref: [refrigerant]
+  comp: [compressor]
+  hd: [hot, deck]
+  cd: [[cold, deck], [condenser]]
+  iso: [isolation]
+  fire: [firing]
+  elec: [electric]
+  bldg: [building]
+  # compound sensor acronyms
+  sat: [supply, air, temperature]
+  dat: [discharge, air, temperature]
+  rat: [return, air, temperature]
+  mat: [mixed, air, temperature]
+  oat: [outside, air, temperature]
+  zat: [zone, temperature]
+  dsp: [duct, static, pressure]
+  ssp: [supply, static, pressure]
+  # conditions
+  clg: [cooling]
+  cool: [cooling]
+  htg: [heating]
+  heat: [heating]
+  occ: [occupied]
+  unocc: [unoccupied]
+  unoc: [unoccupied]
+  stby: [standby]
+  ss: [start, stop]
+  # equipment / components
+  vfd: [vfd]
+  vsd: [vfd]
+  dmpr: [damper]
+  dmp: [damper]
+  dpr: [damper]
+  vlv: [valve]
+  econ: [economizer]
+  sf: [supply, fan]
+  rf: [return, fan]
+  ef: [exhaust, fan]
+  chlr: [chiller]
+  ch: [chiller]
+  blr: [boiler]
+  ct: [cooling_tower]
+  hx: [heat_exchanger]
+  pmp: [pump]
+  rhv: [reheat, valve]
+
+# Worked examples, checked by the loader: name -> expected canonical words (first alternative).
+examples:
+  "Clg_Valve_Cmd": [cooling, valve, command]
+  "Htg Valve Signal": [heating, valve, signal]
+  "Occupied Clg Setpoint": [occupied, cooling, setpoint]
+  "Unoccupied Htg Sp": [unoccupied, heating, setpoint]
+  "Clg Dmpr Pos. %": [cooling, damper, position, percent]
+  "Current Airflow": [actual, air, flow]
+  "Space Temperature": [space, temperature]
+  "SF VFD Signal": [supply, fan, vfd, signal]
+  "OAT": [outside, air, temperature]
+  "MAT": [mixed, air, temperature]
+  "Econ_Cmd": [economizer, command]
+  "DisAirTemp": [discharge, air, temperature]
+  "EFStatus": [exhaust, fan, status]
+  "AHU1 SAT": [ahu, "1", supply, air, temperature]
+  "HHWP-2 S/S": [hhwp, "2", start, stop]
+  "Cold Deck SAT": [cold, deck, supply, air, temperature]

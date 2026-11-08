@@ -1,0 +1,18 @@
+id: fcu
+brick_class: FCU
+description: Fan coil unit. Local fan plus heating and/or cooling coil serving one zone.
+name_patterns: ['\bFCU\b', '\bFC[-_ ]?\d', '\bUV\b', '\bCUH\b']
+point_count: [3, 15]
+points:
+  - {role: zone_temp, classes: [Zone_Air_Temperature_Sensor], required: true}
+  - {role: fan_cmd, classes: [Fan_Command, Fan_Speed_Command, Start_Stop_Command], required: true}
+  - {role: fan_status, classes: [Fan_Status, Run_Status, On_Off_Status], required: false}
+  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false}
+  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false}
+  - {role: discharge_temp, classes: [Discharge_Air_Temperature_Sensor], required: false}
+  - {role: occ_cooling_sp, classes: [Occupied_Cooling_Zone_Air_Temperature_Setpoint], required: false}
+  - {role: occ_heating_sp, classes: [Occupied_Heating_Zone_Air_Temperature_Setpoint], required: false}
+  - {role: occupancy, classes: [Occupancy_Command, Occupancy_Status, Occupancy_Sensor], required: false}
+relations:
+  - {rel: isFedBy, target: chiller, medium: chilled_water, required: false}
+  - {rel: isFedBy, target: boiler, medium: hot_water, required: false}

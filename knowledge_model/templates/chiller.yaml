@@ -1,0 +1,20 @@
+id: chiller
+brick_class: Chiller
+description: Produces chilled water; water- or air-cooled.
+name_patterns: ['\bCH[-_ ]?\d', '\bCHLR?\b', '\bCHILLER\b']
+point_count: [4, 50]
+points:
+  - {role: chw_leaving_temp, classes: [Leaving_Chilled_Water_Temperature_Sensor], required: true}
+  - {role: chw_entering_temp, classes: [Entering_Chilled_Water_Temperature_Sensor], required: false}
+  - {role: chw_leaving_sp, classes: [Leaving_Chilled_Water_Temperature_Setpoint], required: false}
+  - {role: cw_entering_temp, classes: [Entering_Condenser_Water_Temperature_Sensor], required: false}
+  - {role: cw_leaving_temp, classes: [Leaving_Condenser_Water_Temperature_Sensor], required: false}
+  - {role: chw_flow, classes: [Chilled_Water_Flow_Sensor], required: false}
+  - {role: cw_flow, classes: [Condenser_Water_Flow_Sensor], required: false}
+  - {role: enable, classes: [Enable_Command, Run_Enable_Command, Start_Stop_Command], required: false}
+  - {role: status, classes: [Run_Status, On_Off_Status, Status], required: false}
+  - {role: power, classes: [Power_Sensor, Current_Sensor], required: false}
+relations:
+  - {rel: feeds, target: ahu, medium: chilled_water, required: false}
+  - {rel: feeds, target: fcu, medium: chilled_water, required: false}
+  - {rel: isFedBy, target: pump, medium: chilled_water, required: false}

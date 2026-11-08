@@ -1,0 +1,48 @@
+# Brick subset v0: the classes and relations the mapper may assign.
+# Every entry must be a non-deprecated class or relation of Brick 1.4.4 (checked by the loader).
+# Parents are not restated here: the loader reads them from Brick, and computes for each class
+# its nearest ancestor inside this subset (used later for "close enough" scoring).
+#
+# Chosen from HVAC basics plus the classes in the Alpha ground truth (dev set only), minus
+#   - deprecated classes (Zone_Air_Temperature_Setpoint, Unoccupied_Zone_Air_Temperature_Setpoint, Heat_Sensor)
+#   - Zone_Occupied_Load_Shed_Command, which brickschema assigns to plain occupancy points by mistake.
+
+brick_version: "1.4.4"
+namespace: "https://brickschema.org/schema/Brick#"
+
+relations: [hasPoint, isPointOf, hasPart, isPartOf, feeds, isFedBy, hasLocation, isLocationOf]
+
+equipment:
+  generic: [Equipment, HVAC_Equipment]
+  air_side: [AHU, RTU, Terminal_Unit, VAV, FCU, Thermostat]
+  fans: [Fan, Supply_Fan, Return_Fan, Exhaust_Fan, Relief_Fan]
+  water_side: [Chiller, Boiler, Cooling_Tower, Heat_Exchanger, Pump, Chilled_Water_Pump, Hot_Water_Pump, Condenser_Water_Pump]
+  components: [Damper, Valve, Variable_Frequency_Drive]
+  meters: [Meter, Electrical_Meter, Gas_Meter, Chilled_Water_Meter, Hot_Water_Meter]
+
+points:
+  generic: [Point, Sensor, Setpoint, Command, Status, Alarm, Temperature_Sensor, Temperature_Setpoint, Pressure_Sensor, Pressure_Setpoint, Flow_Sensor, Humidity_Sensor]
+  zone: [Zone_Air_Temperature_Sensor, Zone_Air_Humidity_Sensor,
+         Occupied_Cooling_Zone_Air_Temperature_Setpoint, Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,
+         Occupied_Heating_Zone_Air_Temperature_Setpoint, Unoccupied_Heating_Zone_Air_Temperature_Setpoint,
+         Occupancy_Command, Occupancy_Status, Occupancy_Sensor]
+  air: [Air_Temperature_Sensor, Air_Temperature_Setpoint, Air_Flow_Sensor, Air_Flow_Setpoint,
+        Discharge_Air_Temperature_Sensor, Discharge_Air_Temperature_Setpoint,
+        Supply_Air_Temperature_Sensor, Supply_Air_Temperature_Setpoint,
+        Discharge_Air_Flow_Sensor, Discharge_Air_Flow_Setpoint, Supply_Air_Flow_Sensor,
+        Discharge_Air_Static_Pressure_Sensor, Discharge_Air_Static_Pressure_Setpoint,
+        Supply_Air_Static_Pressure_Sensor, Supply_Air_Static_Pressure_Setpoint,
+        Mixed_Air_Temperature_Sensor, Return_Air_Temperature_Sensor,
+        Outside_Air_Temperature_Sensor, Outside_Air_Humidity_Sensor,
+        Discharge_Air_Humidity_Sensor, Discharge_Air_Humidity_Setpoint]
+  water: [Entering_Chilled_Water_Temperature_Sensor, Leaving_Chilled_Water_Temperature_Sensor, Leaving_Chilled_Water_Temperature_Setpoint,
+          Entering_Condenser_Water_Temperature_Sensor, Leaving_Condenser_Water_Temperature_Sensor, Entering_Condenser_Water_Temperature_Setpoint,
+          Entering_Hot_Water_Temperature_Sensor, Leaving_Hot_Water_Temperature_Sensor, Leaving_Hot_Water_Temperature_Setpoint,
+          Chilled_Water_Differential_Pressure_Sensor, Chilled_Water_Differential_Pressure_Setpoint,
+          Hot_Water_Differential_Pressure_Sensor, Hot_Water_Differential_Pressure_Setpoint,
+          Chilled_Water_Flow_Sensor, Condenser_Water_Flow_Sensor, Hot_Water_Flow_Sensor]
+  actuation: [Damper_Command, Damper_Position_Command, Damper_Position_Sensor,
+              Valve_Command, Valve_Position_Command, Valve_Position_Sensor,
+              Fan_Command, Fan_Speed_Command, Fan_Status, Pump_Command,
+              Enable_Command, Run_Enable_Command, Start_Stop_Command, Run_Status, On_Off_Status, Mode_Command, Mode_Status]
+  electrical: [Speed_Sensor, Frequency_Sensor, Power_Sensor, Energy_Sensor, Current_Sensor, Run_Time_Sensor]

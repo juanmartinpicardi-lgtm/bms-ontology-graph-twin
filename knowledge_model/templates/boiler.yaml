@@ -1,0 +1,17 @@
+id: boiler
+brick_class: Boiler
+description: Produces hot water or steam from gas, oil or electricity.
+name_patterns: ['\bB[-_ ]?\d\b', '\bBLR\b', '\bBOILER\b', '\bHWB\b']
+point_count: [3, 30]
+points:
+  - {role: hw_leaving_temp, classes: [Leaving_Hot_Water_Temperature_Sensor], required: true}
+  - {role: hw_entering_temp, classes: [Entering_Hot_Water_Temperature_Sensor], required: false}
+  - {role: hw_leaving_sp, classes: [Leaving_Hot_Water_Temperature_Setpoint], required: false}
+  - {role: enable, classes: [Enable_Command, Run_Enable_Command, Start_Stop_Command], required: false}
+  - {role: status, classes: [Run_Status, On_Off_Status, Status], required: false}
+  - {role: firing_rate, classes: [Command, Sensor], required: false}
+relations:
+  - {rel: feeds, target: ahu, medium: hot_water, required: false}
+  - {rel: feeds, target: vav, medium: hot_water, required: false}
+  - {rel: feeds, target: fcu, medium: hot_water, required: false}
+  - {rel: isFedBy, target: pump, medium: hot_water, required: false}
