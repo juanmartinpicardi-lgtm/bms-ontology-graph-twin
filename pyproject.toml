@@ -1,0 +1,22 @@
+[project]
+name = "projectmodel"
+version = "0.0.1"
+description = "Prototype: engineering-tool exports -> reviewed building knowledge graph"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "brickschema>=0.8.0",
+    "pandas>=3.1.1",
+    "pytest>=9.2.0",
+    "rdflib>=7.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/projectmodel"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
