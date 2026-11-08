@@ -1,0 +1,11 @@
+# Which convention scopes apply to which project ("<site>/<variant>"), merged in layer order:
+# knowledge model <- contractor/* <- customer/* <- site/*. A project not listed here runs blind.
+#
+# Bravo is the held-out test set. Its conventions may only hold what a site engineer would tell us
+# before seeing our output (spec-tribal-knowledge.md section 4.3). Nobody has told us anything yet, so
+# Bravo's "with conventions" score is its blind score until someone supplies such a file.
+
+alpha/names_paths: [site/alpha]
+alpha/names_only: [site/alpha]
+bravo/names_paths: []
+bravo/names_only: []

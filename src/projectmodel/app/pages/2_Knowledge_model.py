@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import km_explorer as kx  # noqa: E402
+from projectmodel.conventions import CONV_DIR, ConventionError, apply_conventions, load_layers, scopes_for  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth  # noqa: E402
@@ -63,7 +64,8 @@ st.caption(f"Brick {km.brick_version} subset · relations: {', '.join(km.relatio
 if not project:
     st.stop()
 
-tab_c, tab_t, tab_u, tab_r, tab_m = st.tabs(["Classes", "Templates", "Unknown words", "Relations", "Missing from the model"])
+tab_c, tab_t, tab_u, tab_r, tab_m, tab_v = st.tabs(["Classes", "Templates", "Unknown words", "Relations",
+                                                    "Missing from the model", "Conventions"])
 
 # --- Classes -----------------------------------------------------------------------------------
 with tab_c:
@@ -176,3 +178,26 @@ with tab_m:
             st.caption(f"{len(miss)} ground-truth classes ({miss['points'].sum()} points) are not in the model, "
                        "so the mapper can never get them exactly right.")
             st.dataframe(miss, hide_index=True, width="stretch")
+
+# --- Conventions -------------------------------------------------------------------------------
+with tab_v:
+    available = sorted(str(f.relative_to(CONV_DIR).with_suffix("")) for f in CONV_DIR.glob("*/*.yaml"))
+    configured = scopes_for(project)
+    scopes = st.multiselect("Layers on top of the knowledge model", available,
+                            [s for s in configured if s in available], key=f"km_scopes_{project}",
+                            help="Defaults to this project's layers in conventions/projects.yaml.")
+    st.caption(f"{project} uses: knowledge model ← {' ← '.join(configured) or '(no conventions: blind)'} · "
+               "layers apply contractor ← customer ← site. Edit files in `conventions/`, then rerun the mapper.")
+    if scopes:
+        try:
+            layers = load_layers(scopes)
+            apply_conventions(km, layers)
+        except ConventionError as e:
+            st.error("\n".join(e.problems))
+            st.stop()
+        rows = pd.DataFrame(kx.convention_entries(km, store, project, layers))
+        st.dataframe(rows, hide_index=True, width="stretch",
+                     column_config={"points here": st.column_config.NumberColumn(
+                         help="Nodes in this project whose provenance names this entry (latest mapper run)")})
+    else:
+        st.info("No layers selected: the knowledge model alone.")

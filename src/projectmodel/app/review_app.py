@@ -90,6 +90,7 @@ def frame(kind: str) -> pd.DataFrame:
             "status": n["status"], "alternatives": alts if kind == "point" else "",
             "points": a.get("points", "") if kind == "equipment" else "",
             "notes": note_count.get(("node", n["id"]), 0),
+            "flag": a["ignore"]["reason"] if "ignore" in a else "",
         })
     return pd.DataFrame(rows)
 
@@ -117,7 +118,7 @@ def review_tab(kind: str):
     if st.checkbox("Select all shown", key=f"all_{kind}"):
         view["select"] = True
     cols = ["select", "name", "equipment", "class", "notes", "confidence", "method", "status"]
-    cols += ["alternatives"] if kind == "point" else ["points"]
+    cols += ["flag", "alternatives"] if kind == "point" else ["points"]
     edited = st.data_editor(
         view[cols + ["id"]], hide_index=True, width="stretch", height=420,
         disabled=[c for c in cols + ["id"] if c != "select"],
@@ -170,7 +171,7 @@ def fact(what: str, p: dict | None) -> dict:
     return {"fact": what, "method": p.get("method", ""), "confidence": p.get("confidence"),
             "status": p.get("status", ""), "ref": p.get("source_ref", ""), "revision": p.get("revision"),
             "reviewed": f"{r['action']} by {r['by']} at {r['at'][:16]}" if r else "",
-            "source": p.get("source_file", "")}
+            "convention": ", ".join(p.get("convention", [])), "source": p.get("source_file", "")}
 
 
 def provenance_table(rows: list[dict]):
@@ -333,6 +334,8 @@ def tree_tab():
                       "folder path": a.get("path")}
             if "review" in a:
                 detail["before review"] = a["review"].get("previous")
+            if "ignore" in a:
+                detail["flagged for review"] = f"{a['ignore']['reason']} ({a['ignore']['convention']})"
             st.json({k: v for k, v in detail.items() if v}, expanded=True)
             targets = [("node", p.id, p.label)]
             if n.id != UNPLACED:

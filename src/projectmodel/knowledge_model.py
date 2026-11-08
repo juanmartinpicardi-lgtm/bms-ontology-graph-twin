@@ -4,6 +4,7 @@
     km.is_a("VAV", "Terminal_Unit")      # class reasoning over Brick 1.4.4 + BA extension
     km.name_rules.words("Clg_Valve_Cmd") # ['cooling', 'valve', 'command']
     km.templates["vav"].slots            # point slots for template matching
+    load_knowledge_model(conventions=["site/alpha"])  # same, with convention layers merged (see conventions.py)
 
 Brick is pinned to 1.4.4, the version the ground truth was built with.
 """
@@ -113,9 +114,26 @@ class Template:
     point_count: tuple[int, int]
     slots: list[Slot]
     relations: list[Relation]
+    pattern_origin: dict[str, str] = field(default_factory=dict)  # pattern text -> convention that added it
 
     def matches_name(self, name: str) -> bool:
         return any(p.search(name) for p in self.name_patterns)
+
+
+# --- Convention entries (merged in by conventions.py; empty for the bare knowledge model) -----------
+
+@dataclass(frozen=True)
+class ClassHint:
+    pattern: re.Pattern  # matched against the whole point name
+    cls: str
+    origin: str  # e.g. "site/alpha:class_hints[0]"
+
+
+@dataclass(frozen=True)
+class IgnoreRule:
+    pattern: re.Pattern
+    reason: str
+    origin: str
 
 
 # --- Knowledge model --------------------------------------------------------------------------
@@ -174,6 +192,11 @@ class KnowledgeModel:
     name_rules: NameRules
     class_matching: ClassMatching
     graph: rdflib.Graph = field(repr=False)  # Brick 1.4.4 + BA extension
+    # Convention layers merged on top (conventions.py). Hints and ignore rules: highest priority first.
+    conventions: list[str] = field(default_factory=list)  # scopes, e.g. ["site/alpha"]
+    class_hints: list[ClassHint] = field(default_factory=list)
+    ignore: list[IgnoreRule] = field(default_factory=list)
+    abbreviation_origin: dict[str, str] = field(default_factory=dict)  # token -> convention that set it
 
     def uri(self, cls: str) -> rdflib.URIRef:
         return BA[cls] if self.classes.get(cls, None) and self.classes[cls].source == "ba" else BRICK[cls]
@@ -200,7 +223,10 @@ def _load_brick() -> rdflib.Graph:
     return brickschema.Graph(load_brick=True, brick_version=BRICK_VERSION)
 
 
-def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = None) -> KnowledgeModel:
+def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = None,
+                         conventions: list[str] | None = None, conventions_dir: Path | None = None) -> KnowledgeModel:
+    """`conventions`: scopes such as ["contractor/acme", "site/alpha"], merged on top of the model
+    (raises ConventionError naming the file and key of any problem). The files on disk are untouched."""
     km_dir = Path(km_dir)
     problems: list[str] = []
     g = brick if brick is not None else _load_brick()
@@ -388,4 +414,8 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
 
     if problems:
         raise KnowledgeModelError(problems)
-    return KnowledgeModel(version, classes, relations, ba_relations, templates, name_rules, class_matching, merged)
+    km = KnowledgeModel(version, classes, relations, ba_relations, templates, name_rules, class_matching, merged)
+    if conventions:
+        from .conventions import CONV_DIR, apply_conventions, load_layers
+        km = apply_conventions(km, load_layers(conventions, conventions_dir or CONV_DIR))
+    return km

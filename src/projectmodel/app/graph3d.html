@@ -336,6 +336,8 @@ function provRows(p) {
               "source ref": p.source_ref, revision: p.revision, "defined in": p.defined_in, "model group": p.class_kind ? `${p.source_ref} (${p.class_kind})` : undefined };
   if (p.method === "model") delete r["source ref"];
   if (p.review) r.review = `${p.review.action} by ${p.review.by} at ${String(p.review.at).slice(0, 16)}`;
+  if (p.convention) r.convention = p.convention.join(", ");
+  if (p.ignore) r["flagged (ignore)"] = `${p.ignore.reason} (${p.ignore.convention})`;
   return rows(r);
 }
 // Notes are read-only here; they are written in the review app (Tree tab).

@@ -1,6 +1,6 @@
 """Validate the knowledge model and report its coverage of the Alpha dev set.
 
-Usage: .venv/bin/python scripts/validate_km.py
+Usage: .venv/bin/python scripts/validate_km.py [--project alpha/names_paths]
 
 Only Alpha is measured: Bravo is the held-out test set and must not drive changes here.
 """
@@ -14,6 +14,30 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.knowledge_model import KnowledgeModelError, load_knowledge_model  # noqa: E402
+
+
+def check_conventions(project: str) -> int:
+    """`--project <site>/<variant>`: validate the knowledge model merged with that project's convention
+    layers (conventions/projects.yaml), with the same rules. Returns the exit code."""
+    from projectmodel.conventions import ConventionError, layer_entries, load_layers, scopes_for
+
+    try:
+        scopes = scopes_for(project)
+        km = load_knowledge_model(conventions=scopes)
+    except ConventionError as e:
+        print(e)
+        return 1
+    except KnowledgeModelError as e:
+        print(e)
+        return 1
+    print(f"Knowledge model + conventions OK for {project}: {' <- '.join(['knowledge model'] + km.conventions)}")
+    for row in layer_entries(load_layers(scopes)):
+        print(f"  {row['scope']:<24} {row['kind']:<19} {row['key']} -> {row['value']}")
+    return 0
+
+
+if __name__ == "__main__" and "--project" in sys.argv:
+    sys.exit(check_conventions(sys.argv[sys.argv.index("--project") + 1]))
 
 if __name__ == "__main__":
     try:

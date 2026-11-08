@@ -5,8 +5,10 @@ H1  grouping: share of points (that have true equipment) placed on the right equ
     merging equipment costs points. Ungrouped points count as wrong.
 H2  classification: share of points (that have a ground-truth class) with exactly the right class,
     overall and among auto-accepted points. "compatible" also counts a parent/child of the true class.
-Review: share of points not auto-accepted (confidence below the threshold, or no class) and not
-    already decided by a human.
+Review: share of points not auto-accepted (confidence below the threshold, no class, or flagged by a
+    convention's ignore rule) and not already decided by a human.
+Every result says which convention layers the latest run used (`conventions`), so a score always
+says what it was built with.
 Cost and time per 1,000 points come from the latest run and its logged LLM calls.
 Also reported: equipment class accuracy, feeds/hasPart precision and recall, a confidence
 calibration table, and H2 split by where the point name came from (BMS name vs dis fallback).
@@ -93,7 +95,9 @@ def score_project(store: Store, project: str, gt: GroundTruth, km: KnowledgeMode
     def accepted(n) -> bool:
         if n["status"] == "rejected":
             return False
-        return n["method"] == "human" or n["status"] == "confirmed" or (bool(n["class"]) and n["confidence"] >= accept)
+        if n["method"] == "human" or n["status"] == "confirmed":
+            return True
+        return bool(n["class"]) and n["confidence"] >= accept and "ignore" not in json.loads(n["attrs"])
 
     def compatible(pred: str | None, true: str) -> bool:
         if not pred or pred not in km.classes or true not in km.classes:
@@ -136,7 +140,7 @@ def score_project(store: Store, project: str, gt: GroundTruth, km: KnowledgeMode
         return {"predicted": len(pred), "true": len(true), "precision_pct": _pct(hit, len(pred)),
                 "recall_pct": _pct(hit, len(true))}
 
-    run = store.conn.execute("SELECT revision, seconds FROM runs WHERE project = ? ORDER BY revision DESC LIMIT 1",
+    run = store.conn.execute("SELECT revision, seconds, summary FROM runs WHERE project = ? ORDER BY revision DESC LIMIT 1",
                              (project,)).fetchone()
     cost = store.conn.execute("SELECT COUNT(*), COALESCE(SUM(cost_usd), 0), COALESCE(SUM(latency_s), 0)"
                               " FROM llm_calls WHERE project = ? AND revision = ?", (project, run["revision"])).fetchone()
@@ -144,6 +148,7 @@ def score_project(store: Store, project: str, gt: GroundTruth, km: KnowledgeMode
 
     return {
         "project": project,
+        "conventions": json.loads(run["summary"] or "{}").get("conventions", []),
         "points": len(points),
         "accept_threshold": accept,
         "H1_grouped_right_pct": _pct(grouped_right, len(with_equip)),

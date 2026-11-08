@@ -27,6 +27,10 @@ def provenance(row) -> dict:
            "confidence": row["confidence"], "status": row["status"], "revision": row["revision"]}
     if "review" in attrs:
         out["review"] = attrs["review"]
+    if "convention" in attrs:
+        out["convention"] = attrs["convention"]
+    if "ignore" in attrs:
+        out["ignore"] = attrs["ignore"]
     return out
 
 
