@@ -207,7 +207,22 @@ function selectPoint(id) {
 }
 function openEquipment(id) {
   const href = DATA.links?.[id];
-  if (href) { location.href = href; return; }
+  if (href) {
+    // In the app the page sits in a sandboxed, same-origin iframe that may not navigate the top window itself, so it
+    // clicks a link in the app's own document (the app navigates); a new tab if that is not reachable.
+    if (DATA.link_target === "top" && parent !== window) {
+      try {
+        const a = top.document.createElement("a");
+        a.href = href;
+        top.document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) { open(href, "_blank"); }
+      return;
+    }
+    location.href = href;
+    return;
+  }
   if (parent !== window) parent.postMessage({ type: "open-equipment", id }, "*");  // the app can route it (E5)
   const r = rels.find(r => r.id === id);
   if (r) panels.showEquipment(r, null);

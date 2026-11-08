@@ -3,18 +3,21 @@
   "configurations": [
     {
       "name": "review",
-      "runtimeExecutable": ".venv/bin/streamlit",
+      "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": [
+        "-m",
+        "streamlit",
         "run",
         "src/projectmodel/app/review_app.py",
         "--server.headless",
         "true",
         "--server.port",
-        "8501",
+        "8518",
         "--browser.gatherUsageStats",
         "false"
       ],
-      "port": 8501
+      "port": 8518,
+      "autoPort": false
     },
     {
       "name": "equipment3d",
