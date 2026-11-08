@@ -128,6 +128,41 @@ class ClassInfo:
 
 
 @dataclass
+class ClassMatching:
+    """Settings for matching name words to class-name words (name_rules/class_matching.yaml)."""
+    name_synonyms: dict[str, str]  # "" means drop the word
+    class_word_synonyms: dict[tuple[str, ...], str]
+    functions: list[str]
+    default_function: str
+    quantities: set[str]
+    command_cues: set[str]
+    point_implies: dict[str, list[str]] = field(default_factory=dict)
+
+    def name_words(self, words: list[str]) -> list[str]:
+        out = []
+        for w in words:
+            w = self.name_synonyms.get(w, w)
+            if w:
+                out.append(w)
+        return out
+
+    def class_words(self, cls: str) -> list[str]:
+        words = cls.lower().split("_")
+        out, i = [], 0
+        phrases = sorted(self.class_word_synonyms, key=len, reverse=True)
+        while i < len(words):
+            for p in phrases:
+                if tuple(words[i:i + len(p)]) == p:
+                    out.append(self.class_word_synonyms[p])
+                    i += len(p)
+                    break
+            else:
+                out.append(words[i])
+                i += 1
+        return [w for w in out if w]
+
+
+@dataclass
 class KnowledgeModel:
     brick_version: str
     classes: dict[str, ClassInfo]
@@ -135,6 +170,7 @@ class KnowledgeModel:
     ba_relations: list[str]
     templates: dict[str, Template]
     name_rules: NameRules
+    class_matching: ClassMatching
     graph: rdflib.Graph = field(repr=False)  # Brick 1.4.4 + BA extension
 
     def uri(self, cls: str) -> rdflib.URIRef:
@@ -318,6 +354,31 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
         if got != expected:
             problems.append(f"abbreviations: example {name!r} parses to {got}, expected {expected}")
 
+    # Class matching
+    cm = yaml.safe_load((km_dir / "name_rules" / "class_matching.yaml").read_text())
+    class_matching = ClassMatching(
+        name_synonyms={str(k): str(v or "") for k, v in cm["name_synonyms"].items()},
+        class_word_synonyms={tuple(str(k).lower().split()): str(v or "") for k, v in cm["class_word_synonyms"].items()},
+        functions=[str(f) for f in cm["functions"]],
+        default_function=str(cm["default_function"]),
+        quantities={str(q) for q in cm["quantities"]},
+        command_cues={str(c) for c in cm["command_cues"]},
+        point_implies={str(k): [str(w) for w in v] for k, v in (cm.get("point_implies") or {}).items()},
+    )
+    for k, ws in class_matching.point_implies.items():
+        for w in ws:
+            if w not in vocabulary:
+                problems.append(f"class_matching: point_implies {k} -> {w!r} is not in the vocabulary")
+    for group in ("functions", "quantities", "command_cues"):
+        for w in cm[group]:
+            if str(w) not in vocabulary:
+                problems.append(f"class_matching: {group} word {w!r} is not in the vocabulary")
+    if class_matching.default_function not in class_matching.functions:
+        problems.append("class_matching: default_function must be one of functions")
+    for k, v in class_matching.name_synonyms.items():
+        if v and v not in vocabulary and v not in {w for c in classes for w in class_matching.class_words(c)}:
+            problems.append(f"class_matching: name synonym {k} -> {v!r} is neither a vocabulary word nor a class word")
+
     if problems:
         raise KnowledgeModelError(problems)
-    return KnowledgeModel(version, classes, relations, ba_relations, templates, name_rules, merged)
+    return KnowledgeModel(version, classes, relations, ba_relations, templates, name_rules, class_matching, merged)

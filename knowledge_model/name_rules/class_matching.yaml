@@ -1,0 +1,45 @@
+# How canonical name words are matched against Brick class names.
+#
+# A Brick class name is split into words (Discharge_Air_Temperature_Sensor -> discharge air temperature
+# sensor). A point's parsed name words are mapped through `name_synonyms`; class words through
+# `class_word_synonyms`. The mapper then scores each class by words matched vs. class words missing.
+# Words in `ignore` carry no class information. Built from Alpha (dev) and general conventions only.
+
+# name word -> class word (applied to parsed point/equipment names)
+name_synonyms:
+  space: zone
+  room: zone
+  signal: command
+  output: command
+  desired: setpoint
+  feedback: status
+  actual: ""          # "" = drop the word
+  value: ""
+  percent: ""
+  effective: ""
+  dd: vav             # dual-duct terminal box
+  economizer: damper  # an economizer command drives the outside-air damper
+
+# class-name word(s) -> canonical word (multi-word keys are matched as phrases)
+class_word_synonyms:
+  occupancy: occupied
+  electrical: electric
+  "run time": runtime
+  "air handling unit": ahu
+  "variable frequency drive": vfd
+  "heat exchanger": heat_exchanger
+  "cooling tower": cooling_tower
+  point: ""           # "Utility_Cost_Point" -> utility cost
+
+# For points only: a word that implies more words (a VFD signal is a speed command).
+point_implies:
+  vfd: [speed]
+
+# Functions a point can have. If a name has none of these but names a measurable quantity,
+# the mapper assumes `default_function`.
+functions: [sensor, setpoint, command, status, alarm]
+default_function: sensor
+quantities: [temperature, pressure, flow, humidity, enthalpy, dewpoint, co2, power, energy, current,
+             voltage, frequency, speed, runtime, load, efficiency]
+# Words that only make sense as a command when no function word is present.
+command_cues: [enable, start, stop, position, mode]

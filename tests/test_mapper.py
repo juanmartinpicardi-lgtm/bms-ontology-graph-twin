@@ -1,0 +1,124 @@
+from pathlib import Path
+
+import pytest
+
+from projectmodel.adapters.haystack import read_blind_export
+from projectmodel.db.store import METHODS, Store
+from projectmodel.knowledge_model import load_knowledge_model
+from projectmodel.mapper.classify import ClassMatcher
+from projectmodel.mapper.llm import LLMAnswer, LLMRequest
+from projectmodel.mapper.pipeline import Mapper
+from projectmodel.records import RawRecord
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(scope="module")
+def km():
+    return load_knowledge_model()
+
+
+@pytest.mark.parametrize("name, cls", [
+    ("MAT", "Mixed_Air_Temperature_Sensor"),
+    ("Discharge Air Temp", "Discharge_Air_Temperature_Sensor"),
+    ("Space Temperature", "Zone_Air_Temperature_Sensor"),
+    ("Unoccupied Htg Sp", "Unoccupied_Heating_Zone_Air_Temperature_Setpoint"),
+    ("SF VFD Signal", "Fan_Speed_Command"),
+    ("Econ_Cmd", "Damper_Command"),
+    ("HHWP-2 S/S", "Start_Stop_Command"),
+])
+def test_point_names(km, name, cls):
+    assert ClassMatcher(km, "point").classify(name).cls == cls
+
+
+@pytest.mark.parametrize("name, cls", [
+    ("AHU-2", "AHU"), ("DD 1-4-2", "VAV"), ("EF-1", "Exhaust_Fan"), ("Gas Meter 1", "Gas_Meter"),
+])
+def test_equipment_names(km, name, cls):
+    assert ClassMatcher(km, "equipment").classify(name).cls == cls
+
+
+def test_unknown_name_gets_no_class(km):
+    g = ClassMatcher(km, "point").classify("Zork Blarg")
+    assert g.cls is None and g.confidence == 0.0 and g.unknown == ["zork", "blarg"]
+
+
+def test_equipment_ids_in_names(km):
+    m = Mapper(km)
+    assert m._equipment_id_in_name("EF-1 Status") == "EF-1"
+    assert m._equipment_id_in_name("HHWP-2 S/S") == "HHWP-2"
+    assert m._equipment_id_in_name("Damper Command") is None
+
+
+def _rec(i, name, path=None):
+    return RawRecord(f"p{i}", "test", "test.csv", i, name, path=path)
+
+
+def test_template_refines_generic_airflow_only_without_position_words(km):
+    recs = [_rec(1, "Current Airflow", "AHU-1/VAV 1"), _rec(2, "Airflow sensor (Hot)", "AHU-1/VAV 1"),
+            _rec(3, "Space Temperature", "AHU-1/VAV 1"), _rec(4, "Damper Command", "AHU-1/VAV 1")]
+    store = Store(":memory:")
+    Mapper(km).run(recs, store, "t")
+    cls = {r["label"]: r["class"] for r in store.nodes("t", "point")}
+    assert cls["Current Airflow"] == "Discharge_Air_Flow_Sensor"
+    assert cls["Airflow sensor (Hot)"] == "Air_Flow_Sensor"
+    feeds = [(e["src"], e["dst"]) for e in store.edges("t", "feeds")]
+    assert feeds == [("eq:AHU-1", "eq:AHU-1/VAV 1")]
+
+
+@pytest.fixture(scope="module")
+def alpha_run(km):
+    store = Store(":memory:")
+    recs = read_blind_export(ROOT / "data/blind/alpha/names_paths.csv")
+    summary = Mapper(km).run(recs, store, "alpha/names_paths")
+    return store, recs, summary
+
+
+def test_end_to_end_alpha(alpha_run):
+    store, recs, summary = alpha_run
+    points = store.nodes("alpha/names_paths", "point")
+    assert len(points) == len(recs) == summary["points"]
+    assert len(store.edges("alpha/names_paths", "hasPoint")) == len(recs)
+    for n in points + store.nodes("alpha/names_paths", "equipment"):
+        assert n["method"] in METHODS and 0 <= n["confidence"] <= 1
+        assert n["source_file"] and n["source_ref"] and n["status"] == "proposed" and n["revision"] == 1
+    assert summary["llm_calls"] == 0
+
+
+def test_rerun_keeps_human_rows(km):
+    store = Store(":memory:")
+    recs = [_rec(1, "MAT", "AHU-1"), _rec(2, "OAT", "AHU-1")]
+    Mapper(km).run(recs, store, "t")
+    store.replace_machine_rows("t", 1, [], [])  # wipe machine rows
+    with store.conn:
+        store.conn.execute("INSERT INTO nodes (project, id, kind, label, class, source_file, source_ref, method,"
+                           " confidence, revision) VALUES ('t', 'pt:p1', 'point', 'MAT', 'Temperature_Sensor',"
+                           " 'review', 'x', 'human', 1, 1)")
+    Mapper(km).run(recs, store, "t")
+    p1 = [n for n in store.nodes("t", "point") if n["id"] == "pt:p1"]
+    assert len(p1) == 1 and p1[0]["method"] == "human" and p1[0]["class"] == "Temperature_Sensor"
+
+
+class FakeLLM:
+    name = "fake"
+
+    def __init__(self):
+        self.requests: list[LLMRequest] = []
+
+    def classify_point(self, req):
+        self.requests.append(req)
+        pick = req.candidates[0] if req.candidates else "Not_A_Candidate"
+        return LLMAnswer(pick, 0.6, f"picked {pick}", 0.001, 0.01, "fake-model")
+
+
+def test_llm_only_for_leftovers_and_logged(km):
+    store, fake = Store(":memory:"), FakeLLM()
+    recs = [_rec(1, "MAT", "AHU-1"), _rec(2, "Zork", "AHU-1"), _rec(3, "Cost", "AHU-1")]
+    summary = Mapper(km, llm=fake, llm_below=0.4).run(recs, store, "t")
+    asked = [r.name for r in fake.requests]
+    assert "MAT" not in asked and "Zork" in asked
+    assert all(len(r.candidates) <= 5 for r in fake.requests)
+    logged = store.conn.execute("SELECT COUNT(*), SUM(cost_usd) FROM llm_calls").fetchone()
+    assert logged[0] == summary["llm_calls"] == len(fake.requests)
+    nodes = {n["label"]: n for n in store.nodes("t", "point")}
+    assert nodes["Zork"]["method"] != "llm"  # no candidates, so the answer is ignored
