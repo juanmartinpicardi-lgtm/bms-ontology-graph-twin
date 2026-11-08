@@ -1,7 +1,7 @@
 """Review screen: proposed items sorted by confidence; accept / fix / reject in bulk.
 Tree tab: equipment tree with points and the provenance of every node and edge.
 
-Run: .venv/bin/streamlit run src/projectmodel/app/review_app.py
+Runs as a page of src/projectmodel/app/main.py; the project comes from the shared project picker.
 Decisions are written to data/kg.sqlite with method=human and survive mapper reruns.
 """
 
@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import review  # noqa: E402
+from projectmodel.app.shell import active_project  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth, score_project  # noqa: E402
@@ -44,10 +45,9 @@ projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes
 if not projects:
     st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
     st.stop()
+project = active_project(projects)
 with st.sidebar:
     st.header("Review")
-    default = projects.index("alpha/names_paths") if "alpha/names_paths" in projects else 0
-    project = st.selectbox("Project", projects, index=default)
     reviewer = st.text_input("Reviewer", value=st.session_state.get("reviewer", ""), placeholder="your name")
     st.session_state["reviewer"] = reviewer
     accept_at = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05)

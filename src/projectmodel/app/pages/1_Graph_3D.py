@@ -10,6 +10,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
+from projectmodel.app.shell import active_project  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.viz import graph_payload, render_html  # noqa: E402
@@ -29,9 +30,8 @@ projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes
 if not projects:
     st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
     st.stop()
+project = active_project(projects)
 with st.sidebar:
-    default = projects.index("alpha/names_paths") if "alpha/names_paths" in projects else 0
-    project = st.selectbox("Project", projects, index=default, key="g3d_project")
     height = st.slider("Viewer height", 500, 1400, 820, 20)
     st.caption("Review decisions show up here after a page refresh. "
                "For a full-window view: `.venv/bin/python scripts/export_graph3d.py " + project + "`")

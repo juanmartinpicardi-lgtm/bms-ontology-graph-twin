@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import km_explorer as kx  # noqa: E402
+from projectmodel.app.shell import active_project  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth  # noqa: E402
@@ -36,8 +37,8 @@ projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes
 with st.sidebar:
     st.header("Measure against")
     if projects:
-        default = projects.index("alpha/names_paths") if "alpha/names_paths" in projects else 0
-        project = st.selectbox("Project", projects, index=default, key="km_project")
+        # The model is shared; measuring it starts from the active project but can use any.
+        project = st.selectbox("Project", projects, index=projects.index(active_project(projects)), key="km_project")
     else:
         project = None
         st.caption("No mapped projects yet, so only the model itself is shown.")
