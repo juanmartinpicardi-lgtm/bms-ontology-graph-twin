@@ -1,4 +1,5 @@
 """Review screen: proposed items sorted by confidence; accept / fix / reject in bulk.
+Tree tab: equipment tree with points and the provenance of every node and edge.
 
 Run: .venv/bin/streamlit run src/projectmodel/app/review_app.py
 Decisions are written to data/kg.sqlite with method=human and survive mapper reruns.
@@ -18,6 +19,7 @@ from projectmodel import review  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth, score_project  # noqa: E402
+from projectmodel.tree import UNPLACED, build_tree  # noqa: E402
 
 DB = ROOT / "data/kg.sqlite"
 
@@ -151,12 +153,101 @@ def review_tab(kind: str):
                 st.rerun()
 
 
+def fact(what: str, p: dict | None) -> dict:
+    """One row of a provenance table: a fact and where it came from."""
+    p = p or {}
+    r = p.get("review") or {}
+    return {"fact": what, "method": p.get("method", ""), "confidence": p.get("confidence"),
+            "status": p.get("status", ""), "ref": p.get("source_ref", ""), "revision": p.get("revision"),
+            "reviewed": f"{r['action']} by {r['by']} at {r['at'][:16]}" if r else "",
+            "source": p.get("source_file", "")}
+
+
+def provenance_table(rows: list[dict]):
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch",
+                 column_config={"confidence": st.column_config.NumberColumn(format="%.2f")})
+
+
+def tree_tab():
+    tree = build_tree(store, project)
+    f1, f2 = st.columns([2, 1])
+    text = f1.text_input("Find equipment or point", key="tree_tx").strip().lower()
+    only_open = f2.toggle("Only equipment with proposed items", key="tree_open")
+
+    def matches(n) -> bool:
+        if only_open and n.prov.get("status") != "proposed" and all(p.prov["status"] != "proposed" for p in n.points):
+            return False
+        return not text or text in n.label.lower() or text in (n.cls or "").lower() or \
+            any(text in p.label.lower() for p in n.points)
+
+    keep = set()
+    for n in tree.walk():
+        if matches(n):
+            keep.update(a.id for a in tree.path(n.id))
+    rows = [{"id": n.id, "equipment": " " * n.depth + ("▾ " if n.children else "• ") + n.label,
+             "class": n.cls or "", "points": f"{len(n.points)} / {n.total_points}" if n.children else str(len(n.points)),
+             "method": n.prov.get("method", ""), "status": n.prov.get("status", "")}
+            for n in tree.walk() if n.id in keep]
+    eq_count = sum(1 for n in tree.walk() if n.id != UNPLACED)
+    st.caption(f"{eq_count} equipment, {len(tree.by_id) - eq_count - (UNPLACED in tree.by_id)} points. "
+               f"Showing {len(rows)} equipment. Points column: own / including parts. Select a row for its provenance.")
+
+    left, right = st.columns([1, 1.5])
+    with left:
+        df = pd.DataFrame(rows, columns=["id", "equipment", "class", "points", "method", "status"])
+        ev = st.dataframe(df, hide_index=True, width="stretch", height=640, on_select="rerun",
+                          selection_mode="single-row", key=f"tree_{project}", column_config={"id": None})
+    sel = ev.selection.rows
+    with right:
+        if not sel or sel[0] >= len(df):
+            st.info("Select equipment on the left.")
+            return
+        n = tree.by_id[df.iloc[sel[0]]["id"]]
+        st.subheader(n.label)
+        st.caption(" › ".join(a.label for a in tree.path(n.id)))
+        facts = [fact(f"class = {n.cls or '(none)'}", n.prov)] if n.prov else []
+        if n.via:
+            facts.append(fact(f"part of {tree.by_id[tree.parent[n.id]].label}", n.via))
+        facts += [fact(f"feeds {tree.by_id[d].label}", p) for d, p in tree.feeds_to(n.id)]
+        facts += [fact(f"fed by {tree.by_id[s].label}", p) for s, p in tree.fed_by(n.id)]
+        if facts:
+            provenance_table(facts)
+        if n.attrs.get("template") or n.attrs.get("evidence"):
+            with st.expander("How the class was chosen"):
+                st.json({"template": n.attrs.get("template"), "grouping": n.attrs.get("grouping"),
+                         "evidence": n.attrs.get("evidence")}, expanded=True)
+
+        st.markdown(f"**Points ({len(n.points)})**")
+        if not n.points:
+            return
+        pts = pd.DataFrame([{"id": p.id, "name": p.label, "class": p.cls or "", "confidence": p.prov["confidence"],
+                             "method": p.prov["method"], "status": p.prov["status"], "row": p.prov["source_ref"],
+                             "placed by": (p.via or {}).get("method", "")} for p in n.points])
+        pev = st.dataframe(pts, hide_index=True, width="stretch", on_select="rerun", selection_mode="single-row",
+                           key=f"tree_pts_{project}_{n.id}",
+                           column_config={"id": None, "confidence": st.column_config.ProgressColumn(
+                               min_value=0, max_value=1, format="%.2f")})
+        if pev.selection.rows:
+            p = tree.by_id[pts.iloc[pev.selection.rows[0]]["id"]]
+            st.markdown(f"**{p.label}** · `{p.attrs.get('source_id', '')}`")
+            provenance_table([fact(f"class = {p.cls or '(none)'}", p.prov), fact(f"on {n.label}", p.via)])
+            a = p.attrs
+            detail = {"name words": a.get("words"), "unknown tokens": a.get("unknown_tokens"),
+                      "alternatives (class, score)": [f"{c} ({s:g})" for c, s in a.get("alternatives", [])],
+                      "folder path": a.get("path")}
+            if "review" in a:
+                detail["before review"] = a["review"].get("previous")
+            st.json({k: v for k, v in detail.items() if v}, expanded=True)
+
+
 st.title("Project Model review")
 st.caption(f"{project} · knowledge graph in {DB.relative_to(ROOT)} · decisions are saved as method=human")
 if msg := st.session_state.pop("flash", None):
     st.success(msg)
-tab_p, tab_e = st.tabs(["Points", "Equipment"])
+tab_p, tab_e, tab_t = st.tabs(["Points", "Equipment", "Tree"])
 with tab_p:
     review_tab("point")
 with tab_e:
     review_tab("equipment")
+with tab_t:
+    tree_tab()
