@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knowledge Graph 3D</title>
+<script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.80.0/dist/3d-force-graph.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --panel: rgba(22, 27, 34, 0.94); --line: #30363d; --text: #e6edf3; --muted: #8b949e;
+    --accent: #58a6ff; --chip: #21262d;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  #graph { position: absolute; inset: 0; }
+  .card { position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    backdrop-filter: blur(6px); }
+  #toolbar { top: 12px; left: 12px; padding: 10px 12px; width: 300px; display: grid; gap: 8px; z-index: 3; }
+  #toolbar h1 { font-size: 14px; margin: 0; }
+  #toolbar .sub { color: var(--muted); font-size: 12px; margin-top: -4px; }
+  label.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  select, input[type=text] { background: var(--chip); color: var(--text); border: 1px solid var(--line);
+    border-radius: 6px; padding: 5px 7px; font: inherit; }
+  input[type=text] { width: 100%; }
+  .toggles { display: flex; flex-wrap: wrap; gap: 6px 12px; }
+  .toggles label { display: flex; gap: 5px; align-items: center; cursor: pointer; }
+  button { background: var(--chip); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+    padding: 5px 9px; font: inherit; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  #results { display: none; max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; }
+  #results div { padding: 5px 8px; cursor: pointer; border-bottom: 1px solid var(--line); }
+  #results div:hover { background: var(--chip); }
+  #results small, .muted { color: var(--muted); }
+  #legend { left: 12px; bottom: 12px; padding: 8px 12px; max-width: 300px; z-index: 2; }
+  #legend .item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  #legend .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  #legend .ln { width: 16px; height: 3px; flex: none; }
+  #stats { top: 12px; right: 12px; padding: 6px 10px; font-size: 12px; color: var(--muted); z-index: 2; }
+  #panel { top: 48px; right: 12px; bottom: 12px; width: 380px; padding: 14px; overflow: auto; display: none; z-index: 3; }
+  #panel h2 { font-size: 16px; margin: 0 0 2px; word-break: break-word; }
+  #panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 14px 0 6px; }
+  #panel table { width: 100%; border-collapse: collapse; }
+  #panel td { border-top: 1px solid var(--line); padding: 4px 4px; vertical-align: top; word-break: break-word; }
+  #panel td:first-child { color: var(--muted); width: 38%; }
+  .chip { display: inline-block; background: var(--chip); border: 1px solid var(--line); border-radius: 999px;
+    padding: 1px 8px; font-size: 12px; margin: 2px 4px 2px 0; }
+  .nav { color: var(--accent); cursor: pointer; }
+  .nav:hover { text-decoration: underline; }
+  .close { position: absolute; top: 8px; right: 10px; border: none; background: none; font-size: 18px; color: var(--muted); }
+  ul.nb { list-style: none; padding: 0; margin: 0; }
+  ul.nb li { padding: 3px 0; border-top: 1px solid var(--line); }
+  @media (max-width: 760px) {
+    #toolbar { width: calc(100% - 24px); }
+    #panel { top: auto; left: 12px; right: 12px; width: auto; height: 50%; }
+    #legend, #stats { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="graph"></div>
+
+<div id="toolbar" class="card">
+  <div>
+    <h1>Knowledge graph</h1>
+    <div class="sub" id="project"></div>
+  </div>
+  <input id="search" type="text" placeholder="Find equipment, point or class…" autocomplete="off">
+  <div id="results"></div>
+  <label class="row">Colour by
+    <select id="colorBy">
+      <option value="kind">Kind</option>
+      <option value="cls">Class</option>
+      <option value="confidence">Confidence</option>
+      <option value="method">Method</option>
+      <option value="status">Review status</option>
+    </select>
+  </label>
+  <label class="row">Show around selection
+    <select id="hops">
+      <option value="0">Whole graph</option>
+      <option value="1">1 step</option>
+      <option value="2">2 steps</option>
+      <option value="3">3 steps</option>
+    </select>
+  </label>
+  <div class="toggles">
+    <label><input type="checkbox" id="showPoints" checked> Points</label>
+    <label><input type="checkbox" id="showModel"> Knowledge model layer</label>
+    <label><input type="checkbox" id="showFlow" checked> Animate feeds</label>
+  </div>
+  <div style="display:flex; gap:6px;">
+    <button id="fit">Fit view</button>
+    <button id="clear">Clear selection</button>
+  </div>
+  <div class="muted" style="font-size:12px">Drag to rotate · scroll to zoom · right-drag to pan · click a node or link</div>
+</div>
+
+<div id="stats" class="card"></div>
+<div id="legend" class="card"></div>
+<div id="panel" class="card"><button class="close" id="closePanel" aria-label="Close">×</button><div id="panelBody"></div></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+const KIND_COLOR = { equipment: "#58a6ff", point: "#8b949e", class: "#f2b134" };
+const METHOD_COLOR = { parsed: "#58a6ff", rule: "#39c5bb", template: "#a371f7", llm: "#f0883e", human: "#3fb950", model: "#f2b134" };
+const STATUS_COLOR = { proposed: "#d29922", confirmed: "#3fb950", rejected: "#f85149" };
+const REL = {
+  hasPart:    { color: "#6e9fe0", width: 1.2, arrow: 3, label: "has part" },
+  hasPoint:   { color: "#3d4a5a", width: 0.2, arrow: 0, label: "has point" },
+  feeds:      { color: "#ff7b54", width: 1.6, arrow: 4, label: "feeds" },
+  type:       { color: "#8a6d1f", width: 0.2, arrow: 0, label: "is a (class)" },
+  subClassOf: { color: "#f2b134", width: 1.0, arrow: 3, label: "subclass of" },
+};
+const DIM = "rgba(48, 54, 61, 0.25)";
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = v => typeof v === "number" ? (Number.isInteger(v) ? v : v.toFixed(2)) : v;
+
+// --- index -------------------------------------------------------------------------------------
+const nodes = DATA.nodes;
+const links = DATA.links.map(l => ({ ...l, s: l.source, t: l.target }));
+const byId = new Map(nodes.map(n => [n.id, n]));
+const adj = new Map(nodes.map(n => [n.id, []]));
+links.forEach(l => { adj.get(l.s).push(l); adj.get(l.t).push(l); });
+const parentOf = new Map();  // point/equipment -> containing equipment
+links.forEach(l => { if (l.rel === "hasPoint" || l.rel === "hasPart") parentOf.set(l.t, l.s); });
+const conf = n => n.prov && typeof n.prov.confidence === "number" ? n.prov.confidence : null;
+
+// class colour: stable hue per class name
+const hue = s => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+const clsColor = c => c ? `hsl(${hue(c)}, 65%, 60%)` : "#555";
+const confColor = c => {
+  if (c === null) return "#555";
+  // red (0) -> amber (0.5) -> green (1)
+  const r = c < 0.5 ? 248 : Math.round(248 - (c - 0.5) * 2 * 185);
+  const g = c < 0.5 ? Math.round(81 + c * 240) : 201;
+  return `rgb(${r}, ${g}, 73)`;
+};
+
+const state = { colorBy: "kind", hops: 0, showPoints: true, showModel: false, showFlow: true, selected: null };
+let highlight = null;  // Set of node ids to keep bright, or null
+
+function baseColor(n) {
+  switch (state.colorBy) {
+    case "cls": return n.kind === "class" ? KIND_COLOR.class : clsColor(n.cls);
+    case "confidence": return n.kind === "class" ? KIND_COLOR.class : confColor(conf(n));
+    case "method": return METHOD_COLOR[n.prov?.method] || "#555";
+    case "status": return n.kind === "class" ? KIND_COLOR.class : (STATUS_COLOR[n.prov?.status] || "#555");
+    default: return KIND_COLOR[n.kind];
+  }
+}
+const nodeColor = n => highlight && !highlight.has(n.id) ? DIM : baseColor(n);
+const nodeSize = n => n.kind === "equipment" ? 1 + Math.sqrt(n.attrs?.points || 1) * 0.5
+  : n.kind === "class" ? 1.2 + Math.sqrt(n.attrs?.instances || 0) * 0.3 : 0.35;
+
+// --- visibility ----------------------------------------------------------------------------------
+function layerOk(n) {
+  if (n.kind === "point" && !state.showPoints) return false;
+  if (n.layer === "model" && !state.showModel) return false;
+  return true;
+}
+function linkLayerOk(l) {
+  if ((l.rel === "type" || l.rel === "subClassOf") && !state.showModel) return false;
+  return layerOk(byId.get(l.s)) && layerOk(byId.get(l.t));
+}
+function visible() {
+  let keep = new Set(nodes.filter(layerOk).map(n => n.id));
+  if (state.hops > 0 && state.selected?.kind === "node" && keep.has(state.selected.id)) {
+    const seen = new Set([state.selected.id]); let frontier = [state.selected.id];
+    for (let i = 0; i < state.hops; i++) {
+      const next = [];
+      for (const id of frontier) for (const l of adj.get(id)) {
+        if (!linkLayerOk(l)) continue;
+        const o = l.s === id ? l.t : l.s;
+        if (!seen.has(o)) { seen.add(o); next.push(o); }
+      }
+      frontier = next;
+    }
+    keep = seen;
+  }
+  return {
+    nodes: nodes.filter(n => keep.has(n.id)),
+    links: links.filter(l => keep.has(l.s) && keep.has(l.t) && linkLayerOk(l)),
+  };
+}
+
+// --- graph -------------------------------------------------------------------------------------
+const el = document.getElementById("graph");
+const Graph = ForceGraph3D()(el)
+  .backgroundColor("#0d1117")
+  .cooldownTime(7000)
+  .nodeId("id")
+  .nodeLabel(n => `<div style="background:#161b22;border:1px solid #30363d;padding:4px 8px;border-radius:6px;font:12px sans-serif">
+      <b>${esc(n.label)}</b><br><span style="color:#8b949e">${esc(n.kind)}${n.cls ? " · " + esc(n.cls) : ""}${conf(n) !== null ? " · " + conf(n).toFixed(2) : ""}</span></div>`)
+  .nodeVal(nodeSize)
+  .nodeColor(nodeColor)
+  .nodeOpacity(0.92)
+  .nodeResolution(10)
+  .linkColor(l => highlight && !(highlight.has(l.s) && highlight.has(l.t)) ? DIM : REL[l.rel]?.color || "#444")
+  .linkWidth(l => (state.selected?.kind === "link" && state.selected.link === l ? 3 : REL[l.rel]?.width ?? 0.3))
+  .linkOpacity(0.55)
+  .linkDirectionalArrowLength(l => REL[l.rel]?.arrow || 0)
+  .linkDirectionalArrowRelPos(1)
+  .linkDirectionalParticles(l => state.showFlow && l.rel === "feeds" ? 3 : 0)
+  .linkDirectionalParticleWidth(1.6)
+  .linkDirectionalParticleSpeed(0.006)
+  .linkLabel(l => `<div style="background:#161b22;border:1px solid #30363d;padding:4px 8px;border-radius:6px;font:12px sans-serif">
+      ${esc(byId.get(l.s).label)} <b>${esc(REL[l.rel]?.label || l.rel)}</b> ${esc(byId.get(l.t).label)}</div>`)
+  .onNodeClick(n => selectNode(n.id, true))
+  .onLinkClick(l => selectLink(l))
+  .onBackgroundClick(() => clearSelection())
+  .width(window.innerWidth).height(window.innerHeight);
+
+window.graph3d = Graph;  // handy from the browser console
+
+// Fit the camera to the shown nodes. (The library's zoomToFit picked a far too close distance here.)
+function fitView(ms = 800) {
+  const ns = Graph.graphData().nodes.filter(n => Number.isFinite(n.x));
+  if (!ns.length) return;
+  const c = ["x", "y", "z"].map(k => ns.reduce((s, n) => s + n[k], 0) / ns.length);
+  const r = Math.max(10, ...ns.map(n => Math.hypot(n.x - c[0], n.y - c[1], n.z - c[2])));
+  const cam = Graph.camera(), fov = (cam.fov || 40) * Math.PI / 180;
+  const half = Math.min(fov, 2 * Math.atan(Math.tan(fov / 2) * (cam.aspect || 1))) / 2;
+  const d = r / Math.sin(half) * 1.05;
+  const p = Graph.cameraPosition();
+  let dir = [p.x - c[0], p.y - c[1], p.z - c[2]];
+  const len = Math.hypot(...dir) || 1;
+  dir = len < 1e-6 ? [0, 0, 1] : dir.map(v => v / len);
+  Graph.cameraPosition({ x: c[0] + dir[0] * d, y: c[1] + dir[1] * d, z: c[2] + dir[2] * d }, { x: c[0], y: c[1], z: c[2] }, ms);
+}
+
+let fitted = false;
+// The engine also "stops" once on the empty graph before data arrives, so only count a fit with nodes.
+// Instant: an animated move here gets overridden by the library's own initial camera placement.
+const firstFit = () => { if (!fitted && Graph.graphData().nodes.length) { fitted = true; fitView(0); } };
+Graph.onEngineStop(firstFit);
+setTimeout(firstFit, 7500);  // just after the 7 s cooldown; the engine-stop event can be late in an embedded frame
+["pointerdown", "wheel"].forEach(ev => el.addEventListener(ev, () => { fitted = true; }, { once: true }));
+window.addEventListener("resize", () => Graph.width(window.innerWidth).height(window.innerHeight));
+
+function refresh(resetData) {
+  if (resetData) Graph.graphData(visible());
+  Graph.nodeColor(Graph.nodeColor()).linkColor(Graph.linkColor()).linkWidth(Graph.linkWidth())
+       .linkDirectionalParticles(Graph.linkDirectionalParticles());
+  renderStats(); renderLegend();
+}
+
+// --- selection & navigation ----------------------------------------------------------------------
+function flyTo(n) {
+  if (n.x === undefined) { setTimeout(() => flyTo(n), 300); return; }
+  const d = 140 + nodeSize(n) * 10, r = Math.hypot(n.x, n.y, n.z) || 1, k = 1 + d / r;
+  Graph.cameraPosition({ x: n.x * k, y: n.y * k, z: n.z * k }, n, 1200);
+}
+function ensureVisible(n) {
+  let changed = false;
+  if (n.kind === "point" && !state.showPoints) { state.showPoints = true; document.getElementById("showPoints").checked = true; changed = true; }
+  if (n.layer === "model" && !state.showModel) { state.showModel = true; document.getElementById("showModel").checked = true; changed = true; }
+  return changed;
+}
+function selectNode(id, fly) {
+  const n = byId.get(id);
+  const changed = ensureVisible(n);
+  state.selected = { kind: "node", id };
+  highlight = new Set([id]);
+  for (const l of adj.get(id)) if (linkLayerOk(l)) { highlight.add(l.s); highlight.add(l.t); }
+  refresh(changed || state.hops > 0);
+  renderNodePanel(n);
+  if (fly) flyTo(n);
+}
+function selectLink(l) {
+  state.selected = { kind: "link", link: l };
+  highlight = new Set([l.s, l.t]);
+  refresh(false);
+  renderLinkPanel(l);
+}
+function clearSelection() {
+  state.selected = null; highlight = null;
+  document.getElementById("panel").style.display = "none";
+  refresh(state.hops > 0);
+}
+
+// --- panel -------------------------------------------------------------------------------------
+const nav = id => `<span class="nav" data-id="${esc(id)}">${esc(byId.get(id)?.label ?? id)}</span>`;
+function rows(obj) {
+  return Object.entries(obj).filter(([, v]) => v !== undefined && v !== null && v !== "")
+    .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${typeof v === "object" ? esc(JSON.stringify(v)) : esc(fmt(v))}</td></tr>`).join("");
+}
+function provRows(p) {
+  if (!p) return "";
+  const r = { method: p.method, confidence: p.confidence, status: p.status, "source file": p.source_file,
+              "source ref": p.source_ref, revision: p.revision, "defined in": p.defined_in, "model group": p.class_kind ? `${p.source_ref} (${p.class_kind})` : undefined };
+  if (p.method === "model") delete r["source ref"];
+  if (p.review) r.review = `${p.review.action} by ${p.review.by} at ${String(p.review.at).slice(0, 16)}`;
+  return rows(r);
+}
+function breadcrumb(id) {
+  const chain = []; let cur = parentOf.get(id), guard = 0;
+  while (cur && guard++ < 20) { chain.unshift(cur); cur = parentOf.get(cur); }
+  return chain.length ? chain.map(nav).join(" › ") + " › " : "";
+}
+function renderNodePanel(n) {
+  const a = n.attrs || {};
+  let h = `<div class="muted" style="font-size:12px">${breadcrumb(n.id)}</div><h2>${esc(n.label)}</h2>`;
+  h += `<span class="chip">${esc(n.kind)}</span>`;
+  if (n.cls && n.kind !== "class") h += `<span class="chip">${byId.has("cls:" + n.cls) ? nav("cls:" + n.cls) : esc(n.cls)}</span>`;
+  h += `<h3>${n.kind === "class" ? "Definition" : "Provenance of this node"}</h3><table>${provRows(n.prov)}</table>`;
+  const extra = {};
+  if (a.points !== undefined) extra["points (from mapper)"] = a.points;
+  if (a.instances !== undefined) extra["instances in this project"] = a.instances;
+  if (a.template) extra.template = a.template;
+  if (a.grouping) extra.grouping = a.grouping;
+  if (a.path) extra["folder path"] = a.path;
+  if (a.words) extra["name words"] = a.words.join(" ");
+  if (a.unknown_tokens?.length) extra["unknown tokens"] = a.unknown_tokens.join(", ");
+  if (a.alternatives) extra["alternatives (class, score)"] = a.alternatives.map(([c, s]) => `${c} (${fmt(s)})`).join(", ");
+  if (a.evidence) extra.evidence = a.evidence;
+  if (Object.keys(extra).length) h += `<h3>Evidence</h3><table>${rows(extra)}</table>`;
+
+  // neighbours grouped by relation and direction
+  const groups = new Map();
+  for (const l of adj.get(n.id)) {
+    const out = l.s === n.id, other = out ? l.t : l.s;
+    const key = out ? `${REL[l.rel]?.label || l.rel} →` : `← ${REL[l.rel]?.label || l.rel}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push({ other, l });
+  }
+  for (const [key, items] of groups) {
+    items.sort((x, y) => byId.get(x.other).label.localeCompare(byId.get(y.other).label));
+    const shown = items.slice(0, 60);
+    h += `<h3>${esc(key)} (${items.length})</h3><ul class="nb">` + shown.map(({ other, l }) =>
+      `<li>${nav(other)} <span class="muted">· <span class="nav" data-link="${links.indexOf(l)}">link</span> · ${esc(l.prov?.method || "")}${typeof l.prov?.confidence === "number" ? " " + l.prov.confidence.toFixed(2) : ""}</span></li>`).join("") +
+      (items.length > shown.length ? `<li class="muted">…and ${items.length - shown.length} more</li>` : "") + `</ul>`;
+  }
+  openPanel(h);
+}
+function renderLinkPanel(l) {
+  let h = `<h2>${nav(l.s)} <span class="muted">${esc(REL[l.rel]?.label || l.rel)}</span> ${nav(l.t)}</h2>`;
+  h += `<span class="chip">link · ${esc(l.rel)}</span><h3>Provenance of this link</h3><table>${provRows(l.prov)}</table>`;
+  if (l.rel === "type") h += `<p class="muted">The class assignment of the instance; its provenance is the instance's own.</p>`;
+  openPanel(h);
+}
+function openPanel(html) {
+  document.getElementById("panelBody").innerHTML = html;
+  document.getElementById("panel").style.display = "block";
+}
+document.getElementById("panel").addEventListener("click", e => {
+  const t = e.target.closest("[data-id],[data-link]");
+  if (!t) return;
+  if (t.dataset.link !== undefined) selectLink(links[+t.dataset.link]);
+  else selectNode(t.dataset.id, true);
+});
+document.getElementById("closePanel").onclick = clearSelection;
+
+// --- search ------------------------------------------------------------------------------------
+const searchEl = document.getElementById("search"), resultsEl = document.getElementById("results");
+searchEl.addEventListener("input", () => {
+  const q = searchEl.value.trim().toLowerCase();
+  if (!q) { resultsEl.style.display = "none"; return; }
+  const hits = [];
+  for (const n of nodes) {
+    const where = n.attrs?.path || (parentOf.has(n.id) ? byId.get(parentOf.get(n.id)).label : "");
+    if (n.label.toLowerCase().includes(q) || (n.cls || "").toLowerCase().includes(q) || where.toLowerCase().includes(q)) {
+      hits.push({ n, where, rank: (n.kind === "equipment" ? 0 : n.kind === "class" ? 1 : 2) + (n.label.toLowerCase().startsWith(q) ? 0 : 3) });
+    }
+  }
+  hits.sort((x, y) => x.rank - y.rank || x.n.label.localeCompare(y.n.label));
+  resultsEl.innerHTML = hits.slice(0, 40).map(({ n, where }) =>
+    `<div data-id="${esc(n.id)}">${esc(n.label)} <small>· ${esc(n.kind)}${n.cls && n.kind !== "class" ? " · " + esc(n.cls) : ""}${where ? " · " + esc(where) : ""}</small></div>`).join("")
+    + (hits.length > 40 ? `<div class="muted">${hits.length - 40} more…</div>` : "")
+    + (hits.length ? "" : `<div class="muted">No match</div>`);
+  resultsEl.style.display = "block";
+});
+resultsEl.addEventListener("click", e => {
+  const t = e.target.closest("[data-id]");
+  if (!t) return;
+  resultsEl.style.display = "none";
+  selectNode(t.dataset.id, true);
+});
+
+// --- controls, stats, legend -------------------------------------------------------------------
+document.getElementById("colorBy").onchange = e => { state.colorBy = e.target.value; refresh(false); };
+document.getElementById("hops").onchange = e => { state.hops = +e.target.value; refresh(true); };
+for (const k of ["showPoints", "showModel", "showFlow"]) {
+  document.getElementById(k).onchange = e => {
+    state[k] = e.target.checked;
+    if (state.selected?.kind === "node" && !layerOk(byId.get(state.selected.id))) clearSelection();
+    refresh(k !== "showFlow");
+  };
+}
+document.getElementById("fit").onclick = () => fitView();
+document.getElementById("clear").onclick = clearSelection;
+
+function renderStats() {
+  const d = Graph.graphData();
+  document.getElementById("stats").textContent = `${d.nodes.length.toLocaleString()} nodes · ${d.links.length.toLocaleString()} links shown`;
+}
+function renderLegend() {
+  const sw = (c, t) => `<div class="item"><span class="sw" style="background:${c}"></span>${esc(t)}</div>`;
+  const ln = (c, t) => `<div class="item"><span class="ln" style="background:${c}"></span>${esc(t)}</div>`;
+  let h = "";
+  if (state.colorBy === "kind") h += Object.entries(KIND_COLOR).filter(([k]) => k !== "class" || state.showModel).map(([k, c]) => sw(c, k)).join("");
+  if (state.colorBy === "method") h += Object.entries(METHOD_COLOR).map(([k, c]) => sw(c, k)).join("");
+  if (state.colorBy === "status") h += Object.entries(STATUS_COLOR).map(([k, c]) => sw(c, k)).join("");
+  if (state.colorBy === "confidence") h += [0, 0.5, 0.8, 1].map(v => sw(confColor(v), `confidence ${v}`)).join("") + sw("#555", "no confidence");
+  if (state.colorBy === "cls") {
+    const cnt = new Map();
+    Graph.graphData().nodes.forEach(n => { if (n.kind === "equipment") cnt.set(n.cls, (cnt.get(n.cls) || 0) + 1); });
+    h += `<div class="muted">Equipment classes</div>` + [...cnt].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([c, k]) => sw(clsColor(c), `${c || "(none)"} (${k})`)).join("");
+  }
+  const rels = new Set(Graph.graphData().links.map(l => l.rel));
+  h += `<div style="height:6px"></div>` + Object.entries(REL).filter(([r]) => rels.has(r)).map(([, v]) => ln(v.color, v.label)).join("");
+  document.getElementById("legend").innerHTML = h;
+}
+
+document.getElementById("project").textContent =
+  `${DATA.project} · ${Object.entries(DATA.counts.nodes).map(([k, v]) => `${v} ${k}`).join(" · ")}`;
+refresh(true);
+</script>
+</body>
+</html>
