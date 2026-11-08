@@ -1,6 +1,6 @@
 {
   "about": "Human decisions fixing brickschema's output in the ground truth. 'rules' break ties and fire only when an entity's candidate set equals when_candidates exactly. 'corrections' replace a single wrong match and fire only when brickschema returned when_class and the entity has every tag in when_tags_all. Edit freely; rebuild with scripts/build_golden.py.",
-  "decided": "2026-11-08, proposed by Claude on the user's instruction; GT-001..GT-010 approved by the user as is on 2026-11-08; GC-001..GC-004 requested by the user on 2026-11-08 (GC-003/004 class choices proposed by Claude, pending review)",
+  "decided": "2026-11-08, proposed by Claude on the user's instruction; GT-001..GT-010 approved by the user as is on 2026-11-08; GC-001..GC-004 requested by the user on 2026-11-08; GC-003/004 class choices proposed by Claude and approved by the user on 2026-11-08",
   "rules": [
     {
       "id": "GT-001",
