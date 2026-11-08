@@ -85,7 +85,7 @@ Unknown sub-equipment points go to the unplaced list.
 
 | Type | Built from | Variants chosen from the slots found |
 |---|---|---|
-| **AHU** | casing, mixing box (OA/RA dampers), filter, cooling coil, heating coil, supply fan, return fan, ducts | no heating valve → no heating coil; no economizer damper → no mixing box; return fan only if return-fan points or sub-equipment exist |
+| **AHU** | casing, OA inlet, mixing box (OA/RA dampers), relief outlet, pre-filter, bag filter, cooling coil, heating coil, supply fan, return fan, return duct, supply riser + VAV branch manifold | no heating valve → no heating coil; no economizer damper → no mixing box; relief outlet if `relief_damper`; return fan if return-fan points or `RF` sub-equipment exist (Alpha AHU-2 has both) |
 | **VAV** | inlet duct, damper, flow sensor cross, box, optional reheat coil, optional fan, discharge duct, zone sensor on a wall stub | reheat if `reheat_valve`; fan-powered if `fan_cmd` or name says FPB; dual-duct if name says DD (two inlets) |
 | FCU | casing, fan, coil(s), filter | 2- or 4-pipe from valves found |
 | Chiller | shell-and-tube evaporator + condenser, compressor, pipe stubs | water-cooled vs air-cooled from condenser points |
@@ -111,13 +111,7 @@ src/projectmodel/app/equipment3d/
   plus `OrbitControls` and `CSS2DRenderer` for labels from the same version.
 - The Python side inlines the JS modules into one HTML string (as `render_html` does today) so Streamlit's
   `st.iframe` and a standalone export both work with no server.
-- **Look:** clean product-render style. Brushed-metal casing with a cut-away front panel so the inside shows;
-  ducts in light grey; pipes coloured by medium (chilled water blue, hot water red, condenser water green,
-  matching the graph viewer's palette); soft studio lighting; ground shadow; background = the app's theme
-  `--bg` so it sits seamlessly in light and dark mode.
-- **Motion:** fan blades spin at `speed%`; damper blades and valve stems rotate to their command %; airflow
-  particles move along ducts at a rate tied to fan speed and damper position; water particles in pipes when the
-  valve is open. A pause button stops all motion.
+- **Look and motion:** see §4.4. That section is the quality bar, not a nice-to-have.
 - **Missing required slot:** the part is drawn as a translucent **ghost** with a "expected, not found" pin.
 
 ### 4.3 Labels and interaction
@@ -130,6 +124,58 @@ src/projectmodel/app/equipment3d/
 - **Unplaced list** under the panel: points on this equipment with no slot, with class and confidence.
 - Header: equipment name, class, template, fit (`slot_fill`), fed by / feeds (clickable → opens that equipment).
 - Camera presets: Front, Top, Cut-away; "Fit" button. Mouse: rotate, zoom, pan, as in the graph viewer.
+
+### 4.4 Visual target (the quality bar)
+
+Target: [`reference/ahu-graphic-target.png`](reference/ahu-graphic-target.png), a BAS-style cut-away AHU
+supplied as the bar to meet. It is a **style reference only**: we draw our own geometry in code and never ship or
+trace the image (source and licence unknown). Unlike the reference, ours is **real 3D and fully interactive**:
+the user can orbit, zoom and click everything, and it opens on a "hero" camera matching the reference's
+three-quarter view from the front and above.
+
+What "this level" means, item by item:
+
+| Element | In the reference | What we build |
+|---|---|---|
+| **Casing** | Dark grey sheet metal, front wall removed, thickness visible at cut edges | `MeshStandardMaterial` metal/roughness, bevelled panel edges, visible wall thickness at the cut, subtle panel seams. Front wall cut away; a toggle shows it closed (translucent) |
+| **Ductwork** | Return duct looping over the top, fresh-air inlet left, supply riser and branch manifold right | Same topology from the variant: OA inlet → mixing box ← return duct (over the top) → relief outlet if `relief_damper`. Supply duct → riser → branch manifold → downstream VAVs (see "Context" below) |
+| **Filters** | Pleated pre-filter, bag filter with pockets | Procedural pleats (folded plane) and bag pockets (lathe geometry); canvas-generated fibre texture. Drawn always: filters are physical even when the export has no filter points (Alpha has none). A part with no point gets a muted chip "no point in source" |
+| **Coils** | Finned coil with copper headers, pipe stubs with valve and actuator | Fin pack (instanced thin plates), copper headers and U-bends, supply/return stubs coloured by medium, valve body + actuator whose stem/indicator moves with `Valve_Command` |
+| **Fan** | Plenum/plug fan in a housing, blades lit green when running | Housing + impeller (instanced blades) spinning at `speed%`; **status glow**: green emissive ring + bloom when `Fan_Status` = on, red when tripped, grey when off. Motor + VFD box with frequency/power readout |
+| **Dampers** | Blade dampers at inlets | Opposed-blade dampers whose blades rotate to the command % (economizer, relief, VAV) |
+| **Sensors** | Small transmitter heads on the duct with probe | Sensor head models on stalks per anchor: temperature, humidity, pressure (with tube), flow station (grid in the duct) |
+| **Airflow** | Animated chevrons: green on fresh air, red on return, blue on supply | **Flow arrows** (chevrons scrolling along the duct, colour by air stream: outside green, return red, mixed amber, supply blue) **plus** soft particle streams inside the cut-away. Speed ∝ fan speed × damper %. Stops when the fan is off. Colour can switch to "by temperature" (blue → red ramp from the live sensor values) |
+| **Water** | Pipe stubs | Particles in pipes when the valve is open, colour by medium |
+| **Labels** | Title + dark pill chips with value/unit, thin leader to the sensor | Same idiom: point name in the theme's text colour, value chip (`##.#°F`, `RUN`, `NORMAL`, `AUTO`) with state colour, leader line to the anchor. CSS2D, crisp at any zoom, never overlapping (simple collision push) |
+| **Panels** | Grouped tables: "SF Run Status / Trip / H-O-A / VFD Speed Cmd / FB / Enable", setpoints panel | Generated **component panels**: points grouped by part (supply fan, return fan, cooling coil, economizer…), and a **setpoints panel** listing every `*_Setpoint`. Pinned to screen corners, collapsible, click a row → highlight + fly to its anchor |
+| **Context** | Supply manifold branching to 3 VAVs | Downstream VAVs from the graph's `feeds` links. AHU-2 feeds 88, so show up to 6 branches (first by name) and a "+82 more" chip that opens a searchable list; clicking a VAV opens its own 3D view. Upstream plant (chilled/hot water) as labelled pipe stubs linking to the chiller/boiler |
+| **Header** | Site / equipment name, nav | Equipment name, class, template fit, value-source badge (**SIMULATED**), scenario picker, camera presets |
+| **Lighting** | Studio-lit, dark backdrop | `RoomEnvironment` image-based lighting (generated, no asset file), one key light with soft shadows, ground contact shadow, ACES tone mapping, `UnrealBloomPass` for status glows. Dark theme matches the reference; light theme uses the same scene on the app's light `--bg` |
+
+Performance: 60 fps on a laptop for one AHU with 6 VAV branches. Instance repeated geometry (fins, blades,
+chevrons, particles). Pause rendering when the tab is hidden.
+
+**Acceptance for the look:** a screenshot of Alpha AHU-2 at the hero camera, dark theme, put next to the
+reference image. Someone outside the project should judge them as the same class of graphic. The coding session
+must iterate render → screenshot → compare in the browser pane until that holds, then check light theme.
+
+### 4.5 Template and anchor gaps this exposes
+
+Alpha AHU-2's real points include things the AHU template has no slot for. They would land in "unplaced" and
+the model would miss parts. Add these slots to `ahu.yaml` (with anchors), then **re-score Alpha to confirm no
+regression** (slots also feed the mapper's template boost):
+
+| New slot | Classes (Brick) | Alpha example |
+|---|---|---|
+| `return_fan_cmd` / `return_fan_speed` / `return_fan_status` | `Fan_Speed_Command`, `Fan_Status` on a return fan | `RF VFD S/S`, `RF Status` |
+| `relief_damper` | `Damper_Command`, `Damper_Position_Command` | `Relief Damper Signal` |
+| `vfd_frequency`, `vfd_power` (on fan sub-equipment) | `Frequency_Sensor`, `Power_Sensor` | `Supply Fan Frequency`, `Return Fan Power` |
+| `building_pressure` | `Building_Air_Static_Pressure_Sensor` | `Building DP` (currently mapped as supply static: a review item) |
+| `filter_status` / `filter_dp` | `Filter_Status`, `Filter_Differential_Pressure_Sensor` | none on Alpha; present on most real AHUs |
+| `return_humidity`, `oa_flow` | `Return_Air_Humidity_Sensor`, `Outside_Air_Flow_Sensor` | none on Alpha; in the reference |
+
+Supply fan vs return fan points need the name rule "SF/RF" to pick the slot; the anchor map already separates
+`supply_fan` and `return_fan` parts.
 
 ## 5. Payload (`equipment_payload(store, project, equip_id, km)`)
 
@@ -210,8 +256,8 @@ zone temp drifts up). Useful for telling a story; uses the same simulator with a
 
 | Step | Scope | Done when |
 |---|---|---|
-| E1 | `equipment_view.py`: slot assignment, variant, payload; `anchors.yaml` for AHU + VAV; validator check | Tests pass for AHU-2 and a reheat VAV on Alpha; validator fails on a slot without an anchor |
-| E2 | Viewer shell + `parts.js` + `ahu.js`, static (no values), pins, side panel, unplaced list | AHU-2 renders in Streamlit in light and dark, every placed point has a pin, clicking shows provenance |
+| E1 | `equipment_view.py`: slot assignment, variant, payload; AHU template gaps (§4.5); `anchors.yaml` for AHU + VAV; validator check | Tests pass for AHU-2 and a reheat VAV on Alpha; validator fails on a slot without an anchor; Alpha re-scored with no regression; AHU-2's return fan and relief damper points are placed, not unplaced |
+| E2 | Viewer shell + `parts.js` + `ahu.js` at the §4.4 quality bar: casing, filters, coils, fan, dampers, sensors, labels, component panels, VAV branches, flow arrows (static values) | Side-by-side screenshot with the reference passes §4.4 acceptance; every placed point has a label; clicking shows provenance; light and dark both seamless |
 | E3 | `vav.js` with reheat / fan-powered / dual-duct variants, ghost parts | Three Alpha VAV variants render correctly; a VAV missing its flow sensor shows a ghost |
 | E4 | `value_model.py` + `sim.js`, motion, SIMULATED badges, scenario dropdown | Fan, dampers, valves and particles move with values; same seed gives the same demo |
 | E5 | Deep links from tree and graph, standalone export | One click from the graph opens the equipment; export works offline apart from the CDN |
@@ -223,8 +269,10 @@ in both themes, as for the graph viewer.
 
 ## 9. Effort and risk
 
-- E1–E3 (AHU + VAV, static) is the core; the geometry is the part that needs visual iteration. Expect a few
-  rounds of "render → screenshot → adjust" per type.
+- E1–E3 (AHU + VAV, static) is the core; the geometry is the part that needs visual iteration. At the §4.4 bar,
+  E2 alone is the biggest step: expect many rounds of "render → screenshot → compare with reference → adjust",
+  probably more than one session. Split E2 if needed: (a) casing, ducts, flow arrows, hero camera, lighting;
+  (b) filters, coils, fan, dampers, sensors; (c) labels, panels, VAV branches.
 - Labels are the main readability risk on a 20–60 point AHU. Mitigations: stacking per anchor, distance-based
   detail, a "points list" toggle that hides pins.
 - Inferred units can be wrong when a class is wrong. That is acceptable for a demo and visible in review: the
