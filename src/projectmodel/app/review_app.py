@@ -1,5 +1,6 @@
 """Review screen: proposed items sorted by confidence; accept / fix / reject in bulk.
-Tree tab: equipment tree with points and the provenance of every node and edge.
+Tree tab: equipment tree with points and the provenance of every node and edge, plus notes
+(free-text tribal knowledge) on equipment, points, links and the whole project.
 
 Run: .venv/bin/streamlit run src/projectmodel/app/review_app.py
 Decisions are written to data/kg.sqlite with method=human and survive mapper reruns.
@@ -15,7 +16,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel import review  # noqa: E402
+from projectmodel import notes, review  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth, score_project  # noqa: E402
@@ -77,6 +78,7 @@ def need_reviewer() -> bool:
 
 def frame(kind: str) -> pd.DataFrame:
     rows = []
+    note_count = notes.active_counts(store, project)
     hp = {e["dst"]: e["src"] for e in store.edges(project, "hasPoint") if e["status"] != "rejected"}
     for n in store.nodes(project, kind):
         a = json.loads(n["attrs"])
@@ -87,6 +89,7 @@ def frame(kind: str) -> pd.DataFrame:
             "class": n["class"] or "", "confidence": n["confidence"], "method": n["method"],
             "status": n["status"], "alternatives": alts if kind == "point" else "",
             "points": a.get("points", "") if kind == "equipment" else "",
+            "notes": note_count.get(("node", n["id"]), 0),
         })
     return pd.DataFrame(rows)
 
@@ -113,13 +116,14 @@ def review_tab(kind: str):
     view = view.head(int(limit))
     if st.checkbox("Select all shown", key=f"all_{kind}"):
         view["select"] = True
-    cols = ["select", "name", "equipment", "class", "confidence", "method", "status"]
+    cols = ["select", "name", "equipment", "class", "notes", "confidence", "method", "status"]
     cols += ["alternatives"] if kind == "point" else ["points"]
     edited = st.data_editor(
         view[cols + ["id"]], hide_index=True, width="stretch", height=420,
         disabled=[c for c in cols + ["id"] if c != "select"],
         column_config={"id": None, "confidence": st.column_config.ProgressColumn(min_value=0, max_value=1, format="%.2f"),
-                       "select": st.column_config.CheckboxColumn("✓", width="small")},
+                       "select": st.column_config.CheckboxColumn("✓", width="small"),
+                       "notes": st.column_config.NumberColumn("📝", width="small", help="Active notes")},
         key=f"ed_{kind}_{project}",
     )
     chosen = edited[edited["select"]]["id"].tolist()
@@ -138,8 +142,14 @@ def review_tab(kind: str):
         options = km.by_kind("point") if kind == "point" else km.by_kind("equipment") + km.by_kind("system")
         c_sel, c_btn = st.columns([3, 1])
         new_cls = c_sel.selectbox("Fix class to", options, label_visibility="collapsed", key=f"fc_{kind}")
+        why = st.text_input("Why? (optional, saved as a note on each fixed item)", key=f"why_{kind}")
         if c_btn.form_submit_button("Fix class", disabled=not chosen) and not need_reviewer():
             n = review.fix_class(store, km, project, chosen, new_cls, reviewer)
+            if why.strip():
+                labels = dict(zip(edited["id"], edited["name"]))
+                for i in chosen:
+                    notes.add_note(store, project, "node", i, labels.get(i, i), "naming", why, reviewer,
+                                   source="review", source_ref=f"fix to {new_cls}")
             st.session_state["flash"] = f"Set {n} {kind} items to {new_cls}."
             st.rerun()
     if kind == "point":
@@ -168,8 +178,75 @@ def provenance_table(rows: list[dict]):
                  column_config={"confidence": st.column_config.NumberColumn(format="%.2f")})
 
 
+def show_notes(items: list[dict], key: str, with_target: bool = False):
+    """Notes with inline edit and status buttons (no delete: resolve or supersede instead)."""
+    for x in items:
+        head = f"**{x['topic']}** · {x['author']} · {x['updated_at'][:16]}"
+        if x["source"] != "manual":
+            head += f" · {x['source']}" + (f" ({x['source_ref']})" if x["source_ref"] else "")
+        if x["status"] != "active":
+            head += f" · _{x['status']}_"
+        if with_target:
+            head = f"{x['target_label'] or 'project'} — " + head
+        with st.container(border=True):
+            st.markdown(head)
+            st.write(x["body"])
+            b1, b2, b3 = st.columns([1, 1, 3])
+            if x["status"] == "active":
+                if b1.button("Resolve", key=f"nres_{key}_{x['id']}"):
+                    notes.set_status(store, x["id"], "resolved")
+                    st.rerun()
+                if b2.button("Supersede", key=f"nsup_{key}_{x['id']}"):
+                    notes.set_status(store, x["id"], "superseded")
+                    st.rerun()
+            elif b1.button("Reopen", key=f"nre_{key}_{x['id']}"):
+                notes.set_status(store, x["id"], "active")
+                st.rerun()
+            with b3.popover("Edit"):
+                with st.form(key=f"nedf_{key}_{x['id']}", border=False):
+                    body = st.text_area("Note", x["body"], key=f"ned_{key}_{x['id']}")
+                    topic = st.selectbox("Topic", notes.TOPICS, index=notes.TOPICS.index(x["topic"]),
+                                         key=f"netp_{key}_{x['id']}")
+                    if st.form_submit_button("Save") and body.strip():
+                        notes.update_note(store, x["id"], body, topic)
+                        st.rerun()
+
+
+def add_note_form(targets: list[tuple[str, str, str]], key: str):
+    """targets: (target_kind, target_id, label) the note may be attached to; the first is the default."""
+    with st.expander("Add note"):
+        with st.form(key=f"nadd_{key}", clear_on_submit=True, border=False):
+            if len(targets) > 1:
+                t = st.selectbox("About", targets, format_func=lambda t: t[2], key=f"natg_{key}")
+            else:
+                t = targets[0]
+            topic = st.selectbox("Topic", notes.TOPICS, key=f"natp_{key}")
+            body = st.text_area("Note", key=f"nabd_{key}",
+                                placeholder="What should the next engineer know? e.g. 'RF VFD removed in 2022 retrofit'")
+            if st.form_submit_button("Save note") and not need_reviewer():
+                if not body.strip():
+                    st.error("Write something first.")
+                else:
+                    notes.add_note(store, project, t[0], t[1], t[2], topic, body, reviewer, source="manual")
+                    st.session_state["flash"] = f"Note added to {t[2]}."
+                    st.rerun()
+
+
+def notes_section(targets: list[tuple[str, str, str]], key: str):
+    """Notes on any of the targets (all statuses, active first), then the add form."""
+    found = [x for kind, tid, _ in targets for x in notes.notes_for(store, project, kind, tid)]
+    found.sort(key=lambda x: (x["status"] != "active", x["id"]))
+    st.markdown(f"**Notes ({sum(x['status'] == 'active' for x in found)} active)**")
+    show_notes(found, key, with_target=len(targets) > 1)
+    add_note_form(targets, key)
+
+
 def tree_tab():
     tree = build_tree(store, project)
+    proj_notes = notes.notes_for(store, project, "project", "")
+    with st.expander(f"Project notes ({sum(x['status'] == 'active' for x in proj_notes)} active)"):
+        show_notes(sorted(proj_notes, key=lambda x: (x["status"] != "active", x["id"])), "proj")
+        add_note_form([("project", "", f"project {project}")], "proj")
     f1, f2 = st.columns([2, 1])
     text = f1.text_input("Find equipment or point", key="tree_tx").strip().lower()
     only_open = f2.toggle("Only equipment with proposed items", key="tree_open")
@@ -216,17 +293,36 @@ def tree_tab():
             with st.expander("How the class was chosen"):
                 st.json({"template": n.attrs.get("template"), "grouping": n.attrs.get("grouping"),
                          "evidence": n.attrs.get("evidence")}, expanded=True)
+        if n.id != UNPLACED:
+            targets = [("node", n.id, n.label)]
+            if n.via:
+                par = tree.parent[n.id]
+                targets.append(("edge", notes.edge_id(par, "hasPart", n.id),
+                                f"{tree.by_id[par].label} has part {n.label}"))
+            targets += [("edge", notes.edge_id(n.id, "feeds", d), f"{n.label} feeds {tree.by_id[d].label}")
+                        for d, _ in tree.feeds_to(n.id)]
+            targets += [("edge", notes.edge_id(s_, "feeds", n.id), f"{tree.by_id[s_].label} feeds {n.label}")
+                        for s_, _ in tree.fed_by(n.id)]
+            notes_section(targets, f"eq_{n.id}")
+            pt_notes = [x for p in n.points for x in notes.notes_for(store, project, "node", p.id, "active")]
+            if pt_notes:
+                with st.expander(f"Notes on this equipment's points ({len(pt_notes)})"):
+                    for x in pt_notes:
+                        st.markdown(f"**{x['target_label']}** · {x['topic']} · {x['author']}: {x['body']}")
 
         st.markdown(f"**Points ({len(n.points)})**")
         if not n.points:
             return
-        pts = pd.DataFrame([{"id": p.id, "name": p.label, "class": p.cls or "", "confidence": p.prov["confidence"],
+        pt_count = notes.active_counts(store, project)
+        pts = pd.DataFrame([{"id": p.id, "name": p.label, "class": p.cls or "",
+                             "notes": pt_count.get(("node", p.id), 0), "confidence": p.prov["confidence"],
                              "method": p.prov["method"], "status": p.prov["status"], "row": p.prov["source_ref"],
                              "placed by": (p.via or {}).get("method", "")} for p in n.points])
         pev = st.dataframe(pts, hide_index=True, width="stretch", on_select="rerun", selection_mode="single-row",
                            key=f"tree_pts_{project}_{n.id}",
-                           column_config={"id": None, "confidence": st.column_config.ProgressColumn(
-                               min_value=0, max_value=1, format="%.2f")})
+                           column_config={"id": None, "notes": st.column_config.NumberColumn("📝", width="small"),
+                                          "confidence": st.column_config.ProgressColumn(
+                                              min_value=0, max_value=1, format="%.2f")})
         if pev.selection.rows:
             p = tree.by_id[pts.iloc[pev.selection.rows[0]]["id"]]
             st.markdown(f"**{p.label}** · `{p.attrs.get('source_id', '')}`")
@@ -238,13 +334,18 @@ def tree_tab():
             if "review" in a:
                 detail["before review"] = a["review"].get("previous")
             st.json({k: v for k, v in detail.items() if v}, expanded=True)
+            targets = [("node", p.id, p.label)]
+            if n.id != UNPLACED:
+                targets.append(("edge", notes.edge_id(n.id, "hasPoint", p.id), f"{n.label} has point {p.label}"))
+            notes_section(targets, f"pt_{p.id}")
 
 
 st.title("Project Model review")
 st.caption(f"{project} · knowledge graph in {DB.relative_to(ROOT)} · decisions are saved as method=human")
 if msg := st.session_state.pop("flash", None):
     st.success(msg)
-tab_p, tab_e, tab_t = st.tabs(["Points", "Equipment", "Tree"])
+# Keyed so a save (flash + rerun) keeps the reviewer on the tab they were working in.
+tab_p, tab_e, tab_t = st.tabs(["Points", "Equipment", "Tree"], key="main_tab", on_change="rerun")
 with tab_p:
     review_tab("point")
 with tab_e:

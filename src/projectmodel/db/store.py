@@ -66,6 +66,21 @@ CREATE TABLE IF NOT EXISTS llm_calls (
     latency_s   REAL NOT NULL DEFAULT 0,
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS notes (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    project      TEXT NOT NULL,
+    target_kind  TEXT NOT NULL CHECK (target_kind IN ('node', 'edge', 'project')),
+    target_id    TEXT NOT NULL,
+    target_label TEXT NOT NULL,
+    topic        TEXT NOT NULL CHECK (topic IN ('naming', 'history', 'operations', 'maintenance', 'other')),
+    body         TEXT NOT NULL,
+    author       TEXT NOT NULL,
+    source       TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'review', 'interview', 'document')),
+    source_ref   TEXT NOT NULL DEFAULT '',
+    status       TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'resolved', 'superseded')),
+    created_at   TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
 """
 
 

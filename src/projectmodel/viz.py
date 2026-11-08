@@ -5,6 +5,8 @@ Model layer: the knowledge-model classes those instances use, plus their ancesto
 linked instance -type-> class and class -subClassOf-> parent class.
 Every instance node and link carries its provenance; class nodes say where the class is defined.
 Rejected links are left out (as in the tree); rejected nodes stay, marked by their status.
+Instance nodes and links carry `notes` (count of active notes); the notes themselves are in
+payload["notes"], keyed by node id or "src|rel|dst", for the read-only details panel.
 """
 
 from __future__ import annotations
@@ -14,6 +16,7 @@ from pathlib import Path
 
 from .db.store import Store
 from .knowledge_model import KnowledgeModel
+from .notes import edge_id, notes_by_project
 from .tree import provenance
 
 TEMPLATE = Path(__file__).resolve().parent / "app" / "graph3d.html"
@@ -22,17 +25,23 @@ ATTR_KEYS = ("alternatives", "words", "unknown_tokens", "path", "template", "gro
 
 def graph_payload(store: Store, project: str, km: KnowledgeModel | None = None) -> dict:
     nodes, links = [], []
+    notes: dict[str, list[dict]] = {}
+    for n in notes_by_project(store, project):
+        if n["target_kind"] != "project":
+            notes.setdefault(n["target_id"], []).append(
+                {k: n[k] for k in ("id", "topic", "body", "author", "source", "updated_at")})
     rows = store.nodes(project)
     ids = {r["id"] for r in rows}
     for r in rows:
         attrs = json.loads(r["attrs"])
         nodes.append({"id": r["id"], "label": r["label"], "kind": r["kind"], "cls": r["class"],
-                      "layer": "instance", "prov": provenance(r),
+                      "layer": "instance", "prov": provenance(r), "notes": len(notes.get(r["id"], [])),
                       "attrs": {k: attrs[k] for k in ATTR_KEYS if k in attrs}})
     for e in store.edges(project):
         if e["status"] == "rejected" or e["src"] not in ids or e["dst"] not in ids:
             continue
-        links.append({"source": e["src"], "target": e["dst"], "rel": e["rel"], "prov": provenance(e)})
+        links.append({"source": e["src"], "target": e["dst"], "rel": e["rel"], "prov": provenance(e),
+                      "notes": len(notes.get(edge_id(e["src"], e["rel"], e["dst"]), []))})
 
     if km is not None:
         used = {n["cls"] for n in nodes if n["cls"] in km.classes}
@@ -67,7 +76,8 @@ def graph_payload(store: Store, project: str, km: KnowledgeModel | None = None) 
     rels = {}
     for link in links:
         rels[link["rel"]] = rels.get(link["rel"], 0) + 1
-    return {"project": project, "nodes": nodes, "links": links, "counts": {"nodes": kinds, "links": rels}}
+    return {"project": project, "nodes": nodes, "links": links, "counts": {"nodes": kinds, "links": rels},
+            "notes": notes}
 
 
 def render_html(payload: dict, theme: str | None = None) -> str:
