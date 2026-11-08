@@ -116,6 +116,11 @@ class Store:
         with self.conn:
             self.conn.execute("DELETE FROM nodes WHERE project = ? AND method != 'human'", (project,))
             self.conn.execute("DELETE FROM edges WHERE project = ? AND method != 'human'", (project,))
+            # A point a person placed on equipment keeps that placement only.
+            placed = {r[0] for r in self.conn.execute(
+                "SELECT dst FROM edges WHERE project = ? AND rel = 'hasPoint' AND method = 'human'"
+                " AND status = 'confirmed'", (project,))}
+            edges = [e for e in edges if not (e.rel == "hasPoint" and e.dst in placed)]
             self.conn.executemany(
                 "INSERT OR IGNORE INTO nodes (project, id, kind, label, class, source_file, source_ref, method,"
                 " confidence, revision, attrs) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

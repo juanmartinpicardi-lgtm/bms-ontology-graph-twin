@@ -9,6 +9,7 @@ dependencies = [
     "pytest>=9.2.0",
     "pyyaml>=6.0.3",
     "rdflib>=7.6.0",
+    "streamlit>=1.67.0",
 ]
 
 [build-system]

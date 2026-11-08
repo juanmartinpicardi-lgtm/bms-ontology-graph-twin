@@ -70,7 +70,8 @@ def match_equipment(pred_groups: dict[str, list[str]], true_equip_of: dict[str, 
 
 
 def score_project(store: Store, project: str, gt: GroundTruth, km: KnowledgeModel, accept: float) -> dict:
-    nodes = store.nodes(project)
+    # A rejected class counts as no class.
+    nodes = [dict(n) | ({"class": None} if n["status"] == "rejected" else {}) for n in store.nodes(project)]
     if not nodes:
         raise ValueError(f"project {project!r} has no nodes; run the mapper first")
     points = [n for n in nodes if n["kind"] == "point"]
