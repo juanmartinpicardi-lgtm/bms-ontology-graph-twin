@@ -47,3 +47,8 @@ points:
               Fan_Command, Fan_Speed_Command, Fan_Status, Pump_Command,
               Enable_Command, Run_Enable_Command, Start_Stop_Command, Run_Status, On_Off_Status, Mode_Command, Mode_Status]
   electrical: [Speed_Sensor, Frequency_Sensor, Power_Sensor, Energy_Sensor, Current_Sensor, Run_Time_Sensor]
+
+# Systems: a plant or loop that groups equipment (a "Hot Water Plant" folder). In Brick these are
+# brick:System, not equipment. Equipment nodes in the graph may take one of these classes.
+systems:
+  water: [Water_System, Chilled_Water_System, Hot_Water_System, Condenser_Water_System]

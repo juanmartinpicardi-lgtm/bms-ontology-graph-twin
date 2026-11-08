@@ -51,7 +51,7 @@ class Mapper:
     def __init__(self, km: KnowledgeModel, llm: LLMProvider | None = None, llm_below: float = 0.4):
         self.km = km
         self.points = ClassMatcher(km, "point")
-        self.equipment = ClassMatcher(km, "equipment")
+        self.equipment = ClassMatcher(km, "equipment", also=("system",))  # a folder may be a plant / loop
         self.llm = llm or NoLLM()
         self.llm_below = llm_below
         self._equip_prefixes = {
@@ -98,7 +98,10 @@ class Mapper:
     # 2. name rules -----------------------------------------------------------------------------
 
     def classify_points(self, records: list[RawRecord]) -> dict[str, ClassGuess]:
-        return {f"pt:{r.source_id}": self.points.classify(r.name) for r in records}
+        # The point's own equipment name (last folder, or an id found in the name) is not part of what it is.
+        return {f"pt:{r.source_id}": self.points.classify(
+                    r.name, r.path.split("/")[-1] if r.path else self._equipment_id_in_name(r.name))
+                for r in records}
 
     # 3. templates ------------------------------------------------------------------------------
 
@@ -124,6 +127,14 @@ class Mapper:
         by_name = [t for t in self.km.templates.values() if t.matches_name(g.label)]
         name_guess = self.equipment.classify(g.label)
         fills = {t.id: self._slot_fill(t, classes) for t in self.km.templates.values()} if n else {}
+        g.evidence = {"name_patterns": [t.id for t in by_name], "name_guess": name_guess.cls,
+                      "slot_fill": {k: v[0] for k, v in fills.items() if v[0] > 0}}
+
+        # A name that clearly says plant / system ("Hot Water Plant", "Boiler Room HW Sys") is a system,
+        # even when it also mentions equipment that a template would match.
+        if name_guess.cls and self.km.classes[name_guess.cls].kind == "system" and name_guess.confidence >= 0.5:
+            g.cls, g.cls_conf, g.cls_method, g.template = name_guess.cls, name_guess.confidence, "rule", None
+            return
 
         if by_name:
             t = max(by_name, key=lambda t: fills.get(t.id, (0, 0)))
@@ -143,8 +154,6 @@ class Mapper:
                 g.cls_conf = 0.4 + 0.3 * fits / n
         if not g.cls:
             g.cls, g.cls_conf, g.cls_method = "Equipment", 0.1, "rule"
-        g.evidence = {"name_patterns": [t.id for t in by_name], "name_guess": name_guess.cls,
-                      "slot_fill": {k: v[0] for k, v in fills.items() if v[0] > 0}}
 
     def refine_points(self, g: EquipGroup, guesses: dict[str, ClassGuess]) -> dict[str, tuple[str, float, str]]:
         """Template context: make a generic point class specific, and raise confidence when a point
@@ -170,17 +179,61 @@ class Mapper:
             out[pid] = (cls, round(conf, 4), method)
         return out
 
-    def infer_feeds(self, groups: dict[str, EquipGroup]) -> list[tuple[str, str, float]]:
-        """Parent folder feeds child when one of their templates says so (e.g. AHU feeds VAV)."""
-        out = []
+    def infer_feeds(self, groups: dict[str, EquipGroup],
+                    point_cls: dict[str, str | None] | None = None) -> list[tuple[str, str, float, str | None]]:
+        """(source, target, confidence, medium) feeds links, from two rules:
+        folder - a parent folder feeds a child when one of their templates says so (AHU feeds VAV);
+        medium - equipment whose template is fed by a water medium, and that has a point showing it uses
+                 that medium (a filled slot with that `medium`), is fed by the site's single top-level
+                 system of that medium, or else by the single equipment of the producing template."""
+        out, seen = [], set()
+
+        def add(src, dst, conf, medium):
+            if src != dst and (src, dst) not in seen:
+                seen.add((src, dst))
+                out.append((src, dst, round(conf, 4), medium))
+
         for g in groups.values():
             p = groups.get(g.parent) if g.parent else None
             if not p or not g.template or not p.template:
                 continue
-            fed_by_parent = any(r.rel == "isFedBy" and r.target == p.template.id for r in g.template.relations)
-            parent_feeds = any(r.rel == "feeds" and r.target == g.template.id for r in p.template.relations)
+            fed_by_parent = next((r for r in g.template.relations if r.rel == "isFedBy" and r.target == p.template.id), None)
+            parent_feeds = next((r for r in p.template.relations if r.rel == "feeds" and r.target == g.template.id), None)
             if fed_by_parent or parent_feeds:
-                out.append((p.id, g.id, round(0.9 * min(p.cls_conf, g.cls_conf), 4)))
+                add(p.id, g.id, 0.9 * min(p.cls_conf, g.cls_conf), (fed_by_parent or parent_feeds).medium or None)
+
+        if point_cls is None:
+            return out
+        is_a = self.km.is_a
+
+        def ancestors(gid):
+            while gid := (groups[gid].parent if gid in groups else None):
+                yield gid
+
+        def source_for(rel):
+            if rel.system:
+                systems = [g for g in groups.values() if g.cls and is_a(g.cls, rel.system)]
+                top = [s for s in systems if not any(groups[a].cls and is_a(groups[a].cls, rel.system)
+                                                     for a in ancestors(s.id))]
+                if len(top) == 1:
+                    return top[0]
+                if top:
+                    return None  # several plants of this medium: can't tell which one feeds what
+            producers = [g for g in groups.values() if g.template and g.template.id == rel.target]
+            return producers[0] if len(producers) == 1 else None
+
+        for g in groups.values():
+            if not g.template:
+                continue
+            classes = [point_cls.get(p) for p in g.points]
+            for rel in g.template.relations:
+                if rel.rel != "isFedBy" or rel.medium not in ("hot_water", "chilled_water"):
+                    continue
+                uses = any(c and any(is_a(c, sc) or is_a(sc, c) for sc in s.classes)
+                           for s in g.template.slots if s.medium == rel.medium for c in classes)
+                src = source_for(rel) if uses else None
+                if src is not None:
+                    add(src.id, g.id, 0.8 * min(src.cls_conf, g.cls_conf), rel.medium)
         return out
 
     # run ---------------------------------------------------------------------------------------
@@ -222,9 +275,9 @@ class Mapper:
                                            "evidence": g.evidence, "points": len(g.points)}))
             if g.parent:
                 edges.append(Edge(g.parent, "hasPart", g.id, source_file, g.source_ref, "parsed", 1.0))
-        for src, dst, conf in self.infer_feeds(groups):
+        for src, dst, conf, medium in self.infer_feeds(groups, {pid: c for pid, (c, _, _) in final.items()}):
             edges.append(Edge(src, "feeds", dst, source_file, groups[dst].source_ref, "template", conf,
-                              {"medium": "air" if self.km.is_a(groups[dst].cls or "", "Terminal_Unit") else None}))
+                              {"medium": medium}))
         for pid, (cls, conf, method) in final.items():
             r, guess = rec_by_pid[pid], guesses[pid]
             nodes.append(Node(pid, "point", r.name, cls, source_file, str(r.source_row), method, conf,

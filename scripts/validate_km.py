@@ -24,8 +24,8 @@ if __name__ == "__main__":
 
     kinds = Counter((c.source, c.kind) for c in km.classes.values())
     print(f"Knowledge model OK (Brick {km.brick_version})")
-    print(f"  Brick subset: {kinds[('brick', 'equipment')]} equipment + {kinds[('brick', 'point')]} point classes, "
-          f"{len(km.relations)} relations")
+    print(f"  Brick subset: {kinds[('brick', 'equipment')]} equipment + {kinds[('brick', 'point')]} point + "
+          f"{kinds[('brick', 'system')]} system classes, {len(km.relations)} relations")
     print(f"  BA extension: {sum(v for (s, _), v in kinds.items() if s == 'ba')} classes, {len(km.ba_relations)} relations")
     print(f"  Templates: {', '.join(sorted(km.templates))}")
     print(f"  Name rules: {len(km.name_rules.vocabulary)} words, {len(km.name_rules.abbreviations)} abbreviations, "

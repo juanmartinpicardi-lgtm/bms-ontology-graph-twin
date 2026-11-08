@@ -9,7 +9,7 @@ points:
   - {role: airflow_sp, classes: [Discharge_Air_Flow_Setpoint, Air_Flow_Setpoint], required: false}
   - {role: damper, classes: [Damper_Command, Damper_Position_Command, Damper_Position_Sensor], required: true}
   - {role: discharge_temp, classes: [Discharge_Air_Temperature_Sensor], required: false}
-  - {role: reheat_valve, classes: [Valve_Command, Valve_Position_Command], required: false}
+  - {role: reheat_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water}
   - {role: occ_cooling_sp, classes: [Occupied_Cooling_Zone_Air_Temperature_Setpoint], required: false}
   - {role: unocc_cooling_sp, classes: [Unoccupied_Cooling_Zone_Air_Temperature_Setpoint], required: false}
   - {role: occ_heating_sp, classes: [Occupied_Heating_Zone_Air_Temperature_Setpoint], required: false}
@@ -18,4 +18,4 @@ points:
   - {role: fan_cmd, classes: [Fan_Command, Fan_Status], required: false}
 relations:
   - {rel: isFedBy, target: ahu, medium: air, required: true}
-  - {rel: isFedBy, target: boiler, medium: hot_water, required: false}
+  - {rel: isFedBy, target: boiler, medium: hot_water, required: false, system: Hot_Water_System}

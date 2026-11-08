@@ -11,14 +11,14 @@ points:
   - {role: outside_temp, classes: [Outside_Air_Temperature_Sensor], required: false}
   - {role: static_pressure, classes: [Supply_Air_Static_Pressure_Sensor, Discharge_Air_Static_Pressure_Sensor], required: false}
   - {role: static_pressure_sp, classes: [Supply_Air_Static_Pressure_Setpoint, Discharge_Air_Static_Pressure_Setpoint], required: false}
-  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false}
-  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false}
+  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: chilled_water}
+  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water}
   - {role: economizer_damper, classes: [Damper_Command, Damper_Position_Command], required: false}
   - {role: supply_fan_cmd, classes: [Fan_Command, Run_Enable_Command, Start_Stop_Command], required: false}
   - {role: supply_fan_speed, classes: [Fan_Speed_Command], required: false}
   - {role: supply_fan_status, classes: [Fan_Status, Run_Status, On_Off_Status], required: false}
   - {role: occupancy, classes: [Occupancy_Command, Occupancy_Status, Mode_Command], required: false}
 relations:
-  - {rel: isFedBy, target: chiller, medium: chilled_water, required: false}
-  - {rel: isFedBy, target: boiler, medium: hot_water, required: false}
+  - {rel: isFedBy, target: chiller, medium: chilled_water, required: false, system: Chilled_Water_System}
+  - {rel: isFedBy, target: boiler, medium: hot_water, required: false, system: Hot_Water_System}
   - {rel: feeds, target: vav, medium: air, required: false}

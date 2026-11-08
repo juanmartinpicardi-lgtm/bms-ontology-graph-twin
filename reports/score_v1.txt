@@ -1,0 +1,31 @@
+
+Score report (auto-accept at confidence >= 0.8)
+
+                                               alpha/names_paths [dev]        alpha/names_only [dev]      bravo/names_paths [TEST]       bravo/names_only [TEST]
+H1  grouped on right equipment                                  100.0%                          3.0%                        100.0%                          0.0%
+    ungrouped points                                                 0                          1783                             0                           913
+H2  class exact (all labelled)                                   82.3%                         70.4%                         57.8%                         36.6%
+    class compatible (parent/child ok)                           86.3%                         86.3%                         59.9%                         59.9%
+    auto-accepted (share of labelled)                            68.0%                         23.6%                         41.6%                          9.0%
+    class exact among auto-accepted                              81.7%                         48.9%                         82.3%                         26.9%
+    true class not in knowledge model                                0                             0                            24                            24
+Sent to review                                                   37.8%                         78.3%                         60.4%                         91.4%
+Decided by a human                                                   0                             0                             0                             0
+Equipment class exact (matched)                                  87.7%                         45.0%                         73.2%                             -
+LLM calls                                                            0                             0                             0                             0
+Cost per 1,000 points (USD)                                        0.0                           0.0                           0.0                           0.0
+Time per 1,000 points (s)                                        0.403                         0.071                         0.337                         0.058
+hasPart precision / recall                             100.0% / 100.0%                      - / 0.0%                         - / -                         - / -
+feeds precision / recall                                100.0% / 91.5%                      - / 0.0%                 100.0% / 2.0%                      - / 0.0%
+H2 exact, BMS names / dis fallback                       83.6% / 58.0%                 70.6% / 65.9%                 62.2% / 14.1%                 38.9% / 14.1%
+
+Calibration: class exact % by confidence band (n)
+  0.0-0.2                                                    0.0% (15)                     0.0% (19)                    0.0% (130)                    0.0% (131)
+  0.2-0.4                                                   50.0% (36)                   91.9% (321)                    21.4% (14)                    3.4% (118)
+  0.4-0.6                                                   25.0% (12)                   92.0% (163)                    26.9% (26)                    4.1% (221)
+  0.6-0.7                                                  93.2% (310)                   96.4% (305)                    3.8% (131)                    20.0% (40)
+  0.7-0.8                                                  84.3% (166)                   52.6% (477)                   92.2% (206)                   98.6% (280)
+  0.8-0.9                                                  98.8% (758)                    48.5% (33)                   89.0% (310)                     0.0% (41)
+  0.9-1.0                                                  48.1% (385)                   48.9% (364)                    41.2% (51)                    56.8% (37)
+
+TEST columns are held out: do not tune rules, templates or prompts on them.

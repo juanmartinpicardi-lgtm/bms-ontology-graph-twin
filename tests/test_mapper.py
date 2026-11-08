@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -33,9 +34,42 @@ def test_point_names(km, name, cls):
 
 @pytest.mark.parametrize("name, cls", [
     ("AHU-2", "AHU"), ("DD 1-4-2", "VAV"), ("EF-1", "Exhaust_Fan"), ("Gas Meter 1", "Gas_Meter"),
+    ("Hot Water Plant", "Hot_Water_System"), ("Chilled Water Plant", "Chilled_Water_System"),
+    ("Penthouse HW Sys", "Hot_Water_System"),
 ])
 def test_equipment_names(km, name, cls):
-    assert ClassMatcher(km, "equipment").classify(name).cls == cls
+    assert ClassMatcher(km, "equipment", also=("system",)).classify(name).cls == cls
+
+
+@pytest.mark.parametrize("name, equipment, words", [
+    ("B-1 Fire Rate", "B-1", ["fire", "rate"]),              # equipment name dropped
+    ("EF-2 Status", "EF-2", ["status", "fan"]),               # only a function left: keep the type word
+    ("CWP-1 ISO Valve", "CWP-1", ["iso", "valve"]),           # something else left: no type word
+    ("HHWP-2", "HHWP-2", ["hhwp", "2"]),                      # nothing would remain: name kept as is
+    ("Fire Rate", "B-1", ["fire", "rate"]),                   # equipment name not in the point name
+])
+def test_point_name_without_its_equipment(km, name, equipment, words):
+    assert ClassMatcher(km, "point").tokens_without(name, equipment)[0] == words
+
+
+def _rec(i, name, path):
+    return RawRecord(f"p{i}", "test", "t.csv", i, name, path=path)
+
+
+def test_medium_feeds_need_evidence_and_a_single_source(km):
+    recs = [_rec(1, "Space Temp", "HW Plant/x"),  # gives the plant folder a point
+            _rec(2, "Space Temp", "VAV-1"), _rec(3, "Airflow", "VAV-1"), _rec(4, "Damper Cmd", "VAV-1"),
+            _rec(5, "Reheat Valve Cmd", "VAV-1"),
+            _rec(6, "Space Temp", "VAV-2"), _rec(7, "Airflow", "VAV-2"), _rec(8, "Damper Cmd", "VAV-2")]
+    store = Store(":memory:")
+    Mapper(km).run([r if r.source_id != "p1" else _rec(1, "HW Supply Temp", "Hot Water Plant") for r in recs], store, "t")
+    feeds = {(e["src"], e["dst"]): json.loads(e["attrs"])["medium"] for e in store.edges("t", "feeds")}
+    assert feeds == {("eq:Hot Water Plant", "eq:VAV-1"): "hot_water"}  # VAV-2 has no reheat valve
+    # Two separate hot water plants: no way to tell which feeds VAV-1, so nothing is inferred.
+    store2 = Store(":memory:")
+    Mapper(km).run(recs[1:] + [_rec(1, "HW Supply Temp", "Hot Water Plant"), _rec(9, "HW Supply Temp", "HW Plant B")],
+                   store2, "t")
+    assert not store2.edges("t", "feeds")
 
 
 def test_unknown_name_gets_no_class(km):

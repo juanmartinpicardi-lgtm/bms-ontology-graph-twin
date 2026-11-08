@@ -135,7 +135,7 @@ def review_tab(kind: str):
             st.session_state["flash"] = f"Rejected {review.reject(store, project, chosen, reviewer)} {kind} items."
             st.rerun()
     with a3.form(key=f"fix_{kind}", border=False):
-        options = km.by_kind("point" if kind == "point" else "equipment")
+        options = km.by_kind("point") if kind == "point" else km.by_kind("equipment") + km.by_kind("system")
         c_sel, c_btn = st.columns([3, 1])
         new_cls = c_sel.selectbox("Fix class to", options, label_visibility="collapsed", key=f"fc_{kind}")
         if c_btn.form_submit_button("Fix class", disabled=not chosen) and not need_reviewer():

@@ -18,6 +18,9 @@ IMPLIED_PENALTY = 0.1
 IMPLIED_WORDS = {"air"}
 ALT_PENALTY = 1.0  # per token read with a less likely abbreviation meaning
 MAX_INTERPRETATIONS = 16
+# Words naming a kind of equipment or component (vocabulary words of the name rules).
+EQUIPMENT_WORDS = {"fan", "pump", "chiller", "boiler", "cooling_tower", "heat_exchanger", "vfd", "damper",
+                   "valve", "coil", "filter", "humidifier", "meter", "economizer"}
 
 
 @dataclass
@@ -30,17 +33,36 @@ class ClassGuess:
 
 
 class ClassMatcher:
-    def __init__(self, km: KnowledgeModel, kind: str):
+    def __init__(self, km: KnowledgeModel, kind: str, also: tuple[str, ...] = ()):
+        """Match against classes of `kind` (plus kinds in `also`, e.g. systems for equipment folders)."""
         self.km = km
         self.cm = km.class_matching
         self.kind = kind
-        self.class_words = {c: set(ws) for c in km.by_kind(kind) if (ws := self.cm.class_words(c))}
+        self.class_words = {c: set(ws) for k in (kind, *also) for c in km.by_kind(k) if (ws := self.cm.class_words(c))}
 
-    def _interpretations(self, name: str) -> tuple[list[tuple[list[str], int]], list[str]]:
+    def tokens_without(self, name: str, equipment: str | None) -> tuple[list[str], list[str]]:
+        """Name tokens with the equipment's own name removed ("B-1 Fire Rate" on B-1 -> fire rate).
+        The equipment name says what the point belongs to, not what the point is. Kept if nothing remains.
+        If only function words remain ("EF-2 Status" -> status), the equipment's type word comes back
+        (-> fan status), since then it is the only thing saying what the status is of."""
+        nr = self.km.name_rules
+        tokens = nr.tokenize(name)
+        drop = nr.tokenize(equipment) if equipment else []
+        n = len(drop)
+        for i in range(len(tokens) - n + 1) if n else ():
+            if tokens[i:i + n] == drop and len(tokens) > n:
+                rest = tokens[:i] + tokens[i + n:]
+                words = {w for t in rest for w in (nr.expand(t) or [[t]])[0]}
+                if words <= set(self.cm.functions) | set(self.cm.command_cues):
+                    rest += [w for t in drop for w in (nr.expand(t) or [[]])[0] if w in EQUIPMENT_WORDS]
+                return rest, drop
+        return tokens, []
+
+    def _interpretations(self, name: str, equipment: str | None = None) -> tuple[list[tuple[list[str], int]], list[str]]:
         """Every reading of the name as (words, number of non-default abbreviation meanings used)."""
         nr = self.km.name_rules
         options, unknown = [], []
-        for t in nr.tokenize(name):
+        for t in self.tokens_without(name, equipment)[0]:
             if t.isdigit():
                 continue
             alts = nr.expand(t)
@@ -76,8 +98,9 @@ class ClassMatcher:
         scored = [(c, self._score(s, cw)) for c, cw in self.class_words.items()]
         return sorted((x for x in scored if x[1] > 0), key=lambda x: (-x[1], len(self.class_words[x[0]]), x[0]))
 
-    def classify(self, name: str) -> ClassGuess:
-        interpretations, unknown = self._interpretations(name)
+    def classify(self, name: str, equipment: str | None = None) -> ClassGuess:
+        """`equipment`: the name of the equipment the point sits on, left out of the point's words."""
+        interpretations, unknown = self._interpretations(name, equipment)
         best: tuple[float, list[str], list[tuple[str, float]]] | None = None
         winners = set()
         for raw, non_default in interpretations:

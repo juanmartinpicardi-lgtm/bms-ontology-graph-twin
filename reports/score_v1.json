@@ -1,0 +1,330 @@
+[
+  {
+    "project": "alpha/names_paths",
+    "points": 1842,
+    "accept_threshold": 0.8,
+    "H1_grouped_right_pct": 100.0,
+    "H1_points_with_true_equipment": 1842,
+    "H1_points_ungrouped": 0,
+    "H2_labelled_points": 1682,
+    "H2_exact_pct": 82.3,
+    "H2_compatible_pct": 86.3,
+    "H2_auto_accepted_pct_of_labelled": 68.0,
+    "H2_auto_accepted_exact_pct": 81.7,
+    "H2_unreachable_classes": 0,
+    "review_pct": 37.8,
+    "human_decided": 0,
+    "equipment_class_exact_pct": 87.7,
+    "equipment_matched": 184,
+    "equipment_true": 184,
+    "feeds": {
+      "predicted": 247,
+      "true": 270,
+      "precision_pct": 100.0,
+      "recall_pct": 91.5
+    },
+    "hasPart": {
+      "predicted": 165,
+      "true": 165,
+      "precision_pct": 100.0,
+      "recall_pct": 100.0
+    },
+    "by_name_source": {
+      "source": {
+        "n": 1594,
+        "exact_pct": 83.6
+      },
+      "dis": {
+        "n": 88,
+        "exact_pct": 58.0
+      }
+    },
+    "calibration": [
+      {
+        "conf": "0.0-0.2",
+        "n": 15,
+        "exact_pct": 0.0
+      },
+      {
+        "conf": "0.2-0.4",
+        "n": 36,
+        "exact_pct": 50.0
+      },
+      {
+        "conf": "0.4-0.6",
+        "n": 12,
+        "exact_pct": 25.0
+      },
+      {
+        "conf": "0.6-0.7",
+        "n": 310,
+        "exact_pct": 93.2
+      },
+      {
+        "conf": "0.7-0.8",
+        "n": 166,
+        "exact_pct": 84.3
+      },
+      {
+        "conf": "0.8-0.9",
+        "n": 758,
+        "exact_pct": 98.8
+      },
+      {
+        "conf": "0.9-1.0",
+        "n": 385,
+        "exact_pct": 48.1
+      }
+    ],
+    "llm_calls": 0,
+    "cost_usd_per_1000_points": 0.0,
+    "seconds_per_1000_points": 0.403,
+    "revision": 7
+  },
+  {
+    "project": "alpha/names_only",
+    "points": 1842,
+    "accept_threshold": 0.8,
+    "H1_grouped_right_pct": 3.0,
+    "H1_points_with_true_equipment": 1842,
+    "H1_points_ungrouped": 1783,
+    "H2_labelled_points": 1682,
+    "H2_exact_pct": 70.4,
+    "H2_compatible_pct": 86.3,
+    "H2_auto_accepted_pct_of_labelled": 23.6,
+    "H2_auto_accepted_exact_pct": 48.9,
+    "H2_unreachable_classes": 0,
+    "review_pct": 78.3,
+    "human_decided": 0,
+    "equipment_class_exact_pct": 45.0,
+    "equipment_matched": 22,
+    "equipment_true": 184,
+    "feeds": {
+      "predicted": 0,
+      "true": 270,
+      "precision_pct": null,
+      "recall_pct": 0.0
+    },
+    "hasPart": {
+      "predicted": 0,
+      "true": 165,
+      "precision_pct": null,
+      "recall_pct": 0.0
+    },
+    "by_name_source": {
+      "source": {
+        "n": 1594,
+        "exact_pct": 70.6
+      },
+      "dis": {
+        "n": 88,
+        "exact_pct": 65.9
+      }
+    },
+    "calibration": [
+      {
+        "conf": "0.0-0.2",
+        "n": 19,
+        "exact_pct": 0.0
+      },
+      {
+        "conf": "0.2-0.4",
+        "n": 321,
+        "exact_pct": 91.9
+      },
+      {
+        "conf": "0.4-0.6",
+        "n": 163,
+        "exact_pct": 92.0
+      },
+      {
+        "conf": "0.6-0.7",
+        "n": 305,
+        "exact_pct": 96.4
+      },
+      {
+        "conf": "0.7-0.8",
+        "n": 477,
+        "exact_pct": 52.6
+      },
+      {
+        "conf": "0.8-0.9",
+        "n": 33,
+        "exact_pct": 48.5
+      },
+      {
+        "conf": "0.9-1.0",
+        "n": 364,
+        "exact_pct": 48.9
+      }
+    ],
+    "llm_calls": 0,
+    "cost_usd_per_1000_points": 0.0,
+    "seconds_per_1000_points": 0.071,
+    "revision": 6
+  },
+  {
+    "project": "bravo/names_paths",
+    "points": 914,
+    "accept_threshold": 0.8,
+    "H1_grouped_right_pct": 100.0,
+    "H1_points_with_true_equipment": 913,
+    "H1_points_ungrouped": 0,
+    "H2_labelled_points": 868,
+    "H2_exact_pct": 57.8,
+    "H2_compatible_pct": 59.9,
+    "H2_auto_accepted_pct_of_labelled": 41.6,
+    "H2_auto_accepted_exact_pct": 82.3,
+    "H2_unreachable_classes": 24,
+    "review_pct": 60.4,
+    "human_decided": 0,
+    "equipment_class_exact_pct": 73.2,
+    "equipment_matched": 149,
+    "equipment_true": 149,
+    "feeds": {
+      "predicted": 4,
+      "true": 197,
+      "precision_pct": 100.0,
+      "recall_pct": 2.0
+    },
+    "hasPart": {
+      "predicted": 0,
+      "true": 0,
+      "precision_pct": null,
+      "recall_pct": null
+    },
+    "by_name_source": {
+      "source": {
+        "n": 790,
+        "exact_pct": 62.2
+      },
+      "dis": {
+        "n": 78,
+        "exact_pct": 14.1
+      }
+    },
+    "calibration": [
+      {
+        "conf": "0.0-0.2",
+        "n": 130,
+        "exact_pct": 0.0
+      },
+      {
+        "conf": "0.2-0.4",
+        "n": 14,
+        "exact_pct": 21.4
+      },
+      {
+        "conf": "0.4-0.6",
+        "n": 26,
+        "exact_pct": 26.9
+      },
+      {
+        "conf": "0.6-0.7",
+        "n": 131,
+        "exact_pct": 3.8
+      },
+      {
+        "conf": "0.7-0.8",
+        "n": 206,
+        "exact_pct": 92.2
+      },
+      {
+        "conf": "0.8-0.9",
+        "n": 310,
+        "exact_pct": 89.0
+      },
+      {
+        "conf": "0.9-1.0",
+        "n": 51,
+        "exact_pct": 41.2
+      }
+    ],
+    "llm_calls": 0,
+    "cost_usd_per_1000_points": 0.0,
+    "seconds_per_1000_points": 0.337,
+    "revision": 2
+  },
+  {
+    "project": "bravo/names_only",
+    "points": 914,
+    "accept_threshold": 0.8,
+    "H1_grouped_right_pct": 0.0,
+    "H1_points_with_true_equipment": 913,
+    "H1_points_ungrouped": 913,
+    "H2_labelled_points": 868,
+    "H2_exact_pct": 36.6,
+    "H2_compatible_pct": 59.9,
+    "H2_auto_accepted_pct_of_labelled": 9.0,
+    "H2_auto_accepted_exact_pct": 26.9,
+    "H2_unreachable_classes": 24,
+    "review_pct": 91.4,
+    "human_decided": 0,
+    "equipment_class_exact_pct": null,
+    "equipment_matched": 0,
+    "equipment_true": 149,
+    "feeds": {
+      "predicted": 0,
+      "true": 197,
+      "precision_pct": null,
+      "recall_pct": 0.0
+    },
+    "hasPart": {
+      "predicted": 0,
+      "true": 0,
+      "precision_pct": null,
+      "recall_pct": null
+    },
+    "by_name_source": {
+      "source": {
+        "n": 790,
+        "exact_pct": 38.9
+      },
+      "dis": {
+        "n": 78,
+        "exact_pct": 14.1
+      }
+    },
+    "calibration": [
+      {
+        "conf": "0.0-0.2",
+        "n": 131,
+        "exact_pct": 0.0
+      },
+      {
+        "conf": "0.2-0.4",
+        "n": 118,
+        "exact_pct": 3.4
+      },
+      {
+        "conf": "0.4-0.6",
+        "n": 221,
+        "exact_pct": 4.1
+      },
+      {
+        "conf": "0.6-0.7",
+        "n": 40,
+        "exact_pct": 20.0
+      },
+      {
+        "conf": "0.7-0.8",
+        "n": 280,
+        "exact_pct": 98.6
+      },
+      {
+        "conf": "0.8-0.9",
+        "n": 41,
+        "exact_pct": 0.0
+      },
+      {
+        "conf": "0.9-1.0",
+        "n": 37,
+        "exact_pct": 56.8
+      }
+    ],
+    "llm_calls": 0,
+    "cost_usd_per_1000_points": 0.0,
+    "seconds_per_1000_points": 0.058,
+    "revision": 2
+  }
+]

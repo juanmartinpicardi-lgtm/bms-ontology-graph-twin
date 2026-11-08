@@ -17,8 +17,11 @@ name_synonyms:
   value: ""
   percent: ""
   effective: ""
+  percentage: ""
+  reading: ""
   dd: vav             # dual-duct terminal box
   economizer: damper  # an economizer command drives the outside-air damper
+  plant: system       # "Hot Water Plant" -> Hot_Water_System
 
 # class-name word(s) -> canonical word (multi-word keys are matched as phrases)
 class_word_synonyms:

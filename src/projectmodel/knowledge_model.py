@@ -92,6 +92,7 @@ class Slot:
     role: str
     classes: tuple[str, ...]
     required: bool
+    medium: str = ""  # a filled slot is evidence the equipment uses this medium (e.g. a heating valve -> hot_water)
 
 
 @dataclass(frozen=True)
@@ -100,6 +101,7 @@ class Relation:
     target: str
     medium: str
     required: bool
+    system: str = ""  # system class that supplies the medium site-wide (e.g. Hot_Water_System), if any
 
 
 @dataclass
@@ -121,7 +123,7 @@ class Template:
 @dataclass
 class ClassInfo:
     name: str
-    kind: str  # "equipment" | "point" | "other"
+    kind: str  # "equipment" | "point" | "system" | "other"
     group: str  # section in brick_subset.yaml, or "ba_extension"
     source: str  # "brick" | "ba"
     subset_parent: str | None = None  # nearest ancestor that is also in the model
@@ -216,8 +218,10 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
     if version not in loaded:
         problems.append(f"brick_subset.yaml says Brick {version}, loaded Brick is {sorted(loaded)}")
     classes: dict[str, ClassInfo] = {}
-    for kind in ("equipment", "points"):
-        for group, names in subset[kind].items():
+    roots = {"equipment": (BRICK.Equipment, "equipment"), "points": (BRICK.Point, "point"),
+             "systems": (BRICK.System, "system")}
+    for kind in ("equipment", "points", "systems"):
+        for group, names in subset.get(kind, {}).items():
             for name in names:
                 uri = BRICK[name]
                 if name in classes:
@@ -227,10 +231,10 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
                 elif deprecated(uri):
                     problems.append(f"brick_subset: {name} is deprecated in Brick {version}")
                 else:
-                    root = BRICK.Equipment if kind == "equipment" else BRICK.Point
+                    root, class_kind = roots[kind]
                     if uri != root and not _is_subclass(g, uri, root):
                         problems.append(f"brick_subset: {name} is listed under {kind} but is not a {root.split('#')[1]}")
-                    classes[name] = ClassInfo(name, "equipment" if kind == "equipment" else "point", group, "brick")
+                    classes[name] = ClassInfo(name, class_kind, group, "brick")
     relations = list(subset.get("relations", []))
     for rel in relations:
         if not any(g.triples((BRICK[rel], RDF.type, None))):
@@ -310,7 +314,7 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
             for c in s["classes"]:
                 if classes.get(c, ClassInfo("", "", "", "")).kind != "point":
                     problems.append(f"{where}: slot {s['role']} uses {c}, which is not a point class in the model")
-            slots.append(Slot(s["role"], tuple(s["classes"]), bool(s.get("required", False))))
+            slots.append(Slot(s["role"], tuple(s["classes"]), bool(s.get("required", False)), s.get("medium", "")))
         if not any(s.required for s in slots):
             problems.append(f"{where}: needs at least one required point slot")
         rels = []
@@ -319,7 +323,10 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
                 problems.append(f"{where}: relation {r['rel']} is not in the subset")
             if r["target"] not in raw_templates:
                 problems.append(f"{where}: relation target {r['target']} is not a template")
-            rels.append(Relation(r["rel"], r["target"], r.get("medium", ""), bool(r.get("required", False))))
+            if r.get("system") and classes.get(r["system"], ClassInfo("", "", "", "")).kind != "system":
+                problems.append(f"{where}: relation system {r['system']} is not a system class in the model")
+            rels.append(Relation(r["rel"], r["target"], r.get("medium", ""), bool(r.get("required", False)),
+                                 r.get("system", "")))
         templates[tid] = Template(tid, t.get("brick_class", ""), t.get("description", ""), patterns,
                                   (lo, hi), slots, rels)
 

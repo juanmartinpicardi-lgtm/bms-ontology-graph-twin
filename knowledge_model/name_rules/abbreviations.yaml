@@ -120,6 +120,24 @@ vocabulary:
   - humidifier
   - reheat
   - box
+  - motor
+  - expansion
+  # systems
+  - system
+  - plant
+  - primary
+  - secondary
+  # refrigeration cycle and electrical detail (no class of their own in the model yet)
+  - cycle
+  - suction
+  - subcool
+  - delta
+  - phase
+  # other plain words seen in names
+  - control
+  - floor
+  - percentage
+  - reading
   # conditions
   - cooling
   - heating
@@ -271,6 +289,16 @@ abbreviations:
   hx: [heat_exchanger]
   pmp: [pump]
   rhv: [reheat, valve]
+  # pump tags (HHW = heating hot water)
+  hwp: [hot, water, pump]
+  hhwp: [hot, water, pump]
+  chwp: [chilled, water, pump]
+  pchwp: [primary, chilled, water, pump]
+  schwp: [secondary, chilled, water, pump]
+  cwp: [condenser, water, pump]
+  # systems and others
+  sys: [system]
+  exp: [expansion]
 
 # Worked examples, checked by the loader: name -> expected canonical words (first alternative).
 examples:
@@ -288,5 +316,5 @@ examples:
   "DisAirTemp": [discharge, air, temperature]
   "EFStatus": [exhaust, fan, status]
   "AHU1 SAT": [ahu, "1", supply, air, temperature]
-  "HHWP-2 S/S": [hhwp, "2", start, stop]
+  "HHWP-2 S/S": [hot, water, pump, "2", start, stop]
   "Cold Deck SAT": [cold, deck, supply, air, temperature]

@@ -57,8 +57,9 @@ def fix_class(store: Store, km: KnowledgeModel, project: str, ids: list[str], cl
         f"SELECT kind FROM nodes WHERE project = ? AND id IN ({','.join('?' * len(ids))})", [project, *ids])} if ids else set()
     if cls not in km.classes:
         raise ValueError(f"{cls} is not a class in the knowledge model")
+    allowed = {"point": {"point"}, "equipment": {"equipment", "system"}}  # an equipment node may be a plant/loop
     for kind in kinds:
-        if km.classes[cls].kind != kind:
+        if km.classes[cls].kind not in allowed[kind]:
             raise ValueError(f"{cls} is a {km.classes[cls].kind} class, cannot be given to a {kind}")
     return _update_nodes(store, project, ids, reviewer, "fix", cls=cls, keep_class=False)
 

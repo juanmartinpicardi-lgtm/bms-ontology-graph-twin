@@ -64,6 +64,7 @@ def _problems(km_dir, brick):
     (lambda d: d["points"]["generic"].append("Not_A_Class"), "Not_A_Class is not a Brick"),
     (lambda d: d["points"]["generic"].append("Zone_Air_Temperature_Setpoint"), "deprecated"),
     (lambda d: d["equipment"]["generic"].append("Zone_Air_Temperature_Sensor"), "is not a Equipment"),
+    (lambda d: d["systems"]["water"].append("Steam_Valve"), "is not a System"),
     (lambda d: d["relations"].append("controlsEverything"), "relation controlsEverything"),
 ])
 def test_subset_errors_are_caught(km_copy, brick, edit, expected):
@@ -74,6 +75,7 @@ def test_subset_errors_are_caught(km_copy, brick, edit, expected):
 @pytest.mark.parametrize("edit, expected", [
     (lambda d: d["points"].append({"role": "x", "classes": ["AHU"], "required": False}), "not a point class"),
     (lambda d: d["relations"].append({"rel": "feeds", "target": "spaceship"}), "spaceship is not a template"),
+    (lambda d: d["relations"].append({"rel": "isFedBy", "target": "ahu", "system": "AHU"}), "not a system class"),
     (lambda d: d.update(name_patterns=["(unclosed"]), "bad name pattern"),
     (lambda d: d.update(id="other"), "must equal the file name"),
 ])
