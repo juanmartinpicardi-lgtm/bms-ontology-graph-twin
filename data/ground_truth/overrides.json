@@ -1,6 +1,6 @@
 {
   "about": "Human decisions resolving brickschema ties in the ground truth. Each rule fires only when an entity's candidate set equals when_candidates exactly. Edit freely; rebuild with scripts/build_golden.py.",
-  "decided": "2026-11-08, proposed by Claude on the user's instruction; review the rationale of each rule",
+  "decided": "2026-11-08, proposed by Claude on the user's instruction; GT-001..GT-010 approved by the user as is on 2026-11-08",
   "rules": [
     {
       "id": "GT-001",
