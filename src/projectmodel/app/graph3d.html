@@ -6,10 +6,40 @@
 <title>Knowledge Graph 3D</title>
 <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.80.0/dist/3d-force-graph.min.js"></script>
 <style>
+  /* Every colour is a token; the 3D scene reads them too. Backgrounds match Streamlit's light (#ffffff)
+     and dark (#171614) themes. The app sets data-theme; the standalone page follows the system. */
   :root {
-    --bg: #0d1117; --panel: rgba(22, 27, 34, 0.94); --line: #30363d; --text: #e6edf3; --muted: #8b949e;
-    --accent: #58a6ff; --chip: #21262d;
+    color-scheme: light;
+    --bg: #ffffff; --panel: rgba(255, 255, 255, 0.94); --line: #dcdad6; --text: #2f2d2b; --muted: #74706b;
+    --accent: #0969da; --chip: #f8f8f7; --none: #a8b0b8; --dim: rgba(140, 149, 159, 0.16); --cls-light: 48%;
+    --k-equipment: #2f6fdb; --k-point: #8c959f; --k-class: #c48a00;
+    --m-parsed: #2f6fdb; --m-rule: #1a9e95; --m-template: #8250df; --m-llm: #e8590c; --m-human: #2da44e; --m-model: #c48a00;
+    --s-proposed: #bf8700; --s-confirmed: #2da44e; --s-rejected: #cf222e;
+    --r-hasPart: #5b8bd6; --r-hasPoint: #c4ccd4; --r-feeds: #e8590c; --r-type: #dcc07a; --r-subClassOf: #c48a00;
   }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e1117; --panel: rgba(22, 27, 34, 0.94); --line: #30363d; --text: #e6edf3; --muted: #8b949e;
+      --accent: #58a6ff; --chip: #262730; --none: #555c66; --dim: rgba(48, 54, 61, 0.25); --cls-light: 60%;
+      --k-equipment: #58a6ff; --k-point: #8b949e; --k-class: #f2b134;
+      --m-parsed: #58a6ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #3fb950; --m-model: #f2b134;
+      --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149;
+      --r-hasPart: #6e9fe0; --r-hasPoint: #3d4a5a; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #171614; --panel: rgba(33, 32, 29, 0.94); --line: #3b3935; --text: #edebe8; --muted: #a29e98;
+    --accent: #58a6ff; --chip: #2a2925; --none: #5c5955; --dim: rgba(59, 57, 53, 0.25); --cls-light: 60%;
+    --k-equipment: #58a6ff; --k-point: #8b949e; --k-class: #f2b134;
+    --m-parsed: #58a6ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #3fb950; --m-model: #f2b134;
+    --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149;
+    --r-hasPart: #6e9fe0; --r-hasPoint: #3d4a5a; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
+  }
+  .tip { background: var(--panel); color: var(--text); border: 1px solid var(--line); padding: 4px 8px;
+    border-radius: 6px; font: 12px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .tip .muted { color: var(--muted); }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
     font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
@@ -103,17 +133,25 @@
 <script>
 const DATA = /*__DATA__*/null;
 
-const KIND_COLOR = { equipment: "#58a6ff", point: "#8b949e", class: "#f2b134" };
-const METHOD_COLOR = { parsed: "#58a6ff", rule: "#39c5bb", template: "#a371f7", llm: "#f0883e", human: "#3fb950", model: "#f2b134" };
-const STATUS_COLOR = { proposed: "#d29922", confirmed: "#3fb950", rejected: "#f85149" };
+// Colours come from the CSS tokens above, so the scene always matches the page theme.
+const KIND_COLOR = {}, METHOD_COLOR = {}, STATUS_COLOR = {};
 const REL = {
-  hasPart:    { color: "#6e9fe0", width: 1.2, arrow: 3, label: "has part" },
-  hasPoint:   { color: "#3d4a5a", width: 0.2, arrow: 0, label: "has point" },
-  feeds:      { color: "#ff7b54", width: 1.6, arrow: 4, label: "feeds" },
-  type:       { color: "#8a6d1f", width: 0.2, arrow: 0, label: "is a (class)" },
-  subClassOf: { color: "#f2b134", width: 1.0, arrow: 3, label: "subclass of" },
+  hasPart:    { width: 1.2, arrow: 3, label: "has part" },
+  hasPoint:   { width: 0.2, arrow: 0, label: "has point" },
+  feeds:      { width: 1.6, arrow: 4, label: "feeds" },
+  type:       { width: 0.2, arrow: 0, label: "is a (class)" },
+  subClassOf: { width: 1.0, arrow: 3, label: "subclass of" },
 };
-const DIM = "rgba(48, 54, 61, 0.25)";
+const P = {};  // page colours
+function readTheme() {
+  const s = getComputedStyle(document.documentElement), v = n => s.getPropertyValue(n).trim();
+  for (const k of ["equipment", "point", "class"]) KIND_COLOR[k] = v(`--k-${k}`);
+  for (const k of ["parsed", "rule", "template", "llm", "human", "model"]) METHOD_COLOR[k] = v(`--m-${k}`);
+  for (const k of ["proposed", "confirmed", "rejected"]) STATUS_COLOR[k] = v(`--s-${k}`);
+  for (const k of Object.keys(REL)) REL[k].color = v(`--r-${k}`);
+  Object.assign(P, { bg: v("--bg"), dim: v("--dim"), none: v("--none"), clsLight: v("--cls-light") });
+}
+readTheme();
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmt = v => typeof v === "number" ? (Number.isInteger(v) ? v : v.toFixed(2)) : v;
@@ -130,9 +168,9 @@ const conf = n => n.prov && typeof n.prov.confidence === "number" ? n.prov.confi
 
 // class colour: stable hue per class name
 const hue = s => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
-const clsColor = c => c ? `hsl(${hue(c)}, 65%, 60%)` : "#555";
+const clsColor = c => c ? `hsl(${hue(c)}, 65%, ${P.clsLight})` : P.none;
 const confColor = c => {
-  if (c === null) return "#555";
+  if (c === null) return P.none;
   // red (0) -> amber (0.5) -> green (1)
   const r = c < 0.5 ? 248 : Math.round(248 - (c - 0.5) * 2 * 185);
   const g = c < 0.5 ? Math.round(81 + c * 240) : 201;
@@ -146,12 +184,12 @@ function baseColor(n) {
   switch (state.colorBy) {
     case "cls": return n.kind === "class" ? KIND_COLOR.class : clsColor(n.cls);
     case "confidence": return n.kind === "class" ? KIND_COLOR.class : confColor(conf(n));
-    case "method": return METHOD_COLOR[n.prov?.method] || "#555";
-    case "status": return n.kind === "class" ? KIND_COLOR.class : (STATUS_COLOR[n.prov?.status] || "#555");
+    case "method": return METHOD_COLOR[n.prov?.method] || P.none;
+    case "status": return n.kind === "class" ? KIND_COLOR.class : (STATUS_COLOR[n.prov?.status] || P.none);
     default: return KIND_COLOR[n.kind];
   }
 }
-const nodeColor = n => highlight && !highlight.has(n.id) ? DIM : baseColor(n);
+const nodeColor = n => highlight && !highlight.has(n.id) ? P.dim : baseColor(n);
 const nodeSize = n => n.kind === "equipment" ? 1 + Math.sqrt(n.attrs?.points || 1) * 0.5
   : n.kind === "class" ? 1.2 + Math.sqrt(n.attrs?.instances || 0) * 0.3 : 0.35;
 
@@ -189,16 +227,15 @@ function visible() {
 // --- graph -------------------------------------------------------------------------------------
 const el = document.getElementById("graph");
 const Graph = ForceGraph3D()(el)
-  .backgroundColor("#0d1117")
+  .backgroundColor(P.bg)
   .cooldownTime(7000)
   .nodeId("id")
-  .nodeLabel(n => `<div style="background:#161b22;border:1px solid #30363d;padding:4px 8px;border-radius:6px;font:12px sans-serif">
-      <b>${esc(n.label)}</b><br><span style="color:#8b949e">${esc(n.kind)}${n.cls ? " · " + esc(n.cls) : ""}${conf(n) !== null ? " · " + conf(n).toFixed(2) : ""}</span></div>`)
+  .nodeLabel(n => `<div class="tip"><b>${esc(n.label)}</b><br><span class="muted">${esc(n.kind)}${n.cls ? " · " + esc(n.cls) : ""}${conf(n) !== null ? " · " + conf(n).toFixed(2) : ""}</span></div>`)
   .nodeVal(nodeSize)
   .nodeColor(nodeColor)
   .nodeOpacity(0.92)
   .nodeResolution(10)
-  .linkColor(l => highlight && !(highlight.has(l.s) && highlight.has(l.t)) ? DIM : REL[l.rel]?.color || "#444")
+  .linkColor(l => highlight && !(highlight.has(l.s) && highlight.has(l.t)) ? P.dim : REL[l.rel]?.color || P.none)
   .linkWidth(l => (state.selected?.kind === "link" && state.selected.link === l ? 3 : REL[l.rel]?.width ?? 0.3))
   .linkOpacity(0.55)
   .linkDirectionalArrowLength(l => REL[l.rel]?.arrow || 0)
@@ -206,8 +243,7 @@ const Graph = ForceGraph3D()(el)
   .linkDirectionalParticles(l => state.showFlow && l.rel === "feeds" ? 3 : 0)
   .linkDirectionalParticleWidth(1.6)
   .linkDirectionalParticleSpeed(0.006)
-  .linkLabel(l => `<div style="background:#161b22;border:1px solid #30363d;padding:4px 8px;border-radius:6px;font:12px sans-serif">
-      ${esc(byId.get(l.s).label)} <b>${esc(REL[l.rel]?.label || l.rel)}</b> ${esc(byId.get(l.t).label)}</div>`)
+  .linkLabel(l => `<div class="tip">${esc(byId.get(l.s).label)} <b>${esc(REL[l.rel]?.label || l.rel)}</b> ${esc(byId.get(l.t).label)}</div>`)
   .onNodeClick(n => selectNode(n.id, true))
   .onLinkClick(l => selectLink(l))
   .onBackgroundClick(() => clearSelection())
@@ -239,6 +275,11 @@ Graph.onEngineStop(firstFit);
 setTimeout(firstFit, 7500);  // just after the 7 s cooldown; the engine-stop event can be late in an embedded frame
 ["pointerdown", "wheel"].forEach(ev => el.addEventListener(ev, () => { fitted = true; }, { once: true }));
 window.addEventListener("resize", () => Graph.width(window.innerWidth).height(window.innerHeight));
+
+// Standalone page: follow the system theme as it changes (the app passes its theme instead).
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+  readTheme(); Graph.backgroundColor(P.bg); refresh(false);
+});
 
 function refresh(resetData) {
   if (resetData) Graph.graphData(visible());
@@ -403,7 +444,7 @@ function renderLegend() {
   if (state.colorBy === "kind") h += Object.entries(KIND_COLOR).filter(([k]) => k !== "class" || state.showModel).map(([k, c]) => sw(c, k)).join("");
   if (state.colorBy === "method") h += Object.entries(METHOD_COLOR).map(([k, c]) => sw(c, k)).join("");
   if (state.colorBy === "status") h += Object.entries(STATUS_COLOR).map(([k, c]) => sw(c, k)).join("");
-  if (state.colorBy === "confidence") h += [0, 0.5, 0.8, 1].map(v => sw(confColor(v), `confidence ${v}`)).join("") + sw("#555", "no confidence");
+  if (state.colorBy === "confidence") h += [0, 0.5, 0.8, 1].map(v => sw(confColor(v), `confidence ${v}`)).join("") + sw(P.none, "no confidence");
   if (state.colorBy === "cls") {
     const cnt = new Map();
     Graph.graphData().nodes.forEach(n => { if (n.kind === "equipment") cnt.set(n.cls, (cnt.get(n.cls) || 0) + 1); });

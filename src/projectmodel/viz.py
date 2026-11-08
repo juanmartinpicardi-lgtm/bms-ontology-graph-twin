@@ -70,7 +70,11 @@ def graph_payload(store: Store, project: str, km: KnowledgeModel | None = None) 
     return {"project": project, "nodes": nodes, "links": links, "counts": {"nodes": kinds, "links": rels}}
 
 
-def render_html(payload: dict) -> str:
-    """The standalone 3D viewer page with the payload embedded."""
+def render_html(payload: dict, theme: str | None = None) -> str:
+    """The 3D viewer page with the payload embedded. `theme` ("light" / "dark") pins the colours to the
+    host app's theme; without it the page follows the system setting."""
     data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
-    return TEMPLATE.read_text().replace("/*__DATA__*/null", data)
+    html = TEMPLATE.read_text().replace("/*__DATA__*/null", data)
+    if theme in ("light", "dark"):
+        html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
+    return html

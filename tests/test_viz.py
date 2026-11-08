@@ -57,6 +57,14 @@ def test_rejected_link_left_out(store):
     assert hp == [(other, "human")]
 
 
+def test_render_theme(store):
+    g = graph_payload(store, P)
+    assert 'data-theme="dark"' in render_html(g, "dark")
+    assert 'data-theme="light"' in render_html(g, "light")
+    assert "data-theme=" not in render_html(g).split("<head>")[0]  # standalone: follows the system
+    assert "data-theme=" not in render_html(g, "pink").split("<head>")[0]
+
+
 def test_render_embeds_data_safely(store):
     g = graph_payload(store, P)
     g["nodes"][0]["label"] = "</script><b>x"

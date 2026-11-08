@@ -37,4 +37,5 @@ with st.sidebar:
                "For a full-window view: `.venv/bin/python scripts/export_graph3d.py " + project + "`")
 
 # Labels come from source exports; the viewer escapes every string it puts into the page.
-st.iframe(render_html(graph_payload(store, project, knowledge_model())), height=height)
+# The viewer takes the app's light/dark theme so its background matches the page around it.
+st.iframe(render_html(graph_payload(store, project, knowledge_model()), st.context.theme.type), height=height)
