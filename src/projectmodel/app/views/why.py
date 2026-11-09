@@ -65,7 +65,9 @@ with st.container(border=True):
                "the links from the equipment templates.")
 
 st.header("What it unlocks: agents that act")
-st.write("**\"Zone 1-2-81 is too warm. What's wrong?\"** An agent walks the graph instead of the drawings:")
+with st.container(horizontal=True, vertical_alignment="center"):
+    st.write("**\"Zone 1-2-81 is too warm. What's wrong?\"** An agent walks the graph instead of the drawings:")
+    st.page_link("views/agent_tour.py", label="Watch the agent do it", icon=":material/play_circle:", width="content")
 # Each step opens that equipment in 3D with the "Chilled water running warm" scenario, so the walk can be shown live.
 DEMO = "alpha/names_paths"
 steps = [

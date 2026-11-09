@@ -23,6 +23,7 @@ st.set_page_config(page_title="Project Model", page_icon=":material/hub:", layou
 overview = [
     st.Page(APP / "views/why.py", title="Why it matters", icon=":material/bolt:", default=True),
     st.Page(APP / "views/how.py", title="How it works", icon=":material/schema:", url_path="how-it-works"),
+    st.Page(APP / "views/agent_tour.py", title="Agent tour", icon=":material/smart_toy:", url_path="agent-tour"),
 ]
 projects = [
     st.Page(APP / "views/projects.py", title="All projects", icon=":material/apartment:", url_path="projects"),

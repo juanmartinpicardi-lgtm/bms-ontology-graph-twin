@@ -243,14 +243,23 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
     }
 
 
+DATA_SLOT = "/*__DATA__*/null"
+
+
+def render_template(theme: str | None = None) -> str:
+    """The 3D equipment page with the JS modules inlined and DATA_SLOT still open, for a host that fills in several
+    payloads itself (the agent tour)."""
+    modules = "\n".join([(APP / "viewer_controls.js").read_text()]
+                        + [(APP / "equipment3d" / m).read_text() for m in MODULES])
+    html = (APP / "equipment3d.html").read_text().replace("/*__MODULES__*/", modules)
+    if theme in ("light", "dark"):
+        html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
+    return html
+
+
 def render_html(payload: dict, theme: str | None = None) -> str:
     """The 3D equipment page with the payload and the JS modules inlined, so it works in Streamlit's iframe and as a
     standalone file (three.js comes from the CDN). `theme` ("light" / "dark") pins the colours to the host app's
     theme; without it the page follows the system setting."""
     data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
-    modules = "\n".join([(APP / "viewer_controls.js").read_text()]
-                        + [(APP / "equipment3d" / m).read_text() for m in MODULES])
-    html = (APP / "equipment3d.html").read_text().replace("/*__MODULES__*/", modules).replace("/*__DATA__*/null", data)
-    if theme in ("light", "dark"):
-        html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
-    return html
+    return render_template(theme).replace(DATA_SLOT, data)

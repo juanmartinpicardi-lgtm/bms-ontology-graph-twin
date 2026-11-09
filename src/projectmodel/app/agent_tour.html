@@ -1,0 +1,1250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent tour</title>
+<style>
+  /* Tokens follow the other viewers (graph3d.html, equipment3d.html): the app sets data-theme, standalone follows the
+     system. --agent is the agent's own colour: everything it touches turns that colour. */
+  :root {
+    color-scheme: light;
+    --bg: #f6f6f4; --panel: #ffffff; --glass: rgba(255, 255, 255, 0.86); --line: #e3e1dc; --text: #25231f;
+    --muted: #77726b; --chip: #f1f0ed; --node: #cfccc5; --edge: #b3aea5; --grid: rgba(0, 0, 0, 0.07);
+    --agent: #6d5dfc; --agent2: #1aa6bf; --ok: #1f9d55; --warn: #c98a12; --fault: #d6453b; --cool: #2f8fe0;
+    --shadow: 0 10px 40px rgba(30, 25, 15, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #171614; --panel: #1d1c1a; --glass: rgba(29, 28, 26, 0.86); --line: #34322e; --text: #edebe8;
+      --muted: #a29e98; --chip: #2a2925; --node: #4d4a44; --edge: #5c5852; --grid: rgba(255, 255, 255, 0.05);
+      --agent: #8f83ff; --agent2: #5ee0f0; --ok: #3fd17a; --warn: #f2b134; --fault: #ff5a4e; --cool: #3fb4ff;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #171614; --panel: #1d1c1a; --glass: rgba(29, 28, 26, 0.86); --line: #34322e; --text: #edebe8;
+    --muted: #a29e98; --chip: #2a2925; --node: #4d4a44; --edge: #5c5852; --grid: rgba(255, 255, 255, 0.05);
+    --agent: #8f83ff; --agent2: #5ee0f0; --ok: #3fd17a; --warn: #f2b134; --fault: #ff5a4e; --cool: #3fb4ff;
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
+    padding: 5px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  button:hover { border-color: var(--agent); }
+  button.primary { background: var(--agent); border-color: var(--agent); color: #fff; font-weight: 600; }
+  button.primary:hover { filter: brightness(1.08); }
+  button.ghost { background: none; border-color: transparent; color: var(--muted); }
+  button.ghost:hover { color: var(--text); border-color: var(--line); }
+  svg.i { width: 15px; height: 15px; fill: currentColor; flex: none; }
+
+  #app { position: fixed; inset: 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 10px; padding: 4px 2px 2px; }
+
+  /* --- top: the question, the controls ------------------------------------------------------- */
+  #top { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .ask { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700;
+    font-size: 12px; color: #fff; background: linear-gradient(135deg, #f2994a, #eb5757); }
+  .bubble { background: var(--panel); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; padding: 6px 13px;
+    min-width: 0; box-shadow: var(--shadow); }
+  .bubble .who { display: block; font-size: 10.5px; color: var(--muted); }
+  .bubble .q { font-size: 15.5px; font-weight: 600; letter-spacing: -.01em; }
+  .bubble .q .z { color: var(--fault); }
+  #controls { display: flex; gap: 6px; align-items: center; }
+  #speed { min-width: 44px; justify-content: center; }
+
+  /* --- step rail --------------------------------------------------------------------------------- */
+  #rail { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
+  .stp { position: relative; padding: 7px 8px 6px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 11.5px;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border: 1px solid transparent; }
+  .stp:hover { border-color: var(--line); color: var(--text); }
+  .stp b { font-variant-numeric: tabular-nums; margin-right: 5px; opacity: .7; }
+  .stp::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: var(--line); }
+  .stp .fill { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; border-radius: 3px; z-index: 1;
+    background: linear-gradient(90deg, var(--agent), var(--agent2)); transition: width .4s ease; }
+  .stp.done { color: var(--text); } .stp.done .fill { width: 100%; }
+  .stp.cur { color: var(--text); font-weight: 600; background: color-mix(in srgb, var(--agent) 9%, transparent); }
+  .stp.cur .fill { width: 50%; animation: grow 8s linear forwards; }
+  .stp.fin.done { color: var(--fault); }
+  @keyframes grow { to { width: 92%; } }
+
+  /* --- the two panels ---------------------------------------------------------------------------- */
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 12px; min-height: 0; }
+  .panel { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+    min-height: 0; }
+  .ptitle { position: absolute; top: 10px; left: 12px; z-index: 4; display: flex; align-items: center; gap: 8px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; pointer-events: none; }
+  .ptitle .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--agent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--agent) 25%, transparent); }
+
+  /* left: the graph */
+  #g { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  #g:active { cursor: grabbing; }
+  #glabels { position: absolute; inset: 0; pointer-events: none; z-index: 2; overflow: hidden; }
+  #agent { position: absolute; top: 34px; left: 12px; z-index: 4; display: flex; align-items: center; gap: 8px; padding: 4px 10px 4px 6px;
+    border-radius: 999px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(8px); font-size: 12px; }
+  #agent .orb { width: 18px; height: 18px; border-radius: 50%; position: relative;
+    background: radial-gradient(circle at 35% 35%, #fff 0 8%, var(--agent2) 30%, var(--agent) 75%); box-shadow: 0 0 12px var(--agent); }
+  #agent.busy .orb { animation: orb 1.2s ease-in-out infinite; }
+  #agent.done .orb { background: radial-gradient(circle at 35% 35%, #fff 0 8%, #ffb199 30%, var(--fault) 75%); box-shadow: 0 0 12px var(--fault); }
+  @keyframes orb { 50% { transform: scale(1.18); box-shadow: 0 0 22px var(--agent2); } }
+  #agent .st { color: var(--muted); } #agent .st b { color: var(--text); font-weight: 600; }
+  #hud { position: absolute; top: 10px; right: 12px; z-index: 4; display: flex; gap: 12px; font-size: 11px; color: var(--muted);
+    padding: 5px 10px; border-radius: 10px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(8px); }
+  #hud b { color: var(--text); font-size: 13px; font-variant-numeric: tabular-nums; display: inline-block; transition: transform .2s, color .2s; }
+  #hud b.bump { transform: scale(1.35); color: var(--agent); }
+  #hud .zero b { color: var(--ok); }
+
+  /* graph shapes; --k is world units per screen pixel, so strokes and text keep their size at any zoom */
+  #g .bgdots { fill: url(#dots); }
+  .e { stroke: var(--edge); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .35; transition: opacity .6s, stroke .6s; }
+  .e.has { stroke-dasharray: 2 3; }
+  .e.pe { opacity: 0; }
+  .e.pe.on { opacity: .45; }
+  .e.lit { opacity: .9; stroke: var(--agent); }
+  .e.pruned { opacity: .5; stroke: var(--muted); stroke-dasharray: 3 4; }
+  svg.focus .e:not(.lit):not(.pe):not(.pruned) { opacity: .12; }
+  .n .core { r: calc(var(--r) * var(--ks)); fill: var(--node); stroke: var(--panel); stroke-width: calc(1.2px * var(--k));
+    transition: fill .5s, opacity .6s; }
+  .n .halo { r: calc(var(--r) * var(--ks)); fill: none; stroke: var(--agent); stroke-width: calc(1.6px * var(--k)); opacity: 0;
+    transform-box: fill-box; transform-origin: center; }
+  .n { transition: opacity .6s; }
+  svg.focus .n:not(.lit) { opacity: .3; }
+  .n.eq .core { fill: var(--panel); stroke: var(--edge); stroke-width: calc(1.6px * var(--k)); }
+  .n.big .core { stroke-width: calc(2.2px * var(--k)); }
+  .n.visited .core { stroke: var(--agent); stroke-width: calc(2.4px * var(--k)); }
+  .n.active .halo { animation: halo 1.6s ease-out infinite; }
+  .n.ok .core { fill: var(--ok); } .n.warn .core { fill: var(--warn); } .n.fault .core { fill: var(--fault); }
+  .n.eq.ok .core, .n.eq.warn .core, .n.eq.fault .core { stroke: var(--panel); }
+  .n.fault .halo { stroke: var(--fault); animation: halo 1.6s ease-out infinite; }
+  .n.info .core { fill: var(--agent2); }
+  .n.pt .core { transform: scale(0); transform-box: fill-box; transform-origin: center; transition: transform .5s cubic-bezier(.3, 1.6, .5, 1), fill .5s; }
+  .n.pt.on .core { transform: scale(1); }
+  .n.pruned .core { fill: var(--chip); stroke: var(--muted); stroke-dasharray: 2 2; }
+  .n.ping .core { animation: ping .9s ease-out both; }
+  @keyframes halo { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(3.2); opacity: 0; } }
+  @keyframes ping { 0%, 100% { fill: var(--node); } 30% { fill: var(--agent2); } }
+  .walk { fill: none; stroke: var(--agent); stroke-width: calc(2.6px * var(--k)); stroke-linecap: round; filter: url(#glow); }
+  .walk.side { stroke-width: calc(1.6px * var(--k)); opacity: .8; }
+  .walk.causal { stroke: var(--fault); stroke-dasharray: calc(9px * var(--k)) calc(7px * var(--k)) !important;
+    animation: flow .7s linear infinite; stroke-width: calc(3.2px * var(--k)); }
+  @keyframes flow { to { stroke-dashoffset: calc(16px * var(--k)); } }
+  .comet { r: calc(6px * var(--k)); fill: #fff; stroke: var(--agent2); stroke-width: calc(3px * var(--k)); filter: url(#glow2); }
+  .ripple { fill: none; stroke: var(--agent2); stroke-width: calc(2px * var(--k)); transform-box: fill-box; transform-origin: center;
+    animation: ripple 1.1s ease-out forwards; }
+  .ripple.red { stroke: var(--fault); }
+  @keyframes ripple { from { transform: scale(1); opacity: .9; } to { transform: scale(7); opacity: 0; } }
+  .scanring { fill: none; stroke: var(--agent2); stroke-width: calc(2px * var(--k)); opacity: .7; }
+  .xmark { stroke: var(--fault); stroke-width: calc(2.4px * var(--k)); stroke-linecap: round; }
+
+  /* graph labels (HTML, positioned from the camera) */
+  .gl { position: absolute; transform: translate(-50%, 0); font-size: 11px; white-space: nowrap; color: var(--muted);
+    text-shadow: 0 0 4px var(--panel), 0 0 2px var(--panel); transition: opacity .5s, color .4s; }
+  .gl.eq { color: var(--text); font-weight: 600; font-size: 12px; }
+  .gl.eq small { display: block; text-align: center; font-weight: 400; font-size: 10px; color: var(--muted); }
+  .gl.minor { font-size: 10px; }
+  .gl.hide { opacity: 0; }
+  .gl.dim { opacity: .35; }
+  .gl.lit { color: var(--text); }
+  .gl.fault { color: var(--fault); }
+  .gl.pruned { text-decoration: line-through; opacity: .6; }
+  .tag { position: absolute; display: flex; align-items: center; gap: 6px; padding: 2px 4px 2px 8px; border-radius: 999px;
+    background: var(--glass); border: 1px solid var(--line); font-size: 11px; white-space: nowrap; backdrop-filter: blur(4px);
+    animation: tagIn .4s cubic-bezier(.3, 1.4, .5, 1); box-shadow: 0 2px 10px rgba(0, 0, 0, .12); }
+  .tag.l { transform: translate(-100%, -50%); } .tag.r { transform: translate(0, -50%); }
+  .tag .v { padding: 1px 7px; border-radius: 999px; background: var(--chip); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .tag.fault { border-color: var(--fault); } .tag.fault .v { background: var(--fault); color: #fff; }
+  .tag.warn { border-color: var(--warn); } .tag.warn .v { background: var(--warn); color: #1d1c1a; }
+  .tag.ok .v { color: var(--ok); }
+  @keyframes tagIn { from { opacity: 0; filter: blur(4px); } }
+  #tip { position: absolute; z-index: 8; pointer-events: none; display: none; max-width: 280px; padding: 7px 10px; border-radius: 8px;
+    background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 11.5px; }
+  #tip b { display: block; font-size: 12.5px; }
+  #tip .m { color: var(--muted); }
+
+  /* agent trace (bottom of the graph panel) */
+  #trace { position: absolute; left: 0; right: 0; bottom: 0; height: 36%; z-index: 3; padding: 26px 14px 10px;
+    background: linear-gradient(to bottom, transparent, var(--panel) 22px); overflow: hidden; transition: height .8s ease; }
+  #left.wide #trace { height: 22%; }
+  #trace .scroll { height: 100%; overflow-y: auto; scrollbar-width: none; padding-right: 4px;
+    mask-image: linear-gradient(to bottom, transparent, #000 26px); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 26px); }
+  #trace .scroll::-webkit-scrollbar { display: none; }
+  #trace .hd { position: absolute; top: 6px; left: 14px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; }
+  .ln { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 4px; padding: 2px 0; animation: lnIn .3s ease-out; }
+  .ln .ic { color: var(--muted); text-align: center; font-weight: 700; }
+  .ln.think .ic { color: var(--agent); }
+  .ln.think .tx { color: var(--text); font-size: 13px; }
+  .ln.call { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--agent); }
+  .ln.call .ok { color: var(--ok); margin-left: 6px; }
+  .ln.res { font-size: 12px; color: var(--muted); }
+  .ln.res b { color: var(--text); font-weight: 600; }
+  .ln.res .cls, .cls { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; padding: 0 5px; border-radius: 4px;
+    background: var(--chip); color: var(--muted); }
+  .ln.res .prov { font-size: 10.5px; color: var(--muted); opacity: .85; }
+  .ln.res .val { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .ln.res .val.fault { color: var(--fault); } .ln.res .val.warn { color: var(--warn); } .ln.res .val.ok { color: var(--ok); }
+  .caret { display: inline-block; width: 7px; height: 14px; margin-left: 2px; vertical-align: -2px; background: var(--agent); animation: blink 1s steps(1) infinite; }
+  .spin { display: inline-block; width: 10px; height: 10px; margin-left: 8px; border: 2px solid var(--agent); border-right-color: transparent;
+    border-radius: 50%; animation: spin .6s linear infinite; vertical-align: -1px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes lnIn { from { opacity: 0; transform: translateY(4px); } }
+
+  /* right: equipment */
+  #right { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); }
+  #crumbs { display: flex; align-items: center; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--line); min-height: 46px;
+    overflow-x: auto; scrollbar-width: none; }
+  #crumbs .ptitle { position: static; margin-right: 8px; }
+  .crumb { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--chip); font-size: 12px; white-space: nowrap; cursor: pointer; animation: crumbIn .5s cubic-bezier(.3, 1.4, .5, 1); }
+  .crumb:hover { border-color: var(--agent); }
+  .crumb.cur { border-color: var(--agent); background: color-mix(in srgb, var(--agent) 12%, var(--chip)); font-weight: 600; }
+  .crumb .sd { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .crumb.fault .sd { background: var(--fault); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fault) 25%, transparent); }
+  .crumb.warn .sd { background: var(--warn); }
+  .crumb small { color: var(--muted); font-weight: 400; }
+  .sep { color: var(--muted); font-size: 11px; animation: crumbIn .5s; }
+  @keyframes crumbIn { from { opacity: 0; transform: translateX(-8px) scale(.9); } }
+  #stage { position: relative; overflow: hidden; background: var(--bg); }
+  #stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; pointer-events: none;
+    transform: scale(1.04); filter: blur(6px); transition: opacity .7s ease, transform .9s cubic-bezier(.2, .8, .2, 1), filter .7s; }
+  #stage iframe.on { opacity: 1; transform: none; filter: none; pointer-events: auto; }
+  #empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted); transition: opacity .6s; }
+  #empty .ring { width: 120px; height: 120px; margin: 0 auto 14px; border-radius: 50%; border: 1px dashed var(--line);
+    display: grid; place-items: center; animation: spin 18s linear infinite; }
+  #empty .ring::after { content: ""; width: 60px; height: 60px; border-radius: 50%; border: 1px dashed var(--line); }
+  #empty.gone { opacity: 0; pointer-events: none; }
+  #titlecard { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 5; opacity: 0; }
+  #titlecard.on { animation: card 1.9s ease forwards; }
+  #titlecard .tc { text-align: center; padding: 18px 30px; border-radius: 18px; background: var(--glass); backdrop-filter: blur(10px);
+    border: 1px solid var(--line); box-shadow: var(--shadow); }
+  #titlecard .k { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--agent); font-weight: 700; }
+  #titlecard .t { font-size: 30px; font-weight: 700; letter-spacing: -.02em; }
+  #titlecard .s { color: var(--muted); font-size: 12.5px; }
+  @keyframes card { 0% { opacity: 0; transform: scale(.94); } 18%, 70% { opacity: 1; transform: none; } 100% { opacity: 0; transform: scale(1.03); } }
+  .ov { position: absolute; left: 12px; bottom: 12px; z-index: 4; width: min(340px, calc(100% - 24px)); padding: 10px 12px 12px; border-radius: 12px;
+    background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(10px); box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .5s, transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .ov.on { opacity: 1; transform: none; pointer-events: auto; }
+  .ov h4 { margin: 0 0 2px; font-size: 12.5px; }
+  .ov .sub { color: var(--muted); font-size: 11.5px; margin-bottom: 8px; }
+  .ov .sub b { color: var(--fault); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(17px, 1fr)); gap: 3px; }
+  .tile { aspect-ratio: 1; border-radius: 4px; background: var(--chip); transform: scale(.4); opacity: .3; transition: transform .35s cubic-bezier(.3, 1.6, .5, 1), opacity .3s, background .6s; }
+  .tile.on { transform: none; opacity: 1; }
+  .tile.me { outline: 2px solid var(--text); outline-offset: 1px; }
+  .ramp { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; font-size: 10.5px; color: var(--muted); }
+  .ramp i { flex: 1; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #3fb4ff, #f2b134, #ff5a4e); }
+  table.rows { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.rows td { padding: 4px 4px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  table.rows tr { opacity: 0; transition: opacity .4s; } table.rows tr.on { opacity: 1; }
+  table.rows td:first-child { font-weight: 600; }
+  table.rows .fault { color: var(--fault); font-weight: 600; } table.rows .warn { color: var(--warn); font-weight: 600; } table.rows .ok { color: var(--ok); }
+  table.rows th { text-align: left; font-weight: 500; color: var(--muted); font-size: 10.5px; padding: 0 4px 3px; }
+
+  /* evidence strip */
+  #evidence { border-top: 1px solid var(--line); padding: 8px 10px 10px; min-height: 112px; }
+  #evidence .hd { display: flex; justify-content: space-between; font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+  #cards { display: flex; gap: 8px; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 2px; scrollbar-width: thin; }
+  #cards:empty::after { content: "Points the agent reads collect here, with live values and where each fact came from."; color: var(--muted);
+    font-size: 12px; padding: 18px 4px; }
+  .ev { flex: none; width: 178px; padding: 7px 10px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel);
+    position: relative; animation: evIn .5s cubic-bezier(.3, 1.4, .5, 1); cursor: pointer; }
+  .ev::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--muted); }
+  .ev.fault::before { background: var(--fault); } .ev.warn::before { background: var(--warn); } .ev.ok::before { background: var(--ok); }
+  .ev.info::before { background: var(--agent2); }
+  .ev.new { box-shadow: 0 0 0 2px var(--agent); }
+  .ev .eq { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev .nm { font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev .vl { font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1.2; }
+  .ev.fault .vl { color: var(--fault); } .ev.warn .vl { color: var(--warn); }
+  .ev .vd { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev.fault .vd { color: var(--fault); } .ev.warn .vd { color: var(--warn); }
+  .ev .pv { font-size: 9.5px; color: var(--muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .8; }
+  @keyframes evIn { from { opacity: 0; transform: translateY(10px) scale(.95); } }
+
+  /* splash and finale */
+  .veil { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; padding: 18px;
+    background: color-mix(in srgb, var(--bg) 55%, transparent); backdrop-filter: blur(7px); transition: opacity .6s; }
+  .veil.hidden { opacity: 0; pointer-events: none; }
+  #splash .box { text-align: center; max-width: 620px; }
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--agent); font-weight: 700; }
+  #splash h1 { font-size: 40px; line-height: 1.1; letter-spacing: -.03em; margin: 14px 0 12px; }
+  #splash h1 .z { background: linear-gradient(90deg, var(--fault), var(--warn)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #splash p { color: var(--muted); font-size: 15px; margin: 0 auto 22px; max-width: 520px; }
+  #splash .go { font-size: 15px; padding: 11px 22px; border-radius: 12px; box-shadow: 0 8px 30px color-mix(in srgb, var(--agent) 45%, transparent); }
+  #splash .go svg { width: 18px; height: 18px; }
+  #splash .alt { margin-top: 12px; }
+  #splash .fine { margin-top: 18px; font-size: 11.5px; color: var(--muted); }
+  #finale { align-items: start; overflow-y: auto; }
+  .fcard { width: min(1040px, 100%); margin: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow); padding: 20px 22px 16px; animation: fIn .7s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes fIn { from { opacity: 0; transform: translateY(24px) scale(.97); } }
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; padding: 3px 9px;
+    border-radius: 999px; color: var(--fault); background: color-mix(in srgb, var(--fault) 13%, transparent); }
+  .badge .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--fault); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--fault) 60%, transparent); } 100% { box-shadow: 0 0 0 9px transparent; } }
+  .fcard h2 { font-size: 25px; letter-spacing: -.02em; margin: 8px 0 4px; line-height: 1.2; }
+  .fcard .lead { color: var(--muted); font-size: 14px; margin: 0 0 14px; max-width: 900px; }
+  .fcard .lead b { color: var(--text); }
+  .chain { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: stretch; gap: 6px; margin-bottom: 14px; }
+  .link { padding: 9px 11px; border-radius: 12px; border: 1px solid var(--line); background: var(--chip); }
+  .link.root { border-color: var(--fault); background: color-mix(in srgb, var(--fault) 10%, var(--panel)); }
+  .link .k { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .link .t { font-weight: 600; font-size: 13px; }
+  .link .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--fault); }
+  .link .v.warn { color: var(--warn); }
+  .link .s { font-size: 11px; color: var(--muted); }
+  .arrow { display: grid; place-items: center; color: var(--fault); position: relative; width: 26px; }
+  .arrow i { display: block; width: 26px; height: 2px; background: repeating-linear-gradient(90deg, var(--fault) 0 6px, transparent 6px 10px);
+    background-size: 20px 2px; animation: dash .6s linear infinite; }
+  .arrow::after { content: "▶"; position: absolute; right: -4px; font-size: 9px; }
+  @keyframes dash { to { background-position: 20px 0; } }
+  .cols { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr); gap: 18px; }
+  .fcard h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 8px; }
+  .impact { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .imp { padding: 9px 10px; border-radius: 12px; background: var(--chip); }
+  .imp .n { font-size: 24px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .imp .n.r { color: var(--fault); } .imp .n.g { color: var(--ok); }
+  .imp .l { font-size: 11px; color: var(--muted); line-height: 1.3; }
+  .wo { border: 1px dashed var(--line); border-radius: 12px; padding: 10px 12px; font-size: 12px; background: var(--bg); }
+  .wo .top { display: flex; justify-content: space-between; gap: 8px; font-weight: 700; margin-bottom: 4px; }
+  .wo .top span { font-weight: 500; color: var(--muted); font-size: 11px; }
+  .wo dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 0; }
+  .wo dt { color: var(--muted); } .wo dd { margin: 0; }
+  ol.todo { margin: 0; padding: 0; list-style: none; counter-reset: t; display: grid; gap: 7px; }
+  ol.todo li { counter-increment: t; display: grid; grid-template-columns: 24px 1fr; gap: 8px; font-size: 12.5px; color: var(--muted);
+    animation: lnIn .5s both; }
+  ol.todo li::before { content: counter(t); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11px;
+    font-weight: 700; background: color-mix(in srgb, var(--agent) 14%, transparent); color: var(--agent); }
+  ol.todo li b { color: var(--text); }
+  ol.todo li:first-child::before { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+  .pt-link { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; padding: 0 5px; border-radius: 4px;
+    background: var(--chip); color: var(--agent); cursor: pointer; border: 1px solid transparent; white-space: nowrap; }
+  .pt-link:hover { border-color: var(--agent); }
+  .ffoot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .stats { display: flex; gap: 14px; font-size: 11.5px; color: var(--muted); flex-wrap: wrap; }
+  .stats b { color: var(--text); font-size: 13px; }
+  .stats .zero b { color: var(--ok); }
+  .ffoot .btns { display: flex; gap: 6px; }
+  .fine { font-size: 11px; color: var(--muted); margin-top: 8px; }
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .chain { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); margin: auto; }
+    .cols { grid-template-columns: 1fr; }
+    #hud span:nth-child(n+4) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <div class="ask">
+      <div class="avatar" title="Facility manager">FM</div>
+      <div class="bubble"><span class="who">Facility manager · hot call</span>
+        <span class="q"><span class="z" id="qZone">Zone</span> is too warm. What's wrong?</span></div>
+    </div>
+    <div id="controls">
+      <button class="ghost" id="restart" title="Start over (R)"><svg class="i" viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+      <button class="ghost" id="prev" title="Previous step (←)"><svg class="i" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+      <button class="primary" id="play" title="Play / pause (space)"><svg class="i" viewBox="0 0 24 24"><path id="playIcon" d="M8 5v14l11-7z"/></svg><span id="playTx">Play</span></button>
+      <button class="ghost" id="next" title="Next step (→)"><svg class="i" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+      <button id="speed" title="Speed">1×</button>
+      <button id="showDx" style="display:none"><span class="badge" style="padding:0 6px"><span class="pulse"></span>DIAGNOSIS</span></button>
+    </div>
+  </header>
+  <nav id="rail"></nav>
+  <main>
+    <section class="panel" id="left">
+      <div class="ptitle" id="projName"><span class="dot"></span>Knowledge graph</div>
+      <div id="agent"><span class="orb"></span><span class="st" id="agentSt"><b>Agent</b> · ready</span></div>
+      <div id="hud">
+        <span><b data-h="hops">0</b> hops</span>
+        <span><b data-h="points">0</b> points read</span>
+        <span><b data-h="equip">0</b> equipment</span>
+        <span><b data-h="nbrs">0</b> neighbours</span>
+        <span class="zero"><b>0</b> drawings</span>
+      </div>
+      <svg id="g" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="var(--grid)"/></pattern>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow2" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect class="bgdots" x="-5000" y="-5000" width="10000" height="10000"/>
+        <g id="lEdges"></g><g id="lWalks"></g><g id="lNodes"></g><g id="lFx"></g>
+      </svg>
+      <div id="glabels"></div>
+      <div id="tip"></div>
+      <div id="trace"><div class="hd">Agent trace</div><div class="scroll" id="traceIn"></div></div>
+    </section>
+    <section class="panel" id="right">
+      <div id="crumbs"><span class="ptitle"><span class="dot" style="background:var(--agent2)"></span>Equipment</span></div>
+      <div id="stage">
+        <div id="empty"><div><div class="ring"></div>Equipment opens here as the agent reaches it.</div></div>
+        <div id="titlecard"><div class="tc"><div class="k" id="tcK"></div><div class="t" id="tcT"></div><div class="s" id="tcS"></div></div></div>
+        <div class="ov" id="ovZones"><h4 id="ovZonesH"></h4><div class="sub"><b id="zWarm">0</b> above setpoint · <b id="zOpen">0</b> dampers ≥ 95 %</div>
+          <div class="tiles" id="tiles"></div><div class="ramp"><span>72 °F</span><i></i><span>79 °F</span></div></div>
+        <div class="ov" id="ovAhus"><h4>AHUs on the chilled water plant</h4><div class="sub">Same symptom everywhere means one cause upstream.</div>
+          <table class="rows" id="ahuRows"></table></div>
+        <div class="ov" id="ovChillers"><h4>Chillers in the plant</h4><div class="sub">All running, all warm: not a staging problem.</div>
+          <table class="rows" id="chRows"></table></div>
+      </div>
+      <div id="evidence"><div class="hd"><span>Evidence</span><span id="evCount"></span></div><div id="cards"></div></div>
+    </section>
+  </main>
+  <div class="veil" id="splash">
+    <div class="box">
+      <div class="kicker"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--agent);display:inline-block"></span>Agent tour</div>
+      <h1>"<span class="z" id="spZone">Zone</span> is too warm.<br>What's wrong?"</h1>
+      <p>Watch an agent answer a hot call by walking the building's <b>knowledge graph</b> instead of the drawings:
+        from the room, through the equipment that serves it, to the root cause.</p>
+      <button class="primary go" id="go"><svg class="i" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Watch the agent</button>
+      <div class="alt"><button class="ghost" id="goStep">or step through it yourself</button></div>
+      <div class="fine" id="spFine"></div>
+    </div>
+  </div>
+  <div class="veil hidden" id="finale"></div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+/*__SIM__*/
+(() => {
+  // --- data ------------------------------------------------------------------------------------------
+  const D = DATA, P = D.path, N = D.nodes, EQ = D.equipment, R = D.roles;
+  const $ = (q, el = document) => el.querySelector(q);
+  const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const short = l => String(l ?? "").replace(/^(Airside|Waterside)\s+/, "");
+  const el = (tag, cls = "", html = "") => { const e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; return e; };
+  const SVG = "http://www.w3.org/2000/svg";
+  const sv = (tag, attrs = {}) => { const e = document.createElementNS(SVG, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); return e; };
+  const PT = {};  // every point the agent can read, with the equipment it sits on
+  for (const k in EQ) for (const [id, p] of Object.entries(EQ[k].points)) PT[id] = { ...p, key: k, equip: EQ[k].equipment.id };
+  const KEY = { [P.zone]: "zone", [P.ahu]: "ahu", [P.chiller]: "chiller" };
+  const zoneName = "Zone " + (N[P.zone].label.match(/[\d][\d-]*$/)?.[0] ?? N[P.zone].label);
+  const prov = p => p ? `${p.method} · ${(p.confidence ?? 0).toFixed(2)}` : "";
+  const src = p => p?.source_file ? `${p.source_file.split("/").pop()}${p.source_ref ? ` · ${/^\d+$/.test(p.source_ref) ? "row " : ""}${p.source_ref}` : ""}` : "";
+  const nPoints = Object.values(D.vavs).reduce((a, v) => a + v.length, 0);
+  $("#qZone").textContent = $("#spZone").textContent = zoneName;
+  $("#projName").title = `Alpha · ${D.counts.points.toLocaleString()} points · ${D.counts.equipment} equipment`;
+  $("#spFine").textContent = `Scripted walk over the real knowledge graph of Project Haystack site Alpha (names and folders only). ` +
+    `Values are simulated: "Chilled water running warm".`;
+
+  // --- simulated values: the same simulator and settings as the 3D viewers --------------------------------
+  const SIMCFG = EQ.zone.sim, OPTS = { scenario: SIMCFG.scenario, offset: SIMCFG.offset };
+  const sims = Object.fromEntries(Object.keys(EQ).map(k => [k, Sim.create(EQ[k], OPTS)]));
+  const mini = (id, template, fedBy) => Sim.create({ project: D.project, equipment: { id, label: N[id].label, template }, points: {},
+    variant: {}, relations: fedBy ? { fed_by: [{ id: fedBy, template: "ahu" }] } : {} }, OPTS);
+  const vavSims = {}; for (const a of D.ahus) for (const v of D.vavs[a]) vavSims[v] = mini(v, "vav", a);
+  const ahuSims = Object.fromEntries(D.ahus.map(a => [a, mini(a, "ahu")]));
+  const chSims = Object.fromEntries(D.chillers.map(c => [c, mini(c, "chiller")]));
+  const t0 = performance.now();
+  let now = { values: {} };
+  function seconds() {  // the clock of the 3D viewer on screen, so both sides show the same instant
+    try { const s = frames[active]?.contentWindow?.__sim?.seconds(); if (Number.isFinite(s)) return s; } catch (e) { /* not loaded */ }
+    return ((performance.now() - t0) / 1000) % SIMCFG.span;
+  }
+  function sample() {
+    const h = sims.zone.hourAt(seconds()), values = {};
+    for (const k in sims) Object.assign(values, sims[k].sample(h).values);
+    const vav = {}, ahu = {}, ch = {};
+    for (const id in vavSims) { const x = vavSims[id].sample(h).vav; vav[id] = { zone: x.zone, damper: x.damper }; }
+    for (const id in ahuSims) { const x = ahuSims[id].sample(h).ahu; ahu[id] = { sat: x.sat, cool: x.cool, oat: x.oat }; }
+    for (const id in chSims) { const x = chSims[id].sample(h).plant; ch[id] = { run: x.run, chwS: x.chwS }; }
+    now = { h, values, vav, ahu, ch };
+  }
+  const V = id => now.values[id] || { text: "–", value: NaN };
+  const ref = (k, role) => V(R[k][role]).value;
+  const SP = () => ref("zone", "occ_cooling_sp");
+  const zoneState = z => z > SP() + 3 ? "fault" : z > SP() + 1 ? "warn" : "ok";
+  const f1 = x => Number.isFinite(x) ? x.toFixed(1) : "–";
+  // What each reading means, live: [state, note]
+  const VERDICT = {
+    zone_temp: () => { const d = ref("zone", "zone_temp") - SP(); return d > 1.5 ? ["fault", `+${f1(d)} °F over its setpoint`] : ["ok", "at setpoint"]; },
+    occ_cooling_sp: () => ["info", "what the room should be"],
+    damper: () => ref("zone", "damper") >= 95 ? ["warn", "wide open, asking for more"] : ["ok", "modulating"],
+    airflow: () => { const r = ref("zone", "airflow") / ref("zone", "airflow_sp"); return r < 0.95 ? ["warn", `${Math.round((1 - r) * 100)} % short of setpoint`] : ["ok", "meets setpoint"]; },
+    airflow_sp: () => ["info", "what the box asks for"],
+    supply_temp: () => { const d = ref("ahu", "supply_temp") - ref("ahu", "supply_temp_sp"); return d > 2 ? ["fault", `+${f1(d)} °F over setpoint`] : ["ok", "at setpoint"]; },
+    supply_temp_sp: () => ["info", "design supply air"],
+    cooling_valve: () => ref("ahu", "cooling_valve") >= 99 ? ["warn", "100 % open, no headroom"] : ["ok", "modulating"],
+    supply_fan_speed: () => ["ok", "fan is moving air"],
+    status: () => V(R.chiller.status).text === "RUN" ? ["ok", "running"] : ["warn", "not running"],
+    chw_flow: () => ref("chiller", "chw_flow") > 100 ? ["ok", "water is flowing"] : ["warn", "no flow"],
+    chw_leaving_temp: () => { const d = ref("chiller", "chw_leaving_temp") - ref("chiller", "chw_leaving_sp"); return d > 2 ? ["fault", `+${f1(d)} °F over setpoint`] : ["ok", "at setpoint"]; },
+    chw_leaving_sp: () => ["info", "design chilled water"],
+    chw_entering_temp: () => ["info", `ΔT ${f1(ref("chiller", "chw_entering_temp") - ref("chiller", "chw_leaving_temp"))} °F`],
+  };
+  const ROLE = {}; for (const k in R) for (const [role, id] of Object.entries(R[k])) if (id) ROLE[id] = role;
+  const verdict = id => (VERDICT[ROLE[id]] || (() => ["info", ""]))();
+  const live = new Set();  // functions run on every tick
+  function tick() { sample(); for (const f of live) f(); }
+
+  // --- player: every wait and animation goes through here, so pause, speed and jumps work everywhere -------
+  class Abort extends Error {}
+  const S = { token: 0, paused: true, speed: 1, instant: false, step: -1, stepMode: false, started: false, ended: false };
+  const ease = t => t < .5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
+  function anim(ms, fn, e = ease) {
+    if (S.instant) { fn(1); return Promise.resolve(); }
+    const tok = S.token;
+    return new Promise((res, rej) => {
+      let t = 0, last = performance.now();
+      const loop = n => {
+        if (tok !== S.token) return rej(new Abort());
+        if (!S.paused) t += (n - last) * S.speed;
+        last = n;
+        const p = Math.min(1, t / ms);
+        fn(e(p));
+        if (p >= 1) res(); else requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    });
+  }
+  const wait = ms => anim(ms, () => {});
+  function gate() {
+    const tok = S.token;
+    return new Promise((res, rej) => { const loop = () => tok !== S.token ? rej(new Abort()) : !S.paused ? res() : requestAnimationFrame(loop); loop(); });
+  }
+
+  // --- graph: layout ---------------------------------------------------------------------------------
+  const svg = $("#g"), lE = $("#lEdges"), lW = $("#lWalks"), lN = $("#lNodes"), lF = $("#lFx"), labels = $("#glabels");
+  const POS = new Map(), NODE = new Map(), LAB = new Map(), EDGE = new Map(), WALK = new Map(), TAG = new Map(), CENTER = new Map();
+  const rad = a => a * Math.PI / 180, polar = (c, r, a) => ({ x: c.x + r * Math.cos(rad(a)), y: c.y + r * Math.sin(rad(a)) });
+  function node(id, p, kind, r) {
+    POS.set(id, p);
+    const g = sv("g", { class: `n ${kind}`, transform: `translate(${p.x} ${p.y})` });
+    g.style.setProperty("--r", `${r}px`);
+    g.dataset.id = id;
+    g.append(sv("circle", { class: "halo" }), sv("circle", { class: "core" }));
+    lN.append(g);
+    NODE.set(id, g);
+    return g;
+  }
+  function line(a, b, cls = "") {
+    const p = POS.get(a), q = POS.get(b), l = sv("line", { x1: p.x, y1: p.y, x2: q.x, y2: q.y, class: `e ${cls}` });
+    lE.append(l);
+    EDGE.set(`${a}>${b}`, l);
+    return l;
+  }
+  function label(id, html, cls = "") { const e = el("div", `gl ${cls}`, html); labels.append(e); LAB.set(id, e); return e; }
+  // n slots over [a0, a1]; the points the agent reads take evenly spread slots, so their tags don't collide
+  function flower(center, ids, first, r, a0, a1) {
+    const n = ids.length, slots = Array(n).fill(null), pri = first.filter(i => ids.includes(i));
+    pri.forEach((id, k) => { let s = Math.min(n - 1, Math.round((k + 0.5) * n / pri.length - 0.5)); while (slots[s]) s = (s + 1) % n; slots[s] = id; });
+    const rest = ids.filter(i => !pri.includes(i));
+    for (let s = 0; s < n; s++) if (!slots[s]) slots[s] = rest.shift();
+    slots.forEach((id, s) => {
+      const p = polar(center, r, n === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * s / (n - 1));
+      CENTER.set(id, center);
+      node(id, p, "pt", 2.8);
+    });
+  }
+  // the AHU's VAVs on an arc below it, the zone in the middle
+  function fan(ahu, center, r, a0, a1, mid) {
+    let ids = D.vavs[ahu].slice();
+    if (mid) { const k = ids.indexOf(mid), m = Math.floor(ids.length / 2); ids = ids.map((_, i) => ids[(i + k - m + ids.length) % ids.length]); }
+    ids.forEach((id, i) => { const p = polar(center, r, a0 + (a1 - a0) * i / Math.max(1, ids.length - 1)); node(id, p, "vav", id === mid ? 6 : 2.6); line(ahu, id, "fan"); });
+    return ids;
+  }
+  const PLANT = { x: 0, y: -430 }, AHU = { x: 0, y: -40 };
+  node(P.plant, PLANT, "eq big plant", 15); label(P.plant, `${esc(short(N[P.plant].label))}<small>${esc(N[P.plant].cls)}</small>`, "eq");
+  node(P.ahu, AHU, "eq big", 12); label(P.ahu, `${esc(short(N[P.ahu].label))}<small>${esc(N[P.ahu].cls)} · ${N[P.ahu].points} points</small>`, "eq");
+  // plant parts on an arc above it, lead chiller on top
+  const others = D.plant_parts.filter(i => i !== P.chiller), parts = Array(D.plant_parts.length);
+  const mid = Math.floor(parts.length / 2);
+  parts[mid] = P.chiller;
+  others.sort((a, b) => (N[b].template === "chiller") - (N[a].template === "chiller"));
+  others.forEach((id, k) => { parts[mid + (k % 2 ? 1 : -1) * Math.ceil((k + 1) / 2)] = id; });
+  parts.filter(Boolean).forEach((id, i, arr) => {
+    const p = polar(PLANT, 150, 200 + 140 * i / (arr.length - 1));
+    node(id, p, `eq part ${N[id].template || ""}`, id === P.chiller ? 9 : N[id].template === "chiller" ? 7 : 5);
+    line(P.plant, id, "has");
+    label(id, esc(short(N[id].label)), id === P.chiller ? "eq" : "minor");
+  });
+  P.others.forEach((id, k) => {
+    node(id, { x: -560 - 160 * k, y: -560 }, "eq big hw", 12);
+    label(id, `${esc(short(N[id].label))}<small>${esc(N[id].cls)}</small>`, "eq");
+  });
+  const fanIds = fan(P.ahu, AHU, 290, 22, 158, P.zone);
+  label(P.zone, `${esc(N[P.zone].label)}<small>${esc(N[P.zone].cls)} · ${N[P.zone].points} points</small>`, "eq");
+  const sibAhus = D.ahus.filter(a => a !== P.ahu), ANG = [145, 35, 168, 12, 125, 55];
+  sibAhus.forEach((a, i) => {
+    const p = polar(PLANT, 390, ANG[i % ANG.length]);
+    node(a, p, "eq", 9);
+    label(a, `${esc(short(N[a].label))}<small>${D.vavs[a].length} terminal units</small>`, "eq");
+    fan(a, p, 64, 30, 150);
+  });
+  for (const a of D.ahus) line(P.plant, a, "feeds");
+  for (const id of P.others) for (const a of D.ahus) line(id, a, "feeds hwf");
+  line(P.ahu, P.zone, "feeds");  // drawn again on top of the fan
+  // points of the three pieces of equipment the agent opens, hidden until it opens them
+  const order = k => Object.values(R[k]).filter(Boolean);
+  flower(POS.get(P.zone), Object.keys(EQ.zone.points), order("zone"), 62, 28, 152);
+  flower(AHU, Object.keys(EQ.ahu.points), order("ahu"), 84, 196, 344);
+  flower(POS.get(P.chiller), Object.keys(EQ.chiller.points), order("chiller"), 80, 192, 348);
+  for (const id in PT) line(PT[id].equip, id, "pe");
+  // lift the edges of the points above the fan lines
+  for (const id in PT) lE.append(EDGE.get(`${PT[id].equip}>${id}`));
+
+  // --- graph: camera ----------------------------------------------------------------------------------
+  const cam = { x: 0, y: -150, w: 1400 };
+  let camAnim = 0;
+  const VW = () => svg.clientWidth || 600, VH = () => svg.clientHeight || 600;
+  const traceH = () => $("#trace").offsetHeight;
+  const vis = () => Math.max(120, VH() - traceH() - 40);  // the part of the panel above the trace
+  function k() { return cam.w / VW(); }
+  function applyCam() {
+    const kk = k(), x0 = cam.x - cam.w / 2, y0 = cam.y - (40 + vis() / 2) * kk;
+    svg.setAttribute("viewBox", `${x0} ${y0} ${cam.w} ${VH() * kk}`);
+    svg.style.setProperty("--k", kk);
+    svg.style.setProperty("--ks", Math.pow(kk, 0.72));
+    cam.x0 = x0; cam.y0 = y0;
+    placeLabels();
+  }
+  const scr = p => ({ x: (p.x - cam.x0) / k(), y: (p.y - cam.y0) / k() });
+  function box(cx, cy, w, h) { return { x: cx, y: cy, w: Math.max(w, h * VW() / vis()) }; }
+  const VIEWS = {
+    all: () => box(-130, -175, 1240, 1040),
+    zone: () => box(POS.get(P.zone).x, POS.get(P.zone).y + 34, 380, 210),
+    fan: () => box(0, 95, 700, 400),
+    ahu: () => box(0, -88, 440, 250),
+    plants: () => box(-150, -300, 1060, 560),
+    chiller: () => box(POS.get(P.chiller).x + 10, POS.get(P.chiller).y - 34, 560, 270),
+  };
+  function camTo(name, ms = 1300) {
+    const to = VIEWS[name](), from = { ...cam }, id = ++camAnim;
+    if (S.instant || ms === 0) { Object.assign(cam, to); applyCam(); return; }
+    const start = performance.now();
+    const loop = n => {
+      if (id !== camAnim) return;
+      const e = ease(Math.min(1, (n - start) / (ms / S.speed)));
+      // zoom out a little on the way when the move is long: a sense of travelling through the graph
+      const d = Math.hypot(to.x - from.x, to.y - from.y), lift = 1 + Math.sin(Math.PI * e) * Math.min(0.5, d / 1400);
+      cam.x = from.x + (to.x - from.x) * e; cam.y = from.y + (to.y - from.y) * e;
+      cam.w = (from.w + (to.w - from.w) * e) * lift;
+      applyCam();
+      if (e < 1) requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+  // drag to pan, wheel to zoom: the next step of the walk takes the camera back
+  let drag = null;
+  svg.addEventListener("pointerdown", e => { drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y }; svg.setPointerCapture(e.pointerId); camAnim++; });
+  svg.addEventListener("pointermove", e => { if (!drag) return; cam.x = drag.cx - (e.clientX - drag.x) * k(); cam.y = drag.cy - (e.clientY - drag.y) * k(); applyCam(); });
+  svg.addEventListener("pointerup", () => { drag = null; });
+  svg.addEventListener("wheel", e => {
+    e.preventDefault(); camAnim++;
+    const r = svg.getBoundingClientRect(), mx = cam.x0 + (e.clientX - r.left) * k(), my = cam.y0 + (e.clientY - r.top) * k();
+    const f = Math.exp(e.deltaY * 0.0015), w = Math.min(4000, Math.max(120, cam.w * f)), s = w / cam.w;
+    cam.x = mx + (cam.x - mx) * s; cam.y = my + (cam.y - my) * s; cam.w = w; applyCam();
+  }, { passive: false });
+  addEventListener("resize", applyCam);
+
+  function placeLabels() {
+    const kk = k(), ks = Math.pow(kk, 0.72);
+    for (const [id, e] of LAB) {
+      const p = scr(POS.get(id)), r = parseFloat(NODE.get(id).style.getPropertyValue("--r")) * ks / kk;
+      e.style.left = `${p.x}px`; e.style.top = `${p.y + r + 3}px`;
+    }
+    for (const [id, e] of TAG) {
+      const p = scr(POS.get(id)), c = scr(CENTER.get(id)), dx = p.x - c.x, dy = p.y - c.y, d = Math.hypot(dx, dy) || 1;
+      e.className = e.className.replace(/\b[lr]\b/g, "").trim() + (dx < -2 ? " l" : " r");
+      e.style.left = `${p.x + dx / d * 9}px`; e.style.top = `${p.y + dy / d * 9}px`;
+    }
+  }
+
+  // --- graph: what the agent does to it -----------------------------------------------------------------
+  const cls = (id, ...c) => NODE.get(id)?.classList.add(...c);
+  const uncls = (id, ...c) => NODE.get(id)?.classList.remove(...c);
+  function mark(id, state) { const n = NODE.get(id); if (!n) return; n.classList.remove("ok", "warn", "fault", "info"); if (state) n.classList.add(state, "lit"); LAB.get(id)?.classList.toggle("fault", state === "fault"); }
+  function lit(...ids) { for (const id of ids) { cls(id, "lit"); LAB.get(id)?.classList.add("lit"); } }
+  function ripple(id, red) {
+    if (S.instant) return;
+    const p = POS.get(id), c = sv("circle", { cx: p.x, cy: p.y, r: 6 * Math.pow(k(), 0.72), class: `ripple${red ? " red" : ""}` });
+    lF.append(c); setTimeout(() => c.remove(), 1200);
+  }
+  function visit(id) {
+    for (const n of lN.querySelectorAll(".active")) n.classList.remove("active");
+    cls(id, "visited", "active"); lit(id); ripple(id);
+  }
+  function bloom(key) {
+    const ids = Object.keys(EQ[key].points);
+    ids.forEach((id, i) => {
+      const n = NODE.get(id), e = EDGE.get(`${PT[id].equip}>${id}`);
+      n.querySelector(".core").style.transitionDelay = S.instant ? "0s" : `${i * 18}ms`;
+      n.classList.add("on", "lit"); e.classList.add("on");
+    });
+  }
+  async function travel(a, b, side = false, ms = 1100) {
+    const p = POS.get(a), q = POS.get(b), dx = q.x - p.x, dy = q.y - p.y;
+    const c = { x: (p.x + q.x) / 2 - dy * 0.14, y: (p.y + q.y) / 2 + dx * 0.14 };
+    const path = sv("path", { d: `M${p.x} ${p.y} Q${c.x} ${c.y} ${q.x} ${q.y}`, class: `walk${side ? " side" : ""}` });
+    lW.append(path); WALK.set(`${a}>${b}`, path);
+    EDGE.get(`${a}>${b}`)?.classList.add("lit"); EDGE.get(`${b}>${a}`)?.classList.add("lit");
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = `${len}`; path.style.strokeDashoffset = `${len}`;
+    if (!side) hud("hops");
+    if (S.instant) { path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; return; }
+    const head = sv("circle", { class: "comet" }); lF.append(head);
+    try {
+      await anim(ms, e => {
+        const at = len * e, pt = path.getPointAtLength(at);
+        path.style.strokeDashoffset = `${len - at}`;
+        head.setAttribute("cx", pt.x); head.setAttribute("cy", pt.y);
+      });
+    } finally { head.remove(); }
+    path.style.strokeDasharray = ""; path.style.strokeDashoffset = "";
+    ripple(b);
+  }
+  async function scan() {  // the search: a ring sweeps the graph and every node it passes flickers
+    if (S.instant) return;
+    const c = { x: 0, y: -150 }, ring = sv("circle", { cx: c.x, cy: c.y, r: 1, class: "scanring" }); lF.append(ring);
+    for (const [id, n] of NODE) {
+      if (n.classList.contains("pt")) continue;
+      const p = POS.get(id); n.querySelector(".core").style.animationDelay = `${Math.hypot(p.x - c.x, p.y - c.y) / 900 * (1.4 / S.speed)}s`;
+      n.classList.add("ping");
+    }
+    try { await anim(1400, e => { ring.setAttribute("r", 20 + e * 900); ring.style.opacity = 0.8 * (1 - e); }, t => t); }
+    finally { ring.remove(); setTimeout(() => { for (const n of NODE.values()) n.classList.remove("ping"); }, 1200); }
+  }
+  function prune(id) {
+    for (const a of D.ahus) { const e = EDGE.get(`${id}>${a}`); e?.classList.add("pruned"); }
+    cls(id, "pruned"); LAB.get(id)?.classList.add("pruned");
+    if (S.instant) return;
+    const p = POS.get(id), s = 10;
+    const g = sv("g"); g.append(sv("line", { x1: p.x - s, y1: p.y - s, x2: p.x + s, y2: p.y + s, class: "xmark" }), sv("line", { x1: p.x - s, y1: p.y + s, x2: p.x + s, y2: p.y - s, class: "xmark" }));
+    lF.append(g); setTimeout(() => g.remove(), 1800);
+  }
+  function tag(id) {
+    if (TAG.has(id)) return;
+    const t = el("div", "tag", `<span>${esc(PT[id].label)}</span><span class="v"></span>`);
+    labels.append(t); TAG.set(id, t);
+    const upd = () => { const v = V(id), [st] = verdict(id); t.querySelector(".v").textContent = v.text; t.classList.remove("ok", "warn", "fault"); if (st !== "info") t.classList.add(st); mark(id, st); };
+    t.upd = upd;
+    upd(); live.add(upd); placeLabels();
+  }
+  // Moving on: the last equipment's tags go (its readings stay in the evidence strip), except the ones named.
+  function clearTags(keep = []) {
+    for (const [id, t] of TAG) if (!keep.includes(id)) { live.delete(t.upd); t.remove(); TAG.delete(id); }
+  }
+
+  // --- trace -------------------------------------------------------------------------------------------
+  const traceIn = $("#traceIn");
+  const scrollTrace = () => { traceIn.scrollTop = traceIn.scrollHeight; };
+  const agentSt = $("#agentSt"), agentEl = $("#agent");
+  function status(word, busy = true) { agentSt.innerHTML = `<b>Agent</b> · ${esc(word)}`; agentEl.classList.toggle("busy", busy); }
+  async function think(text) {
+    status("thinking");
+    const ln = el("div", "ln think", `<span class="ic">◆</span><span class="tx"></span>`), tx = ln.querySelector(".tx");
+    traceIn.append(ln); scrollTrace();
+    if (S.instant) { tx.textContent = text; return; }
+    const caret = el("span", "caret");
+    await anim(Math.max(500, text.length * 17), e => { tx.textContent = text.slice(0, Math.round(text.length * e)); tx.append(caret); scrollTrace(); }, t => t);
+    caret.remove();
+    await wait(350);
+  }
+  async function call(fn, args) {
+    status("querying the graph");
+    const ln = el("div", "ln call", `<span class="ic">→</span><span>${esc(fn)}(${args})<span class="spin"></span></span>`);
+    traceIn.append(ln); scrollTrace();
+    await wait(650);
+    ln.querySelector(".spin")?.replaceWith(el("span", "ok", "✓"));
+  }
+  async function result(html, pause = 250) {
+    const ln = el("div", "ln res", `<span class="ic">←</span><span>${html}</span>`);
+    traceIn.append(ln); scrollTrace();
+    await wait(pause);
+  }
+
+  // --- right side: equipment, crumbs, overlays, evidence -------------------------------------------------
+  const stage = $("#stage"), frames = {};
+  let active = null;
+  const NAMES = { ahu: "Air handling unit", vav: "VAV box", chiller: "Chiller" };
+  for (const key of Object.keys(EQ)) {
+    const f = document.createElement("iframe");
+    f.title = EQ[key].equipment.label;
+    f.srcdoc = D.viewer.replace(D.slot, () => JSON.stringify(EQ[key]).replace(/<\//g, "<\\/"));
+    stage.append(f); frames[key] = f;
+  }
+  const api = key => { try { return frames[key].contentWindow.__eq3dApi || null; } catch (e) { return null; } };
+  const want = {};  // what each viewer should show once it has loaded
+  function drive(key) {
+    const a = api(key), w = want[key];
+    if (!w) return;
+    if (!a) { clearTimeout(w.timer); w.timer = setTimeout(() => drive(key), 300); return; }
+    // how close the camera comes to a point: an AHU is big, a VAV box small
+    if (w.point) a.point(w.point, { panel: w.panel, dist: { zone: 8, ahu: 15, chiller: 11 }[key] }); else a.clear();
+    a.rotate(!w.point);
+  }
+  function point3d(key, id, panel = false) { want[key] = { point: id, panel }; drive(key); }
+  function show(key) {
+    if (active === key) return;
+    active = key;
+    for (const [k2, f] of Object.entries(frames)) f.classList.toggle("on", k2 === key);
+    $("#empty").classList.add("gone");
+    if (!want[key]) { want[key] = { point: null }; drive(key); }
+    const e = EQ[key].equipment;
+    if (!S.instant) {
+      $("#tcK").textContent = "Now inspecting";
+      $("#tcT").textContent = short(e.label);
+      $("#tcS").textContent = `${NAMES[e.template] || e.cls} · ${Object.keys(EQ[key].points).length} points · class ${e.cls}`;
+      const tc = $("#titlecard"); tc.classList.remove("on"); void tc.offsetWidth; tc.classList.add("on");
+    }
+    renderCrumbs();
+  }
+  const crumbs = [];
+  const CRUMB_STATE = {};
+  function crumb(id) { if (!crumbs.includes(id)) crumbs.push(id); renderCrumbs(); }
+  function renderCrumbs() {
+    const box = $("#crumbs");
+    for (const c of box.querySelectorAll(".crumb, .sep")) c.remove();
+    crumbs.forEach((id, i) => {
+      if (i) box.append(el("span", "sep", "›"));
+      const key = KEY[id], b = el("span", `crumb ${CRUMB_STATE[id] || ""} ${key && key === active ? "cur" : ""}`,
+        `<span class="sd"></span>${esc(id === P.zone ? `${zoneName} · ${N[id].label}` : short(N[id].label))}${key ? "" : " <small>no 3D</small>"}`);
+      b.title = key ? "Show it" : "A plant group: shown in the graph";
+      b.onclick = () => { if (key) show(key); camTo(id === P.zone ? "zone" : id === P.ahu ? "ahu" : id === P.plant ? "plants" : "chiller"); };
+      box.append(b);
+    });
+    box.scrollLeft = box.scrollWidth;
+  }
+  function crumbState(id, st) { CRUMB_STATE[id] = st; renderCrumbs(); }
+  function overlay(name) { for (const o of stage.querySelectorAll(".ov")) o.classList.toggle("on", o.id === name); }
+
+  // zones overlay: one tile per VAV on the AHU
+  $("#ovZonesH").textContent = `${D.vavs[P.ahu].length} zones served by ${short(N[P.ahu].label)}`;
+  const tiles = {};
+  for (const id of D.vavs[P.ahu]) { const t = el("div", `tile${id === P.zone ? " me" : ""}`); t.title = N[id].label; $("#tiles").append(t); tiles[id] = t; }
+  const ramp = z => { const x = Math.max(0, Math.min(1, (z - 72) / 7)); const c = x < .5 ? mix("#3fb4ff", "#f2b134", x * 2) : mix("#f2b134", "#ff5a4e", (x - .5) * 2); return c; };
+  function mix(a, b, t) { const p = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16)), A = p(a), B = p(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(",")})`; }
+  const swept = new Set();
+  function vavLive() {
+    let warm = 0, open = 0;
+    for (const id of swept) {
+      const v = now.vav[id]; if (!v) continue;
+      const st = zoneState(v.zone);
+      if (id !== P.zone) mark(id, st);
+      if (tiles[id]) tiles[id].style.background = ramp(v.zone);
+      if (D.vavs[P.ahu].includes(id)) { warm += st !== "ok"; open += v.damper >= 95; }
+    }
+    $("#zWarm").textContent = warm; $("#zOpen").textContent = open;
+  }
+  live.add(vavLive);
+  function stats() {
+    const all = Object.keys(now.vav), warm = all.filter(id => zoneState(now.vav[id].zone) !== "ok").length;
+    const mine = D.vavs[P.ahu], mineWarm = mine.filter(id => zoneState(now.vav[id].zone) !== "ok").length;
+    const mineOpen = mine.filter(id => now.vav[id].damper >= 95).length;
+    const hot = D.ahus.filter(a => now.ahu[a].sat > 57 && now.ahu[a].cool >= 99).length;
+    const running = D.chillers.filter(c => now.ch[c].run).length;
+    return { all: all.length, warm, mine: mine.length, mineWarm, mineOpen, ahus: D.ahus.length, hot, running };
+  }
+  // AHU and chiller tables
+  $("#ahuRows").innerHTML = `<tr class="on"><th>AHU</th><th>Supply air</th><th>Cooling valve</th><th>Units</th></tr>` +
+    D.ahus.map(a => `<tr data-a="${esc(a)}"><td>${esc(short(N[a].label))}</td><td class="s"></td><td class="c"></td><td>${D.vavs[a].length}</td></tr>`).join("");
+  $("#chRows").innerHTML = `<tr class="on"><th>Chiller</th><th>Status</th><th>Leaving water</th><th>Setpoint</th></tr>` +
+    D.chillers.map(c => `<tr data-c="${esc(c)}"><td>${esc(short(N[c].label))}</td><td class="st"></td><td class="lw"></td><td class="sp"></td></tr>`).join("");
+  live.add(() => {
+    for (const tr of document.querySelectorAll("#ahuRows tr[data-a]")) {
+      const a = now.ahu[tr.dataset.a]; if (!a) continue;
+      const s = tr.querySelector(".s"), c = tr.querySelector(".c");
+      s.textContent = `${f1(a.sat)} °F`; s.className = `s ${a.sat > 57 ? "fault" : "ok"}`;
+      c.textContent = `${Math.round(a.cool)} %`; c.className = `c ${a.cool >= 99 ? "warn" : "ok"}`;
+      if (tr.classList.contains("on") && tr.dataset.a !== P.ahu) mark(tr.dataset.a, a.sat > 57 ? "fault" : "ok");
+    }
+    const sp = ref("chiller", "chw_leaving_sp");
+    for (const tr of document.querySelectorAll("#chRows tr[data-c]")) {
+      const c = now.ch[tr.dataset.c]; if (!c) continue;
+      tr.querySelector(".st").innerHTML = c.run ? `<span class="ok">RUN</span>` : `<span class="muted">OFF</span>`;
+      const lw = tr.querySelector(".lw"); lw.textContent = `${f1(c.chwS)} °F`; lw.className = `lw ${c.chwS > sp + 2 ? "fault" : "ok"}`;
+      tr.querySelector(".sp").textContent = `${f1(sp)} °F`;
+      if (tr.classList.contains("on") && tr.dataset.c !== P.chiller) mark(tr.dataset.c, c.chwS > sp + 2 ? "fault" : "ok");
+    }
+  });
+
+  // evidence cards
+  const cards = $("#cards");
+  let read = 0;
+  function evidence(id) {
+    const p = PT[id], c = el("div", "ev new");
+    c.innerHTML = `<div class="eq">${esc(short(N[p.equip]?.label || EQ[p.key].equipment.label))} · <span class="mono">${esc(p.cls || "unclassified")}</span></div>
+      <div class="nm">${esc(p.label)}</div><div class="vl"></div><div class="vd"></div>
+      <div class="pv">${esc(src(p.prov))} · ${esc(prov(p.prov))}</div>`;
+    c.title = `${p.label}\nclass ${p.cls}\nsource ${src(p.prov)}\nmethod ${prov(p.prov)}`;
+    c.onclick = () => { show(p.key); point3d(p.key, id, true); };
+    for (const o of cards.querySelectorAll(".new")) o.classList.remove("new");
+    cards.append(c); cards.scrollLeft = cards.scrollWidth;
+    const upd = () => { const v = V(id), [st, note] = verdict(id); c.querySelector(".vl").textContent = v.text; c.querySelector(".vd").textContent = note; c.classList.remove("ok", "warn", "fault", "info"); c.classList.add(st); };
+    upd(); live.add(upd);
+    $("#evCount").textContent = `${++read} points · every one traceable to its source row`;
+  }
+
+  // --- HUD ------------------------------------------------------------------------------------------------
+  const H = { hops: 0, points: 0, equip: 0, nbrs: 0 };
+  function hud(what, n = 1) {
+    H[what] += n;
+    const b = document.querySelector(`[data-h="${what}"]`);
+    b.textContent = H[what];
+    if (!S.instant) { b.classList.add("bump"); setTimeout(() => b.classList.remove("bump"), 250); }
+  }
+
+  // --- one reading: graph, 3D, trace, evidence --------------------------------------------------------------
+  async function readPoint(key, role, { panel = false } = {}) {
+    const id = R[key][role];
+    if (!id) return;
+    status("reading points");
+    lit(id); ripple(id);
+    point3d(key, id, panel);
+    tag(id);
+    hud("points");
+    const v = V(id), [st, note] = verdict(id), p = PT[id];
+    await result(`<b>${esc(p.label)}</b> <span class="cls">${esc(p.cls)}</span> = <span class="val ${st}">${esc(v.text)}</span>` +
+      (note && st !== "info" ? ` · ${esc(note)}` : "") + ` <span class="prov">· ${esc(prov(p.prov))}</span>`, 150);
+    evidence(id);
+    await wait(650);
+  }
+  const ahuCount = () => `${D.vavs[P.ahu].length}`;
+
+  // --- the walk ------------------------------------------------------------------------------------------
+  const zoneLbl = N[P.zone].label, ahuLbl = short(N[P.ahu].label), plantLbl = short(N[P.plant].label), chLbl = short(N[P.chiller].label);
+  const STEPS = [
+    { t: "Find the zone", run: async () => {
+      camTo("all", 0);
+      await think(`The caller names a room, not a point. Find "${zoneName}" in the graph.`);
+      await call("graph.find", `"${esc(zoneName.replace(/^Zone /, ""))}"`);
+      await scan();
+      svg.classList.add("focus");
+      camTo("zone", 1700);
+      visit(P.zone); hud("equip");
+      await result(`<b>${esc(zoneLbl)}</b> <span class="cls">${esc(N[P.zone].cls)}</span> · ${N[P.zone].points} points · folder <i>${esc(N[P.ahu].label)} / ${esc(zoneLbl)}</i> <span class="prov">· ${esc(prov(N[P.zone].prov))}</span>`, 500);
+      show("zone"); crumb(P.zone);
+      bloom("zone");
+      await think(`It's a VAV box. Its ${N[P.zone].points} points tell me how the room is doing.`);
+    } },
+    { t: "Read the room", run: async () => {
+      camTo("zone");
+      await call("graph.points", `${esc(zoneLbl)}, class ⊂ <span class="cls">Zone_Air_Temperature_*</span>`);
+      await readPoint("zone", "zone_temp", { panel: true });
+      await readPoint("zone", "occ_cooling_sp");
+      mark(P.zone, "fault"); crumbState(P.zone, "fault"); ripple(P.zone, true);
+      await think(`Confirmed: ${f1(ref("zone", "zone_temp") - SP())} °F above its cooling setpoint, in occupied hours. Now: why?`);
+    } },
+    { t: "Check the box", run: async () => {
+      await think("Is the box doing its job? Check what it commands and what it gets.");
+      await call("graph.points", `${esc(zoneLbl)}, class ⊂ <span class="cls">Damper_Command</span>, <span class="cls">Discharge_Air_Flow_*</span>`);
+      await readPoint("zone", "damper");
+      await readPoint("zone", "airflow");
+      await readPoint("zone", "airflow_sp");
+      await think("Damper wide open and still short of air: the box is asking for all the cooling it can get. It's a victim, not the cause.");
+    } },
+    { t: "Look sideways", run: async () => {
+      await think("If the fault is local, its neighbours are fine. If it's upstream, they suffer too.");
+      await call("graph.siblings", `${esc(zoneLbl)}, via <span class="cls">feeds</span> ← ${esc(ahuLbl)}`);
+      camTo("fan", 1500);
+      lit(...fanIds, P.ahu);
+      for (const id of fanIds) EDGE.get(`${P.ahu}>${id}`)?.classList.add("lit");
+      overlay("ovZones");
+      await result(`<b>${ahuCount()} VAV boxes</b> share ${esc(ahuLbl)}`, 300);
+      // the sweep: outwards from the zone, each box lights up with its own temperature
+      const z = fanIds.indexOf(P.zone), byDist = fanIds.slice().sort((a, b) => Math.abs(fanIds.indexOf(a) - z) - Math.abs(fanIds.indexOf(b) - z));
+      let i = 0;
+      await anim(1900, e => {
+        const upto = Math.round(e * byDist.length);
+        for (; i < upto; i++) { swept.add(byDist[i]); tiles[byDist[i]]?.classList.add("on"); if (!S.instant && i % 3 === 0) ripple(byDist[i]); }
+        vavLive();
+      }, t => t);
+      hud("nbrs", byDist.length - 1);
+      const s = stats();
+      await result(`<b>${s.mineWarm} of ${s.mine}</b> zones above setpoint · <b>${s.mineOpen}</b> dampers ≥ 95 %`);
+      await think(`${s.mineWarm} of ${s.mine} rooms are warm with their dampers wide open. Many symptoms, one shared cause: go upstream.`);
+    } },
+    { t: "Go upstream", run: async () => {
+      await call("graph.traverse", `${esc(zoneLbl)} —<span class="cls">feeds⁻¹</span>→ ?`);
+      overlay(null); clearTags();
+      for (const id of fanIds) EDGE.get(`${P.ahu}>${id}`)?.classList.remove("lit");
+      camTo("ahu", 1600);
+      await travel(P.zone, P.ahu, false, 1500);
+      visit(P.ahu); hud("equip");
+      await result(`<b>${esc(ahuLbl)}</b> <span class="cls">${esc(N[P.ahu].cls)}</span> · ${N[P.ahu].points} points · edge <span class="cls">feeds</span> <span class="prov">· ${esc(prov(D.edges.zone_ahu))} · ${esc(src(D.edges.zone_ahu))}</span>`, 400);
+      show("ahu"); crumb(P.ahu);
+      bloom("ahu");
+      await call("graph.points", `${esc(ahuLbl)}, class ⊂ <span class="cls">Supply_Air_Temperature_*</span>, <span class="cls">Valve_Command</span>, <span class="cls">Fan_Speed_Command</span>`);
+      await readPoint("ahu", "supply_temp", { panel: true });
+      await readPoint("ahu", "supply_temp_sp");
+      await readPoint("ahu", "cooling_valve");
+      await readPoint("ahu", "supply_fan_speed");
+      mark(P.ahu, "fault"); crumbState(P.ahu, "fault"); ripple(P.ahu, true);
+      await think(`Cooling valve 100 % open and the fan is running, yet the supply air is ${f1(ref("ahu", "supply_temp") - ref("ahu", "supply_temp_sp"))} °F warm. The coil isn't getting cold enough water.`);
+    } },
+    { t: "Find the common cause", run: async () => {
+      await call("graph.traverse", `${esc(ahuLbl)} —<span class="cls">feeds⁻¹</span>→ ?`);
+      clearTags();
+      camTo("plants", 1700);
+      const hw = P.others[0];
+      await Promise.all([travel(P.ahu, P.plant, false, 1500), hw ? travel(P.ahu, hw, true, 1500) : null]);
+      lit(P.plant, ...P.others);
+      await result([P.plant, ...P.others].map(i => `<b>${esc(short(N[i].label))}</b> <span class="cls">${esc(N[i].cls)}</span>`).join(" · ") +
+        ` <span class="prov">· ${esc(prov(D.edges.ahu_plant))}</span>`, 300);
+      if (hw) {
+        await think("Hot water can't make a room too warm in cooling season. Prune that branch.");
+        prune(hw); WALK.get(`${P.ahu}>${hw}`)?.remove();
+        await wait(500);
+      }
+      visit(P.plant); crumb(P.plant); hud("equip");
+      await call("graph.siblings", `${esc(ahuLbl)}, via <span class="cls">feeds</span> ← ${esc(plantLbl)}`);
+      overlay("ovAhus");
+      const rows = [...document.querySelectorAll("#ahuRows tr[data-a]")];
+      rows.find(r => r.dataset.a === P.ahu)?.classList.add("on");
+      for (const a of sibAhus) {
+        rows.find(r => r.dataset.a === a)?.classList.add("on");
+        lit(a, ...D.vavs[a]);
+        for (const v of D.vavs[a]) swept.add(v);
+        await travel(P.plant, a, true, 650);
+        tick();
+      }
+      hud("nbrs", sibAhus.length + sibAhus.reduce((n, a) => n + D.vavs[a].length, 0));
+      const s = stats();
+      await result(`<b>${s.hot} of ${s.ahus}</b> AHUs: supply air above 57 °F with cooling valves at 100 % · <b>${s.warm} of ${s.all}</b> zones warm`);
+      mark(P.plant, "fault"); crumbState(P.plant, "fault"); ripple(P.plant, true);
+      await think(`Every AHU on this plant is starved of cooling. ${s.ahus} AHUs, ${s.all} zones, one thing in common: the ${plantLbl.toLowerCase()}.`);
+    } },
+    { t: "Inside the plant", run: async () => {
+      await call("graph.parts", `${esc(plantLbl)}, class ⊂ <span class="cls">Chiller</span>`);
+      overlay(null);
+      camTo("chiller", 1600);
+      lit(...D.plant_parts);
+      await result(D.chillers.map(c => `<b>${esc(short(N[c].label))}</b>`).join(" · ") + ` · lead unit ${esc(chLbl)} <span class="prov">· <span class="cls">hasPart</span> ${esc(prov(D.edges.plant_chiller))}</span>`, 300);
+      await travel(P.plant, P.chiller, false, 1100);
+      visit(P.chiller); hud("equip");
+      show("chiller"); crumb(P.chiller);
+      bloom("chiller");
+      await call("graph.points", `${esc(chLbl)}, class ⊂ <span class="cls">Run_Status</span>, <span class="cls">*Chilled_Water*</span>`);
+      await readPoint("chiller", "status");
+      await readPoint("chiller", "chw_flow");
+      await readPoint("chiller", "chw_leaving_temp", { panel: true });
+      await readPoint("chiller", "chw_leaving_sp");
+      mark(P.chiller, "fault"); crumbState(P.chiller, "fault");
+      overlay("ovChillers");
+      for (const tr of document.querySelectorAll("#chRows tr[data-c]")) { tr.classList.add("on"); if (!S.instant) await wait(250); }
+      hud("nbrs", D.chillers.length - 1); tick();
+      const s = stats();
+      await think(`Running, water flowing, but leaving ${f1(ref("chiller", "chw_leaving_temp") - ref("chiller", "chw_leaving_sp"))} °F above setpoint, and ${s.running === D.chillers.length ? `all ${s.running} chillers are on` : `${s.running} of ${D.chillers.length} chillers are on`}. The plant isn't making chilled water.`);
+    } },
+    { t: "Diagnosis", fin: true, run: async () => {
+      await think("Root cause found. Writing it up with the evidence and what to check first.");
+      overlay(null);
+      clearTags();
+      $("#left").classList.add("wide");
+      if (!S.instant) await wait(500);  // the trace shrinks first, so the camera frames the space it leaves
+      camTo("all", 1800);
+      for (const [k2, role] of [["chiller", "chw_leaving_temp"], ["ahu", "supply_temp"], ["zone", "zone_temp"]]) tag(R[k2][role]);
+      for (const id of [P.zone, P.ahu, P.plant, P.chiller]) uncls(id, "active");
+      cls(P.chiller, "active");
+      const chain = [[P.chiller, P.plant], [P.plant, P.ahu], [P.ahu, P.zone]];
+      for (const [a, b] of chain) { const w = WALK.get(`${b}>${a}`); if (w) w.classList.add("causal"); if (!S.instant) { ripple(a, true); await wait(450); } }
+      ripple(P.zone, true);
+      status("done", false); agentEl.classList.add("done");
+      await wait(1500);
+      finale();
+    } },
+  ];
+
+  // --- finale ------------------------------------------------------------------------------------------------
+  function finale() {
+    S.ended = true;
+    const s = stats(), find = re => Object.keys(EQ.chiller.points).find(id => re.test(EQ.chiller.points[id].label));
+    const ptl = (id, text) => id ? `<span class="pt-link" data-pt="${esc(id)}">${esc(text || PT[id].label)}</span>` : esc(text);
+    const L = id => `<span data-live="${esc(id)}">${esc(V(id).text)}</span>`;
+    const r = (k2, role) => R[k2][role];
+    const oat = now.ahu[P.ahu]?.oat;
+    const html = `<div class="fcard">
+      <span class="badge"><span class="pulse"></span>ROOT CAUSE · FOUND IN ${H.hops} HOPS</span>
+      <h2>The ${esc(plantLbl.toLowerCase())} isn't making setpoint</h2>
+      <p class="lead">Chilled water leaves ${esc(chLbl)} at <b>${L(r("chiller", "chw_leaving_temp"))}</b> against <b>${L(r("chiller", "chw_leaving_sp"))}</b>.
+        ${esc(ahuLbl)} opens its cooling valve fully and still supplies <b>${L(r("ahu", "supply_temp"))}</b> air, so ${esc(zoneLbl)} opens its damper fully
+        and ${esc(zoneName)} drifts to <b>${L(r("zone", "zone_temp"))}</b>. The VAV box and the thermostat are fine.</p>
+      <div class="chain">
+        <div class="link root"><div class="k">Root cause</div><div class="t">${esc(chLbl)} · chilled water</div><div class="v">${L(r("chiller", "chw_leaving_temp"))}</div><div class="s">setpoint ${L(r("chiller", "chw_leaving_sp"))}</div></div>
+        <div class="arrow"><i></i></div>
+        <div class="link"><div class="k">Then</div><div class="t">${esc(ahuLbl)} · supply air</div><div class="v">${L(r("ahu", "supply_temp"))}</div><div class="s">valve ${L(r("ahu", "cooling_valve"))} · setpoint ${L(r("ahu", "supply_temp_sp"))}</div></div>
+        <div class="arrow"><i></i></div>
+        <div class="link"><div class="k">Then</div><div class="t">${esc(zoneLbl)} · damper</div><div class="v warn">${L(r("zone", "damper"))}</div><div class="s">airflow ${L(r("zone", "airflow"))} of ${L(r("zone", "airflow_sp"))}</div></div>
+        <div class="arrow"><i></i></div>
+        <div class="link"><div class="k">Symptom</div><div class="t">${esc(zoneName)}</div><div class="v">${L(r("zone", "zone_temp"))}</div><div class="s">setpoint ${L(r("zone", "occ_cooling_sp"))}</div></div>
+      </div>
+      <div class="cols">
+        <div>
+          <h3>Impact</h3>
+          <div class="impact">
+            <div class="imp"><div class="n r">${s.hot}/${s.ahus}</div><div class="l">AHUs starved of cooling</div></div>
+            <div class="imp"><div class="n r">${s.warm}</div><div class="l">zones above setpoint, of ${s.all}</div></div>
+            <div class="imp"><div class="n g">1</div><div class="l">work order, instead of ${s.warm} hot calls</div></div>
+          </div>
+          <div class="wo"><div class="top">Work order · draft<span>ready to route</span></div><dl>
+            <dt>Asset</dt><dd>${esc(plantLbl)} (${D.chillers.map(c => esc(short(N[c].label))).join(", ")})</dd>
+            <dt>Trade</dt><dd>Chiller technician · priority high</dd>
+            <dt>Symptom</dt><dd>CHW leaving ${L(r("chiller", "chw_leaving_temp"))} vs ${L(r("chiller", "chw_leaving_sp"))}; ${s.hot} AHUs at 100 % cooling valve</dd>
+            <dt>Evidence</dt><dd>${H.points} points, each with its source row and how it was mapped</dd></dl></div>
+        </div>
+        <div>
+          <h3>Troubleshooting, in order</h3>
+          <ol class="todo">
+            <li><span><b>Leave the zones alone.</b> No thermostat or VAV changes: ${esc(zoneLbl)} is doing its job. Attach the ${s.warm} hot calls to this one work order.</span></li>
+            <li><span><b>Check the chilled water setpoint.</b> Confirm ${ptl(r("chiller", "chw_leaving_sp"))} reads ${L(r("chiller", "chw_leaving_sp"))} at the chiller panel and isn't being reset upward by a supervisory override.</span></li>
+            <li><span><b>Check heat rejection.</b> ${Number.isFinite(oat) ? `At ${f1(oat)} °F outside, ` : ""}condensers run out of headroom first: ${ptl(find(/^Cond Water Flow/i), "Cond Water Flow")}, ${ptl(find(/^Cond Refrig Pressure/i), "Cond Refrig Pressure")}, cooling towers ${D.plant_parts.filter(i => /^CT/i.test(short(N[i].label))).map(i => esc(short(N[i].label))).join(" / ") || "CT"} and condenser pumps.</span></li>
+            <li><span><b>Check the evaporator.</b> Compare ${ptl(find(/^Evap Refrig Saturation/i), "Evap Refrig Saturation Temp")} with ${ptl(r("chiller", "chw_leaving_temp"), "leaving water")}: a wide approach points to fouled tubes or low refrigerant charge.</span></li>
+            <li><span><b>Until it's fixed.</b> Shed load: raise non-critical zone cooling setpoints by 2 °F and confirm primary pumps ${D.plant_parts.filter(i => /PCHWP/i.test(N[i].label)).map(i => esc(short(N[i].label))).join(" / ") || ""} are delivering design flow.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="ffoot">
+        <div class="stats"><span><b>${H.hops}</b> hops</span><span><b>${H.points}</b> points read</span><span><b>${H.equip}</b> equipment visited</span>
+          <span><b>${H.nbrs}</b> neighbours checked</span><span class="zero"><b>0</b> drawings opened</span></div>
+        <div class="btns"><button id="fReplay"><svg class="i" viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>Replay</button>
+          <button id="fExplore">Explore the walk</button>
+          <button class="primary" id="fLive">Open ${esc(chLbl)} live ↗</button></div>
+      </div>
+      <div class="fine">The path, the points, their classes and provenance are read from Alpha's knowledge graph. Values are simulated ("Chilled water running warm"); the agent's script is fixed for this demo.</div>
+    </div>`;
+    const fin = $("#finale");
+    fin.innerHTML = html;
+    fin.classList.remove("hidden");
+    for (const s2 of fin.querySelectorAll("[data-live]")) live.add(() => { s2.textContent = V(s2.dataset.live).text; });
+    $("#fReplay").onclick = () => start(0);
+    $("#fExplore").onclick = () => fin.classList.add("hidden");
+    $("#fLive").onclick = () => openTop(D.links.chiller);
+    for (const a of fin.querySelectorAll(".pt-link")) a.onclick = () => { fin.classList.add("hidden"); const id = a.dataset.pt; show(PT[id].key); point3d(PT[id].key, id, true); };
+    $("#showDx").style.display = "";
+    controls();
+  }
+  // Same as the 3D viewer: in the app this page is a same-origin iframe that may not navigate the top window, so it
+  // clicks a link in the app's own document.
+  function openTop(href) {
+    try { const a = top.document.createElement("a"); a.href = href; top.document.body.appendChild(a); a.click(); a.remove(); }
+    catch (e) { open(href, "_blank"); }
+  }
+
+  // --- running it --------------------------------------------------------------------------------------------
+  const rail = $("#rail");
+  STEPS.forEach((s, i) => {
+    const b = el("div", `stp${s.fin ? " fin" : ""}`, `<b>${i + 1}</b>${esc(s.t)}<span class="fill"></span>`);
+    b.onclick = () => start(i);
+    rail.append(b);
+  });
+  function setStep(i) {
+    S.step = i;
+    [...rail.children].forEach((c, j) => { c.classList.toggle("done", j < i); c.classList.toggle("cur", j === i); });
+  }
+  function reset() {
+    camAnim++;
+    traceIn.innerHTML = ""; cards.innerHTML = ""; read = 0; $("#evCount").textContent = "";
+    lW.innerHTML = ""; lF.innerHTML = ""; WALK.clear();
+    for (const t of TAG.values()) t.remove();
+    TAG.clear(); live.clear(); live.add(vavLive); swept.clear();
+    for (const n of NODE.values()) { n.setAttribute("class", n.getAttribute("class").split(" ").filter(c => ["n", "eq", "big", "plant", "part", "chiller", "pump", "hw", "vav", "pt"].includes(c)).join(" ")); }
+    for (const e of EDGE.values()) e.classList.remove("lit", "on", "pruned");
+    for (const l of LAB.values()) l.classList.remove("lit", "fault", "pruned");
+    for (const t of Object.values(tiles)) { t.classList.remove("on"); t.style.background = ""; }
+    for (const tr of document.querySelectorAll("#ahuRows tr[data-a], #chRows tr[data-c]")) tr.classList.remove("on");
+    svg.classList.remove("focus");
+    $("#left").classList.remove("wide");
+    crumbs.length = 0; for (const k2 in CRUMB_STATE) delete CRUMB_STATE[k2];
+    active = null; for (const f of Object.values(frames)) f.classList.remove("on");
+    for (const k2 in want) { want[k2] = { point: null }; drive(k2); }
+    $("#empty").classList.remove("gone");
+    overlay(null); renderCrumbs();
+    for (const w of Object.keys(H)) { H[w] = 0; document.querySelector(`[data-h="${w}"]`).textContent = 0; }
+    $("#finale").classList.add("hidden"); $("#showDx").style.display = "none";
+    agentEl.classList.remove("done"); status("ready", false);
+    S.ended = false;
+    $("#titlecard").classList.remove("on");
+    // the 3D viewers' own tables (AHU rows) go through `live`: register again
+    live.add(tableLive);
+  }
+  const tableLive = [...live].find(f => f !== vavLive);
+  async function start(from = 0) {
+    const tok = ++S.token;
+    $("#splash").classList.add("hidden");
+    S.started = true;
+    reset();
+    tick();
+    S.paused = false;
+    controls();
+    try {
+      for (let i = 0; i < STEPS.length; i++) {
+        S.instant = i < from;
+        setStep(i);
+        if (i === from && i > 0) { status("resuming"); }
+        await STEPS[i].run();
+        if (tok !== S.token) return;
+        if (!S.instant) await wait(700);
+        if (S.stepMode && !S.instant && i < STEPS.length - 1) { S.paused = true; controls(); await gate(); }
+      }
+      setStep(STEPS.length);
+    } catch (e) {
+      if (!(e instanceof Abort)) throw e;
+    } finally { if (tok === S.token) S.instant = false; }
+  }
+  function controls() {
+    const playing = S.started && !S.paused && !S.ended;
+    $("#playIcon").setAttribute("d", playing ? "M6 5h4v14H6zm8 0h4v14h-4z" : "M8 5v14l11-7z");
+    $("#playTx").textContent = playing ? "Pause" : S.ended ? "Replay" : !S.started ? "Play" : S.stepMode ? "Next step" : "Resume";
+  }
+  function playPause() {
+    if (!S.started || S.ended) return start(0);
+    S.paused = !S.paused; controls();
+  }
+  $("#play").onclick = playPause;
+  $("#restart").onclick = () => start(0);
+  $("#next").onclick = () => start(Math.min(STEPS.length - 1, Math.max(0, S.step + 1)));
+  $("#prev").onclick = () => start(Math.max(0, Math.min(STEPS.length - 1, S.step - 1)));
+  const SPEEDS = [1, 1.5, 2, 0.75];
+  $("#speed").onclick = () => { S.speed = SPEEDS[(SPEEDS.indexOf(S.speed) + 1) % SPEEDS.length]; $("#speed").textContent = `${S.speed}×`; };
+  $("#go").onclick = () => { S.stepMode = false; start(0); };
+  $("#goStep").onclick = () => { S.stepMode = true; start(0); };
+  $("#showDx").onclick = () => $("#finale").classList.remove("hidden");
+  addEventListener("keydown", e => {
+    if (e.target.closest?.("input, select, textarea")) return;
+    if (e.key === " ") { e.preventDefault(); if (!S.started) $("#go").click(); else playPause(); }
+    else if (e.key === "ArrowRight") $("#next").click();
+    else if (e.key === "ArrowLeft") $("#prev").click();
+    else if (e.key === "r" || e.key === "R") start(0);
+    else if (e.key === "Escape") $("#finale").classList.add("hidden");
+  });
+
+  // tooltips on the graph
+  const tip = $("#tip");
+  svg.addEventListener("pointerover", e => {
+    const g = e.target.closest?.(".n"); if (!g || drag) return;
+    const id = g.dataset.id, n = N[id], p = PT[id];
+    const v = p ? V(id) : null, vav = now.vav[id];
+    tip.innerHTML = n ? `<b>${esc(n.label)}</b><span class="mono">${esc(n.cls)}</span>${n.points ? ` · ${n.points} points` : ""}` +
+        (vav && swept.has(id) ? `<div>zone ${f1(vav.zone)} °F · damper ${Math.round(vav.damper)} %</div>` : "") + `<div class="m">${esc(src(n.prov))} · ${esc(prov(n.prov))}</div>`
+      : p ? `<b>${esc(p.label)}</b><span class="mono">${esc(p.cls || "unclassified")}</span>${v && v.text !== "–" ? ` · ${esc(v.text)}` : ""}<div class="m">${esc(src(p.prov))} · ${esc(prov(p.prov))}</div>` : "";
+    tip.style.display = tip.innerHTML ? "block" : "none";
+  });
+  svg.addEventListener("pointermove", e => { const r = $("#left").getBoundingClientRect(); tip.style.left = `${e.clientX - r.left + 14}px`; tip.style.top = `${e.clientY - r.top + 12}px`; });
+  svg.addEventListener("pointerout", e => { if (e.target.closest?.(".n")) tip.style.display = "none"; });
+
+  // --- go ----------------------------------------------------------------------------------------------------
+  Object.assign(cam, VIEWS.all());
+  applyCam();
+  sample();
+  setInterval(tick, 250);
+  // the splash: the graph drifts behind it
+  (function drift() { if (S.started) return; cam.x += Math.sin(performance.now() / 4000) * 0.15; applyCam(); requestAnimationFrame(drift); })();
+  renderCrumbs(); controls();
+  window.__tour = { start, S, now: () => now, stats };
+})();
+</script>
+</body>
+</html>

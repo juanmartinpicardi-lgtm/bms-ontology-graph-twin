@@ -136,6 +136,9 @@
   .crow td { padding: 2px 0; border-top: 1px solid var(--line); }
   .crow td:last-child { text-align: right; }
   .crow:hover td:first-child, .crow.sel td:first-child { color: var(--accent); }
+  /* Embedded in the agent tour: the tour drives the camera and selection, so the viewer's own tools step aside. */
+  body.embed #tools, body.embed #help, body.embed #dock, body.embed #vcHelp { display: none !important; }
+  body.embed #header { top: 10px; left: 10px; }
   @media (max-width: 760px) {
     #tools { top: auto; bottom: 12px; }
     #help, #dock { display: none; }
@@ -236,9 +239,11 @@ function openEquipment(id) {
 // In the app, DATA.sim carries the app-wide scenario and how long it has been running, so the demo continues from
 // page to page; the app then owns the scenario picker.
 const params = new URLSearchParams(location.search), hour = parseFloat(params.get("hour")), app = DATA.sim;
+// The agent tour passes a fixed `offset` and a `span` instead: the same stretch of the day replays in a loop, so the
+// fault looks the same however long the tour stays open.
 const sim = Sim.create(DATA, { seed: params.get("seed"), scenario: app?.scenario || params.get("scenario") || "normal",
                                hour: Number.isFinite(hour) ? hour : null,
-                               offset: app?.started ? Math.max(0, Date.now() / 1000 - app.started) : 0 });
+                               offset: app?.offset ?? (app?.started ? Math.max(0, Date.now() / 1000 - app.started) : 0) });
 let simSeconds = 0, simState = sim.sample(sim.hourAt(0)), sinceTick = 1;
 const value = id => simState.values[id];
 labels = Labels.create(viewer, model, DATA, { onSelect: selectPoint, value });
@@ -270,9 +275,28 @@ function tick() {
     `${Sim.clock(simState.h)} · outdoor ${a.oat.toFixed(1)} °F · ${a.occ ? "occupied" : "unoccupied"}`;
 }
 // the simulated clock runs with the render loop, so it pauses with it when the tab is hidden
-viewer.onFrame((t, dt) => { simSeconds += dt; sinceTick += dt; if (sinceTick >= 0.25) { sinceTick = 0; tick(); } });
+viewer.onFrame((t, dt) => {
+  simSeconds += dt;
+  if (app?.span) simSeconds %= app.span;
+  sinceTick += dt;
+  if (sinceTick >= 0.25) { sinceTick = 0; tick(); }
+});
 tick();
 window.__sim = { sim, state: () => simState, seconds: () => simSeconds };
+if (DATA.embed) document.body.classList.add("embed");
+// What the agent tour drives from outside: show a point (label, camera; the details panel only when asked), a view.
+window.__eq3dApi = {
+  point(id, { panel = false, dist = 9 } = {}) {
+    const pin = labels.select(id);
+    panels.highlight(id);
+    if (panel) panels.showPoint(id); else panels.close();
+    if (pin) viewer.focus(pin.pos, dist);
+    return !!pin;
+  },
+  clear() { labels.select(null); panels.close(); },
+  view: name => viewer.view(name),
+  rotate: on => { viewer.controls.autoRotate = on; viewer.controls.autoRotateSpeed = 0.6; },
+};
 document.getElementById("pinsBtn").onclick = e => {
   const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
   e.currentTarget.setAttribute("aria-pressed", on);
