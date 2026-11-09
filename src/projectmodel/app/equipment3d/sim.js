@@ -22,6 +22,18 @@ const Sim = (() => {
     normal: { label: "Normal day", start: 9.5, dOAT: 0 },
     hot: { label: "Hot afternoon", start: 13.5, dOAT: 13 },
     stuck: { label: "Stuck reheat valve", start: 9.5, dOAT: 0, stuck: true, needs: "reheat" },
+    // Plant fault for the demo: chilled water supply drifts warm, so every AHU's cooling valve pins at 100 % and its
+    // supply air climbs; VAVs open fully, can't reach their airflow setpoint, and zones warm up. The cause is upstream.
+    chw_warm: { label: "Chilled water running warm", start: 13.5, dOAT: 6, chwWarm: true },
+  };
+  // How far the chilled-water fault has developed: already visible at the start, fully developed after ~50 s.
+  const chwFault = (sc, h) => sc.chwWarm ? clamp(0.55 + (h - sc.start) * 0.55, 0, 1) : 0;
+  const chwSupply = (sc, h) => 44 + 8.5 * chwFault(sc, h);  // °F; 44 is the design supply
+
+  // Out of range: shown amber, the way an operator's graphic flags a value. Thresholds per driver.
+  const WARN = {
+    supply_temp: x => x > 57, chw_supply: x => x > 46.5,
+    zone_temp: x => x > 76, cooling_valve: x => x >= 99, vav_damper: x => x >= 99,
   };
 
   // The AHU's state at simulated hour h (hours since midnight of day 0).
@@ -33,9 +45,13 @@ const Sim = (() => {
     const rat = run ? 71.5 + 2 * load + 0.3 * noise(seed + 3, h * 3) : 74 + 0.3 * noise(seed + 3, h);
     const oa = run ? (oat < rat ? clamp(20 + (68 - oat) * 4, 20, 100) : 20) : 0;
     const mat = run ? (oa / 100) * oat + (1 - oa / 100) * rat : rat;
-    const cool = run && mat > 55.5 ? clamp((mat - 55) * 3.2 + load * 20) : 0;
+    let cool = run && mat > 55.5 ? clamp((mat - 55) * 3.2 + load * 20) : 0;
     const heat = run && mat < 54.5 ? clamp((55 - mat) * 10) : 0;
-    const sat = run ? 55 + 0.35 * noise(seed + 4, h * 6) + (cool >= 100 ? 1.5 : 0) : mat;
+    let sat = run ? 55 + 0.35 * noise(seed + 4, h * 6) + (cool >= 100 ? 1.5 : 0) : mat;
+    // The coil can't cool the air below the chilled water plus its approach: with warm water the valve opens fully
+    // and the supply air still runs warm.
+    const floor = chwSupply(sc, h) + 6 + 2.5 * load;
+    if (run && sc.chwWarm && floor > sat) { sat = Math.min(mat, floor + 0.3 * noise(seed + 4, h * 6)); cool = 100; }
     const speed = run ? 40 + 55 * load : 0, rspeed = speed * 0.85;
     return {
       hod, occ, run, load, oat, rat, mat, sat, cool, heat, oa, ra: run ? 100 - oa : 100, relief: run ? clamp(oa - 15) : 0,
@@ -55,15 +71,18 @@ const Sim = (() => {
   function vavState(seed, a, sc, h, elapsed, v) {
     const k = 0.75 + 0.5 * rnd(seed, 1), off = (rnd(seed, 2) - 0.5) * 0.3, design = 400 + Math.round(rnd(seed, 3) * 8) * 100;
     const run = a.run;
-    const vload = run ? clamp(a.load * k + off + 0.08 * noise(seed + 7, h * 3), 0, 1) : 0;
-    const damper = run ? clamp(30 + 70 * vload) : 0;
+    const vload0 = run ? clamp(a.load * k + off + 0.08 * noise(seed + 7, h * 3), 0, 1) : 0;
+    const warm = sc.chwWarm && run ? Math.max(0, a.sat - 55) : 0;  // degrees the supply air is above design
+    const vload = run ? clamp(vload0 + warm * 0.18, 0, 1) : 0;
+    const damper = run ? clamp(30 + 70 * vload + warm * 4) : 0;
     let reheat = run && v.reheat && vload < 0.2 ? clamp((0.2 - vload) * 450) : 0;
     if (sc.stuck && v.reheat) reheat = 100;
     const zone = (run ? 73 + (vload - 0.5) * 1.5 : 76) + 0.25 * noise(seed + 8, h * 4) +
-                 (sc.stuck && v.reheat ? Math.min(7, elapsed * 0.6) : 0);
+                 (sc.stuck && v.reheat ? Math.min(7, elapsed * 0.6) : 0) + warm * 0.75;
     // dual duct: the cold deck carries the cooling, the hot deck makes up the minimum
     const cold = run ? clamp(15 + 85 * vload) : 0, hot = run ? clamp(55 - 70 * vload, 10, 100) : 0;
-    const flowOf = d => design * d / 100 * (0.97 + 0.03 * noise(seed + 9, h * 5));
+    // with the AHU's fans already at full speed the duct can't deliver the design flow to every open box
+    const flowOf = d => design * d / 100 * (0.97 + 0.03 * noise(seed + 9, h * 5)) * (warm > 1 ? 0.82 : 1);
     return {
       run, vload, design, damper, reheat, zone,
       dat: run ? a.sat + reheat * 0.35 : zone - 1,
@@ -75,12 +94,13 @@ const Sim = (() => {
   }
 
   // A fan coil: like a VAV's zone, but its own valves do the work (a 2-pipe unit has only the coil it has).
-  function fcuState(seed, a, h, v) {
+  function fcuState(seed, a, sc, h, v) {
     const k = 0.75 + 0.5 * rnd(seed, 1), off = (rnd(seed, 2) - 0.5) * 0.3, run = a.run;
     const zload = run ? clamp(a.load * k + off + 0.08 * noise(seed + 7, h * 3), 0, 1) : 0;
-    const cool = run && v.cooling_coil && zload > 0.35 ? clamp((zload - 0.35) * 160) : 0;
-    const heat = run && v.heating_coil && zload < 0.15 ? clamp((0.15 - zload) * 500) : 0;
-    const zone = (run ? 73 + (zload - 0.5) * 1.5 : 76) + 0.25 * noise(seed + 8, h * 4);
+    const short = v.cooling_coil && run ? chwFault(sc, h) : 0;  // warm chilled water: the coil can't keep up
+    const cool = run && v.cooling_coil && (zload > 0.35 || short) ? clamp((zload - 0.35) * 160 + short * 100) : 0;
+    const heat = run && v.heating_coil && zload < 0.15 && !short ? clamp((0.15 - zload) * 500) : 0;
+    const zone = (run ? 73 + (zload - 0.5) * 1.5 : 76) + 0.25 * noise(seed + 8, h * 4) + short * 4;
     return { run, zload, cool, heat, zone, dat: run ? (cool ? 58 - cool * 0.04 : heat ? 78 + heat * 0.2 : zone - 0.5) : zone,
              fan: { terminal: { run, speed: run ? 100 : 0 } } };
   }
@@ -91,15 +111,15 @@ const Sim = (() => {
     const m = /(\d+)\s*([A-Za-z])?\s*$/.exec(label || "");
     return !m ? 0 : m[2] ? m[2].toUpperCase().charCodeAt(0) - 65 : Math.max(0, parseInt(m[1], 10) - 1);
   };
-  function plantState(seed, a, eq, v, h) {
+  function plantState(seed, a, sc, eq, v, h) {
     const k = rank(eq.label), hod = a.hod;
-    const cool = a.run ? clamp(0.1 + a.load * 1.05, 0.1, 1) : 0;
+    const cool = a.run ? clamp(0.1 + a.load * 1.05 + chwFault(sc, h), 0.1, 1) : 0;
     const heat = a.run ? clamp(0.3 + (64 - a.oat) / 25, 0.15, 1) : hod >= 5 && hod < 7 ? 0.5 : 0;  // morning warm-up
     const n = (sd, f) => noise(seed + sd, h * f);
     if (eq.template === "chiller") {
       const on = Math.max(1, [0, 1, 2].filter(i => cool > i * 0.4).length), run = cool > k * 0.4;
       const plr = run ? clamp(cool / (0.4 * on), 0.2, 1) : 0;
-      const chwS = run ? 44 + 0.25 * n(1, 4) + (plr >= 1 ? 1.5 : 0) : 56 + 0.4 * n(1, 1);
+      const chwS = run ? chwSupply(sc, h) + 0.25 * n(1, 4) + (plr >= 1 && !sc.chwWarm ? 1.5 : 0) : 56 + 0.4 * n(1, 1);
       const cwS = run ? clamp(70 + (a.oat - 66) * 0.45, 65, 88) + 0.3 * n(2, 3) : clamp(a.oat - 4, 55, 90);
       return { run, plr, load: cool, chwS, chwR: run ? chwS + 3 + 9 * plr : chwS + 0.3, cwS,
                cwR: run ? cwS + 2 + 8 * plr : cwS + 0.2, chwFlow: run ? 960 * (0.97 + 0.03 * n(3, 5)) : 0,
@@ -185,7 +205,8 @@ const Sim = (() => {
   // create(data, {seed, scenario}) -> {sample(h), hourAt(seconds), ...}. The default seed is the AHU's id, so a VAV
   // page and its AHU's page show the same day; fan coils and plant follow one site-wide day per project, so units of
   // a plant stage together across their pages.
-  function create(data, { seed = null, scenario = "normal", hour = null } = {}) {
+  // `offset` (seconds) continues a running demo across pages: the app passes how long the scenario has been running.
+  function create(data, { seed = null, scenario = "normal", hour = null, offset = 0 } = {}) {
     const eq = data.equipment, t = eq.template, isVav = t === "vav", v = data.variant || {};
     const site = { id: `site|${data.project}` };
     const ahu = isVav ? (data.relations?.fed_by || []).find(r => r.template === "ahu") : t === "ahu" ? eq : site;
@@ -196,20 +217,22 @@ const Sim = (() => {
     function sample(h) {
       const elapsed = h - sc.start, a = ahuState(aSeed, sc, h);
       const s = { h, ahu: a, vav: isVav ? vavState(vSeed, a, sc, h, elapsed, v) : null,
-                  fcu: t === "fcu" ? fcuState(vSeed, a, h, v) : null,
-                  plant: ["chiller", "boiler", "pump"].includes(t) ? plantState(vSeed, a, eq, v, h) : null };
+                  fcu: t === "fcu" ? fcuState(vSeed, a, sc, h, v) : null,
+                  plant: ["chiller", "boiler", "pump"].includes(t) ? plantState(vSeed, a, sc, eq, v, h) : null };
       s.values = {};
       for (const id of ids) {
         const sp = data.points[id].sim;
         if (!sp) continue;
         const x = pointValue(id, sp, s, h);
-        s.values[id] = { value: x, ...format(sp, x) };
+        const f = format(sp, x);
+        if (WARN[sp.driver]?.(x)) f.state = "warn";
+        s.values[id] = { value: x, ...f };
       }
       return s;
     }
     return {
       sample,
-      hourAt: seconds => (hour ?? sc.start) + seconds / 60,  // 1 real minute = 1 simulated hour
+      hourAt: seconds => (hour ?? sc.start) + (seconds + offset) / 60,  // 1 real minute = 1 simulated hour
       scenario: () => scenario,
       setScenario: k => { scenario = SCENARIOS[k] ? k : "normal"; sc = SCENARIOS[scenario]; },
       scenarios: Object.entries(SCENARIOS).filter(([, s]) => !s.needs || (data.variant || {})[s.needs])

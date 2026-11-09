@@ -66,17 +66,25 @@ with st.container(border=True):
 
 st.header("What it unlocks: agents that act")
 st.write("**\"Zone 1-2-81 is too warm. What's wrong?\"** An agent walks the graph instead of the drawings:")
+# Each step opens that equipment in 3D with the "Chilled water running warm" scenario, so the walk can be shown live.
+DEMO = "alpha/names_paths"
 steps = [
-    ("thermostat", "Zone temperature", "belongs to **VAV 1-2-81**: damper 100% open, airflow below setpoint"),
-    ("air", "VAV 1-2-81", "is fed by **AHU-2**: supply air 62 °F against a 55 °F setpoint, cooling valve 100%"),
-    ("water_drop", "AHU-2", "is fed by the **chilled water plant**: supply water running warm"),
+    ("thermostat", "Zone temperature", "belongs to **VAV 1-2-81**: damper 100% open, airflow below setpoint",
+     "eq:Airside AHU-2/VAV 1-2-81"),
+    ("air", "VAV 1-2-81", "is fed by **AHU-2**: supply air around 61 °F against a 55 °F setpoint, cooling valve 100%",
+     "eq:Airside AHU-2"),
+    ("water_drop", "AHU-2", "is fed by the **chilled water plant**: CH-1 supply water running warm, over 50 °F",
+     "eq:Waterside Chilled Water Plant/CH-1"),
     ("build", "Conclusion", "the cause is upstream. **One work order for the chilled water plant**, "
-                            "not thirty hot-call tickets for thirty zones"),
+                            "not thirty hot-call tickets for thirty zones", None),
 ]
-for icon, head, text in steps:
-    with st.container(border=True):
+for icon, head, text, equip in steps:
+    with st.container(border=True, horizontal=True, vertical_alignment="center"):
         st.markdown(f":material/{icon}: **{head}** {text}")
-st.caption("Illustrative values; the path through the graph is real.")
+        if equip:
+            st.page_link("views/equipment_3d.py", label="See it live", icon=":material/view_in_ar:",
+                         query_params={"project": DEMO, "equip": equip, "scenario": "chw_warm"}, width="content")
+st.caption("Simulated values from the \"Chilled water running warm\" scenario; the path through the graph is real.")
 
 st.header("What you can build on it")
 uses = [

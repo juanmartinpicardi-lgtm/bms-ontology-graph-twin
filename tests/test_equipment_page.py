@@ -57,3 +57,25 @@ def test_deep_link_through_the_app_sets_the_shared_project():
     at.switch_page("views/equipment_3d.py").run()
     assert not at.exception
     assert at.session_state["project"] == "alpha/names_only"  # the header dropdown is keyed to this
+
+
+def test_scenario_link_runs_app_wide_and_stays_in_the_address_bar():
+    at = run(project="alpha/names_paths", equip="eq:Airside AHU-2", scenario="chw_warm")
+    assert not at.exception and at.session_state["sim_scenario"] == "chw_warm"
+    started = at.session_state["sim_started"]
+    at.button(key="eq_next").click().run()  # the scenario and its clock carry over to the next equipment
+    assert at.session_state["sim_scenario"] == "chw_warm" and at.session_state["sim_started"] == started
+    assert at.query_params["scenario"] == "chw_warm"
+    at.selectbox(key="sim_scenario").select("normal").run()
+    assert "scenario" not in at.query_params
+
+
+def test_related_jumps_walk_from_a_vav_up_to_the_chiller_and_back():
+    at = run(project="alpha/names_paths", equip="eq:Airside AHU-2/VAV 1-2-81")
+    rel = lambda: [b.key for b in at.button if b.key.startswith("rel_")]  # noqa: E731
+    assert rel() == ["rel_fed by_eq:Airside AHU-2"]  # a VAV feeds nothing
+    at.button(key="rel_fed by_eq:Airside AHU-2").click().run()
+    assert "rel_fed by_eq:Waterside Chilled Water Plant/CH-1" in rel()  # the plant's lead unit stands in for it
+    at.button(key="rel_fed by_eq:Waterside Chilled Water Plant/CH-1").click().run()
+    assert at.session_state["equip"] == "eq:Waterside Chilled Water Plant/CH-1"
+    assert "rel_feeds_eq:Airside AHU-2" in rel()  # CH-1 feeds what its plant feeds

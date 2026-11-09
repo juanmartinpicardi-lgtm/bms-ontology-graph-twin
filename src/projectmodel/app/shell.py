@@ -78,3 +78,12 @@ def project_header(store: Store) -> None:
         n = summaries(store).get(project, {}).get("nodes", {})
         st.caption(f"{site.kind} · {n.get('point', 0):,} points · {n.get('equipment', 0)} equipment",
                    width="content")
+        st.space("stretch")
+        # The right end of this row belongs to the page (page_tools): its scenario, view options, ...
+        st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
+                                                       vertical_alignment="center")
+
+
+def page_tools():
+    """The page's own tools, at the right end of the header row; in place when the page runs on its own (tests)."""
+    return st.session_state.pop("_page_tools", None) or st.container(horizontal=True, horizontal_alignment="right")

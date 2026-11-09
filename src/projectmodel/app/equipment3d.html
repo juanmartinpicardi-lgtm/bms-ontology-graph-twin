@@ -233,9 +233,12 @@ function openEquipment(id) {
 }
 // simulated values: ?seed=, ?scenario= and ?hour= (start time) pick the demo; the same seed gives the same values
 // at the same time
-const params = new URLSearchParams(location.search), hour = parseFloat(params.get("hour"));
-const sim = Sim.create(DATA, { seed: params.get("seed"), scenario: params.get("scenario") || "normal",
-                               hour: Number.isFinite(hour) ? hour : null });
+// In the app, DATA.sim carries the app-wide scenario and how long it has been running, so the demo continues from
+// page to page; the app then owns the scenario picker.
+const params = new URLSearchParams(location.search), hour = parseFloat(params.get("hour")), app = DATA.sim;
+const sim = Sim.create(DATA, { seed: params.get("seed"), scenario: app?.scenario || params.get("scenario") || "normal",
+                               hour: Number.isFinite(hour) ? hour : null,
+                               offset: app?.started ? Math.max(0, Date.now() / 1000 - app.started) : 0 });
 let simSeconds = 0, simState = sim.sample(sim.hourAt(0)), sinceTick = 1;
 const value = id => simState.values[id];
 labels = Labels.create(viewer, model, DATA, { onSelect: selectPoint, value });
@@ -245,6 +248,11 @@ const scenarioSel = document.getElementById("scenario");
 scenarioSel.innerHTML = sim.scenarios.map(s => `<option value="${s.key}">${esc(s.label)}</option>`).join("");
 scenarioSel.value = sim.scenario();
 scenarioSel.onchange = () => { sim.setScenario(scenarioSel.value); simSeconds = 0; sinceTick = 1; };
+if (app) {  // the app's picker decides; show the scenario as text
+  const label = document.createElement("span");
+  label.textContent = Sim.SCENARIOS[sim.scenario()]?.label || "";
+  scenarioSel.replaceWith(label);
+}
 function tick() {
   simState = sim.sample(sim.hourAt(simSeconds));
   model.setState?.(simState);

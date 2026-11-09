@@ -11,6 +11,7 @@ Fed-by / feeds links inside the viewer open the linked equipment on this page.
 import json
 import re
 import sys
+import time
 from collections import Counter
 from pathlib import Path
 from urllib.parse import urlencode
@@ -20,7 +21,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store, knowledge_model, viewer_options  # noqa: E402
+from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools, viewer_options  # noqa: E402
 from projectmodel.equipment_view import equipment_payload, load_anchors, render_html  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
 
@@ -28,6 +29,14 @@ PAGE = "/Equipment_3D"
 TYPES = {"ahu": "AHU", "vav": "VAV", "fcu": "FCU", "chiller": "Chiller", "boiler": "Boiler",
          "pump": "Pump"}  # templates with a 3D model, in picker order
 ALL = "all"
+# Simulated-value scenarios (keys and labels as in equipment3d/sim.js). One runs app-wide: its clock keeps going as
+# you move between equipment, so a fault develops the same way on the plant, the AHU and the VAV.
+SCENARIOS = {"normal": "Normal day", "hot": "Hot afternoon", "stuck": "Stuck reheat valve (VAVs with reheat)",
+             "chw_warm": "Chilled water running warm"}
+
+
+def start_scenario() -> None:
+    st.session_state["sim_started"] = time.time()
 
 
 @st.cache_resource
@@ -39,8 +48,9 @@ def natural(label: str) -> list:
     return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", label)]
 
 
-def link(project: str, equip: str) -> str:
-    return f"{PAGE}?{urlencode({'project': project, 'equip': equip})}"
+def link(project: str, equip: str, scenario: str = "normal") -> str:
+    q = {"project": project, "equip": equip} | ({"scenario": scenario} if scenario != "normal" else {})
+    return f"{PAGE}?{urlencode(q)}"
 
 
 store = get_store()
@@ -64,6 +74,32 @@ for e in store.edges(project, "feeds"):
     if e["status"] != "rejected" and e["src"] in rows and e["dst"] in rows:
         fed_by.setdefault(e["dst"], []).append(e["src"])
         feeds.setdefault(e["src"], []).append(e["dst"])
+parts: dict[str, list[str]] = {}
+part_of: dict[str, str] = {}
+for e in store.edges(project, "hasPart"):
+    if e["status"] != "rejected" and e["dst"] in kind:
+        parts.setdefault(e["src"], []).append(e["dst"])
+        part_of[e["dst"]] = e["src"]
+
+
+def upstream(i: str) -> list[str]:
+    """What feeds this one, as equipment with a model: a plant group has none, so its lead unit stands in (the
+    chilled water plant -> CH-1), which keeps the walk from a VAV up to the chiller one click per step."""
+    out = []
+    for f in fed_by.get(i, []):
+        if f in kind:
+            out.append(f)
+        elif units := sorted(parts.get(f, []), key=lambda u: (kind[u] not in ("chiller", "boiler"), natural(rows[u][0]))):
+            out.append(units[0])
+    return out
+
+
+def downstream(i: str) -> list[str]:
+    """What this one feeds, with a model; a plant's unit (CH-1) feeds what its plant feeds."""
+    plant_unit = kind[i] in ("chiller", "boiler", "pump")  # a VAV is also a part (of its AHU) but feeds nothing
+    return [d for d in feeds.get(i) or (feeds.get(part_of.get(i, ""), []) if plant_unit else []) if d in kind]
+
+
 counts = Counter(kind.values())
 untemplated = len(rows) - len(models)
 
@@ -78,6 +114,9 @@ if asked and asked != st.session_state.get("_linked_equip"):
     else:
         st.toast(f"{rows.get(asked, (asked,))[0]} has no 3D model; showing the first AHU instead.",
                  icon=":material/info:")
+if (sc := qp.get("scenario")) in SCENARIOS and sc != st.session_state.get("_linked_scenario"):
+    st.session_state["_linked_scenario"] = st.session_state["sim_scenario"] = sc
+    start_scenario()
 if st.session_state.get("equip") not in kind:  # first visit, or the project changed
     st.session_state["equip"] = models[0]
     st.session_state["eq_type"] = kind[models[0]]
@@ -115,7 +154,11 @@ def step(delta: int) -> None:
     go(lst[(i + delta) % len(lst)])
 
 
-height = st.session_state.get("equipment_height", 780)  # the View popover (drawn later, above the viewer) sets it
+with page_tools():
+    scenario = st.selectbox("Scenario", list(SCENARIOS), key="sim_scenario", format_func=SCENARIOS.get,
+                            on_change=start_scenario, label_visibility="collapsed", width=240,
+                            help="Simulated values. The scenario keeps running as you move between equipment.")
+    height = viewer_options("equipment", 780)
 browser, main = st.columns([1, 3.4], gap="medium")
 
 # --- browser: type, search, list ---------------------------------------------------------------
@@ -140,7 +183,7 @@ with browser:
         let box = el.parentElement;
         while (box && box.scrollHeight <= box.clientHeight + 1) box = box.parentElement;
         if (box) box.scrollTo({{ top: el.offsetTop - box.clientHeight / 2, behavior: "smooth" }});
-      }})(20);</script>""", unsafe_allow_javascript=True)
+      }})(60);</script>""", unsafe_allow_javascript=True)
     st.caption(f"{untemplated} more equipment have no 3D model yet (meters, drives, plant groups, or not yet "
                "reviewed).")
 
@@ -155,21 +198,27 @@ with main:
         where = f"{lst.index(equip) + 1} of {len(lst)}" if equip in lst else "not in the filtered list"
         st.markdown(f"**{name(equip)}** <span style='opacity:.6'>· {where}</span>",
                     unsafe_allow_html=True, width="content")
-        for rel, ids, icon in [("fed by", fed_by.get(equip, []), ":material/north:"),
-                               ("feeds", feeds.get(equip, []), ":material/south:")]:
-            with_model = [i for i in ids if i in kind]
-            for i in with_model[:3]:
+        for rel, verb, ids, icon in [("fed by", "is fed by", upstream(equip), ":material/north:"),
+                                     ("feeds", "feeds", downstream(equip), ":material/south:")]:
+            for i in ids[:2]:
                 st.button(rows[i][0], icon=icon, on_click=go, args=(i,), key=f"rel_{rel}_{i}",
-                          help=f"{rows[equip][0]} is {rel} {rows[i][0]}", type="tertiary")
-            if len(with_model) > 3:
-                st.caption(f"{rel} {len(with_model) - 3} more", width="content")
-        st.space("stretch")
-        height = viewer_options("equipment", 780)
+                          help=f"{rows[equip][0]} {verb} {rows[i][0]}"
+                               + ("" if i in fed_by.get(equip, []) + feeds.get(equip, []) else " (its plant)"),
+                          type="tertiary")
+            if len(ids) > 2:
+                st.caption(f"+{len(ids) - 2} more", width="content")
 
     qp.update(project=project, equip=equip)  # the address bar is always a deep link to what is on screen
+    if scenario != "normal":
+        qp["scenario"] = st.session_state["_linked_scenario"] = scenario
+    else:
+        qp.pop("scenario", None)
+        st.session_state["_linked_scenario"] = scenario
     st.session_state["_linked_equip"] = equip
     payload = equipment_payload(store, project, equip, knowledge_model(), anchors())
     # Links inside the viewer open the target on this page (the top window), not inside the iframe.
-    payload["links"] = {i: link(project, i) for i in models if i != equip}
+    payload["links"] = {i: link(project, i, scenario) for i in models if i != equip}
+    # The start time, not the elapsed time: the page stays identical between reruns, so the viewer doesn't reload.
+    payload["sim"] = {"scenario": scenario, "started": st.session_state.setdefault("sim_started", time.time())}
     payload["link_target"] = "top"
     st.iframe(render_html(payload, st.context.theme.type), height=height)

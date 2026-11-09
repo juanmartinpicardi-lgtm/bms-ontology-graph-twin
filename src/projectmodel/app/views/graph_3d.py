@@ -10,7 +10,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store, knowledge_model, viewer_options  # noqa: E402
+from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools, viewer_options  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
 from projectmodel.viz import graph_payload, render_html  # noqa: E402
 
@@ -21,7 +21,7 @@ if not projects:
     st.stop()
 project = active_project(projects)
 
-with st.container(horizontal=True, horizontal_alignment="right"):
+with page_tools():
     height = viewer_options("graph", 780, f"For a full-window view outside the app: "
                                           f"`.venv/bin/python scripts/export_graph3d.py {project}`")
 
