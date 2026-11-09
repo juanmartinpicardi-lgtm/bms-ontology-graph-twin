@@ -1,4 +1,7 @@
-[theme]
-# The app's one accent: active chips, rail item, selected controls.
+# The app's one accent (active chips, rail item, selected controls), set per theme: a light and a dark
+# section keep Streamlit's light/dark switch in the menu, where a single [theme] would remove it.
+[theme.light]
+primaryColor = "#1F7FCC"
+
+[theme.dark]
 primaryColor = "#4DA3E8"
-baseRadius = "medium"
