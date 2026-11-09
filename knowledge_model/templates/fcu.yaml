@@ -7,8 +7,8 @@ points:
   - {role: zone_temp, classes: [Zone_Air_Temperature_Sensor], required: true}
   - {role: fan_cmd, classes: [Fan_Command, Fan_Speed_Command, Start_Stop_Command], required: true}
   - {role: fan_status, classes: [Fan_Status, Run_Status, On_Off_Status], required: false}
-  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: chilled_water}
-  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water}
+  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: chilled_water, words: [cooling, chilled]}
+  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water, words: [heating, hot, reheat]}
   - {role: discharge_temp, classes: [Discharge_Air_Temperature_Sensor], required: false}
   - {role: occ_cooling_sp, classes: [Occupied_Cooling_Zone_Air_Temperature_Setpoint], required: false}
   - {role: occ_heating_sp, classes: [Occupied_Heating_Zone_Air_Temperature_Setpoint], required: false}

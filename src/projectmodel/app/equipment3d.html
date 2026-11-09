@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipment 3D</title>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<style>
+  /* Same tokens as graph3d.html, plus scene tokens (--air-*, --metal-*). The scene reads them, so it always
+     matches the page theme. The app sets data-theme; the standalone page follows the system. */
+  :root {
+    color-scheme: light;
+    --bg: #ffffff; --panel: rgba(255, 255, 255, 0.94); --line: #dcdad6; --text: #2f2d2b; --muted: #74706b;
+    --accent: #0969da; --chip: #f8f8f7;
+    --s-proposed: #bf8700; --s-confirmed: #2da44e; --s-rejected: #cf222e;
+    --air-outside: #1f9d55; --air-return: #d1453b; --air-mixed: #c98a12; --air-supply: #1f8fe0;
+    --pill: #2b2d31; --pill-text: #f2f3f5;
+    --shadow: 0.16; --bloom: 0; --exposure: 1.0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e1117; --panel: rgba(22, 27, 34, 0.94); --line: #30363d; --text: #e6edf3; --muted: #8b949e;
+      --accent: #58a6ff; --chip: #262730;
+      --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149;
+      --air-outside: #3fd17a; --air-return: #ff5a4e; --air-mixed: #f2b134; --air-supply: #3fb4ff;
+      --pill: #1d1f23; --pill-text: #e6edf3;
+      --shadow: 0.55; --bloom: 0.5; --exposure: 1.05;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #171614; --panel: rgba(33, 32, 29, 0.94); --line: #3b3935; --text: #edebe8; --muted: #a29e98;
+    --accent: #58a6ff; --chip: #2a2925;
+    --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149;
+    --air-outside: #3fd17a; --air-return: #ff5a4e; --air-mixed: #f2b134; --air-supply: #3fb4ff;
+    --pill: #1d1f23; --pill-text: #edebe8;
+    --shadow: 0.55; --bloom: 0.5; --exposure: 1.05;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  #view, #labels { position: absolute; inset: 0; }
+  #labels { pointer-events: none; z-index: 1; }  /* own stacking context: CSS2DRenderer z-indexes stay under the panels */
+  .card { position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    backdrop-filter: blur(6px); z-index: 3; }
+  #header { top: 12px; left: 12px; padding: 10px 14px; max-width: calc(100% - 24px); }
+  #header h1 { font-size: 15px; margin: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #header .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .badge { font-size: 10px; font-weight: 600; letter-spacing: .06em; padding: 2px 7px; border-radius: 999px;
+    border: 1px solid var(--s-proposed); color: var(--s-proposed); }
+  #tools { top: 12px; right: 12px; padding: 6px; display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  button { background: var(--chip); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+    padding: 4px 9px; font: inherit; font-size: 12px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  #help { left: 12px; bottom: 12px; padding: 5px 10px; font-size: 11px; color: var(--muted); }
+  /* Labels drawn in the scene (CSS2D) */
+  .stream { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap;
+    text-shadow: 0 0 6px var(--bg), 0 0 2px var(--bg); }
+  .stream.vav { font-size: 12px; transform-origin: left; }
+  .tag { font-size: 11px; color: var(--muted); white-space: nowrap; text-shadow: 0 0 4px var(--bg); }
+  .nav { color: var(--accent); cursor: pointer; pointer-events: auto; }
+  .nav:hover { text-decoration: underline; }
+  .stream.nav { color: var(--text); }
+  .morechip, .nopoint { font-size: 11px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .morechip { background: var(--chip); border: 1px solid var(--line); color: var(--accent); cursor: pointer; pointer-events: auto; }
+  .nopoint { color: var(--muted); border: 1px dashed var(--line); background: color-mix(in srgb, var(--bg) 70%, transparent); }
+  /* Pins: dot on the part, leader line, card with one row per point */
+  .pin { width: 0; height: 0; position: relative; }
+  .pin .dot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--text); box-shadow: 0 0 0 2px var(--bg); }
+  .pin .leader { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; }
+  .pin .leader line { stroke: var(--muted); stroke-width: 1; }
+  .pcard { position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer; display: grid; gap: 2px;
+    padding: 3px 6px; border-radius: 6px; white-space: nowrap; font-size: 11.5px;
+    background: color-mix(in srgb, var(--bg) 62%, transparent); }
+  .pin.selected .pcard, .pcard:hover { background: var(--panel); outline: 1px solid var(--accent); z-index: 2; }
+  .pin.selected .dot { background: var(--accent); }
+  .prow { display: grid; grid-template-columns: auto auto auto; align-items: center; gap: 6px; }
+  .prow.sel .pname { color: var(--accent); }
+  .pname { color: var(--text); }
+  .pcls { grid-column: 2 / 4; color: var(--muted); font-size: 10.5px; display: none; }
+  .pin[data-mode="near"] .pcls { display: block; }
+  .pin[data-mode="far"] .pval { display: none; }
+  .pin.ghost .dot { background: transparent; border: 1.5px dashed var(--muted); box-shadow: none; }
+  .pin.ghost .pname { color: var(--muted); }
+  .pin.ghost .pcard { border: 1px dashed var(--muted); }
+  .sdot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .s-proposed { background: var(--s-proposed); } .s-confirmed { background: var(--s-confirmed); } .s-rejected { background: var(--s-rejected); }
+  .pval { font-size: 10.5px; padding: 1px 7px; border-radius: 999px; background: var(--pill); color: var(--pill-text);
+    font-variant-numeric: tabular-nums; }
+  .pval.st-ok { color: #3fd17a; }
+  .pval.muted { background: none; color: var(--muted); font-style: italic; }
+  .pval.sim { min-width: 44px; text-align: center; }
+  .pval.st-off { color: var(--muted); }
+  .pval.st-warn { color: #f2b134; }
+  .simbar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .simbar b { color: var(--text); font-weight: 600; }
+  #simClock { font-variant-numeric: tabular-nums; }
+  #scenario { background: var(--chip); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+    font: inherit; padding: 1px 4px; }
+  /* Details panel (right) and component / setpoint panels (bottom-left) */
+  #panel { top: 64px; right: 12px; bottom: 12px; width: 360px; padding: 14px; overflow: auto; display: none; z-index: 4; }
+  #panel h2 { font-size: 16px; margin: 0 0 4px; word-break: break-word; }
+  #panel h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 14px 0 6px; }
+  #panel table, .cpanel table { width: 100%; border-collapse: collapse; }
+  #panel td { border-top: 1px solid var(--line); padding: 4px; vertical-align: top; word-break: break-word; }
+  #panel td:first-child { color: var(--muted); width: 38%; }
+  #panel input { width: 100%; margin: 6px 0; background: var(--chip); color: var(--text); border: 1px solid var(--line);
+    border-radius: 6px; padding: 5px 7px; font: inherit; }
+  .chip { display: inline-block; background: var(--chip); border: 1px solid var(--line); border-radius: 999px;
+    padding: 1px 8px; font-size: 12px; margin: 2px 4px 2px 0; }
+  .close { position: absolute; top: 8px; right: 10px; border: none; background: none; font-size: 18px; color: var(--muted); }
+  ul.nb { list-style: none; padding: 0; margin: 0; }
+  ul.nb li { padding: 3px 0; border-top: 1px solid var(--line); }
+  .muted { color: var(--muted); }
+  code { font-size: 11px; }
+  #dock { position: absolute; left: 12px; bottom: 44px; display: flex; gap: 10px; align-items: flex-end; z-index: 3;
+    max-width: calc(100% - 24px); }
+  .cpanel { position: static; width: 270px; font-size: 12px; }
+  .chead { padding: 7px 10px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; }
+  .cbody { max-height: 230px; overflow: auto; padding: 0 10px 8px; }
+  .cpanel.collapsed .cbody { display: none; }
+  .cpanel summary { cursor: pointer; padding: 4px 0; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .crow { cursor: pointer; }
+  .crow td { padding: 2px 0; border-top: 1px solid var(--line); }
+  .crow td:last-child { text-align: right; }
+  .crow:hover td:first-child, .crow.sel td:first-child { color: var(--accent); }
+  @media (max-width: 760px) {
+    #tools { top: auto; bottom: 12px; }
+    #help, #dock { display: none; }
+    #panel { top: auto; left: 12px; right: 12px; width: auto; height: 50%; }
+  }
+</style>
+</head>
+<body>
+<div id="view"></div>
+<div id="labels"></div>
+<div id="header" class="card">
+  <h1><span id="eqName"></span><span class="badge" title="Values are simulated: the public datasets have no readings">SIMULATED</span></h1>
+  <div class="sub" id="eqSub"></div>
+  <div class="sub" id="eqRel"></div>
+  <div class="sub simbar"><b>Simulated values</b> · <span id="simClock"></span>
+    <select id="scenario" aria-label="Scenario"></select></div>
+</div>
+<div id="tools" class="card">
+  <button data-view="hero">Hero</button>
+  <button data-view="front">Front</button>
+  <button data-view="top">Top</button>
+  <button id="fit">Fit</button>
+  <button id="frontWall" aria-pressed="false" title="Show the front wall (translucent)">Front wall</button>
+  <button id="pinsBtn" aria-pressed="true" title="Show or hide the point labels">Labels</button>
+</div>
+<div id="dock"></div>
+<div id="panel" class="card"><button class="close" id="closePanel" aria-label="Close">×</button><div id="panelBody"></div></div>
+<div id="help" class="card">Drag to rotate · scroll to zoom · right-drag to pan</div>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+const DATA = /*__DATA__*/null;
+
+/*__MODULES__*/
+
+// --- page -------------------------------------------------------------------------------------
+const q = new URLSearchParams(location.search).get("theme");
+if (q === "light" || q === "dark") document.documentElement.dataset.theme = q;
+
+const esc = Labels.esc;
+const eq = DATA.equipment;
+document.title = `${eq.label} · Equipment 3D`;
+document.getElementById("eqName").textContent = eq.label;
+document.getElementById("eqSub").innerHTML =
+  [`${esc(eq.cls)} · template <b>${esc(eq.template)}</b>`,
+   ...Object.entries(DATA.variant || {}).filter(([, on]) => on)
+     .map(([k, on]) => esc((typeof on === "string" ? on : k).replace(/_/g, " "))),
+   `fit ${Math.round(eq.slot_fill * 100)}%`, esc(DATA.project)].join(" · ");
+
+const viewer = Core.createViewer(document.getElementById("view"), document.getElementById("labels"));
+const BUILD = { ahu: AHU.build, vav: VAV.build, fcu: FCU.build, chiller: Chiller.build, boiler: Boiler.build, pump: Pump.build };
+const model = BUILD[eq.template](DATA, viewer);
+viewer.scene.add(model.group);
+viewer.setModel(model);
+viewer.view("hero", false);
+
+// labels, panels, selection
+const rels = [...(DATA.relations?.fed_by || []), ...(DATA.relations?.feeds || []), ...(DATA.relations?.with || [])];
+let labels, panels;
+function selectPoint(id) {
+  const pin = labels.select(id);
+  panels.showPoint(id);
+  panels.highlight(id);
+  if (pin) viewer.focus(pin.pos);
+}
+function openEquipment(id) {
+  const href = DATA.links?.[id];
+  if (href) {
+    // In the app the page sits in a sandboxed, same-origin iframe that may not navigate the top window itself, so it
+    // clicks a link in the app's own document (the app navigates); a new tab if that is not reachable.
+    if (DATA.link_target === "top" && parent !== window) {
+      try {
+        const a = top.document.createElement("a");
+        a.href = href;
+        top.document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) { open(href, "_blank"); }
+      return;
+    }
+    location.href = href;
+    return;
+  }
+  if (parent !== window) parent.postMessage({ type: "open-equipment", id }, "*");  // the app can route it (E5)
+  const r = rels.find(r => r.id === id);
+  if (r) panels.showEquipment(r, null);
+}
+// simulated values: ?seed=, ?scenario= and ?hour= (start time) pick the demo; the same seed gives the same values
+// at the same time
+const params = new URLSearchParams(location.search), hour = parseFloat(params.get("hour"));
+const sim = Sim.create(DATA, { seed: params.get("seed"), scenario: params.get("scenario") || "normal",
+                               hour: Number.isFinite(hour) ? hour : null });
+let simSeconds = 0, simState = sim.sample(sim.hourAt(0)), sinceTick = 1;
+const value = id => simState.values[id];
+labels = Labels.create(viewer, model, DATA, { onSelect: selectPoint, value });
+panels = Panels.create(DATA, { onSelectPoint: selectPoint, onOpenEquipment: openEquipment, value });
+viewer.onFrame(labels.layout);
+const scenarioSel = document.getElementById("scenario");
+scenarioSel.innerHTML = sim.scenarios.map(s => `<option value="${s.key}">${esc(s.label)}</option>`).join("");
+scenarioSel.value = sim.scenario();
+scenarioSel.onchange = () => { sim.setScenario(scenarioSel.value); simSeconds = 0; sinceTick = 1; };
+function tick() {
+  simState = sim.sample(sim.hourAt(simSeconds));
+  model.setState?.(simState);
+  let resized = false;
+  for (const el of document.querySelectorAll(".pval[data-v]")) {
+    const v = simState.values[el.dataset.v];
+    if (!v || el.textContent === v.text) continue;
+    resized ||= el.textContent.length !== v.text.length;
+    el.textContent = v.text;
+    el.className = `pval sim ${v.state ? "st-" + v.state : ""}`;
+  }
+  if (resized) labels.remeasure();
+  const a = simState.ahu;
+  document.getElementById("simClock").textContent =
+    `${Sim.clock(simState.h)} · outdoor ${a.oat.toFixed(1)} °F · ${a.occ ? "occupied" : "unoccupied"}`;
+}
+// the simulated clock runs with the render loop, so it pauses with it when the tab is hidden
+viewer.onFrame((t, dt) => { simSeconds += dt; sinceTick += dt; if (sinceTick >= 0.25) { sinceTick = 0; tick(); } });
+tick();
+window.__sim = { sim, state: () => simState, seconds: () => simSeconds };
+document.getElementById("pinsBtn").onclick = e => {
+  const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+  e.currentTarget.setAttribute("aria-pressed", on);
+  labels.setVisible(on);
+};
+
+for (const b of document.querySelectorAll("[data-view]")) b.onclick = () => viewer.view(b.dataset.view);
+document.getElementById("fit").onclick = () => viewer.view("fit");
+document.getElementById("frontWall").onclick = e => {
+  const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+  e.currentTarget.setAttribute("aria-pressed", on);
+  model.setFrontWall(on);
+};
+// Standalone page: follow the system theme as it changes (the app passes its theme instead).
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => viewer.applyTheme());
+new MutationObserver(() => viewer.applyTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+window.__eq3d = viewer;  // for debugging and visual checks
+</script>
+</body>
+</html>

@@ -78,6 +78,7 @@ def test_subset_errors_are_caught(km_copy, brick, edit, expected):
     (lambda d: d["relations"].append({"rel": "isFedBy", "target": "ahu", "system": "AHU"}), "not a system class"),
     (lambda d: d.update(name_patterns=["(unclosed"]), "bad name pattern"),
     (lambda d: d.update(id="other"), "must equal the file name"),
+    (lambda d: d["points"][0].update(words=["frobnication"]), "word 'frobnication' is not in the vocabulary"),
 ])
 def test_template_errors_are_caught(km_copy, brick, edit, expected):
     _edit_yaml(km_copy / "templates" / "vav.yaml", edit)

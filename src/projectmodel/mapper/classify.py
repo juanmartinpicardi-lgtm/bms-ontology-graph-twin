@@ -16,6 +16,7 @@ from ..knowledge_model import KnowledgeModel
 MISSING_PENALTY = 0.5
 IMPLIED_PENALTY = 0.1
 IMPLIED_WORDS = {"air"}
+COMPONENT_PENALTY = 1.0  # a class naming a component the name never mentions ("Building DP" is not a filter point)
 ALT_PENALTY = 1.0  # per token read with a less likely abbreviation meaning
 MAX_INTERPRETATIONS = 16
 # Words naming a kind of equipment or component (vocabulary words of the name rules).
@@ -91,7 +92,8 @@ class ClassMatcher:
         if not matched:
             return 0.0
         missing = cls_words - words
-        return matched - sum(IMPLIED_PENALTY if w in IMPLIED_WORDS else MISSING_PENALTY for w in missing)
+        return matched - sum(IMPLIED_PENALTY if w in IMPLIED_WORDS else COMPONENT_PENALTY if w in EQUIPMENT_WORDS
+                             else MISSING_PENALTY for w in missing)
 
     def rank(self, words: list[str]) -> list[tuple[str, float]]:
         s = set(words)

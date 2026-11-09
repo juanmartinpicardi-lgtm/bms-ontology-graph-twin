@@ -341,11 +341,26 @@ function breadcrumb(id) {
   while (cur && guard++ < 20) { chain.unshift(cur); cur = parentOf.get(cur); }
   return chain.length ? chain.map(nav).join(" › ") + " › " : "";
 }
+// Equipment with a 3D model (knowledge_model/templates/anchors.yaml) link to the Equipment 3D page. In the app this
+// viewer sits in a sandboxed same-origin iframe that may not navigate the top window, so the link is clicked in the
+// app's own document (the app navigates); a new tab if that is not reachable.
+const EQ3D_TEMPLATES = ["ahu", "vav", "fcu", "chiller", "boiler", "pump"];
+function openInApp(href) {
+  try {
+    const a = top.document.createElement("a");
+    a.href = href;
+    top.document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (e) { open(href, "_blank"); }
+}
 function renderNodePanel(n) {
   const a = n.attrs || {};
   let h = `<div class="muted" style="font-size:12px">${breadcrumb(n.id)}</div><h2>${esc(n.label)}</h2>`;
   h += `<span class="chip">${esc(n.kind)}</span>`;
   if (n.cls && n.kind !== "class") h += `<span class="chip">${byId.has("cls:" + n.cls) ? nav("cls:" + n.cls) : esc(n.cls)}</span>`;
+  if (n.kind === "equipment" && EQ3D_TEMPLATES.includes(a.template) && parent !== window)
+    h += `<p><a class="open3d" href="/Equipment_3D?${new URLSearchParams({ project: DATA.project, equip: n.id })}">Open 3D equipment</a></p>`;
   h += `<h3>${n.kind === "class" ? "Definition" : "Provenance of this node"}</h3><table>${provRows(n.prov)}</table>`;
   const extra = {};
   if (a.points !== undefined) extra["points (from mapper)"] = a.points;
@@ -387,6 +402,8 @@ function openPanel(html) {
   document.getElementById("panel").style.display = "block";
 }
 document.getElementById("panel").addEventListener("click", e => {
+  const o = e.target.closest("a.open3d");
+  if (o) { e.preventDefault(); openInApp(o.getAttribute("href")); return; }
   const t = e.target.closest("[data-id],[data-link]");
   if (!t) return;
   if (t.dataset.link !== undefined) selectLink(links[+t.dataset.link]);

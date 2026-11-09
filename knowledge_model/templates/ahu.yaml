@@ -11,13 +11,25 @@ points:
   - {role: outside_temp, classes: [Outside_Air_Temperature_Sensor], required: false}
   - {role: static_pressure, classes: [Supply_Air_Static_Pressure_Sensor, Discharge_Air_Static_Pressure_Sensor], required: false}
   - {role: static_pressure_sp, classes: [Supply_Air_Static_Pressure_Setpoint, Discharge_Air_Static_Pressure_Setpoint], required: false}
-  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: chilled_water}
-  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water}
+  - {role: cooling_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: chilled_water, words: [cooling, chilled]}
+  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water, words: [heating, hot, reheat]}
   - {role: economizer_damper, classes: [Damper_Command, Damper_Position_Command], required: false}
   - {role: supply_fan_cmd, classes: [Fan_Command, Run_Enable_Command, Start_Stop_Command], required: false}
   - {role: supply_fan_speed, classes: [Fan_Speed_Command], required: false}
   - {role: supply_fan_status, classes: [Fan_Status, Run_Status, On_Off_Status], required: false}
   - {role: occupancy, classes: [Occupancy_Command, Occupancy_Status, Mode_Command], required: false}
+  # Slots for the 3D equipment view (spec-equipment-3d §4.5). `words` picks between slots that share a class.
+  - {role: return_fan_cmd, classes: [Fan_Command, Run_Enable_Command, Start_Stop_Command], required: false, words: [return]}
+  - {role: return_fan_speed, classes: [Fan_Speed_Command], required: false, words: [return]}
+  - {role: return_fan_status, classes: [Fan_Status, Run_Status, On_Off_Status], required: false, words: [return]}
+  - {role: relief_damper, classes: [Damper_Command, Damper_Position_Command], required: false, words: [relief, exhaust]}
+  - {role: vfd_frequency, classes: [Frequency_Sensor], required: false}
+  - {role: vfd_power, classes: [Power_Sensor], required: false}
+  - {role: building_pressure, classes: [Building_Air_Static_Pressure_Sensor], required: false}
+  - {role: filter_status, classes: [Filter_Status], required: false}
+  - {role: filter_dp, classes: [Filter_Differential_Pressure_Sensor], required: false}
+  - {role: return_humidity, classes: [Return_Air_Humidity_Sensor], required: false}
+  - {role: oa_flow, classes: [Outside_Air_Flow_Sensor], required: false}
 relations:
   - {rel: isFedBy, target: chiller, medium: chilled_water, required: false, system: Chilled_Water_System}
   - {rel: isFedBy, target: boiler, medium: hot_water, required: false, system: Hot_Water_System}

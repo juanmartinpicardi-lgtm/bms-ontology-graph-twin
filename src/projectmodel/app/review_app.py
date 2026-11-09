@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from projectmodel import review  # noqa: E402
 from projectmodel.app.shell import active_project  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
+from projectmodel.equipment_view import load_anchors  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth, score_project  # noqa: E402
 from projectmodel.tree import UNPLACED, build_tree  # noqa: E402
@@ -205,6 +206,9 @@ def tree_tab():
         n = tree.by_id[df.iloc[sel[0]]["id"]]
         st.subheader(n.label)
         st.caption(" › ".join(a.label for a in tree.path(n.id)))
+        if n.attrs.get("template") in load_anchors():
+            st.page_link("pages/3_Equipment_3D.py", label="Open 3D equipment",
+                         query_params={"project": project, "equip": n.id})
         facts = [fact(f"class = {n.cls or '(none)'}", n.prov)] if n.prov else []
         if n.via:
             facts.append(fact(f"part of {tree.by_id[tree.parent[n.id]].label}", n.via))

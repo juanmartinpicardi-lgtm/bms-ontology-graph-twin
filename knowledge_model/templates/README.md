@@ -14,6 +14,7 @@ points:                     # slots; a point fills a slot if its class is one of
     classes: [Zone_Air_Temperature_Sensor]
     required: true          # a group without it is a weak match
     medium: hot_water       # optional: a filled slot shows the equipment uses this medium
+    words: [heating, hot]   # optional: name words that pick this slot over an earlier slot with the same class
 relations:                  # expected links to other equipment (template ids)
   - {rel: isFedBy, target: ahu, medium: air, required: false}
   - {rel: isFedBy, target: boiler, medium: hot_water, system: Hot_Water_System}
@@ -26,5 +27,15 @@ Feeds are inferred two ways:
   single top-level system of class `system` (e.g. the one Hot_Water_System), else the single equipment
   of the `target` template; with several candidates nothing is inferred.
 
+Where each slot sits on the 3D equipment model is in `anchors.yaml` (see below).
+
 The loader validates: id matches file name, classes exist in the subset (or BA extension),
 regexes compile, roles are unique, relation targets are known templates, and `rel` is a subset relation.
+
+## anchors.yaml
+
+Where each slot role sits on the 3D model of its equipment type (`docs/spec-equipment-3d.md` §3.2). Per type:
+`parts` (the named objects the geometry code builds), `sub_equipment` (class of an untemplated part such as
+`SF VFD` → the part its points attach to) and `anchors` (role → `{part, at}`, `at` is 0–1 along a duct).
+`scripts/validate_km.py` checks that every slot role of a drawn type has an anchor, every anchor names a real role,
+and every part is declared. Types without a section (FCU, chiller, boiler, pump) are not drawn yet.

@@ -14,6 +14,8 @@ points:
   - {role: enable, classes: [Enable_Command, Run_Enable_Command, Start_Stop_Command], required: false}
   - {role: status, classes: [Run_Status, On_Off_Status, Status], required: false}
   - {role: power, classes: [Power_Sensor, Current_Sensor], required: false}
+  - {role: evap_iso_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: chilled_water, words: [evaporator]}
+  - {role: cond_iso_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: condenser_water, words: [condenser]}
 relations:
   - {rel: feeds, target: ahu, medium: chilled_water, required: false}
   - {rel: feeds, target: fcu, medium: chilled_water, required: false}
