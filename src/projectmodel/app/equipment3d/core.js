@@ -26,6 +26,8 @@ const Core = (() => {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
+    controls.zoomToCursor = true;  // scroll zooms towards what is under the pointer
+    controls.autoRotateSpeed = 0.7;
     controls.maxPolarAngle = Math.PI * 0.495;  // stay above the floor
 
     // Studio lighting: generated room environment (no asset file), one soft key light, a weak rim light.
@@ -134,6 +136,15 @@ const Core = (() => {
       fly = { from: camera.position.clone(), fromT: controls.target.clone(), to: { pos: p.clone().addScaledVector(dir, dist), target: p.clone() }, t: 0 };
     }
 
+    // Zoom by a factor along the current line of sight, animated, within the orbit limits.
+    function zoom(f) {
+      const off = camera.position.clone().sub(controls.target);
+      const d = THREE.MathUtils.clamp(off.length() * f, controls.minDistance, controls.maxDistance);
+      lastView = null;
+      fly = { from: camera.position.clone(), fromT: controls.target.clone(),
+              to: { pos: controls.target.clone().addScaledVector(off.normalize(), d), target: controls.target.clone() }, t: 0 };
+    }
+
     function setModel(m) {
       model = m;
       model.bounds ??= new THREE.Box3().setFromObject(model.group);
@@ -171,7 +182,7 @@ const Core = (() => {
     });
     frame();
 
-    return { scene, camera, renderer, controls, view, focus, setModel, applyTheme, onFrame: f => frameFns.push(f),
+    return { scene, camera, renderer, controls, view, focus, zoom, setModel, applyTheme, onFrame: f => frameFns.push(f),
              labelLayer,
              frames: () => frames,
              theme: () => P, label: (text, cls = "stream") => {

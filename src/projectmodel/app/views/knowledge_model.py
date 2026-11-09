@@ -19,9 +19,6 @@ from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth  # noqa: E402
 
 DB = ROOT / "data/kg.sqlite"
-st.set_page_config(page_title="Knowledge model", layout="wide")
-
-
 @st.cache_resource
 def knowledge_model():
     return load_knowledge_model()
@@ -35,22 +32,20 @@ def ground_truth(site: str):
 km = knowledge_model()
 store = Store(DB)
 projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes ORDER BY project")]
-with st.sidebar:
-    st.header("Measure against")
-    if projects:
-        # The model is shared; measuring it starts from the active project but can use any.
-        project = st.selectbox("Project", projects, index=projects.index(active_project(projects)), key="km_project")
-    else:
-        project = None
-        st.caption("No mapped projects yet, so only the model itself is shown.")
-    accept = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="km_accept")
-    site = project.split("/")[0] if project else ""
-    gt = ground_truth(site) if project and (GT_DIR / site).exists() else None
-    if site == "bravo":
-        st.warning("Bravo is the held-out test set. Look, but don't change the model because of what you see here.")
-    st.caption("Edit the model in `knowledge_model/` and rerun the mapper; this page is read-only.")
+# The model is shared; it is measured against the active project (header dropdown).
+project = active_project(projects) if projects else None
+site = project.split("/")[0] if project else ""
+gt = ground_truth(site) if project and (GT_DIR / site).exists() else None
 
 st.title("Knowledge model")
+with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
+    st.caption("Shared by every project. Edit it in `knowledge_model/` and rerun the mapper; this page is read-only."
+               if project else "No mapped projects yet, so only the model itself is shown.")
+    with st.popover("Auto-accept ≥ " + f"{st.session_state.get('km_accept', DEFAULT_ACCEPT):.2f}",
+                    icon=":material/tune:"):
+        accept = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="km_accept")
+if site == "bravo":
+    st.caption(":orange[Bravo is the held-out test set. Look, but don't change the model because of what you see here.]")
 classes = km.classes.values()
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Classes", len(km.classes), help="Brick subset + BA extension")

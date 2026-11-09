@@ -26,9 +26,6 @@ from projectmodel.tree import UNPLACED, build_tree  # noqa: E402
 
 DB = ROOT / "data/kg.sqlite"
 
-st.set_page_config(page_title="Project Model review", layout="wide")
-
-
 @st.cache_resource
 def knowledge_model():
     return load_knowledge_model()
@@ -42,37 +39,42 @@ def ground_truth(site: str):
 km = knowledge_model()
 store = Store(DB)
 
-# --- Sidebar: project, reviewer, live score ----------------------------------------------------
+# --- Header: reviewer, auto-accept threshold, live score ---------------------------------------
 projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes ORDER BY project")]
 if not projects:
     st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
     st.stop()
 project = active_project(projects)
-with st.sidebar:
-    st.header("Review")
-    reviewer = st.text_input("Reviewer", value=st.session_state.get("reviewer", ""), placeholder="your name")
-    st.session_state["reviewer"] = reviewer
-    accept_at = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05)
 
-    site = project.split("/")[0]
+st.title("Review")
+st.caption("Proposed items sorted by confidence · decisions are saved as method=human and survive mapper reruns")
+with st.container(horizontal=True, vertical_alignment="bottom", gap="medium"):
+    reviewer = st.text_input("Reviewer", value=st.session_state.get("reviewer", ""), placeholder="your name",
+                             width=220, help="Every decision is attributed to this name.")
+    st.session_state["reviewer"] = reviewer
+    with st.popover("Auto-accept ≥ " + f"{st.session_state.get('accept_at', DEFAULT_ACCEPT):.2f}",
+                    icon=":material/tune:"):
+        accept_at = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="accept_at")
+site = project.split("/")[0]
+with st.container(horizontal=True, gap="small"):
     if (GT_DIR / site).exists():
         s = score_project(store, project, ground_truth(site), km, accept_at)
-        st.subheader("Score")
-        if site == "bravo":
-            st.caption("Bravo is the held-out test set. Don't tune on it.")
-        c1, c2 = st.columns(2)
-        c1.metric("H1 grouping", f"{s['H1_grouped_right_pct']}%")
-        c2.metric("H2 class exact", f"{s['H2_exact_pct']}%")
-        c1.metric("Exact, auto-accepted", f"{s['H2_auto_accepted_exact_pct']}%")
-        c2.metric("To review", f"{s['review_pct']}%")
-        st.metric("Decided by a human", s["human_decided"])
+        for name, value, tip in [
+                ("Right equipment (H1)", f"{s['H1_grouped_right_pct']}%", "Points grouped on the right equipment"),
+                ("Class exact (H2)", f"{s['H2_exact_pct']}%", "Points with exactly the right class"),
+                ("Exact, auto-accepted", f"{s['H2_auto_accepted_exact_pct']}%", "Among auto-accepted points"),
+                ("To review", f"{s['review_pct']}%", "Share of points below the threshold or flagged"),
+                ("Decided by a human", s["human_decided"], "Accepted, fixed or rejected by a reviewer")]:
+            st.metric(name, value, help=tip, border=True, width="content")
     else:
         st.caption("No ground truth for this project, so no score.")
+if site == "bravo":
+    st.caption(":orange[Bravo is the held-out test set: measure here, never tune on it.]")
 
 
 def need_reviewer() -> bool:
     if not reviewer.strip():
-        st.error("Enter your name in the sidebar first, so every decision is attributed.")
+        st.error("Enter your name in Reviewer above first, so every decision is attributed.")
         return True
     return False
 
@@ -285,7 +287,7 @@ def tree_tab():
         st.subheader(n.label)
         st.caption(" › ".join(a.label for a in tree.path(n.id)))
         if n.attrs.get("template") in load_anchors():
-            st.page_link("pages/3_Equipment_3D.py", label="Open 3D equipment",
+            st.page_link("views/equipment_3d.py", label="Open 3D equipment",
                          query_params={"project": project, "equip": n.id})
         facts = [fact(f"class = {n.cls or '(none)'}", n.prov)] if n.prov else []
         if n.via:
@@ -347,8 +349,6 @@ def tree_tab():
             notes_section(targets, f"pt_{p.id}")
 
 
-st.title("Project Model review")
-st.caption(f"{project} · knowledge graph in {DB.relative_to(ROOT)} · decisions are saved as method=human")
 if msg := st.session_state.pop("flash", None):
     st.success(msg)
 # Keyed so a save (flash + rerun) keeps the reviewer on the tab they were working in.

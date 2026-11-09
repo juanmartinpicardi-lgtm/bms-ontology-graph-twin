@@ -50,7 +50,7 @@ with left.container(border=True, height="stretch"):
                 "What kinds of things exist and how to recognise them.")
     st.markdown("**Tribal knowledge, shared part**: conventions of a contractor or a customer, e.g. "
                 "*\"this integrator writes CC for chiller condenser\"*. :gray-badge[coming]")
-    st.page_link("pages/2_Knowledge_model.py", label="Explore the knowledge model", icon=":material/arrow_forward:")
+    st.page_link("views/knowledge_model.py", label="Explore the knowledge model", icon=":material/arrow_forward:")
 with right.container(border=True, height="stretch"):
     st.markdown("#### :material/apartment: Inside each project")
     st.markdown("**Building graph**: equipment, points and how they connect, with review decisions.")

@@ -44,8 +44,8 @@ for i, (site_id, plist) in enumerate(sorted(by_site.items())):
             st.markdown(f"{n.get('point', 0):,} points · {n.get('equipment', 0)} equipment · "
                         f"{links.get('feeds', 0)} feeds links · {s.get('human', 0)} human decisions")
             st.caption(f"Mapped {(s.get('mapped_at') or '-')[:16]} · revision {s.get('revision') or '-'}")
-            if st.button("Open", key=f"open_{p}", icon=":material/arrow_forward:"):
-                set_project(p)
+            # Set in a callback: it runs before the header's project dropdown is drawn on the next run.
+            if st.button("Open", key=f"open_{p}", icon=":material/arrow_forward:", on_click=set_project, args=(p,)):
                 st.switch_page("review_app.py")
 
 with cols[len(by_site) % 3].container(border=True, height="stretch"):

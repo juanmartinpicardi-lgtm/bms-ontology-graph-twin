@@ -81,7 +81,7 @@ target_id)`, `notes_by_project(store, project, topic=None, status="active")`, `o
   "Why?" box that saves a `source=review` note on the node.
 - **3D graph**: `graph_payload` adds `notes: <count>` per node and link; the details panel lists them read-only
   (the viewer is an iframe; editing stays in Streamlit). Optional colour mode "has notes".
-- **New page `4_Notes.py`**: all notes for the project, filter by topic/status/author, orphaned notes at the top.
+- **New page `views/notes.py`**: all notes for the project, filter by topic/status/author, orphaned notes at the top.
 
 ### 3.4 Done when
 

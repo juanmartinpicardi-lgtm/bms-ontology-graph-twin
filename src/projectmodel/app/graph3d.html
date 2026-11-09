@@ -48,6 +48,17 @@
     backdrop-filter: blur(6px); }
   #toolbar { top: 12px; left: 12px; padding: 10px 12px; width: 300px; display: grid; gap: 8px; z-index: 3; }
   #toolbar h1 { font-size: 14px; margin: 0; }
+  #toolbar, #panel, #legend { transition: opacity .2s, transform .2s; }
+  .tbhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  #tbBody { display: grid; gap: 8px; }
+  #toolbar.collapsed #tbBody { display: none; }
+  .iconbtn { width: 26px; height: 26px; padding: 0; display: grid; place-items: center; font-size: 16px; line-height: 1; }
+  kbd { font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 0 5px; border-radius: 4px;
+    border: 1px solid var(--line); background: var(--chip); }
+  body.panel-open #vc, body.panel-open #vcHelp { transform: translateX(-392px); }
+  #vc, #vcHelp { transition: transform .25s ease; }
+  #panel.open { animation: slideIn .2s ease-out; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
   #toolbar .sub { color: var(--muted); font-size: 12px; margin-top: -4px; }
   label.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   select, input[type=text] { background: var(--chip); color: var(--text); border: 1px solid var(--line);
@@ -91,10 +102,14 @@
 <div id="graph"></div>
 
 <div id="toolbar" class="card">
-  <div>
-    <h1>Knowledge graph</h1>
-    <div class="sub" id="project"></div>
+  <div class="tbhead">
+    <div>
+      <h1>Knowledge graph</h1>
+      <div class="sub" id="project"></div>
+    </div>
+    <button id="collapse" class="iconbtn" title="Hide or show these options" aria-label="Hide options" aria-expanded="true">−</button>
   </div>
+  <div id="tbBody">
   <input id="search" type="text" placeholder="Find equipment, point or class…" autocomplete="off">
   <div id="results"></div>
   <label class="row">Colour by
@@ -120,17 +135,18 @@
     <label><input type="checkbox" id="showModel"> Knowledge model layer</label>
     <label><input type="checkbox" id="showFlow" checked> Animate feeds</label>
   </div>
-  <div style="display:flex; gap:6px;">
-    <button id="fit">Fit view</button>
+  <div style="display:flex; gap:6px; align-items:center;">
     <button id="clear">Clear selection</button>
+    <span class="muted" style="font-size:12px">Press <kbd>?</kbd> for controls</span>
   </div>
-  <div class="muted" style="font-size:12px">Drag to rotate · scroll to zoom · right-drag to pan · click a node or link</div>
+  </div>
 </div>
 
 <div id="stats" class="card"></div>
 <div id="legend" class="card"></div>
 <div id="panel" class="card"><button class="close" id="closePanel" aria-label="Close">×</button><div id="panelBody"></div></div>
 
+<script>/*__CONTROLS__*/</script>
 <script>
 const DATA = /*__DATA__*/null;
 
@@ -228,7 +244,7 @@ function visible() {
 
 // --- graph -------------------------------------------------------------------------------------
 const el = document.getElementById("graph");
-const Graph = ForceGraph3D()(el)
+const Graph = ForceGraph3D({ controlType: "orbit" })(el)
   .backgroundColor(P.bg)
   .cooldownTime(7000)
   .nodeId("id")
@@ -249,9 +265,16 @@ const Graph = ForceGraph3D()(el)
   .onNodeClick(n => selectNode(n.id, true))
   .onLinkClick(l => selectLink(l))
   .onBackgroundClick(() => clearSelection())
+  .onNodeHover(n => { el.style.cursor = n ? "pointer" : null; })
+  .onLinkHover(l => { el.style.cursor = l ? "pointer" : null; })
   .width(window.innerWidth).height(window.innerHeight);
 
 window.graph3d = Graph;  // handy from the browser console
+
+// Soft camera: orbit with inertia, zoom towards the pointer, gentle auto-rotate when asked.
+const ctl = Graph.controls();
+Object.assign(ctl, { enableDamping: true, dampingFactor: 0.09, zoomToCursor: true, rotateSpeed: 0.7,
+                     autoRotateSpeed: 0.8, screenSpacePanning: true });
 
 // Fit the camera to the shown nodes. (The library's zoomToFit picked a far too close distance here.)
 function fitView(ms = 800) {
@@ -321,6 +344,7 @@ function selectLink(l) {
 function clearSelection() {
   state.selected = null; highlight = null;
   document.getElementById("panel").style.display = "none";
+  document.body.classList.remove("panel-open");
   refresh(state.hops > 0);
 }
 
@@ -411,8 +435,11 @@ function renderLinkPanel(l) {
   openPanel(h);
 }
 function openPanel(html) {
+  const p = document.getElementById("panel");
   document.getElementById("panelBody").innerHTML = html;
-  document.getElementById("panel").style.display = "block";
+  p.style.display = "block";
+  p.classList.remove("open"); void p.offsetWidth; p.classList.add("open");
+  document.body.classList.add("panel-open");
 }
 document.getElementById("panel").addEventListener("click", e => {
   const o = e.target.closest("a.open3d");
@@ -460,8 +487,37 @@ for (const k of ["showPoints", "showModel", "showFlow"]) {
     refresh(k !== "showFlow");
   };
 }
-document.getElementById("fit").onclick = () => fitView();
 document.getElementById("clear").onclick = clearSelection;
+const toolbar = document.getElementById("toolbar"), collapseBtn = document.getElementById("collapse");
+function setCollapsed(on) {
+  toolbar.classList.toggle("collapsed", on);
+  collapseBtn.textContent = on ? "+" : "−";
+  collapseBtn.setAttribute("aria-expanded", !on);
+  try { localStorage.setItem("graph3d-collapsed", on ? "1" : ""); } catch (e) {}
+}
+collapseBtn.onclick = () => setCollapsed(!toolbar.classList.contains("collapsed"));
+try { if (localStorage.getItem("graph3d-collapsed")) setCollapsed(true); } catch (e) {}
+
+function toggleLayer(k) {
+  const box = document.getElementById(k);
+  box.checked = !box.checked;
+  box.onchange({ target: box });
+}
+function zoom(f) {
+  const t = ctl.target, p = Graph.cameraPosition();
+  Graph.cameraPosition({ x: t.x + (p.x - t.x) * f, y: t.y + (p.y - t.y) * f, z: t.z + (p.z - t.z) * f },
+                       { x: t.x, y: t.y, z: t.z }, 450);
+}
+ViewerControls.mount({
+  surface: el,
+  zoom, fit: () => fitView(), rotate: on => { ctl.autoRotate = on; },
+  gestures: [["Drag", "Rotate"], ["Right-drag or Shift-drag", "Pan"], ["Scroll or pinch", "Zoom towards the pointer"],
+             ["Click a node or link", "Select it and show its details"], ["Click empty space", "Clear the selection"]],
+  keys: [["/", "Search", () => { setCollapsed(false); searchEl.focus(); }],
+         ["Esc", "Clear the selection", () => clearSelection()],
+         ["P", "Points on / off", () => toggleLayer("showPoints")],
+         ["M", "Knowledge model layer on / off", () => toggleLayer("showModel")]],
+});
 
 function renderStats() {
   const d = Graph.graphData();

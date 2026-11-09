@@ -60,6 +60,10 @@
   button:hover { border-color: var(--accent); }
   button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
   #help { left: 12px; bottom: 12px; padding: 5px 10px; font-size: 11px; color: var(--muted); }
+  kbd { font: 10.5px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 0 4px; border-radius: 4px;
+    border: 1px solid var(--line); background: var(--chip); color: var(--text); }
+  #vc, #vcHelp { transition: transform .25s ease; }
+  body.panel-open #vc, body.panel-open #vcHelp { transform: translateX(-372px); }
   /* Labels drawn in the scene (CSS2D) */
   .stream { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap;
     text-shadow: 0 0 6px var(--bg), 0 0 2px var(--bg); }
@@ -153,13 +157,12 @@
   <button data-view="hero">Hero</button>
   <button data-view="front">Front</button>
   <button data-view="top">Top</button>
-  <button id="fit">Fit</button>
   <button id="frontWall" aria-pressed="false" title="Show the front wall (translucent)">Front wall</button>
   <button id="pinsBtn" aria-pressed="true" title="Show or hide the point labels">Labels</button>
 </div>
 <div id="dock"></div>
 <div id="panel" class="card"><button class="close" id="closePanel" aria-label="Close">×</button><div id="panelBody"></div></div>
-<div id="help" class="card">Drag to rotate · scroll to zoom · right-drag to pan</div>
+<div id="help" class="card">Press <kbd>?</kbd> for controls</div>
 
 <script type="module">
 import * as THREE from "three";
@@ -269,7 +272,21 @@ document.getElementById("pinsBtn").onclick = e => {
 };
 
 for (const b of document.querySelectorAll("[data-view]")) b.onclick = () => viewer.view(b.dataset.view);
-document.getElementById("fit").onclick = () => viewer.view("fit");
+const panelEl = document.getElementById("panel");
+new MutationObserver(() => document.body.classList.toggle("panel-open", panelEl.style.display === "block"))
+  .observe(panelEl, { attributes: true, attributeFilter: ["style"] });
+const click = id => document.getElementById(id).click();
+ViewerControls.mount({
+  surface: document.getElementById("view"),
+  zoom: f => viewer.zoom(f), fit: () => viewer.view("fit"), rotate: on => { viewer.controls.autoRotate = on; },
+  gestures: [["Drag", "Rotate around the equipment"], ["Right-drag or Shift-drag", "Pan"],
+             ["Scroll or pinch", "Zoom towards the pointer"], ["Click a point label", "Its details, source and value"],
+             ["Click fed by / feeds", "Open that equipment"]],
+  keys: [["1 / 2 / 3", "Hero, front and top views", e => viewer.view({ 1: "hero", 2: "front", 3: "top" }[e.key])],
+         ["L", "Point labels on / off", () => click("pinsBtn")],
+         ["W", "Front wall on / off", () => click("frontWall")],
+         ["Esc", "Close the details", () => document.getElementById("closePanel").click()]],
+});
 document.getElementById("frontWall").onclick = e => {
   const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
   e.currentTarget.setAttribute("aria-pressed", on);

@@ -34,7 +34,7 @@ st.dataframe({
 }, hide_index=True)
 
 c = st.columns(3)
-c[0].page_link("pages/4_Notes.py", label="Notes (add them in Review › Tree)", icon=":material/sticky_note_2:")
+c[0].page_link("views/notes.py", label="Notes (add them in Review › Tree)", icon=":material/sticky_note_2:")
 c[1].button("Add convention", icon=":material/rule:", disabled=True, width="stretch")
 c[2].button("Review proposed conventions", icon=":material/inbox:", disabled=True, width="stretch")
 

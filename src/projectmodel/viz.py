@@ -84,7 +84,8 @@ def render_html(payload: dict, theme: str | None = None) -> str:
     """The 3D viewer page with the payload embedded. `theme` ("light" / "dark") pins the colours to the
     host app's theme; without it the page follows the system setting."""
     data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
-    html = TEMPLATE.read_text().replace("/*__DATA__*/null", data)
+    controls = (TEMPLATE.parent / "viewer_controls.js").read_text()
+    html = TEMPLATE.read_text().replace("/*__CONTROLS__*/", controls).replace("/*__DATA__*/null", data)
     if theme in ("light", "dark"):
         html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
     return html

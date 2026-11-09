@@ -245,7 +245,7 @@ zone temp drifts up). Useful for telling a story; uses the same simulator with a
 
 ## 7. Where it shows up
 
-- **New Streamlit page `3_Equipment_3D.py`:** project + equipment picker (templated equipment first, grouped by
+- **New Streamlit page `views/equipment_3d.py`:** project + equipment picker (templated equipment first, grouped by
   type, search). Reads `?equip=<id>` so other views can deep-link.
 - **3D graph details panel:** equipment nodes get an "Open 3D equipment" link.
 - **Tree tab:** equipment rows get the same link.

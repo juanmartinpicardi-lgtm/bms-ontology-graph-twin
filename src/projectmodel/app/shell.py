@@ -1,5 +1,5 @@
-"""Shared app state. The active project is chosen once (sidebar or Projects page) and read by every
-project page, so switching building switches every view at once."""
+"""Shared app state. The active project is chosen once (header dropdown, Projects page or a ?project= link) and
+read by every project page, so switching building switches every view at once."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import streamlit as st
 
 from projectmodel.db.store import Store
 from projectmodel.knowledge_model import load_knowledge_model
-from projectmodel.projects import DEFAULT, INPUTS, SITES, list_projects, site_of, summaries
+from projectmodel.projects import DEFAULT, label, list_projects, site_of, summaries
 
 ROOT = Path(__file__).resolve().parents[3]
 DB = ROOT / "data/kg.sqlite"
@@ -18,6 +18,15 @@ DB = ROOT / "data/kg.sqlite"
 @st.cache_resource
 def knowledge_model():
     return load_knowledge_model()
+
+
+def viewer_options(key: str, default: int, note: str = "") -> int:
+    """A small "View" popover above a 3D viewer (its height, plus a note); returns the height. The viewers have their
+    own controls inside; this only holds what the app decides."""
+    with st.popover("View", icon=":material/tune:"):
+        height = st.slider("Viewer height", 500, 1400, default, 20, key=f"{key}_height")
+        st.caption("Review decisions show up here after a page refresh." + (f"\n\n{note}" if note else ""))
+    return height
 
 
 def get_store() -> Store:
@@ -40,28 +49,32 @@ def set_project(project: str) -> None:
     st.session_state["project"] = project
 
 
-def project_picker(store: Store) -> None:
-    """Sidebar block: building, then input. Shown on every project page."""
+# No sidebar anywhere: navigation is the top bar, the project is the header dropdown, page controls live on the page.
+CHROME_CSS = """<style>
+[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {
+  display: none !important; }
+.block-container { padding-top: 3.8rem; }
+</style>"""
+
+
+def project_header(store: Store) -> None:
+    """One row at the top of every page: which project is open, and a dropdown to switch it. The dropdown is keyed
+    to the active project itself, so every page, deep link and the Projects page share one value."""
+    st.html(CHROME_CSS)
     projects = list_projects(store)
     if not projects:
-        st.sidebar.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
+        st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
         return
-    current = active_project(projects)
-    sites = sorted({p.split("/")[0] for p in projects})
-    with st.sidebar:
-        st.caption("PROJECT")
-        site = st.selectbox("Building", sites, index=sites.index(current.split("/")[0]),
-                            format_func=lambda s: f"{SITES[s].name} · {SITES[s].kind}" if s in SITES else s)
-        inputs = [p.split("/", 1)[1] for p in projects if p.startswith(site + "/")]
-        cur_input = current.split("/", 1)[1]
-        inp = st.radio("Input", inputs, index=inputs.index(cur_input) if cur_input in inputs else 0,
-                       format_func=lambda i: INPUTS.get(i, (i,))[0], horizontal=True)
-        project = f"{site}/{inp}"
-        set_project(project)
-        s = summaries(store).get(project, {})
-        if site_of(project).role == "test":
-            st.badge("Test set · measure only, never tune", color="orange")
-        n = s.get("nodes", {})
-        st.caption(f"{n.get('point', 0):,} points · {n.get('equipment', 0)} equipment · "
-                   f"mapped {(s.get('mapped_at') or '-')[:16]}")
-        st.divider()
+    active_project(projects)
+    with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
+        st.selectbox("Project", projects, key="project", format_func=label, label_visibility="collapsed",
+                     width=280, help="Every project page shows this project. Switch it here at any time.")
+        project = st.session_state["project"]
+        site = site_of(project)
+        if site.role == "test":
+            st.badge("Test set · measure only, never tune", color="orange", icon=":material/science:")
+        else:
+            st.badge("Dev set", color="blue")
+        n = summaries(store).get(project, {}).get("nodes", {})
+        st.caption(f"{site.kind} · {n.get('point', 0):,} points · {n.get('equipment', 0)} equipment",
+                   width="content")

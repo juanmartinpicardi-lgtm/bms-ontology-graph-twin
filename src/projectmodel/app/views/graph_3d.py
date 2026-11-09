@@ -10,31 +10,20 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project  # noqa: E402
-from projectmodel.db.store import Store  # noqa: E402
-from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
+from projectmodel.app.shell import active_project, get_store, knowledge_model, viewer_options  # noqa: E402
+from projectmodel.projects import list_projects  # noqa: E402
 from projectmodel.viz import graph_payload, render_html  # noqa: E402
 
-DB = ROOT / "data/kg.sqlite"
-
-st.set_page_config(page_title="Knowledge graph 3D", layout="wide")
-
-
-@st.cache_resource
-def knowledge_model():
-    return load_knowledge_model()
-
-
-store = Store(DB)
-projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes ORDER BY project")]
+store = get_store()
+projects = list_projects(store)
 if not projects:
     st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
     st.stop()
 project = active_project(projects)
-with st.sidebar:
-    height = st.slider("Viewer height", 500, 1400, 820, 20)
-    st.caption("Review decisions show up here after a page refresh. "
-               "For a full-window view: `.venv/bin/python scripts/export_graph3d.py " + project + "`")
+
+with st.container(horizontal=True, horizontal_alignment="right"):
+    height = viewer_options("graph", 780, f"For a full-window view outside the app: "
+                                          f"`.venv/bin/python scripts/export_graph3d.py {project}`")
 
 # Labels come from source exports; the viewer escapes every string it puts into the page.
 # The viewer takes the app's light/dark theme so its background matches the page around it.

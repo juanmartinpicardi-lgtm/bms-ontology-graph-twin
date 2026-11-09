@@ -248,7 +248,8 @@ def render_html(payload: dict, theme: str | None = None) -> str:
     standalone file (three.js comes from the CDN). `theme` ("light" / "dark") pins the colours to the host app's
     theme; without it the page follows the system setting."""
     data = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
-    modules = "\n".join((APP / "equipment3d" / m).read_text() for m in MODULES)
+    modules = "\n".join([(APP / "viewer_controls.js").read_text()]
+                        + [(APP / "equipment3d" / m).read_text() for m in MODULES])
     html = (APP / "equipment3d.html").read_text().replace("/*__MODULES__*/", modules).replace("/*__DATA__*/null", data)
     if theme in ("light", "dark"):
         html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
