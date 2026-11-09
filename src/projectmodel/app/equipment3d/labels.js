@@ -18,11 +18,14 @@ const Labels = (() => {
       if (!groups.has(key)) groups.set(key, { part: p.part, at: p.at, ids: [] });
       groups.get(key).ids.push(id);
     }
-    // Ghost pins: required slots with nothing in them.
+    // Ghost pins: required slots with nothing in them. At an anchor other points share (a pump's missing command on
+    // the motor that has its status), a muted row in that card instead.
+    const ghostRow = role => `<div class="prow"><span class="pname">${esc(role.replace(/_/g, " "))}</span><span class="pval muted">expected, not found</span></div>`;
     for (const s of data.slots || []) {
       if (s.required && !s.points.length) {
         const key = `${s.anchor.part}@${s.anchor.at ?? ""}`;
         if (!groups.has(key)) groups.set(key, { part: s.anchor.part, at: s.anchor.at, ids: [], ghost: s.role });
+        else (groups.get(key).missing ??= []).push(s.role);
       }
     }
     for (const [key, g] of groups) {
@@ -34,13 +37,13 @@ const Labels = (() => {
       el.innerHTML = `<span class="dot"></span><svg class="leader"><line x1="0" y1="0" x2="0" y2="0"/></svg><div class="pcard"></div>`;
       const card = el.querySelector(".pcard"), line = el.querySelector("line");
       card.innerHTML = g.ghost
-        ? `<div class="prow"><span class="pname">${esc(g.ghost.replace(/_/g, " "))}</span><span class="pval muted">expected, not found</span></div>`
+        ? ghostRow(g.ghost)
         : g.ids.map(id => {
             const p = data.points[id];
             return `<div class="prow" data-id="${esc(id)}"><span class="sdot s-${esc(p.status)}" title="${esc(p.status)}"></span>` +
                    `<span class="pname">${esc(p.label)}</span>${chip(id, value(id))}` +
                    `<span class="pcls">${esc(p.cls)} · ${(p.confidence ?? 0).toFixed(2)}</span></div>`;
-          }).join("");
+          }).join("") + (g.missing || []).map(ghostRow).join("");
       const obj = new CSS2DObject(el);
       obj.position.copy(pos);
       viewer.scene.add(obj);

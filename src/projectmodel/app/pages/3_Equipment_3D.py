@@ -22,7 +22,8 @@ from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 
 DB = ROOT / "data/kg.sqlite"
 PAGE = "/Equipment_3D"
-TYPES = {"ahu": "AHU", "vav": "VAV"}  # templates with a 3D model, in picker order
+TYPES = {"ahu": "AHU", "vav": "VAV", "fcu": "FCU", "chiller": "Chiller", "boiler": "Boiler",
+         "pump": "Pump"}  # templates with a 3D model, in picker order
 
 st.set_page_config(page_title="Equipment 3D", layout="wide")
 
@@ -61,7 +62,7 @@ with st.sidebar:
     models = sorted(((i, label, t) for i, label, t in rows if t in TYPES and t in anchors()),
                     key=lambda r: (list(TYPES).index(r[2]), natural(r[1])))
     if not models:
-        st.warning("This project has no equipment with a 3D model (AHU or VAV) yet.")
+        st.warning("This project has no equipment with a 3D model yet.")
         st.stop()
     ids = [i for i, _, _ in models]
     names = {i: f"{TYPES[t]} · {label}" for i, label, t in models}
@@ -71,8 +72,8 @@ with st.sidebar:
     equip = st.selectbox("Equipment (type to search)", ids, index=ids.index(asked) if asked in names else 0,
                          format_func=names.get)
     others = len([r for r in rows if r[2] not in TYPES])
-    st.caption(f"{len(ids)} with a 3D model; {others} more equipment have none yet (FCU, chiller, boiler, pump "
-               "come in v0.2, untemplated equipment needs review first).")
+    st.caption(f"{len(ids)} with a 3D model; {others} more equipment have none (untemplated equipment needs "
+               "review first).")
     height = st.slider("Viewer height", 500, 1400, 820, 20)
     st.caption("Values are simulated. Review decisions show up here after a page refresh.")
 qp.update(project=project, equip=equip)  # the address bar is always a deep link to what is on screen

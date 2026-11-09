@@ -22,7 +22,8 @@ from .value_model import describe
 
 ANCHORS = KM_DIR / "templates" / "anchors.yaml"
 APP = Path(__file__).resolve().parent / "app"
-MODULES = ("core.js", "parts.js", "sim.js", "ahu.js", "vav.js", "labels.js", "panels.js")  # inlined in this order into equipment3d.html
+MODULES = ("core.js", "parts.js", "sim.js", "ahu.js", "vav.js", "plant.js", "fcu.js", "chiller.js", "boiler.js", "pump.js",
+           "labels.js", "panels.js")  # inlined in this order into equipment3d.html
 
 
 def load_anchors(path: Path = ANCHORS) -> dict:
@@ -85,9 +86,24 @@ def assign_slots(template: Template, points: list[dict], km: KnowledgeModel) -> 
     return slots, unplaced
 
 
+MEDIUM_WORDS = {"condenser_water": {"condenser"}, "chilled_water": {"chilled", "cooling"},
+                "hot_water": {"hot", "heating", "boiler"}}
+
+
+def medium(*names: str, km: KnowledgeModel) -> str | None:
+    """The water a pump moves, from the first of its names (own label, then its system's) that says it."""
+    for name in names:
+        words = set(km.name_rules.words(name or ""))
+        found = [m for m, ws in MEDIUM_WORDS.items() if words & ws]
+        if found:
+            return found[0]
+    return None
+
+
 def variant(template: Template, slots: dict[str, list[str]], name: str, sub_parts: set[str],
-            km: KnowledgeModel) -> dict[str, bool]:
-    """Optional parts to draw, from the slots found (and the name, for VAV box types)."""
+            km: KnowledgeModel, parent_label: str = "") -> dict:
+    """Optional parts to draw, from the slots found (and the name, for VAV box types and pump media).
+    True flags name a drawn option; a string value (a pump's medium) is shown as is."""
     has = lambda *roles: any(slots.get(r) for r in roles)  # noqa: E731
     if template.id == "ahu":
         return {"heating_coil": has("heating_valve"), "mixing_box": has("economizer_damper"),
@@ -97,6 +113,16 @@ def variant(template: Template, slots: dict[str, list[str]], name: str, sub_part
         tokens = set(km.name_rules.tokenize(name))
         return {"reheat": has("reheat_valve"), "fan_powered": has("fan_cmd") or "fpb" in tokens,
                 "dual_duct": "dd" in tokens}
+    if template.id == "fcu":  # 4-pipe: a coil per medium; 2-pipe: one coil, from the valve found (cooling if none)
+        heat, cool = has("heating_valve"), has("cooling_valve")
+        return {"four_pipe": heat and cool, "two_pipe": not (heat and cool),
+                "cooling_coil": cool or not heat, "heating_coil": heat}
+    if template.id == "chiller":
+        water = (has("cw_entering_temp", "cw_leaving_temp", "cw_flow", "cond_iso_valve")
+                 or "condenser" in km.name_rules.words(name))
+        return {"water_cooled": water, "air_cooled": not water}
+    if template.id == "pump":
+        return {"vfd": has("speed"), "medium": medium(name, parent_label, km=km) or "water"}
     return {}
 
 
@@ -180,7 +206,8 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
             points[pid].update(role=role, part=part, at=a.get("at"))
     for pid in unplaced:
         points[pid].update(role=None, part=None, at=None)
-    var = variant(template, slots, eq.label, sub_parts, km)
+    parent = tree.by_id.get(tree.parent.get(eq.id, ""))
+    var = variant(template, slots, eq.label, sub_parts, km, parent.label if parent else "")
     if var.get("dual_duct"):  # each deck has its own damper and flow cross: "Htg Dmpr Cmnd" -> damper@hot
         for p in points.values():
             if p["part"] in DECK_PARTS:
@@ -193,6 +220,10 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
     def _rel(nid):
         n = tree.by_id[nid]
         return {"id": n.id, "label": n.label, "cls": n.cls, "template": n.attrs.get("template")}
+    # Plant equipment often has no feeds links, only the plant folder it sits in: link it to that folder's other
+    # drawn equipment. Not for equipment inside a drawn parent (a VAV under its AHU has the AHU as fed-by).
+    plant = parent is not None and (parent.attrs.get("template") or "") not in anchors
+    siblings = [c for c in parent.children if c.id != eq.id and c.attrs.get("template") in anchors] if plant else []
     return {
         "project": project,
         "equipment": {"id": eq.id, "label": eq.label, "cls": eq.cls, "template": template.id,
@@ -205,7 +236,9 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
         "points": points,
         "unplaced": sorted(unplaced, key=lambda i: points[i]["label"]),
         "relations": {"fed_by": sorted((_rel(s) for s, _ in tree.fed_by(eq.id)), key=lambda r: _natural(r["label"])),
-                      "feeds": sorted((_rel(d) for d, _ in tree.feeds_to(eq.id)), key=lambda r: _natural(r["label"]))},
+                      "feeds": sorted((_rel(d) for d, _ in tree.feeds_to(eq.id)), key=lambda r: _natural(r["label"])),
+                      "part_of": _rel(parent.id) if plant else None,
+                      "with": sorted((_rel(c.id) for c in siblings), key=lambda r: _natural(r["label"]))},
         "value_source": "simulated",
     }
 

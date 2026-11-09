@@ -10,6 +10,7 @@ points:
   - {role: dp, classes: [Chilled_Water_Differential_Pressure_Sensor, Hot_Water_Differential_Pressure_Sensor], required: false}
   - {role: dp_sp, classes: [Chilled_Water_Differential_Pressure_Setpoint, Hot_Water_Differential_Pressure_Setpoint], required: false}
   - {role: power, classes: [Power_Sensor, Current_Sensor], required: false}
+  - {role: iso_valve, classes: [Valve_Command, Valve_Position_Command], required: false, words: [isolation]}
 relations:
   - {rel: feeds, target: chiller, medium: chilled_water, required: false}
   - {rel: feeds, target: boiler, medium: hot_water, required: false}

@@ -267,5 +267,5 @@ const VAV = (() => {
     };
   }
 
-  return { build };
+  return { build, casing };
 })();

@@ -24,6 +24,9 @@ const Panels = (() => {
     sub.innerHTML = [
       fedBy && `fed by ${fedBy}`,
       rel.feeds.length && `<span class="nav" data-show="feeds">feeds ${rel.feeds.length} ${rel.feeds[0]?.template === "vav" ? "VAVs" : "equipment"}</span>`,
+      // plant: no feeds links in the source, so the plant it sits in and that plant's other drawn equipment
+      rel.part_of && `in ${esc(rel.part_of.label)}`,
+      rel.with?.length && `with ${rel.with.map(r => `<span class="nav" data-eq="${esc(r.id)}">${esc(r.label)}</span>`).join(", ")}`,
       `<span class="nav" data-show="unplaced">${data.unplaced.length} unplaced</span>`,
     ].filter(Boolean).join(" · ");
 
@@ -120,7 +123,7 @@ const Panels = (() => {
     function showEquipment(r, href) {
       open(`<h2>${esc(r.label)}</h2><span class="chip">${esc(r.cls)}</span>` +
            (href ? `<p><a class="nav" href="${esc(href)}">Open its 3D view</a></p>`
-                 : `<p class="muted">${["ahu", "vav"].includes(r.template) ? "Its 3D page was not exported with this one (export with --all)." : "No 3D model for this equipment type yet."}</p>`) +
+                 : `<p class="muted">${["ahu", "vav", "fcu", "chiller", "boiler", "pump"].includes(r.template) ? "Its 3D page was not exported with this one (export with --all)." : "No 3D model for this equipment type yet."}</p>`) +
            `<div class="muted"><code>${esc(r.id)}</code></div>`);
     }
     return { showPoint, showFeeds, showUnplaced, showEquipment, highlight, close };

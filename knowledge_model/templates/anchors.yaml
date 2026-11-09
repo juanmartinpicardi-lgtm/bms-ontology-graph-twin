@@ -63,3 +63,60 @@ vav:
     unocc_heating_sp:   {part: zone_sensor}
     occupancy:          {part: zone_sensor}
     fan_cmd:            {part: fan}
+
+fcu:
+  parts: [casing, return_grille, filter, cooling_coil, cooling_coil.valve, heating_coil, heating_coil.valve,
+          fan, discharge_grille, zone_sensor, controller]
+  sub_equipment: {}
+  anchors:
+    zone_temp:          {part: zone_sensor}
+    fan_cmd:            {part: fan}
+    fan_status:         {part: fan}
+    cooling_valve:      {part: cooling_coil.valve}
+    heating_valve:      {part: heating_coil.valve}
+    discharge_temp:     {part: discharge_grille}
+    occ_cooling_sp:     {part: zone_sensor}
+    occ_heating_sp:     {part: zone_sensor}
+    occupancy:          {part: zone_sensor}
+
+chiller:
+  parts: [evaporator, condenser, compressor, control_panel,
+          chw_leaving_pipe, chw_entering_pipe, cw_entering_pipe, cw_leaving_pipe,
+          chw_entering_pipe.valve, cw_entering_pipe.valve]
+  sub_equipment: {}
+  anchors:
+    chw_leaving_temp:   {part: chw_leaving_pipe, at: 0.5, label_side: up}
+    chw_leaving_sp:     {part: chw_leaving_pipe, at: 0.5, label_side: up}
+    chw_entering_temp:  {part: chw_entering_pipe, at: 0.4}
+    cw_entering_temp:   {part: cw_entering_pipe, at: 0.4}
+    cw_leaving_temp:    {part: cw_leaving_pipe, at: 0.5}
+    chw_flow:           {part: chw_leaving_pipe, at: 0.85}
+    cw_flow:            {part: cw_leaving_pipe, at: 0.85}
+    enable:             {part: control_panel}
+    status:             {part: control_panel}
+    power:              {part: compressor}
+    evap_iso_valve:     {part: chw_entering_pipe.valve}
+    cond_iso_valve:     {part: cw_entering_pipe.valve}
+
+boiler:
+  parts: [casing, burner, flue, hw_leaving_pipe, hw_entering_pipe, control_panel]
+  sub_equipment: {}
+  anchors:
+    hw_leaving_temp:    {part: hw_leaving_pipe, at: 0.5, label_side: up}
+    hw_leaving_sp:      {part: hw_leaving_pipe, at: 0.5, label_side: up}
+    hw_entering_temp:   {part: hw_entering_pipe, at: 0.5}
+    enable:             {part: control_panel}
+    status:             {part: control_panel}
+    firing_rate:        {part: burner}
+
+pump:
+  parts: [motor, volute, suction_pipe, discharge_pipe, discharge_pipe.valve, vfd]
+  sub_equipment: {}
+  anchors:
+    cmd:                {part: motor}
+    status:             {part: motor}
+    speed:              {part: vfd}
+    dp:                 {part: discharge_pipe, at: 0.75}
+    dp_sp:              {part: discharge_pipe, at: 0.75}
+    power:              {part: motor}
+    iso_valve:          {part: discharge_pipe.valve}

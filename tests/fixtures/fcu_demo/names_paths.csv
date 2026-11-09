@@ -1,0 +1,13 @@
+blind_id,name,path
+fcu-001,FCU-1 Zone Temp,Floor 3/FCU-1
+fcu-002,FCU-1 Fan Cmd,Floor 3/FCU-1
+fcu-003,FCU-1 Fan Status,Floor 3/FCU-1
+fcu-004,FCU-1 Clg Valve Cmd,Floor 3/FCU-1
+fcu-005,FCU-1 Htg Valve Cmd,Floor 3/FCU-1
+fcu-006,FCU-1 DA Temp,Floor 3/FCU-1
+fcu-007,FCU-1 Occ Clg Setpoint,Floor 3/FCU-1
+fcu-008,FCU-1 Occ Htg Setpoint,Floor 3/FCU-1
+fcu-009,FCU-2 Zone Temp,Floor 3/FCU-2
+fcu-010,FCU-2 Fan Cmd,Floor 3/FCU-2
+fcu-011,FCU-2 Clg Valve Cmd,Floor 3/FCU-2
+fcu-012,FCU-2 DA Temp,Floor 3/FCU-2

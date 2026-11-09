@@ -186,18 +186,19 @@ document.title = `${eq.label} · Equipment 3D`;
 document.getElementById("eqName").textContent = eq.label;
 document.getElementById("eqSub").innerHTML =
   [`${esc(eq.cls)} · template <b>${esc(eq.template)}</b>`,
-   ...Object.entries(DATA.variant || {}).filter(([, on]) => on).map(([k]) => esc(k.replace(/_/g, " "))),
+   ...Object.entries(DATA.variant || {}).filter(([, on]) => on)
+     .map(([k, on]) => esc((typeof on === "string" ? on : k).replace(/_/g, " "))),
    `fit ${Math.round(eq.slot_fill * 100)}%`, esc(DATA.project)].join(" · ");
 
 const viewer = Core.createViewer(document.getElementById("view"), document.getElementById("labels"));
-const BUILD = { ahu: AHU.build, vav: VAV.build };
+const BUILD = { ahu: AHU.build, vav: VAV.build, fcu: FCU.build, chiller: Chiller.build, boiler: Boiler.build, pump: Pump.build };
 const model = BUILD[eq.template](DATA, viewer);
 viewer.scene.add(model.group);
 viewer.setModel(model);
 viewer.view("hero", false);
 
 // labels, panels, selection
-const rels = [...(DATA.relations?.fed_by || []), ...(DATA.relations?.feeds || [])];
+const rels = [...(DATA.relations?.fed_by || []), ...(DATA.relations?.feeds || []), ...(DATA.relations?.with || [])];
 let labels, panels;
 function selectPoint(id) {
   const pin = labels.select(id);

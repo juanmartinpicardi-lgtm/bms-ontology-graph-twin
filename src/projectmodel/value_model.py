@@ -12,8 +12,9 @@ the *driver*: which signal of the equipment's simulated state it follows (sim.js
 
 from __future__ import annotations
 
-TEMP, PCT, INWC, CFM = "°F", "%", "inH₂O", "cfm"
+TEMP, PCT, INWC, CFM, GPM, PSI = "°F", "%", "inH₂O", "cfm", "gpm", "psi"
 RUN, ON, OCC, FILTER = ["OFF", "RUN"], ["OFF", "ON"], ["UNOCC", "OCC"], ["CLEAN", "DIRTY"]
+VALVE = ["CLOSED", "OPEN"]
 
 
 def _spec(kind: str, unit: str | None, base: float, rng: tuple[float, float], driver: str, **extra) -> dict:
@@ -57,6 +58,30 @@ ROLES: dict[str, dict] = {
     "oa_flow": _spec("analog", CFM, 3000, (0, 12000), "oa_flow"),
     "occupancy": _binary(OCC, "occupancy"),
     "filter_status": _binary(FILTER, "filter_status"),
+    # FCU
+    "fan_status": _binary(RUN, "fan_run", fan="terminal"),
+    # plant: chiller, boiler, pump. A plant's status/enable/power follow that unit's own run state (lead/lag).
+    "chw_leaving_temp": _spec("analog", TEMP, 44, (38, 60), "chw_supply"),
+    "chw_entering_temp": _spec("analog", TEMP, 54, (40, 65), "chw_return"),
+    "chw_leaving_sp": _spec("setpoint", TEMP, 44, (40, 50), "constant"),
+    "cw_entering_temp": _spec("analog", TEMP, 80, (60, 95), "cw_supply"),
+    "cw_leaving_temp": _spec("analog", TEMP, 90, (60, 105), "cw_return"),
+    "chw_flow": _spec("analog", GPM, 900, (0, 1500), "chw_flow"),
+    "cw_flow": _spec("analog", GPM, 1100, (0, 1800), "cw_flow"),
+    "hw_leaving_temp": _spec("analog", TEMP, 160, (100, 190), "hw_supply"),
+    "hw_entering_temp": _spec("analog", TEMP, 140, (90, 180), "hw_return"),
+    "hw_leaving_sp": _spec("setpoint", TEMP, 160, (120, 180), "constant"),
+    "firing_rate": _spec("command", PCT, 40, (0, 100), "firing_rate"),
+    "enable": _binary(ON, "unit_run"),
+    "status": _binary(RUN, "unit_run"),
+    "cmd": _binary(ON, "unit_run"),
+    "power": _spec("analog", "kW", 150, (0, 400), "unit_power"),
+    "speed": _spec("command", PCT, 75, (0, 100), "pump_speed"),
+    "dp": _spec("analog", PSI, 12, (0, 25), "pump_dp"),
+    "dp_sp": _spec("setpoint", PSI, 12, (5, 20), "constant"),
+    "evap_iso_valve": _binary(VALVE, "unit_run"),
+    "cond_iso_valve": _binary(VALVE, "unit_run"),
+    "iso_valve": _binary(VALVE, "unit_run"),
 }
 
 # Typical setpoints (°F unless said), by the words of the class.
@@ -109,6 +134,8 @@ def describe(cls: str | None, role: str | None, part: str | None = None, deck: s
         spec = dict(ROLES[role])
         if "fan" in spec and part and part.split(".")[0] in ("supply_fan", "return_fan"):
             spec["fan"] = part.split(".")[0].removesuffix("_fan")  # VFD points on the return fan's sub-equipment
+        if role == "speed" and "Frequency" in cls:  # a pump VFD's output frequency
+            spec.update(kind="analog", unit="Hz", base=45, range=[0, 60], driver="pump_freq")
     elif role and cls.endswith("_Setpoint"):
         spec = setpoint(cls)
     else:

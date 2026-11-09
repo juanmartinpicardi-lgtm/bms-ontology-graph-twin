@@ -344,7 +344,7 @@ function breadcrumb(id) {
 // Equipment with a 3D model (knowledge_model/templates/anchors.yaml) link to the Equipment 3D page. In the app this
 // viewer sits in a sandboxed same-origin iframe that may not navigate the top window, so the link is clicked in the
 // app's own document (the app navigates); a new tab if that is not reachable.
-const EQ3D_TEMPLATES = ["ahu", "vav"];
+const EQ3D_TEMPLATES = ["ahu", "vav", "fcu", "chiller", "boiler", "pump"];
 function openInApp(href) {
   try {
     const a = top.document.createElement("a");

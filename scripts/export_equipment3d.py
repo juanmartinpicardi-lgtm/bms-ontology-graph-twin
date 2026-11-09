@@ -28,7 +28,7 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--equip", help='equipment id, e.g. "eq:Airside AHU-2"')
     g.add_argument("--all-ahus", action="store_true")
-    g.add_argument("--all", action="store_true", help="every equipment with a 3D model (AHUs and VAVs)")
+    g.add_argument("--all", action="store_true", help="every equipment with a 3D model (AHU, VAV, FCU, chiller, boiler, pump)")
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
     args = ap.parse_args()
     store, km, anchors = Store(args.db), load_knowledge_model(), load_anchors()

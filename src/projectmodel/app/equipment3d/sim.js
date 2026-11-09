@@ -74,12 +74,73 @@ const Sim = (() => {
     };
   }
 
+  // A fan coil: like a VAV's zone, but its own valves do the work (a 2-pipe unit has only the coil it has).
+  function fcuState(seed, a, h, v) {
+    const k = 0.75 + 0.5 * rnd(seed, 1), off = (rnd(seed, 2) - 0.5) * 0.3, run = a.run;
+    const zload = run ? clamp(a.load * k + off + 0.08 * noise(seed + 7, h * 3), 0, 1) : 0;
+    const cool = run && v.cooling_coil && zload > 0.35 ? clamp((zload - 0.35) * 160) : 0;
+    const heat = run && v.heating_coil && zload < 0.15 ? clamp((0.15 - zload) * 500) : 0;
+    const zone = (run ? 73 + (zload - 0.5) * 1.5 : 76) + 0.25 * noise(seed + 8, h * 4);
+    return { run, zload, cool, heat, zone, dat: run ? (cool ? 58 - cool * 0.04 : heat ? 78 + heat * 0.2 : zone - 0.5) : zone,
+             fan: { terminal: { run, speed: run ? 100 : 0 } } };
+  }
+
+  // Plant: a site load (from the same outdoor day) staged across units by their number. CH-1 / B-1 lead, the next
+  // starts as the load grows; pumps are duty/standby pairs (1 and A duty), the standby joins at high load.
+  const rank = label => {
+    const m = /(\d+)\s*([A-Za-z])?\s*$/.exec(label || "");
+    return !m ? 0 : m[2] ? m[2].toUpperCase().charCodeAt(0) - 65 : Math.max(0, parseInt(m[1], 10) - 1);
+  };
+  function plantState(seed, a, eq, v, h) {
+    const k = rank(eq.label), hod = a.hod;
+    const cool = a.run ? clamp(0.1 + a.load * 1.05, 0.1, 1) : 0;
+    const heat = a.run ? clamp(0.3 + (64 - a.oat) / 25, 0.15, 1) : hod >= 5 && hod < 7 ? 0.5 : 0;  // morning warm-up
+    const n = (sd, f) => noise(seed + sd, h * f);
+    if (eq.template === "chiller") {
+      const on = Math.max(1, [0, 1, 2].filter(i => cool > i * 0.4).length), run = cool > k * 0.4;
+      const plr = run ? clamp(cool / (0.4 * on), 0.2, 1) : 0;
+      const chwS = run ? 44 + 0.25 * n(1, 4) + (plr >= 1 ? 1.5 : 0) : 56 + 0.4 * n(1, 1);
+      const cwS = run ? clamp(70 + (a.oat - 66) * 0.45, 65, 88) + 0.3 * n(2, 3) : clamp(a.oat - 4, 55, 90);
+      return { run, plr, load: cool, chwS, chwR: run ? chwS + 3 + 9 * plr : chwS + 0.3, cwS,
+               cwR: run ? cwS + 2 + 8 * plr : cwS + 0.2, chwFlow: run ? 960 * (0.97 + 0.03 * n(3, 5)) : 0,
+               cwFlow: run ? 1200 * (0.97 + 0.03 * n(4, 5)) : 0, power: run ? 40 + 260 * plr : 0 };
+    }
+    if (eq.template === "boiler") {
+      const on = Math.max(1, [0, 1, 2].filter(i => heat > i * 0.35).length), run = heat > k * 0.35;
+      const plr = run ? clamp(heat / (0.35 * on), 0.15, 1) : 0, firing = run ? clamp(20 + 80 * plr) : 0;
+      const hwS = run ? 160 + 0.6 * n(1, 4) - (firing >= 100 ? 4 : 0) : 112 + 2 * n(1, 1);
+      return { run, plr, load: heat, firing, hwS, hwR: run ? hwS - 8 - 14 * plr : hwS - 1, power: 0 };
+    }
+    // pump: what it moves sets which load it follows
+    const load = v.medium === "hot_water" ? heat : cool, duty = k % 2 === 0;
+    const run = duty ? load > 0 : load > 0.85;
+    const speed = run ? clamp(45 + 50 * load + 2 * n(1, 3)) : 0;
+    return { run, load, speed, freq: speed * 0.6, dp: run ? 4 + 14 * (speed / 100) ** 2 + 0.2 * n(2, 6) : 0,
+             power: run ? 18 * (speed / 100) ** 3 : 0 };
+  }
+
   // Per point: the driver's signal, plus a little sensor noise seeded by the point id.
   function pointValue(id, sp, s, h) {
-    const a = s.ahu, v = s.vav, n = (scale) => scale * noise(hash(id), h * 4);
-    const deck = sp.deck && v?.deck[sp.deck];
-    const fan = (s.vav?.fan[sp.fan] || a.fan[sp.fan] || a.fan.supply);
+    const a = s.ahu, v = s.vav || s.fcu, n = (scale) => scale * noise(hash(id), h * 4), pl = s.plant;
+    const deck = sp.deck && s.vav?.deck[sp.deck];
+    const fan = (v?.fan[sp.fan] || a.fan[sp.fan] || a.fan.supply);
     switch (sp.driver) {
+      case "chw_supply": return pl ? pl.chwS + n(0.05) : 44;
+      case "chw_return": return pl ? pl.chwR + n(0.05) : 54;
+      case "cw_supply": return pl ? pl.cwS + n(0.05) : 80;
+      case "cw_return": return pl ? pl.cwR + n(0.05) : 90;
+      case "chw_flow": return pl?.chwFlow ?? 0;
+      case "cw_flow": return pl?.cwFlow ?? 0;
+      case "hw_supply": return pl ? pl.hwS + n(0.1) : 160;
+      case "hw_return": return pl ? pl.hwR + n(0.1) : 140;
+      case "firing_rate": return pl?.firing ?? 0;
+      case "unit_run": return (pl || v || a).run ? 1 : 0;
+      case "unit_power": return pl ? pl.power + (pl.run ? n(0.4) : 0) : 0;
+      case "pump_speed": return pl?.speed ?? 0;
+      case "pump_freq": return pl?.freq ?? 0;
+      case "pump_dp": return pl?.dp ?? 0;
+      case "cooling_valve": return s.fcu ? s.fcu.cool : a.cool;
+      case "heating_valve": return s.fcu ? s.fcu.heat : a.heat;
       case "constant": return sp.base;
       case "outdoor_temp": return a.oat + n(0.1);
       case "return_temp": return a.rat + n(0.1);
@@ -91,8 +152,6 @@ const Sim = (() => {
       case "building_pressure": return a.building;
       case "filter_dp": return a.filterDp;
       case "humidity": return a.humidity;
-      case "cooling_valve": return a.cool;
-      case "heating_valve": return a.heat;
       case "reheat_valve": return v ? v.reheat : a.heat;
       case "oa_damper": return a.oa;
       case "relief_damper": return a.relief;
@@ -113,28 +172,32 @@ const Sim = (() => {
     }
   }
 
-  const DECIMALS = { "°F": 1, "inH₂O": 2, "Hz": 1, "kW": 1 };
+  const DECIMALS = { "°F": 1, "inH₂O": 2, "Hz": 1, "kW": 1, "psi": 1 };
   function format(sp, x) {
     if (sp.kind === "binary") {
       const t = sp.states[x ? 1 : 0];
-      return { text: t, state: ["RUN", "ON", "OCC"].includes(t) ? "ok" : t === "DIRTY" ? "warn" : "off" };
+      return { text: t, state: ["RUN", "ON", "OCC", "OPEN"].includes(t) ? "ok" : t === "DIRTY" ? "warn" : "off" };
     }
     const d = DECIMALS[sp.unit] ?? (sp.unit ? 0 : 1);
     return { text: sp.unit ? `${x.toFixed(d)} ${sp.unit}` : x.toFixed(d) };
   }
 
   // create(data, {seed, scenario}) -> {sample(h), hourAt(seconds), ...}. The default seed is the AHU's id, so a VAV
-  // page and its AHU's page show the same day.
+  // page and its AHU's page show the same day; fan coils and plant follow one site-wide day per project, so units of
+  // a plant stage together across their pages.
   function create(data, { seed = null, scenario = "normal", hour = null } = {}) {
-    const eq = data.equipment, isVav = eq.template === "vav";
-    const ahu = isVav ? (data.relations?.fed_by || []).find(r => r.template === "ahu") : eq;
+    const eq = data.equipment, t = eq.template, isVav = t === "vav", v = data.variant || {};
+    const site = { id: `site|${data.project}` };
+    const ahu = isVav ? (data.relations?.fed_by || []).find(r => r.template === "ahu") : t === "ahu" ? eq : site;
     const aSeed = seed != null ? hash(`${seed}|${(ahu || eq).id}`) : hash((ahu || eq).id);
     const vSeed = seed != null ? hash(`${seed}|${eq.id}`) : hash(eq.id);
     let sc = SCENARIOS[scenario] || SCENARIOS.normal;
     const ids = Object.keys(data.points);
     function sample(h) {
       const elapsed = h - sc.start, a = ahuState(aSeed, sc, h);
-      const s = { h, ahu: a, vav: isVav ? vavState(vSeed, a, sc, h, elapsed, data.variant || {}) : null };
+      const s = { h, ahu: a, vav: isVav ? vavState(vSeed, a, sc, h, elapsed, v) : null,
+                  fcu: t === "fcu" ? fcuState(vSeed, a, h, v) : null,
+                  plant: ["chiller", "boiler", "pump"].includes(t) ? plantState(vSeed, a, eq, v, h) : null };
       s.values = {};
       for (const id of ids) {
         const sp = data.points[id].sim;
