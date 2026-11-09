@@ -34,6 +34,7 @@ this_project = [
     st.Page(APP / "pages/3_Equipment_3D.py", title="Equipment 3D", icon=":material/view_in_ar:",
             url_path="Equipment_3D"),
     st.Page(APP / "views/data_tables.py", title="Data tables", icon=":material/table:", url_path="data"),
+    st.Page(APP / "pages/4_Notes.py", title="Notes", icon=":material/sticky_note_2:", url_path="Notes"),
 ]
 shared = [
     st.Page(APP / "pages/2_Knowledge_model.py", title="Knowledge model", icon=":material/account_tree:",

@@ -1,0 +1,17 @@
+scope: site/alpha
+description: >
+  Naming habits seen on site Alpha (dev set). Written and tuned on Alpha only.
+  "(CC)" marks 17 points on CH-1 that are the chiller's own refrigerant-cycle diagnostics
+  (efficiencies, saturation / superheat / subcool temperatures, load), not plant water-side readings.
+  What CC stands for is not confirmed by the site; the suffix is read as carrying no class meaning.
+author: claude (Alpha dev analysis, 2026-11-08)
+
+abbreviations:
+  cc: []          # known token, no meaning for the class (meaning unconfirmed; see description)
+
+class_hints:
+  # The chiller template would otherwise specialise these generic readings into water-side slot
+  # classes (e.g. "Efficiency (CC)" -> Leaving_Chilled_Water_Temperature_Sensor).
+  - {pattern: '(?i)\befficiency \(cc\)$', class: Sensor}
+  - {pattern: '(?i)\brefrig\b.*\btemp \(cc\)$', class: Temperature_Sensor}
+  - {pattern: '(?i)^chilled water load \(cc\)$', class: Power_Sensor}     # load in tons = thermal power

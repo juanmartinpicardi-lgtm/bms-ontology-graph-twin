@@ -1,4 +1,5 @@
-"""Tribal knowledge: placeholder until docs/spec-tribal-knowledge.md lands. Shows what is already captured."""
+"""Tribal knowledge: what is captured so far (conventions, notes, review decisions) and what is still to come.
+Spec: docs/spec-tribal-knowledge.md."""
 
 import sys
 from pathlib import Path
@@ -8,7 +9,9 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
+from projectmodel import notes  # noqa: E402
 from projectmodel.app.shell import get_store  # noqa: E402
+from projectmodel.conventions import layer_entries, load_layers, scopes_for  # noqa: E402
 from projectmodel.projects import label, summaries  # noqa: E402
 
 store = get_store()
@@ -16,7 +19,8 @@ store = get_store()
 st.title("Tribal knowledge")
 st.write("What engineers know about a building or a contractor that is written down nowhere. "
          "Captured, it makes the next mapping better and gives agents the context people have.")
-st.info("Being built. See docs/spec-tribal-knowledge.md.", icon=":material/construction:")
+st.info("Live: notes and site conventions. Still to come: adding conventions from the app, and conventions "
+        "proposed from repeated review fixes. See docs/spec-tribal-knowledge.md.", icon=":material/construction:")
 
 st.header("Where it lives")
 st.dataframe({
@@ -30,12 +34,23 @@ st.dataframe({
 }, hide_index=True)
 
 c = st.columns(3)
-c[0].button("Add note", icon=":material/sticky_note_2:", disabled=True, width="stretch")
+c[0].page_link("pages/4_Notes.py", label="Notes (add them in Review › Tree)", icon=":material/sticky_note_2:")
 c[1].button("Add convention", icon=":material/rule:", disabled=True, width="stretch")
 c[2].button("Review proposed conventions", icon=":material/inbox:", disabled=True, width="stretch")
 
 st.header("Captured so far")
 st.write("Every review decision is already tribal knowledge for that one point. The coming features turn "
          "repeated decisions into rules.")
-rows = [(label(p), s.get("human", 0)) for p, s in sorted(summaries(store).items())]
-st.dataframe({"Project": [r[0] for r in rows], "Human decisions": [r[1] for r in rows]}, hide_index=True)
+rows = [(label(p), s.get("human", 0), len(notes.notes_by_project(store, p)), " <- ".join(scopes_for(p)) or "none")
+        for p, s in sorted(summaries(store).items())]
+st.dataframe({"Project": [r[0] for r in rows], "Human decisions": [r[1] for r in rows],
+              "Active notes": [r[2] for r in rows], "Conventions": [r[3] for r in rows]}, hide_index=True)
+
+st.header("Conventions in use")
+st.caption("Files under conventions/, layered knowledge model <- contractor <- customer <- site "
+           "(conventions/projects.yaml says which apply where).")
+entries = layer_entries(load_layers(sorted({s for p in summaries(store) for s in scopes_for(p)})))
+if entries:
+    st.dataframe(entries, hide_index=True)
+else:
+    st.caption("None yet.")

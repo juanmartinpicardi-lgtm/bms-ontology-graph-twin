@@ -213,3 +213,35 @@ def relation_usage(km: KnowledgeModel, store: Store, project: str) -> list[dict]
     rows += [{"source class": s, "relation": r, "target class": d, "links": 0, "methods": "",
               "expected by a template": True} for (s, r, d) in sorted(expected) if (s, r, d) not in seen]
     return rows
+
+
+def convention_entries(km: KnowledgeModel, store: Store, project: str, layers) -> list[dict]:
+    """One row per convention entry: which layer it comes from, whether it overrides the knowledge model
+    or an earlier layer, and how many nodes of the project name it in their provenance."""
+    from .conventions import layer_entries
+
+    used = Counter(c for n in store.nodes(project) for c in json.loads(n["attrs"]).get("convention", []))
+    seen_abbr: dict[str, str] = {}
+    rows = []
+    for layer, e in ((lay, x) for lay in layers for x in layer_entries([lay])):
+        effect = "adds"
+        if e["kind"] == "abbreviations":
+            key = e["key"].lower()
+            if key in seen_abbr:
+                effect = f"overrides {seen_abbr[key]}"
+            elif key in km.name_rules.abbreviations or key in km.name_rules.vocabulary:
+                effect = "overrides knowledge model"
+            seen_abbr[key] = layer.scope
+            origin = f"{layer.scope}:abbreviations.{key}"
+            n = used[origin]
+        else:
+            # entries of one kind are numbered in file order, matching the origins the mapper records
+            same = [x for x in layer_entries([layer]) if x["kind"] == e["kind"]
+                    and (e["kind"] != "equipment_patterns" or x["key"] == e["key"])]
+            idx = same.index(e)
+            origin = (f"{layer.scope}:equipment_patterns.{e['key']}[{idx}]" if e["kind"] == "equipment_patterns"
+                      else f"{layer.scope}:{e['kind']}[{idx}]")
+            n = used[origin]
+        rows.append({"layer": layer.scope, "kind": e["kind"], "entry": e["key"], "value": str(e["value"]),
+                     "effect": effect, "points here": n, "origin": origin})
+    return rows

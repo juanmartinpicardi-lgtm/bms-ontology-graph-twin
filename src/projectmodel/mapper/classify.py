@@ -31,6 +31,7 @@ class ClassGuess:
     words: list[str]  # the interpretation used, after synonyms and function inference
     alternatives: list[tuple[str, float]] = field(default_factory=list)  # top classes with scores
     unknown: list[str] = field(default_factory=list)
+    hint: str | None = None  # origin of the convention class hint that decided the class, if any
 
 
 class ClassMatcher:

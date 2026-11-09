@@ -7,6 +7,10 @@ Order (CLAUDE.md section 3):
   3. templates   - type each equipment from its name and its points; refine generic
                    point classes from the equipment's template; infer feeds           (method=template)
   4. LLM         - only for points still below `llm_below`, with a short candidate list (method=llm)
+Conventions (km.conventions, see conventions.py) take part as rules: a class hint decides a point's class
+before anything else and is not refined by templates (method=rule); abbreviations and equipment patterns
+feed steps 2-3; ignore rules flag points for review. Whatever a convention decided or contributed is
+recorded in attrs.convention, e.g. ["site/alpha:abbreviations.cc"].
 Nothing is written back to any source.
 """
 
@@ -28,6 +32,7 @@ from .llm import LLMProvider, LLMRequest, NoLLM
 POSITION_WORDS = {"supply", "discharge", "return", "mixed", "outside", "exhaust", "relief", "zone", "hot",
                   "cold", "deck", "entering", "leaving", "chilled", "condenser", "inlet", "outlet"}
 TEMPLATE_AGREEMENT_BOOST = 0.5  # share of the remaining confidence gained when a point fits a template slot
+HINT_CONFIDENCE = 0.95  # a class hint is a person's statement about this site's names
 EQUIP_ID = re.compile(r"\b([A-Za-z]{1,6})[-_ ]?(\d{1,3}[A-Za-z]?)\b")
 
 
@@ -45,6 +50,7 @@ class EquipGroup:
     cls_method: str = "rule"
     template: Template | None = None
     evidence: dict = field(default_factory=dict)
+    convention: list[str] = field(default_factory=list)
 
 
 class Mapper:
@@ -99,9 +105,27 @@ class Mapper:
 
     def classify_points(self, records: list[RawRecord]) -> dict[str, ClassGuess]:
         # The point's own equipment name (last folder, or an id found in the name) is not part of what it is.
-        return {f"pt:{r.source_id}": self.points.classify(
-                    r.name, r.path.split("/")[-1] if r.path else self._equipment_id_in_name(r.name))
-                for r in records}
+        out = {}
+        for r in records:
+            guess = self.points.classify(r.name, r.path.split("/")[-1] if r.path else self._equipment_id_in_name(r.name))
+            hint = next((h for h in self.km.class_hints if h.pattern.search(r.name)), None)
+            if hint:
+                guess.hint = hint.origin
+                guess.cls, guess.confidence = hint.cls, HINT_CONFIDENCE
+            out[f"pt:{r.source_id}"] = guess
+        return out
+
+    def point_conventions(self, r: RawRecord, guess: ClassGuess) -> list[str]:
+        """Conventions that decided or contributed to a point: its class hint, convention abbreviations
+        among its tokens, and an ignore rule."""
+        used = [guess.hint] if guess.hint else []
+        origin = self.km.abbreviation_origin
+        used += sorted({origin[t] for t in self.km.name_rules.tokenize(r.name) if t in origin})
+        rule = self.ignore_rule(r.name)
+        return used + ([rule.origin] if rule else [])
+
+    def ignore_rule(self, name: str):
+        return next((g for g in self.km.ignore if g.pattern.search(name)), None)
 
     # 3. templates ------------------------------------------------------------------------------
 
@@ -143,6 +167,11 @@ class Mapper:
             g.cls, g.template = t.brick_class, t
             g.cls_conf = 0.6 + 0.3 * fill + 0.1 * in_range if n else 0.6
             g.cls_method = "template" if n else "rule"
+            own = [p for p in t.name_patterns if p.pattern not in t.pattern_origin and p.search(g.label)]
+            if not own:  # recognised only through a convention's pattern: the convention decided
+                g.convention = sorted({t.pattern_origin[p.pattern] for p in t.name_patterns
+                                       if p.pattern in t.pattern_origin and p.search(g.label)})
+                g.cls_method = "rule"
         elif name_guess.cls:
             g.cls, g.cls_conf, g.cls_method = name_guess.cls, name_guess.confidence, "rule"
             g.template = next((t for t in self.km.templates.values() if self.km.is_a(g.cls, t.brick_class)), None)
@@ -162,7 +191,7 @@ class Mapper:
         t = g.template
         for pid in g.points:
             guess = guesses[pid]
-            if not guess.cls or not t:
+            if not guess.cls or not t or guess.hint:  # a class hint is final
                 continue
             cls, conf, method = guess.cls, guess.confidence, "rule"
             slot_classes = [c for s in t.slots for c in s.classes]
@@ -270,9 +299,12 @@ class Mapper:
 
         nodes, edges = [], []
         for g in groups.values():
+            attrs = {"grouping": g.method, "template": g.template.id if g.template else None,
+                     "evidence": g.evidence, "points": len(g.points)}
+            if g.convention:
+                attrs["convention"] = g.convention
             nodes.append(Node(g.id, "equipment", g.label, g.cls, source_file, g.source_ref, g.cls_method,
-                              g.cls_conf, {"grouping": g.method, "template": g.template.id if g.template else None,
-                                           "evidence": g.evidence, "points": len(g.points)}))
+                              g.cls_conf, attrs))
             if g.parent:
                 edges.append(Edge(g.parent, "hasPart", g.id, source_file, g.source_ref, "parsed", 1.0))
         for src, dst, conf, medium in self.infer_feeds(groups, {pid: c for pid, (c, _, _) in final.items()}):
@@ -280,9 +312,13 @@ class Mapper:
                               {"medium": medium}))
         for pid, (cls, conf, method) in final.items():
             r, guess = rec_by_pid[pid], guesses[pid]
-            nodes.append(Node(pid, "point", r.name, cls, source_file, str(r.source_row), method, conf,
-                              {"source_id": r.source_id, "path": r.path, "words": guess.words,
-                               "alternatives": guess.alternatives, "unknown_tokens": guess.unknown}))
+            attrs = {"source_id": r.source_id, "path": r.path, "words": guess.words,
+                     "alternatives": guess.alternatives, "unknown_tokens": guess.unknown}
+            if used := self.point_conventions(r, guess):
+                attrs["convention"] = used
+            if rule := self.ignore_rule(r.name):
+                attrs["ignore"] = {"reason": rule.reason, "convention": rule.origin}
+            nodes.append(Node(pid, "point", r.name, cls, source_file, str(r.source_row), method, conf, attrs))
             if pid in member:
                 g = groups[member[pid]]
                 edges.append(Edge(g.id, "hasPoint", pid, source_file, str(r.source_row), g.method, g.confidence))
@@ -300,6 +336,8 @@ class Mapper:
             "edges": dict(_count(e.rel for e in edges)),
             "point_methods": dict(_count(n.method for n in points)),
             "point_confidence": dict(_count(_bucket(n.confidence) for n in points)),
+            "points_ignored": sum(1 for n in points if "ignore" in n.attrs),
+            "conventions": list(self.km.conventions),
             "llm_provider": self.llm.name,
             "llm_calls": llm_calls,
             "seconds": round(seconds, 2),
