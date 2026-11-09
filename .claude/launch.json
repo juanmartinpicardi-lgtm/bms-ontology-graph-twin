@@ -2,6 +2,14 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "app-dev",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["-m", "streamlit", "run", "src/projectmodel/app/main.py", "--server.headless", "true",
+                      "--server.port", "8521", "--browser.gatherUsageStats", "false"],
+      "port": 8521,
+      "autoPort": true
+    },
+    {
       "name": "review",
       "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": [

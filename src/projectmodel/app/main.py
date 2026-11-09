@@ -2,9 +2,11 @@
 
 Run: .venv/bin/streamlit run src/projectmodel/app/main.py
 
+An icon rail on the left picks the area; chips at the top pick the page inside it.
+
 Overview          why the knowledge graph matters, how it works
-Projects          every building, and adding a new one
-This project      views of the active project's knowledge graph (project dropdown in the header)
+Projects          every building, and adding a new one; then one project's pages, with the building and input
+                  switched in the project header
 Shared knowledge  what sits above all projects: knowledge model, tribal knowledge
 """
 
@@ -16,7 +18,8 @@ import streamlit as st
 APP = Path(__file__).resolve().parent
 sys.path.insert(0, str(APP.parents[1]))
 
-from projectmodel.app.shell import get_store, project_header  # noqa: E402
+from projectmodel.app.shell import active_project, area_header, get_store, project_header, rail  # noqa: E402
+from projectmodel.projects import list_projects  # noqa: E402
 
 st.set_page_config(page_title="Project Model", page_icon=":material/hub:", layout="wide")
 
@@ -43,7 +46,22 @@ shared = [
     st.Page(APP / "views/tribal.py", title="Tribal knowledge", icon=":material/groups:", url_path="tribal-knowledge"),
 ]
 
-page = st.navigation({"Overview": overview, "Projects": projects, "This project": this_project,
-                      "Shared knowledge": shared}, position="top")
-project_header(get_store())  # every page: which project is open, and switching it
+page = st.navigation(overview + projects + this_project + shared, position="hidden")
+store = get_store()
+if mapped := list_projects(store):
+    active_project(mapped)  # every page: a ?project= deep link opens that project app-wide
+rail([("Overview", ":material/home:", overview), ("Projects", ":material/apartment:", projects + this_project),
+      ("Shared knowledge", ":material/account_tree:", shared)], page)
+def among(pages):
+    return any(p.url_path == page.url_path for p in pages)
+
+
+if among(this_project):
+    project_header(store, this_project, page, projects[0])
+elif among(projects):
+    area_header("Projects", projects, page)
+elif among(shared):
+    area_header("Shared knowledge", shared, page)
+else:
+    area_header("Overview", overview, page)
 page.run()

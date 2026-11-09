@@ -46,7 +46,6 @@ if not projects:
     st.stop()
 project = active_project(projects)
 
-st.title("Review")
 st.caption("Proposed items sorted by confidence · decisions are saved as method=human and survive mapper reruns")
 with st.container(horizontal=True, vertical_alignment="bottom", gap="medium"):
     reviewer = st.text_input("Reviewer", value=st.session_state.get("reviewer", ""), placeholder="your name",

@@ -37,7 +37,6 @@ project = active_project(projects) if projects else None
 site = project.split("/")[0] if project else ""
 gt = ground_truth(site) if project and (GT_DIR / site).exists() else None
 
-st.title("Knowledge model")
 with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
     st.caption("Shared by every project. Edit it in `knowledge_model/` and rerun the mapper; this page is read-only."
                if project else "No mapped projects yet, so only the model itself is shown.")

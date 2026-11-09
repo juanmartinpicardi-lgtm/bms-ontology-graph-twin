@@ -23,7 +23,6 @@ if not projects:
     st.stop()
 project = active_project(projects)  # the shared sidebar picker
 
-st.title("Notes")
 st.caption(f"{label(project)} · tribal knowledge: context about the building, never graph facts. "
            "Add and edit notes in the review app's Tree tab.")
 

@@ -16,7 +16,6 @@ from projectmodel.projects import label, summaries  # noqa: E402
 
 store = get_store()
 
-st.title("Tribal knowledge")
 st.write("What engineers know about a building or a contractor that is written down nowhere. "
          "Captured, it makes the next mapping better and gives agents the context people have.")
 st.info("Live: notes and site conventions. Still to come: adding conventions from the app, and conventions "

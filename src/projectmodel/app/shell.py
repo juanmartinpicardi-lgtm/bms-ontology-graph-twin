@@ -9,7 +9,7 @@ import streamlit as st
 
 from projectmodel.db.store import Store
 from projectmodel.knowledge_model import load_knowledge_model
-from projectmodel.projects import DEFAULT, label, list_projects, site_of, summaries
+from projectmodel.projects import DEFAULT, INPUTS, SITES, list_projects, site_of, summaries
 
 ROOT = Path(__file__).resolve().parents[3]
 DB = ROOT / "data/kg.sqlite"
@@ -49,39 +49,114 @@ def set_project(project: str) -> None:
     st.session_state["project"] = project
 
 
-# No sidebar anywhere: navigation is the top bar, the project is the header dropdown, page controls live on the page.
-CHROME_CSS = """<style>
-[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {
-  display: none !important; }
-.block-container { padding-top: 3.8rem; }
+# No sidebar anywhere: a fixed icon rail picks the area (Overview, Projects, Shared knowledge), chips pick the page
+# inside it, and the project header switches building and input. Page controls live on the page.
+ACCENT = "#4DA3E8"
+CHROME_CSS = f"""<style>
+[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {{
+  display: none !important; }}
+.block-container {{ padding-top: 1.4rem; padding-left: calc(64px + 2rem); }}
+[data-testid="stHeader"], [data-testid="stHeader"] * {{ background: transparent; pointer-events: none; }}
+[data-testid="stHeader"] button, [data-testid="stHeader"] button * {{ pointer-events: auto; }}
+[data-testid="stAppDeployButton"] {{ display: none; }}
+.st-key-rail {{ position: fixed; left: 0; top: 0; bottom: 0; width: 64px; z-index: 999995; background: #0E0F10;
+  border-right: 1px solid #24262A; padding: 14px 0; align-items: center; gap: 6px; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] {{ width: 44px; height: 44px; justify-content: center; padding: 0;
+  border-radius: 10px; color: #9AA0A6; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] [data-testid="stMarkdownContainer"] {{ display: none; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] span {{ margin: 0; font-size: 22px; color: inherit !important; }}
+.st-key-rail [data-testid="stPageLink-NavLink"]:hover {{ background: #1E2023; color: #E8E9EA; }}
+.st-key-rail_on [data-testid="stPageLink-NavLink"] {{ background: #23324A; color: #8CC5F2; }}
+.rail-logo {{ width: 36px; height: 36px; border-radius: 10px; background: {ACCENT}; display: flex;
+  align-items: center; justify-content: center; margin: 0 auto 14px; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ border: 1px solid rgba(128,128,128,.35);
+  border-radius: 999px; padding: 2px 14px; min-height: 34px; background: transparent; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"]:hover {{ border-color: {ACCENT}; }}
+.st-key-chip_on [data-testid="stPageLink-NavLink"] {{ background: rgba(77,163,232,.16); border-color: {ACCENT}; }}
+.st-key-chip_on [data-testid="stPageLink-NavLink"] p {{ font-weight: 600; }}
+.st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid rgba(128,128,128,.22); padding-bottom: 14px;
+  margin-bottom: 6px; }}
+.st-key-projsite [data-baseweb="select"] > div {{ font-size: 1.25rem; font-weight: 600; }}
 </style>"""
 
+RAIL_LOGO = """<div class="rail-logo" title="Project Model"><span aria-hidden="true"
+style="font-family: 'Material Symbols Rounded'; font-size: 22px; color: #0B1A28">hub</span></div>"""
 
-def project_header(store: Store) -> None:
-    """One row at the top of every page: which project is open, and a dropdown to switch it. The dropdown is keyed
-    to the active project itself, so every page, deep link and the Projects page share one value."""
+
+def rail(areas: list[tuple[str, str, list]], current) -> None:
+    """The fixed icon rail on the left: one icon per area, linking to the area's first page."""
     st.html(CHROME_CSS)
+    with st.container(key="rail"):
+        st.html(RAIL_LOGO)
+        for name, icon, pages in areas:
+            on = any(p.url_path == current.url_path for p in pages)
+            with st.container(key="rail_on" if on else f"rail_{name}", width="content"):
+                st.page_link(pages[0], label=name, icon=icon, help=name)
+
+
+def chips(pages: list, current, labels: dict[str, str] | None = None) -> None:
+    """The pages of one area as a row of chips; the current one is filled."""
+    with st.container(horizontal=True, gap="small", width="content"):
+        for i, p in enumerate(pages):
+            with st.container(key="chip_on" if p.url_path == current.url_path else f"chip_{i}", width="content"):
+                st.page_link(p, label=(labels or {}).get(p.title, p.title), icon=p.icon)
+
+
+def area_header(title: str, pages: list, current) -> None:
+    """Areas without a project (Overview, Projects, Shared knowledge): the area's name, then its pages as chips."""
+    with st.container(horizontal=True, vertical_alignment="center", gap="medium", key="areabar"):
+        st.markdown(f"**{title}**", width="content")
+        chips(pages, current)
+
+
+def _pick_project(projects: list[str]) -> None:
+    """Building or input changed: open that building with the chosen input, else its richest input."""
+    site, inp = st.session_state["_site"], st.session_state.get("_input")
+    if inp is None:  # the input toggle was cleared: keep the current project
+        return
+    wanted = f"{site}/{inp}"
+    set_project(wanted if wanted in projects else next(p for p in projects if p.startswith(site + "/")))
+
+
+def project_header(store: Store, sections: list, current, all_projects) -> None:
+    """The top of every project page: back to all projects, the building (switch it here), its role and size, the
+    input it was mapped from, then the project's pages as chips. Building and input are re-derived from the active
+    project on every run, so deep links, the Projects page and these controls always agree."""
     projects = list_projects(store)
     if not projects:
         st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
         return
-    active_project(projects)
-    with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
-        st.selectbox("Project", projects, key="project", format_func=label, label_visibility="collapsed",
-                     width=280, help="Every project page shows this project. Switch it here at any time.")
-        project = st.session_state["project"]
-        site = site_of(project)
-        if site.role == "test":
-            st.badge("Test set · measure only, never tune", color="orange", icon=":material/science:")
-        else:
-            st.badge("Dev set", color="blue")
-        n = summaries(store).get(project, {}).get("nodes", {})
-        st.caption(f"{site.kind} · {n.get('point', 0):,} points · {n.get('equipment', 0)} equipment",
-                   width="content")
-        st.space("stretch")
-        # The right end of this row belongs to the page (page_tools): its scenario, view options, ...
-        st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
-                                                       vertical_alignment="center")
+    project = active_project(projects)
+    site_id = project.split("/")[0]
+    st.session_state["_site"], st.session_state["_input"] = site_id, project.split("/", 1)[1]
+    site = site_of(project)
+    with st.container(key="projbar", gap="small"):
+        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+            st.page_link(all_projects, label="Projects", icon=":material/arrow_back:")
+            st.selectbox("Building", list(dict.fromkeys(p.split("/")[0] for p in projects)), key="_site",
+                         format_func=lambda s: SITES[s].name if s in SITES else s.title(),
+                         label_visibility="collapsed", width=170, on_change=_pick_project, args=(projects,),
+                         help="Every project page shows this building. Switch it here at any time.")
+            if site.role == "test":
+                st.badge("Test set · measure only, never tune", color="orange", icon=":material/science:")
+            else:
+                st.badge("Dev set", color="blue")
+            n = summaries(store).get(project, {}).get("nodes", {})
+            st.caption(f"{site.kind} · {n.get('point', 0):,} points · {n.get('equipment', 0)} equipment",
+                       width="content")
+            st.space("stretch")
+            st.segmented_control("Input", [p.split("/", 1)[1] for p in projects if p.startswith(site_id + "/")],
+                                 key="_input", format_func=lambda i: INPUTS.get(i, (i,))[0],
+                                 label_visibility="collapsed", on_change=_pick_project, args=(projects,),
+                                 help="What the mapper was given: names only, or names plus equipment folders.")
+        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+            proposed = store.conn.execute("SELECT COUNT(*) FROM nodes WHERE project = ? AND status = 'proposed'",
+                                          (project,)).fetchone()[0]
+            chips(sections, current, {"Review": f"Review · {proposed:,}"})
+            st.space("stretch")
+            # The right end of this row belongs to the page (page_tools): its scenario, view options, ...
+            st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
+                                                           vertical_alignment="center")
 
 
 def page_tools():

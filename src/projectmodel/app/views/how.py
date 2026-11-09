@@ -16,7 +16,6 @@ km = knowledge_model()
 store = get_store()
 info = summaries(store)
 
-st.title("How it works")
 st.write("Exports from engineering tools go in. A reviewed knowledge graph of the building comes out. "
          "Data flows one way: nothing is ever written back to the source tools.")
 

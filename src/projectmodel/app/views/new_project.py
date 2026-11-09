@@ -2,7 +2,6 @@
 
 import streamlit as st
 
-st.title("New project")
 st.info("Coming soon. This is the flow we will build; the controls are disabled for now.", icon=":material/construction:")
 
 with st.container(border=True):

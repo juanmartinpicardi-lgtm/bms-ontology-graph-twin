@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.shell import active_project, get_store  # noqa: E402
-from projectmodel.projects import label, list_projects  # noqa: E402
+from projectmodel.projects import list_projects  # noqa: E402
 
 store = get_store()
 projects = list_projects(store)
@@ -19,8 +19,6 @@ if not projects:
     st.stop()
 project = active_project(projects)
 
-st.title("Data tables")
-st.caption(label(project))
 
 COLS = ["id", "label", "class", "confidence", "method", "status", "source_file", "source_ref", "revision"]
 on = {e["dst"]: e["src"] for e in store.edges(project, "hasPoint") if e["status"] != "rejected"}

@@ -1,0 +1,4 @@
+[theme]
+# The app's one accent: active chips, rail item, selected controls.
+primaryColor = "#4DA3E8"
+baseRadius = "medium"

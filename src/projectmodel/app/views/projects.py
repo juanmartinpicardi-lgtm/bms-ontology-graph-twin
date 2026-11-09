@@ -15,7 +15,6 @@ store = get_store()
 projects = list_projects(store)
 info = summaries(store)
 
-st.title("Projects")
 st.write("Each project is one building with its own knowledge graph, review decisions, graphics and tables. "
          "The knowledge model and shared tribal knowledge sit above them all.")
 
