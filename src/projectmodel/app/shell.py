@@ -25,6 +25,10 @@ def get_store() -> Store:
 
 
 def active_project(projects: list[str]) -> str:
+    """A ?project= deep link wins once (each new link); after that the picker decides."""
+    linked = st.query_params.get("project")
+    if linked in projects and linked != st.session_state.get("_linked_project"):
+        st.session_state["project"] = st.session_state["_linked_project"] = linked
     p = st.session_state.get("project")
     if p not in projects:
         p = DEFAULT if DEFAULT in projects else projects[0]

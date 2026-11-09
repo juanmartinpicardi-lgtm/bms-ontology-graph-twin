@@ -16,21 +16,13 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.db.store import Store  # noqa: E402
+from projectmodel.app.shell import active_project, get_store, knowledge_model  # noqa: E402
 from projectmodel.equipment_view import equipment_payload, load_anchors, render_html  # noqa: E402
-from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
+from projectmodel.projects import list_projects  # noqa: E402
 
-DB = ROOT / "data/kg.sqlite"
 PAGE = "/Equipment_3D"
 TYPES = {"ahu": "AHU", "vav": "VAV", "fcu": "FCU", "chiller": "Chiller", "boiler": "Boiler",
          "pump": "Pump"}  # templates with a 3D model, in picker order
-
-st.set_page_config(page_title="Equipment 3D", layout="wide")
-
-
-@st.cache_resource
-def knowledge_model():
-    return load_knowledge_model()
 
 
 @st.cache_resource
@@ -46,18 +38,15 @@ def link(project: str, equip: str) -> str:
     return f"{PAGE}?{urlencode({'project': project, 'equip': equip})}"
 
 
-store = Store(DB)
-projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes ORDER BY project")]
+store = get_store()
+projects = list_projects(store)
 if not projects:
     st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
     st.stop()
+project = active_project(projects)  # the shared sidebar picker; a ?project= deep link sets it
 
 qp = st.query_params
 with st.sidebar:
-    want = qp.get("project")
-    default = projects.index(want) if want in projects else projects.index("alpha/names_paths") \
-        if "alpha/names_paths" in projects else 0
-    project = st.selectbox("Project", projects, index=default)
     rows = [(r["id"], r["label"], json.loads(r["attrs"]).get("template")) for r in store.nodes(project, "equipment")]
     models = sorted(((i, label, t) for i, label, t in rows if t in TYPES and t in anchors()),
                     key=lambda r: (list(TYPES).index(r[2]), natural(r[1])))

@@ -31,8 +31,8 @@ projects = [
 this_project = [
     st.Page(APP / "review_app.py", title="Review", icon=":material/fact_check:", url_path="review"),
     st.Page(APP / "pages/1_Graph_3D.py", title="Graph 3D", icon=":material/bubble_chart:", url_path="Graph_3D"),
-    st.Page(APP / "views/equipment_3d.py", title="Equipment 3D", icon=":material/view_in_ar:",
-            url_path="equipment-3d"),
+    st.Page(APP / "pages/3_Equipment_3D.py", title="Equipment 3D", icon=":material/view_in_ar:",
+            url_path="Equipment_3D"),
     st.Page(APP / "views/data_tables.py", title="Data tables", icon=":material/table:", url_path="data"),
 ]
 shared = [

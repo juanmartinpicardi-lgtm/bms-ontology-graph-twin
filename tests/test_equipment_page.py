@@ -22,12 +22,20 @@ def run(**params) -> AppTest:
 def test_deep_link_opens_that_equipment():
     at = run(project="alpha/names_paths", equip="eq:Airside AHU-4/DD 1-4-1")
     assert not at.exception
-    assert at.sidebar.selectbox[1].value == "eq:Airside AHU-4/DD 1-4-1"
+    assert at.sidebar.selectbox[0].value == "eq:Airside AHU-4/DD 1-4-1"
     assert at.query_params["equip"] == "eq:Airside AHU-4/DD 1-4-1"
 
 
 def test_equipment_without_a_model_falls_back_with_a_note():
     at = run(project="alpha/names_paths", equip="eq:Airside AHU-2/SF VFD")
     assert not at.exception
-    assert at.sidebar.selectbox[1].value == "eq:Airside AHU-2"  # AHUs first
+    assert at.sidebar.selectbox[0].value == "eq:Airside AHU-2"  # AHUs first
     assert any("has no 3D model" in i.value for i in at.sidebar.info)
+
+
+def test_deep_link_through_the_app_sets_the_shared_project():
+    at = AppTest.from_file(str(ROOT / "src/projectmodel/app/main.py"), default_timeout=60)
+    at.query_params.update(project="alpha/names_only", equip="eq:Airside AHU-2")
+    at.switch_page("pages/3_Equipment_3D.py").run()
+    assert not at.exception
+    assert at.session_state["project"] == "alpha/names_only"  # the shared picker reads this
