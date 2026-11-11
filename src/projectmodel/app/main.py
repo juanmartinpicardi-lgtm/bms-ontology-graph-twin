@@ -7,6 +7,7 @@ An icon rail on the left picks the area; chips at the top pick the page inside i
 Overview          why the knowledge graph matters, how it works
 Projects          every building, and adding a new one; then one project's pages, with the building and input
                   switched in the project header
+Digital twin      the active project as a building: floors, zones and equipment in 3D, with a floor plan
 Shared knowledge  what sits above all projects: knowledge model, tribal knowledge
 """
 
@@ -40,24 +41,25 @@ this_project = [
     st.Page(APP / "views/data_tables.py", title="Data tables", icon=":material/table:", url_path="data"),
     st.Page(APP / "views/notes.py", title="Notes", icon=":material/sticky_note_2:", url_path="Notes"),
 ]
+twin = [st.Page(APP / "views/digital_twin.py", title="Digital twin", icon=":material/domain:", url_path="digital-twin")]
 shared = [
     st.Page(APP / "views/knowledge_model.py", title="Knowledge model", icon=":material/account_tree:",
             url_path="Knowledge_model"),
     st.Page(APP / "views/tribal.py", title="Tribal knowledge", icon=":material/groups:", url_path="tribal-knowledge"),
 ]
 
-page = st.navigation(overview + projects + this_project + shared, position="hidden")
+page = st.navigation(overview + projects + this_project + twin + shared, position="hidden")
 store = get_store()
 if mapped := list_projects(store):
     active_project(mapped)  # every page: a ?project= deep link opens that project app-wide
 rail([("Overview", ":material/home:", overview), ("Projects", ":material/apartment:", projects + this_project),
-      ("Shared knowledge", ":material/account_tree:", shared)], page)
+      ("Digital twin", ":material/domain:", twin), ("Shared knowledge", ":material/account_tree:", shared)], page)
 def among(pages):
     return any(p.url_path == page.url_path for p in pages)
 
 
-if among(this_project):
-    project_header(store, this_project, page, projects[0])
+if among(this_project + twin):  # the twin is a project page too, with its own place on the rail
+    project_header(store, this_project + twin, page, projects[0])
 elif among(projects):
     area_header("Projects", projects, page)
 elif among(shared):
