@@ -21,7 +21,7 @@ def scores() -> dict:
 
 
 s = scores()
-alpha, bravo = s.get("alpha/names_paths"), s.get("bravo/names_paths")
+alpha = s.get("alpha/names_paths")
 
 st.html("<style>.lead{font-size:1.3rem;line-height:1.5;opacity:.85;max-width:52rem}</style>")
 st.title("Buildings can't run themselves until software understands them")
@@ -109,12 +109,6 @@ c[0].markdown("**1 · Map a building**  \nRules and templates do most of the wor
 c[1].markdown("**2 · Learn from the review**  \nRepeated fixes become conventions for that contractor or customer.")
 c[2].markdown("**3 · The next building maps better**  \nShared knowledge improves with every project; "
               "each graph stays the customer's own.")
-
-if bravo:
-    st.info(f"**Honest numbers.** On an unseen hospital (Bravo, held out from all tuning), "
-            f"{bravo['H1_grouped_right_pct']:.0f}% of points land on the right equipment and "
-            f"{bravo['H2_exact_pct']:.0f}% get the exact class on first sight. That gap is what review and tribal "
-            "knowledge close.", icon=":material/science:")
 
 c = st.columns([1, 1, 3])
 c[0].page_link("views/how.py", label="How it works", icon=":material/arrow_forward:")

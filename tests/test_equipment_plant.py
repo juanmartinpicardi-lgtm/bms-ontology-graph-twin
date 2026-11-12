@@ -1,6 +1,6 @@
 """3D models for FCU, chiller, boiler and pump (spec-equipment-3d §4.1, E6): slots, variants, plant links, and the
 simulated plant (staging, duty/standby) run in node. Alpha has no fan coils, so the FCU uses a small synthetic export
-(tests/fixtures/fcu_demo) mapped by the same pipeline; Bravo is never used here."""
+(tests/fixtures/fcu_demo) mapped by the same pipeline."""
 
 import json
 import shutil

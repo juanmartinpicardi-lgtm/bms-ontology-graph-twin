@@ -8,7 +8,7 @@ The join back to ground truth lives outside data/blind, in data/ground_truth/<si
   blind_id, point_id, name_source
 
 Name choice per point (name_source):
-  source  - the original BMS name (Alpha: custom.description, Bravo: custom.sourcePointName)
+  source  - the original BMS name (custom.description or custom.sourcePointName)
   dis     - no BMS name; the Haystack dis with the equipment's dis prefix stripped. This label was
             written by the dataset curator from the tags, so it is easier than a real BMS name;
             score these points separately.

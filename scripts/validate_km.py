@@ -2,7 +2,7 @@
 
 Usage: .venv/bin/python scripts/validate_km.py [--project alpha/names_paths]
 
-Only Alpha is measured: Bravo is the held-out test set and must not drive changes here.
+Only Alpha is measured.
 """
 
 import csv

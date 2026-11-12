@@ -25,8 +25,6 @@ class Site:
 SITES = {
     "alpha": Site("Alpha", "Office · central plant + VAV", "Hugo, CO", "dev",
                   "Project Haystack example site, donated by BuildingFit"),
-    "bravo": Site("Bravo", "Hospital", "Fort Wayne, IN", "test",
-                  "Project Haystack example site, donated by Sitton"),
 }
 
 INPUTS = {

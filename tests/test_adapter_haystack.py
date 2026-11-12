@@ -6,7 +6,7 @@ import pytest
 from projectmodel.adapters.haystack import read_blind_export
 
 ROOT = Path(__file__).resolve().parents[1]
-SITES = ["alpha", "bravo"]
+SITES = ["alpha"]
 VARIANTS = ["names_only", "names_paths"]
 
 

@@ -47,14 +47,14 @@ Source adapters  →  Raw records  →  Mapper  →  Knowledge graph  →  Revie
 ## 5. Datasets
 
 - **Dev set:** Project Haystack site **Alpha** (central plant + VAV, ~1,842 points).
-- **Test set:** site **Bravo** (hospital, ~914 points). Never tune rules or prompts on Bravo.
+- **Test set:** none for now (Bravo was removed). When one is added, never tune rules or prompts on it.
 - **Later:** LBNL Building 59 (Brick), Mortar (breadth), Reflow demo station (real Niagara file).
 
 Download from project-haystack.org/example (CSV or Zinc). Store raw downloads in `/data/raw/` untouched.
 
 ## 6. Phase 0 tasks (each with a done-when)
 
-1. **Golden set.** Load Alpha/Bravo; convert to Brick with `brickschema`; save ground truth (point → class, point → equipment, equipment → class, equip → equip feeds/parts). *Done when:* ground truth files exist and a spot-check of 20 points looks right.
+1. **Golden set.** Load Alpha; convert to Brick with `brickschema`; save ground truth (point → class, point → equipment, equipment → class, equip → equip feeds/parts). *Done when:* ground truth files exist and a spot-check of 20 points looks right.
 2. **Blind exports.** Build two inputs per site by removing tags: **(a) names only**, **(b) names + equipment folder path** (closest to a Niagara station tree). *Done when:* the inputs contain no tag or ref that leaks the answer.
 3. **Haystack adapter** → raw records. *Done when:* every point becomes one raw record.
 4. **Knowledge model v0.** Brick subset (~50 HVAC classes), BA extension (~10 classes), templates for AHU, VAV, FCU, chiller, boiler, pump; name-parsing rules (abbreviations dictionary). *Done when:* files load and validate.

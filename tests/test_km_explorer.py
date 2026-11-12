@@ -59,9 +59,13 @@ def test_human_decisions_show_in_coverage(km, alpha):
 
 
 def test_missing_classes_are_outside_the_model(km):
-    store, p = mapped(km, "bravo")  # read-only look at the test set: nothing here feeds back into the model
-    rows = kx.missing_classes(km, store, p, load_ground_truth("bravo"))
-    assert rows and all(r["class"] not in km.classes for r in rows)
+    store, p = mapped(km, "alpha")
+    gt = load_ground_truth("alpha")
+    assert kx.missing_classes(km, store, p, gt) == []  # Alpha's classes are all in the model
+    pid = next(i for i, r in gt.points.items() if r["brick_class"] == "Zone_Air_Temperature_Sensor")
+    gt.points[pid] = gt.points[pid] | {"brick_class": "CO2_Sensor"}
+    rows = kx.missing_classes(km, store, p, gt)
+    assert [r["class"] for r in rows] == ["CO2_Sensor"] and all(r["class"] not in km.classes for r in rows)
     assert all(r["nearest model class"] in km.classes for r in rows if r["nearest model class"])
 
 

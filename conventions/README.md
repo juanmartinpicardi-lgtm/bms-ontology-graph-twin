@@ -48,5 +48,5 @@ the same pattern text replaces an earlier layer's entry. The base model files ar
 
 ## Honest measurement
 
-Write and tune conventions on **Alpha** only. Bravo's conventions may only contain what a site engineer
-would tell us before seeing our output; Bravo is reported twice, blind and with conventions.
+Write and tune conventions on **Alpha** only. A held-out test site's conventions may only contain what a site
+engineer would tell us before seeing our output; it is reported twice, blind and with conventions.

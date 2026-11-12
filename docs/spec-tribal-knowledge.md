@@ -139,9 +139,9 @@ ignore:                   # points known dead/unused; mapped but sent to review 
 ### 4.3 Measuring it honestly
 
 - Write and tune conventions on **Alpha only**.
-- For **Bravo**, conventions may only contain what a site engineer would tell us *before* seeing our output
-  (e.g. contractor abbreviations). Report Bravo twice: blind (no conventions) and with conventions,
-  labelled as such. Never tune a Bravo convention on Bravo's score.
+- For a held-out **test site**, conventions may only contain what a site engineer would tell us *before* seeing
+  our output (e.g. contractor abbreviations). Report it twice: blind (no conventions) and with conventions,
+  labelled as such. Never tune a test-site convention on that site's score.
 - The scoring report adds a line per project: `conventions: [scopes]` so a score always says what it used.
 
 ### 4.4 Done when
@@ -209,4 +209,4 @@ owner to apply by hand.
 
 1. Who may edit convention files: anyone reviewing, or a named owner per scope?
 2. Should `ignore` points be dropped from scoring, or scored and flagged? (Default: scored, flagged.)
-3. Contractor for Alpha and Bravo is unknown beyond the donor names; treat donor as contractor scope?
+3. Contractor for Alpha is unknown beyond the donor names; treat donor as contractor scope?

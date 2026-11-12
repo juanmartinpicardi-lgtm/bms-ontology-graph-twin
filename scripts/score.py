@@ -1,15 +1,14 @@
-"""One command: map (unless --no-run) and score the dev and test sets.
+"""One command: map (unless --no-run) and score the dev set.
 
 Usage:
-  .venv/bin/python scripts/score.py                 # map + score alpha (dev) and bravo (test), both variants
+  .venv/bin/python scripts/score.py                 # map + score alpha (dev), both variants
   .venv/bin/python scripts/score.py --no-run        # score what is in the database now (e.g. after review)
   .venv/bin/python scripts/score.py --sites alpha --variants names_paths --json
   .venv/bin/python scripts/score.py --compare      # every project twice: blind, then with its conventions
 
-Each project runs with its convention layers (conventions/projects.yaml). Bravo, the held-out test set,
-is always reported twice, blind and with conventions (spec-tribal-knowledge.md section 4.3); the database
-keeps the with-conventions run.
-Bravo is the held-out test set: read its numbers, never tune rules, conventions or prompts on them.
+Each project runs with its convention layers (conventions/projects.yaml). A site with role TEST is
+always reported twice, blind and with conventions (spec-tribal-knowledge.md section 4.3); the database
+keeps the with-conventions run. There is no test site at the moment.
 """
 
 import argparse
@@ -28,7 +27,7 @@ from projectmodel.mapper.llm import get_provider  # noqa: E402
 from projectmodel.mapper.pipeline import Mapper  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, load_ground_truth, score_project  # noqa: E402
 
-ROLE = {"alpha": "dev", "bravo": "TEST"}
+ROLE = {"alpha": "dev"}
 ROWS = [
     ("H1  grouped on right equipment", "H1_grouped_right_pct", "%"),
     ("    ungrouped points", "H1_points_ungrouped", ""),
@@ -82,7 +81,7 @@ def print_report(results: list[dict]) -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sites", nargs="+", default=["alpha", "bravo"])
+    ap.add_argument("--sites", nargs="+", default=["alpha"])
     ap.add_argument("--variants", nargs="+", default=["names_paths", "names_only"])
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
     ap.add_argument("--accept", type=float, default=DEFAULT_ACCEPT)

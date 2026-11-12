@@ -15,7 +15,7 @@ is listed under the wrong kind, an extension class clashes with Brick or has an 
 template references an unknown class/template/relation or has a bad regex, an abbreviation expands to a
 word outside the vocabulary or can never be produced by the tokenizer, or a worked example parses differently.
 
-Tuning rule: change these files based on the Alpha dev set only, never Bravo.
+Tuning rule: change these files based on the Alpha dev set only, never a test set.
 
 ## Modelling decisions
 

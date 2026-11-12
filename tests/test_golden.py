@@ -19,7 +19,7 @@ def test_load_decodes_markers_and_refs():
     assert p.custom["description"] == "Clg_Valve_Cmd"
 
 
-@pytest.mark.parametrize("site", ["alpha", "bravo"])
+@pytest.mark.parametrize("site", ["alpha"])
 def test_ground_truth_invariants(site):
     gt = ROOT / "data/ground_truth" / site
     summary = json.loads((gt / "summary.json").read_text())
@@ -45,6 +45,6 @@ def test_every_override_rule_is_used_somewhere():
     rules = {r["id"] for r in data["rules"] + data.get("corrections", [])}
     unused = [
         set(json.loads((ROOT / "data/ground_truth" / s / "summary.json").read_text())["overrides_unused_here"])
-        for s in ("alpha", "bravo")
+        for s in ("alpha",)
     ]
     assert rules and not set.intersection(*unused)

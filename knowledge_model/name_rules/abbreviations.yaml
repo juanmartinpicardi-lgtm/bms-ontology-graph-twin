@@ -1,7 +1,6 @@
 # Name-parsing rules v0: how to turn a BMS point name into canonical words.
 #
-# Built from general BMS naming conventions and the Alpha dev set only. Bravo (test set) was not
-# used. A few Bravo names were visible in earlier pipeline output, but none were added here because of that.
+# Built from general BMS naming conventions and the Alpha dev set only.
 #
 # Pipeline: tokenize -> lowercase -> look up each token -> canonical words.
 #   - A token that is itself in `vocabulary` maps to itself.

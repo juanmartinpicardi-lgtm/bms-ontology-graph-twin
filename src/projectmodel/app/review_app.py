@@ -67,8 +67,6 @@ with st.container(horizontal=True, gap="small"):
             st.metric(name, value, help=tip, border=True, width="content")
     else:
         st.caption("No ground truth for this project, so no score.")
-if site == "bravo":
-    st.caption(":orange[Bravo is the held-out test set: measure here, never tune on it.]")
 
 
 def need_reviewer() -> bool:

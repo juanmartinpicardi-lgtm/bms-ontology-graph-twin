@@ -16,18 +16,18 @@ ROOT = Path(__file__).resolve().parents[1]
 def store():
     km = load_knowledge_model()
     s = Store(":memory:")
-    for site, variant in [("bravo", "names_only"), ("alpha", "names_only"), ("alpha", "names_paths")]:
+    for site, variant in [("alpha", "names_only"), ("alpha", "names_paths")]:
         Mapper(km).run(read_blind_export(ROOT / f"data/blind/{site}/{variant}.csv"), s, f"{site}/{variant}")
     return s
 
 
 def test_list_projects_by_site_richest_input_first(store):
-    assert list_projects(store) == ["alpha/names_paths", "alpha/names_only", "bravo/names_only"]
+    assert list_projects(store) == ["alpha/names_paths", "alpha/names_only"]
 
 
 def test_labels_and_roles():
     assert label("alpha/names_paths") == "Alpha · Names + folders"
-    assert site_of("bravo/names_only").role == "test"
+    assert site_of("alpha/names_only").role == "dev"
     assert site_of("gamma/x").name == "Gamma"  # unknown sites still get a readable name
 
 

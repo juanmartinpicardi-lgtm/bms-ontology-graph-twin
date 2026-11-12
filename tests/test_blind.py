@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-SITES = ["alpha", "bravo"]
+SITES = ["alpha"]
 VARIANTS = {"names_only.csv": ["blind_id", "name"], "names_paths.csv": ["blind_id", "name", "path"]}
 HAYSTACK_ID = re.compile(r"\b[a-z]-[0-9a-f]{4}\b")
 HAYSTACK_REF_TAG = re.compile(r"\b[a-z][A-Za-z]*Ref\b")  # equipRef, siteRef, airRef...

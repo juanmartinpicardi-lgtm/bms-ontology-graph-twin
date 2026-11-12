@@ -69,7 +69,6 @@ def test_override_vs_extend(km, tmp_path):
 
 def test_projects_yaml_and_real_alpha_file(km):
     assert scopes_for("alpha/names_paths") == ["site/alpha"]
-    assert scopes_for("bravo/names_paths") == []
     assert scopes_for("nowhere/x") == []
     m = load_knowledge_model(conventions=["site/alpha"], brick=km.graph)
     assert m.name_rules.unknown_tokens("Efficiency (CC)") == []

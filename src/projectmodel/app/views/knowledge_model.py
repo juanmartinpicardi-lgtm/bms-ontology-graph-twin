@@ -43,8 +43,6 @@ with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
     with st.popover("Auto-accept ≥ " + f"{st.session_state.get('km_accept', DEFAULT_ACCEPT):.2f}",
                     icon=":material/tune:"):
         accept = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="km_accept")
-if site == "bravo":
-    st.caption(":orange[Bravo is the held-out test set. Look, but don't change the model because of what you see here.]")
 classes = km.classes.values()
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Classes", len(km.classes), help="Brick subset + BA extension")
