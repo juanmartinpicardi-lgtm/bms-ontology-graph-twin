@@ -19,6 +19,7 @@ IMPLIED_WORDS = {"air"}
 COMPONENT_PENALTY = 1.0  # a class naming a component the name never mentions ("Building DP" is not a filter point)
 ALT_PENALTY = 1.0  # per token read with a less likely abbreviation meaning
 MAX_INTERPRETATIONS = 16
+FALLBACK_CONFIDENCE = 0.1  # a generic class from the point's function only
 # Words naming a kind of equipment or component (vocabulary words of the name rules).
 EQUIPMENT_WORDS = {"fan", "pump", "chiller", "boiler", "cooling_tower", "heat_exchanger", "vfd", "damper",
                    "valve", "coil", "filter", "humidifier", "meter", "economizer"}
@@ -96,6 +97,15 @@ class ClassMatcher:
         return matched - sum(IMPLIED_PENALTY if w in IMPLIED_WORDS else COMPONENT_PENALTY if w in EQUIPMENT_WORDS
                              else MISSING_PENALTY for w in missing)
 
+    def _fallback(self, words: list[str]) -> str | None:
+        """Best guess when no class name matches: the generic class of the point's function
+        ("Firing Rate" -> Sensor), so every point gets a class. None for equipment."""
+        if self.kind != "point":
+            return None
+        fn = next((w for w in words if w in self.cm.functions), self.cm.default_function)
+        cls = fn.capitalize()
+        return cls if cls in self.km.classes else "Point"
+
     def rank(self, words: list[str]) -> list[tuple[str, float]]:
         s = set(words)
         scored = [(c, self._score(s, cw)) for c, cw in self.class_words.items()]
@@ -117,7 +127,7 @@ class ClassMatcher:
                 best = (total, words, ranked)
         if best is None:
             words = self._with_function(self.cm.name_words(interpretations[0][0]))
-            return ClassGuess(None, 0.0, words, [], unknown)
+            return ClassGuess(self._fallback(words), FALLBACK_CONFIDENCE, words, [], unknown)
 
         _, words, ranked = best
         top_score = ranked[0][1]

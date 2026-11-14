@@ -60,7 +60,9 @@ def test_boiler_without_leaving_temp_is_a_ghost(payloads):
     b1 = payloads["eq:Waterside Hot Water Plant/B-1"]
     slot = next(s for s in b1["slots"] if s["role"] == "hw_leaving_temp")
     assert slot["required"] and slot["points"] == [] and b1["equipment"]["slot_fill"] == 0
-    assert [b1["points"][i]["label"] for i in b1["unplaced"]] == ["B-1 Fire Rate"]  # no class: a review item
+    rate = next(s for s in b1["slots"] if s["role"] == "firing_rate")
+    assert [b1["points"][i]["label"] for i in rate["points"]] == ["B-1 Fire Rate"]  # generic Sensor, by its slot
+    assert b1["unplaced"] == []
 
 
 def test_plant_links_to_its_plant_and_neighbours(payloads):

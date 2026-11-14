@@ -1,0 +1,316 @@
+# Sequences of operation for site Alpha: a project document, read by src/projectmodel/sequences.py.
+#
+# Alpha's real sequences are not public. These were written for this prototype following common practice for VAV
+# systems and central plants (the structure ASHRAE Guideline 36 uses), against the equipment and points Alpha's
+# graph actually has. Values (setpoints, limits, timers) are typical, not Alpha's.
+#
+# How a sequence is written
+#   bind      short names for the equipment and systems the text talks about (graph node ids).
+#   text      paragraphs. [words](ref) links words to the graph. ref is one of:
+#               alias              an equipment or system from `bind`
+#               alias.role         the point in that template slot (knowledge_model/templates), most confident first
+#               alias:Label        the point with that name on that equipment
+#               gap:What           something the sequence needs that the graph does not have
+#   expect    {ref: Brick class} the class the sequence implies; a different class in the graph is a finding.
+#   loops     control loops: setpoint, measured value, outputs.
+#   links     other control facts: requires (interlock / proof), resets, requests, switches (mode).
+#   values    intended values, as written in the text.
+#   steps     the simulation: what happens, in order. lit = nodes to light, links = [from, to, kind]
+#             (control kinds above, or a graph relation: feeds, hasPart), show/focus = what the 3D view shows.
+
+document: Sequences of operation, site Alpha
+status: Demo document written for this prototype (not Alpha's own)
+revision: 1
+
+sequences:
+
+  - id: vav
+    title: VAV zone control
+    scope: Every VAV box. Shown on VAV 1-2-81, served by AHU-2.
+    bind: {vav: "eq:Airside AHU-2/VAV 1-2-81", ahu: "eq:Airside AHU-2"}
+    text:
+      - "Applies to every VAV box. Shown here on [VAV 1-2-81](vav), served by [AHU-2](ahu)."
+      - "Modes. The box follows its [occupancy status](vav.occupancy), set by the air handler's schedule
+        ([Mode_Occ](ahu.occupancy)). Occupied: it controls to the [occupied cooling setpoint](vav.occ_cooling_sp),
+        75 °F, and the [occupied heating setpoint](vav.occ_heating_sp), 70 °F. Unoccupied: it sets back to the
+        [unoccupied cooling setpoint](vav.unocc_cooling_sp), 85 °F, and the [unoccupied heating
+        setpoint](vav.unocc_heating_sp), 60 °F."
+      - "Cooling. When the [space temperature](vav.zone_temp) rises above the active cooling setpoint, a cooling
+        loop raises the [airflow setpoint](vav.airflow_sp) from the minimum (30 % of design) toward the cooling
+        maximum."
+      - "Airflow. The [damper command](vav.damper) modulates so the [measured airflow](vav.airflow) tracks the
+        airflow setpoint."
+      - "Heating. Below the heating setpoint, airflow stays at minimum and the [reheat valve](vav.reheat_valve)
+        opens, limited so the [discharge air temperature](vav.discharge_temp) stays below 90 °F."
+      - "Requests. Each box sends requests to its air handler: a cooling request when the damper stays above 95 %
+        and the space is more than 2 °F above setpoint, a pressure request when the damper is fully open and
+        airflow is below 70 % of setpoint. [AHU-2](ahu) uses them to reset its [supply air temperature
+        setpoint](ahu.supply_temp_sp) and its [duct static pressure setpoint](ahu.static_pressure_sp)."
+    loops:
+      - {name: Zone cooling, setpoint: vav.occ_cooling_sp, measured: vav.zone_temp, outputs: [vav.airflow_sp]}
+      - {name: Airflow, setpoint: vav.airflow_sp, measured: vav.airflow, outputs: [vav.damper]}
+      - {name: Zone heating, setpoint: vav.occ_heating_sp, measured: vav.zone_temp, outputs: [vav.reheat_valve]}
+    links:
+      - [ahu.occupancy, vav.occupancy, switches]
+      - [vav.damper, ahu.supply_temp_sp, resets]
+      - [vav.airflow, ahu.static_pressure_sp, resets]
+    values: {vav.occ_cooling_sp: "75 °F", vav.occ_heating_sp: "70 °F", vav.unocc_cooling_sp: "85 °F",
+             vav.unocc_heating_sp: "60 °F"}
+    steps:
+      - say: "The air handler's schedule switches to occupied, and the box follows."
+        lit: [ahu.occupancy, vav.occupancy]
+        links: [[ahu.occupancy, vav.occupancy, switches]]
+        show: vav
+        focus: vav.occupancy
+      - say: "The box compares the space temperature with the occupied cooling setpoint, 75 °F."
+        lit: [vav.zone_temp, vav.occ_cooling_sp]
+        show: vav
+        focus: vav.zone_temp
+      - say: "The space is warm, so the cooling loop raises the airflow setpoint."
+        lit: [vav.airflow_sp]
+        links: [[vav.occ_cooling_sp, vav.airflow_sp, drives], [vav.zone_temp, vav.airflow_sp, feedback]]
+        show: vav
+        focus: vav.airflow_sp
+      - say: "The damper opens until the measured airflow matches the setpoint."
+        lit: [vav.damper, vav.airflow]
+        links: [[vav.airflow_sp, vav.damper, drives], [vav.airflow, vav.damper, feedback]]
+        show: vav
+        focus: vav.damper
+      - say: "In heating the sequence needs a reheat valve and a discharge air sensor. VAV 1-2-81 has neither in the
+          graph: either the box is cooling-only, or those points are missing from the export."
+        lit: [vav.reheat_valve, vav.discharge_temp]
+        links: [[vav.occ_heating_sp, vav.reheat_valve, drives]]
+        show: vav
+      - say: "Back up the chain: the box's requests reset AHU-2's supply air temperature and static pressure
+          setpoints. The air reaches the box through the feeds link in the graph."
+        lit: [ahu, ahu.supply_temp_sp, ahu.static_pressure_sp]
+        links: [[ahu, vav, feeds], [vav.damper, ahu.supply_temp_sp, resets], [vav.airflow, ahu.static_pressure_sp, resets]]
+        show: ahu
+        focus: ahu.supply_temp_sp
+
+  - id: ahu
+    title: Air handler AHU-2
+    scope: AHU-2 and the 88 VAV boxes it serves. AHU-3 to AHU-5 run the same sequence.
+    bind: {ahu: "eq:Airside AHU-2", vav: "eq:Airside AHU-2/VAV 1-2-81",
+           chwp: "eq:Waterside Chilled Water Plant", hwp: "eq:Waterside Hot Water Plant"}
+    text:
+      - "Start. [AHU-2](ahu) runs when [Mode_Occ](ahu.occupancy) is occupied (scheduled 6:00 to 18:00 on
+        weekdays). The [supply fan speed command](ahu:SF VFD Signal) starts at minimum, and [SF Status](ahu:SF Status)
+        must prove the fan within 60 s, or the unit shuts down on a fan failure alarm. The [return fan](ahu:RF VFD S/S)
+        tracks the supply fan, proven by [RF Status](ahu:RF Status)."
+      - "Static pressure. Supply fan speed modulates to hold [duct static pressure](ahu:Duct Static) at its
+        [setpoint](ahu.static_pressure_sp): 1.0 in. w.c. at start, between 0.5 and 1.5. The setpoint drops
+        0.04 in. every 2 minutes and rises 0.06 in. per pressure request from the [VAV boxes](vav)."
+      - "Supply air temperature. [Supply air temperature](ahu:SAT) is held at the [discharge air temperature
+        setpoint](ahu.supply_temp_sp) by sequencing, in order, the [heating valve](ahu.heating_valve), the
+        [economizer damper](ahu:Econ_Cmd) and the [cooling valve](ahu.cooling_valve). The economizer is allowed
+        when [outside air temperature](ahu.outside_temp) is below both 65 °F and the [return air
+        temperature](ahu.return_temp); [mixed air temperature](ahu.mixed_temp) is kept above 45 °F."
+      - "Reset. The supply air setpoint moves between 55 °F and 65 °F: down 0.2 °F per cooling request from the
+        VAV boxes, up 0.2 °F every 2 minutes without requests."
+      - "Plant requests. While the [cooling valve](ahu.cooling_valve) stays above 95 % open, AHU-2 sends a chilled
+        water request to the [chilled water plant](chwp); while the [heating valve](ahu.heating_valve) is open, a
+        hot water request to the [hot water plant](hwp)."
+      - "Building pressure. The [relief damper](ahu:Relief Damper Signal) opens to hold [building static
+        pressure](ahu:Building DP) at 0.05 in. w.c."
+    expect: {"ahu:Duct Static": Discharge_Air_Static_Pressure_Sensor}
+    loops:
+      - {name: Duct static pressure, setpoint: ahu.static_pressure_sp, measured: "ahu:Duct Static",
+         outputs: ["ahu:SF VFD Signal"]}
+      - {name: Supply air temperature, setpoint: ahu.supply_temp_sp, measured: "ahu:SAT",
+         outputs: [ahu.heating_valve, "ahu:Econ_Cmd", ahu.cooling_valve]}
+      - {name: Building pressure, measured: "ahu:Building DP", outputs: ["ahu:Relief Damper Signal"]}
+    links:
+      - [ahu.occupancy, "ahu:SF VFD Signal", switches]
+      - ["ahu:SF Status", "ahu:SF VFD Signal", requires]
+      - ["ahu:RF Status", "ahu:RF VFD S/S", requires]
+      - [ahu.outside_temp, "ahu:Econ_Cmd", requires]
+      - [vav.damper, ahu.supply_temp_sp, resets]
+      - [vav.airflow, ahu.static_pressure_sp, resets]
+      - [ahu.cooling_valve, chwp, requests]
+      - [ahu.heating_valve, hwp, requests]
+    values: {ahu.static_pressure_sp: "1.0 in. w.c. (0.5 to 1.5)", ahu.supply_temp_sp: "55 to 65 °F"}
+    steps:
+      - say: "Occupied: the schedule starts the supply fan at minimum speed."
+        lit: [ahu.occupancy, "ahu:SF VFD Signal"]
+        links: [[ahu.occupancy, "ahu:SF VFD Signal", switches]]
+        show: ahu
+        focus: "ahu:SF VFD Signal"
+      - say: "The fan must prove it runs within 60 s: SF Status is the interlock."
+        lit: ["ahu:SF Status"]
+        links: [["ahu:SF Status", "ahu:SF VFD Signal", requires]]
+        show: ahu
+        focus: "ahu:SF Status"
+      - say: "The static pressure loop sets fan speed. Finding: the sequence reads Duct Static as the duct pressure,
+          but the graph classed it as a building pressure sensor. One of the two is wrong."
+        lit: ["ahu:Duct Static", ahu.static_pressure_sp]
+        links: [[ahu.static_pressure_sp, "ahu:SF VFD Signal", drives], ["ahu:Duct Static", "ahu:SF VFD Signal", feedback]]
+        show: ahu
+        focus: "ahu:Duct Static"
+      - say: "Supply air temperature control: SAT is compared with its setpoint, and the cooling valve opens."
+        lit: ["ahu:SAT", ahu.supply_temp_sp, ahu.cooling_valve]
+        links: [[ahu.supply_temp_sp, ahu.cooling_valve, drives], ["ahu:SAT", ahu.cooling_valve, feedback]]
+        show: ahu
+        focus: ahu.cooling_valve
+      - say: "Free cooling first: the economizer damper is allowed when outside air is cool enough."
+        lit: [ahu.outside_temp, ahu.return_temp, "ahu:Econ_Cmd"]
+        links: [[ahu.outside_temp, "ahu:Econ_Cmd", requires], [ahu.supply_temp_sp, "ahu:Econ_Cmd", drives]]
+        show: ahu
+        focus: "ahu:Econ_Cmd"
+      - say: "The VAV boxes it feeds reset its setpoints with their requests."
+        lit: [vav, vav.damper, vav.airflow]
+        links: [[ahu, vav, feeds], [vav.damper, ahu.supply_temp_sp, resets], [vav.airflow, ahu.static_pressure_sp, resets]]
+        show: vav
+        focus: vav.damper
+      - say: "With the cooling valve wide open, AHU-2 asks the chilled water plant for more cooling. The water
+          arrives through the plant's feeds link."
+        lit: [chwp, ahu.cooling_valve]
+        links: [[ahu.cooling_valve, chwp, requests], [chwp, ahu, feeds]]
+        show: ahu
+        focus: ahu.cooling_valve
+
+  - id: chw
+    title: Chilled water plant
+    scope: Three chillers, two primary pumps, two condenser pumps, two cooling towers. Serves AHU-2 to AHU-5.
+    bind: {chwp: "eq:Waterside Chilled Water Plant", ch1: "eq:Waterside Chilled Water Plant/CH-1",
+           ch2: "eq:Waterside Chilled Water Plant/CH-2", pchwp: "eq:Waterside Chilled Water Plant/PCHWP-1A",
+           cwp: "eq:Waterside Chilled Water Plant/CWP-1", ct: "eq:Waterside Chilled Water Plant/CT-1",
+           ahu: "eq:Airside AHU-2"}
+    text:
+      - "Enable. The [chilled water plant](chwp) is enabled when at least one air handler sends chilled water
+        requests (for example [AHU-2](ahu), with its [cooling valve](ahu.cooling_valve) above 95 %) and the
+        [outside air temperature](chwp:OSA Temperature) is above 55 °F."
+      - "Start order. The lead chiller [CH-1](ch1) is staged on in order: open its [evaporator isolation
+        valve](ch1:CH-1 Evap ISO Valve) and [condenser isolation valve](ch1:CH-1 Cond ISO Valve); start primary
+        pump [PCHWP-1A](pchwp) with its [speed command](pchwp.cmd) and prove its [status](pchwp.status); start
+        condenser pump [CWP-1](cwp), proven by [CWP-1 Status](cwp.status); start cooling tower [CT-1](ct) with
+        [CT-1 S/S](ct:CT-1 S/S). Only then is the chiller [enabled](ch1.enable); its [status](ch1:Status (CC)) must
+        prove within 5 minutes."
+      - "Chilled water temperature. The chiller holds its [leaving chilled water temperature](ch1.chw_leaving_temp)
+        at the [setpoint](ch1.chw_leaving_sp), 44 °F, reset up to 50 °F when fewer than two air handlers request
+        chilled water."
+      - "Condenser water. Cooling tower [fan frequency](ct:Fan Frequency) modulates to hold the [condenser water
+        supply temperature](chwp:CW Supply Temp) at its [setpoint](chwp:CWS Temp SP), 75 °F."
+      - "Distribution. Primary pump speed holds the [chilled water differential pressure](gap:Chilled water
+        differential pressure sensor) at [CHW DP SP](chwp:CHW DP SP)."
+      - "Staging. [CH-2](ch2) is staged on when CH-1 runs above 90 % load for 15 minutes, or its leaving
+        temperature is 2 °F above setpoint for 10 minutes; off again below 40 %. Lead and lag rotate weekly."
+    expect: {"chwp:CW Supply Temp": Leaving_Condenser_Water_Temperature_Sensor}
+    loops:
+      - {name: Chilled water temperature, setpoint: ch1.chw_leaving_sp, measured: ch1.chw_leaving_temp, outputs: [ch1.enable]}
+      - {name: Condenser water temperature, setpoint: "chwp:CWS Temp SP", measured: "chwp:CW Supply Temp",
+         outputs: ["ct:Fan Frequency"]}
+      - {name: Chilled water pressure, setpoint: "chwp:CHW DP SP", measured: "gap:Chilled water differential pressure sensor",
+         outputs: [pchwp.cmd]}
+    links:
+      - [ahu.cooling_valve, chwp, requests]
+      - ["chwp:OSA Temperature", chwp, requires]
+      - ["ch1:CH-1 Evap ISO Valve", ch1.enable, requires]
+      - ["ch1:CH-1 Cond ISO Valve", ch1.enable, requires]
+      - [pchwp.status, ch1.enable, requires]
+      - [cwp.status, ch1.enable, requires]
+      - ["ct:CT-1 S/S", ch1.enable, requires]
+      - [ch1.chw_leaving_temp, ch2, requests]
+    values: {ch1.chw_leaving_sp: "44 °F (reset to 50 °F)", "chwp:CWS Temp SP": "75 °F"}
+    steps:
+      - say: "AHU-2's cooling valve is wide open: a chilled water request reaches the plant."
+        lit: [ahu.cooling_valve, chwp]
+        links: [[ahu.cooling_valve, chwp, requests], [chwp, ahu, feeds]]
+        show: ahu
+        focus: ahu.cooling_valve
+      - say: "The plant checks outside air: above 55 °F, so it is enabled."
+        lit: ["chwp:OSA Temperature"]
+        links: [["chwp:OSA Temperature", chwp, requires]]
+      - say: "Lead chiller CH-1 is part of the plant. Its isolation valves open first."
+        lit: [ch1, "ch1:CH-1 Evap ISO Valve", "ch1:CH-1 Cond ISO Valve"]
+        links: [[chwp, ch1, hasPart]]
+        show: ch1
+        focus: "ch1:CH-1 Evap ISO Valve"
+      - say: "Primary pump PCHWP-1A starts and proves its status."
+        lit: [pchwp, pchwp.cmd, pchwp.status]
+        links: [[chwp, pchwp, hasPart], [pchwp.status, ch1.enable, requires]]
+        show: pchwp
+        focus: pchwp.status
+      - say: "Condenser pump CWP-1 and cooling tower CT-1 start."
+        lit: [cwp, cwp.status, ct, "ct:CT-1 S/S"]
+        links: [[cwp.status, ch1.enable, requires], ["ct:CT-1 S/S", ch1.enable, requires]]
+        show: cwp
+        focus: cwp.status
+      - say: "Every proof is in: the chiller is enabled and holds 44 °F leaving chilled water."
+        lit: [ch1.enable, ch1.chw_leaving_temp, ch1.chw_leaving_sp]
+        links: [[ch1.chw_leaving_sp, ch1.enable, drives], [ch1.chw_leaving_temp, ch1.enable, feedback]]
+        show: ch1
+        focus: ch1.chw_leaving_temp
+      - say: "The tower fan holds condenser water at 75 °F. Finding: CW Supply Temp is classed as entering
+          condenser water, the sequence uses it as the tower's leaving (supply) water."
+        lit: ["ct:Fan Frequency", "chwp:CW Supply Temp", "chwp:CWS Temp SP"]
+        links: [["chwp:CWS Temp SP", "ct:Fan Frequency", drives], ["chwp:CW Supply Temp", "ct:Fan Frequency", feedback]]
+      - say: "Pump speed should hold chilled water differential pressure, but the graph has only the setpoint: no
+          pressure sensor was found."
+        lit: ["chwp:CHW DP SP", "gap:Chilled water differential pressure sensor", pchwp.cmd]
+        links: [["chwp:CHW DP SP", pchwp.cmd, drives], ["gap:Chilled water differential pressure sensor", pchwp.cmd, feedback]]
+        show: pchwp
+        focus: pchwp.cmd
+      - say: "If CH-1 cannot keep up, CH-2 is staged on."
+        lit: [ch2]
+        links: [[chwp, ch2, hasPart], [ch1.chw_leaving_temp, ch2, requests]]
+
+  - id: hw
+    title: Hot water plant
+    scope: Three steam boilers, steam-to-water heat exchangers in two hot water systems. Serves AHU-2 to AHU-5.
+    bind: {hwp: "eq:Waterside Hot Water Plant", b1: "eq:Waterside Hot Water Plant/B-1",
+           hwsys: "eq:Waterside Hot Water Plant/Boiler Room HW Sys",
+           hx: "eq:Waterside Hot Water Plant/Boiler Room HW Sys/HX-3",
+           hhwp: "eq:Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-1", ahu: "eq:Airside AHU-2"}
+    text:
+      - "Enable. The [hot water plant](hwp) is enabled when an air handler sends hot water requests (for example
+        [AHU-2](ahu), with its [heating valve](ahu.heating_valve) open) or outside air is below 60 °F."
+      - "Steam. The boilers make steam. Lead boiler [B-1](b1) is started by [Boiler 1 S/S](b1.enable) and proven by
+        [Boiler 1 Status](b1.status); its [firing rate](b1.firing_rate) modulates to hold [steam
+        pressure](hwp:Steam Pressure) at the [steam setpoint](hwp:Steam SP)."
+      - "Hot water. In the [Boiler Room hot water system](hwsys), the [steam valve control signal](hwsys:Steam Valve
+        Control Signal) drives heat exchanger [HX-3](hx) (its [1/3](hx:1/3 Steam Valve Signal) and [2/3](hx:2/3
+        Steam Valve Signal) valves in sequence) to hold [HW Supply Temp](hwsys:HW Supply Temp) at [HW Supply Temp
+        SP](hwsys:HW Supply Temp SP), reset from 180 °F at 20 °F outside to 140 °F at 60 °F."
+      - "Pumping. [HHWP-1](hhwp) runs lead, started by its [S/S command](hhwp.cmd) and proven by [HW Pump
+        Status](hwsys:HW Pump Status); its speed holds [HW System DP](hwsys:HW System DP) at [HW Sys DP
+        SP](hwsys:HW Sys DP SP)."
+    expect: {"hwp:Steam SP": Pressure_Setpoint, "hwsys:HW Supply Temp": Leaving_Hot_Water_Temperature_Sensor}
+    loops:
+      - {name: Steam pressure, setpoint: "hwp:Steam SP", measured: "hwp:Steam Pressure", outputs: [b1.firing_rate]}
+      - {name: Hot water temperature, setpoint: "hwsys:HW Supply Temp SP", measured: "hwsys:HW Supply Temp",
+         outputs: ["hwsys:Steam Valve Control Signal", "hx:1/3 Steam Valve Signal", "hx:2/3 Steam Valve Signal"]}
+      - {name: Hot water pressure, setpoint: "hwsys:HW Sys DP SP", measured: "hwsys:HW System DP", outputs: [hhwp.cmd]}
+    links:
+      - [ahu.heating_valve, hwp, requests]
+      - [b1.status, b1.enable, requires]
+      - ["hwsys:HW Pump Status", hhwp.cmd, requires]
+    values: {"hwsys:HW Supply Temp SP": "180 °F at 20 °F outside, 140 °F at 60 °F"}
+    steps:
+      - say: "AHU-2's heating valve opens: a hot water request reaches the plant."
+        lit: [ahu.heating_valve, hwp]
+        links: [[ahu.heating_valve, hwp, requests], [hwp, ahu, feeds]]
+        show: ahu
+        focus: ahu.heating_valve
+      - say: "Lead boiler B-1 starts and proves its status."
+        lit: [b1, b1.enable, b1.status]
+        links: [[hwp, b1, hasPart], [b1.status, b1.enable, requires]]
+        show: b1
+        focus: b1.status
+      - say: "Firing rate holds steam pressure. Finding: Steam SP is classed as a building pressure sensor; the
+          sequence uses it as the steam pressure setpoint."
+        lit: [b1.firing_rate, "hwp:Steam Pressure", "hwp:Steam SP"]
+        links: [["hwp:Steam SP", b1.firing_rate, drives], ["hwp:Steam Pressure", b1.firing_rate, feedback]]
+        show: b1
+        focus: b1.firing_rate
+      - say: "Steam valves on HX-3 heat the hot water to its reset setpoint. Finding: HW Supply Temp is classed as
+          entering hot water; the sequence uses it as the supply (leaving) temperature."
+        lit: [hwsys, hx, "hwsys:HW Supply Temp", "hwsys:HW Supply Temp SP", "hwsys:Steam Valve Control Signal"]
+        links: [[hwp, hwsys, hasPart], [hwsys, hx, hasPart], ["hwsys:HW Supply Temp SP", "hwsys:Steam Valve Control Signal", drives],
+                ["hwsys:HW Supply Temp", "hwsys:Steam Valve Control Signal", feedback]]
+      - say: "Pump HHWP-1 circulates the water and holds system pressure."
+        lit: [hhwp, hhwp.cmd, "hwsys:HW Pump Status", "hwsys:HW System DP"]
+        links: [[hwsys, hhwp, hasPart], ["hwsys:HW Pump Status", hhwp.cmd, requires],
+                ["hwsys:HW Sys DP SP", hhwp.cmd, drives], ["hwsys:HW System DP", hhwp.cmd, feedback]]
+        show: hhwp
+        focus: hhwp.cmd

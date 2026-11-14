@@ -184,8 +184,8 @@ with browser:
         while (box && box.scrollHeight <= box.clientHeight + 1) box = box.parentElement;
         if (box) box.scrollTo({{ top: el.offsetTop - box.clientHeight / 2, behavior: "smooth" }});
       }})(60);</script>""", unsafe_allow_javascript=True)
-    st.caption(f"{untemplated} more equipment have no 3D model yet (meters, drives, plant groups, or not yet "
-               "reviewed).")
+    st.caption(f"{untemplated} more equipment have no 3D model yet (meters, drives, plant groups, or no "
+               "template match).")
 
 # --- viewer, with previous / next and related equipment ---------------------------------------
 with main:

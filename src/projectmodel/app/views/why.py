@@ -35,7 +35,7 @@ if alpha:
     c = st.columns(4)
     c[0].metric(f"Points mapped in {secs:.1f} s", f"{alpha['points']:,}", border=True)
     c[1].metric("On the right equipment", f"{alpha['H1_grouped_right_pct']:.0f}%", border=True)
-    c[2].metric("Need no human review", f"{100 - alpha['review_pct']:.0f}%", border=True)
+    c[2].metric("Exactly the right class", f"{alpha['H2_exact_pct']:.0f}%", border=True)
     c[3].metric("Facts with source + confidence", "100%", border=True)
     st.caption("Measured against ground truth on Project Haystack example site Alpha, from names and folders "
                f"only, with {alpha['llm_calls']} LLM calls.")
@@ -105,8 +105,8 @@ for row in (uses[:3], uses[3:]):
 
 st.header("Why it compounds")
 c = st.columns(3)
-c[0].markdown("**1 · Map a building**  \nRules and templates do most of the work; people review the rest.")
-c[1].markdown("**2 · Learn from the review**  \nRepeated fixes become conventions for that contractor or customer.")
+c[0].markdown("**1 · Map a building**  \nRules and templates give every point and equipment a best guess.")
+c[1].markdown("**2 · Learn each site's habits**  \nNaming habits become conventions for that contractor or customer.")
 c[2].markdown("**3 · The next building maps better**  \nShared knowledge improves with every project; "
               "each graph stays the customer's own.")
 

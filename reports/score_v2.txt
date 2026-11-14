@@ -1,0 +1,30 @@
+
+Score report (confidence threshold 0.8)
+
+                                                 alpha/names_paths [dev]          alpha/names_only [dev]
+conventions                                                   site/alpha                      site/alpha
+H1  grouped on right equipment                                    100.0%                            3.0%
+    ungrouped points                                                   0                            1783
+H2  class exact (all labelled)                                     83.5%                           71.0%
+    class compatible (parent/child ok)                             87.2%                           87.2%
+    above threshold (share of labelled)                            69.2%                           24.8%
+    class exact when above threshold                               81.4%                           49.9%
+    true class not in knowledge model                                  0                               0
+Below confidence threshold                                         36.6%                           77.2%
+Decided by a human                                                    66                               0
+Equipment class exact (matched)                                    87.7%                           45.0%
+LLM calls                                                              0                               0
+Cost per 1,000 points (USD)                                          0.0                             0.0
+Time per 1,000 points (s)                                          0.573                           0.082
+hasPart precision / recall                               100.0% / 100.0%                        - / 0.0%
+feeds precision / recall                                  100.0% / 91.5%                        - / 0.0%
+H2 exact, BMS names / dis fallback                         83.9% / 76.1%                   70.8% / 76.1%
+
+Calibration: class exact % by confidence band (n)
+  0.0-0.2                                                     91.7% (12)                      91.7% (12)
+  0.2-0.4                                                     21.7% (23)                     90.6% (310)
+  0.4-0.6                                                      37.5% (8)                     92.8% (152)
+  0.6-0.7                                                    94.0% (318)                     96.2% (316)
+  0.7-0.8                                                    88.5% (157)                     52.6% (475)
+  0.8-0.9                                                    98.7% (760)                      42.5% (40)
+  0.9-1.0                                                    49.0% (404)                     50.7% (377)

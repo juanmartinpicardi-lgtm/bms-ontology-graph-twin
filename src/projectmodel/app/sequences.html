@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequences</title>
+<style>
+  /* Tokens follow the other viewers (agent_tour.html, graph_standard.html): the app sets data-theme, standalone
+     follows the system. --seq is the sequence's own colour: everything the sequence adds to the graph is drawn in it.
+     --gap and --conf are its findings: a point it needs that the graph lacks, a point the graph classes differently. */
+  :root {
+    color-scheme: light;
+    --bg: #ffffff; --panel: #ffffff; --soft: #f6f6f4; --line: #e3e1dc; --text: #25231f; --muted: #77726b;
+    --chip: #f1f0ed; --node: #cfccc5; --edge: #c9c5bd; --accent: #1F7FCC;
+    --seq: #6d5dfc; --seq-soft: rgba(109, 93, 252, 0.12); --ok: #1f9d55; --conf: #c98a12; --gap: #d6453b;
+    --shadow: 0 6px 24px rgba(30, 25, 15, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e1117; --panel: #171a21; --soft: #14171d; --line: #2c3039; --text: #edebe8; --muted: #a29e98;
+      --chip: #22262e; --node: #4d4a44; --edge: #4a4f59; --accent: #4DA3E8;
+      --seq: #8f83ff; --seq-soft: rgba(143, 131, 255, 0.16); --ok: #3fd17a; --conf: #f2b134; --gap: #ff5a4e;
+      --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0e1117; --panel: #171a21; --soft: #14171d; --line: #2c3039; --text: #edebe8; --muted: #a29e98;
+    --chip: #22262e; --node: #4d4a44; --edge: #4a4f59; --accent: #4DA3E8;
+    --seq: #8f83ff; --seq-soft: rgba(143, 131, 255, 0.16); --ok: #3fd17a; --conf: #f2b134; --gap: #ff5a4e;
+    --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
+    font: 14px/1.5 "Source Sans Pro", "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { display: flex; flex-direction: column; gap: 10px; padding: 2px; }
+  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
+    padding: 4px 11px; cursor: pointer; }
+  button:hover { border-color: var(--seq); }
+  button.on { background: var(--seq); border-color: var(--seq); color: #fff; }
+  button:disabled { opacity: .45; cursor: default; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+
+  /* --- top bar ----------------------------------------------------------------------------------------------- */
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .bar .sp { flex: 1; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+  .seg button { border: none; border-radius: 0; background: var(--panel); }
+  .seg button.on { background: var(--seq); color: #fff; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .legend span { display: inline-flex; gap: 5px; align-items: center; }
+  .sw { width: 18px; height: 0; border-top: 2px solid var(--edge); display: inline-block; }
+  .sw.ctl { border-top: 2px dashed var(--seq); }
+  .sw.gap { border-top: 2px dashed var(--gap); width: 10px; height: 10px; border: 2px dashed var(--gap); border-radius: 50%; }
+  .sw.conf { width: 10px; height: 10px; border: 2px solid var(--conf); border-radius: 50%; }
+
+  /* --- main ---------------------------------------------------------------------------------------------------- */
+  main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 12px; }
+  .left, .right { min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+  .doc { flex: 1; min-height: 0; overflow: auto; padding: 16px 20px 20px; }
+  .doc h3 { margin: 0; font-size: 18px; }
+  .doc .scope { color: var(--muted); margin: 2px 0 12px; font-size: 13px; }
+  .doc p { margin: 0 0 11px; }
+  .doc p b.lead { color: var(--seq); }
+  .m { cursor: pointer; border-radius: 4px; padding: 0 2px; margin: 0 -1px; text-decoration: underline;
+    text-decoration-color: var(--seq); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .m:hover, .m.sel { background: var(--seq-soft); }
+  .m.conflict { text-decoration-color: var(--conf); }
+  .m.gap { text-decoration-style: dashed; text-decoration-color: var(--gap); }
+  .m.eq { font-weight: 600; }
+  .adds { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .adds h4 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .fact { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; font-size: 13px; margin: 3px 0; }
+  .fact .k { font-size: 11px; font-weight: 700; color: var(--seq); background: var(--seq-soft); border-radius: 5px;
+    padding: 0 6px; }
+  .tag { cursor: pointer; background: var(--chip); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px;
+    font-size: 12.5px; white-space: nowrap; }
+  .tag:hover { border-color: var(--seq); }
+  .tag.conflict { border-color: var(--conf); } .tag.gap { border-style: dashed; border-color: var(--gap); color: var(--gap); }
+  .arrow { color: var(--muted); }
+  .docnote { color: var(--muted); font-size: 12px; margin-top: 12px; }
+
+  /* --- graph (simulate) ---------------------------------------------------------------------------------------- */
+  .graph { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+  .graph svg text { user-select: none; }
+  .graph svg { width: 100%; height: 100%; display: block; }
+  .hdr rect { fill: var(--panel); stroke: var(--node); stroke-width: 1.5; }
+  .hdr.sys rect { stroke-dasharray: 5 3; }
+  .hdr text { font-size: 12px; font-weight: 700; fill: var(--text); }
+  .hdr .cls { font-size: 10px; font-weight: 400; fill: var(--muted); }
+  .hdr.lit rect { stroke: var(--seq); stroke-width: 2.5; fill: var(--seq-soft); }
+  .pt circle { fill: var(--panel); stroke: var(--node); stroke-width: 2; transition: all .25s; }
+  .pt text { font-size: 10.5px; fill: var(--muted); transition: fill .25s; }
+  .pt.lit circle { fill: var(--seq); stroke: var(--seq); }
+  .pt.lit text { fill: var(--text); font-weight: 600; }
+  .pt.conflict circle { stroke: var(--conf); stroke-width: 3; }
+  .pt.gap circle { stroke: var(--gap); stroke-dasharray: 3 2; fill: transparent; }
+  .pt.gap.lit circle { fill: color-mix(in srgb, var(--gap) 25%, transparent); }
+  .pt.gap text { fill: var(--gap); }
+  .pt, .hdr { cursor: pointer; }
+  .hp { stroke: var(--edge); stroke-width: 1; opacity: .7; }
+  .lnk { fill: none; stroke-width: 2; }
+  .lnk.ctl { stroke: var(--seq); stroke-dasharray: 6 4; }
+  .lnk.graph { stroke: var(--accent); }
+  .lnk.missing { stroke: var(--gap); }
+  .lnk.old { opacity: .35; }
+  .lbl { font-size: 10px; fill: var(--seq); font-style: italic; paint-order: stroke; stroke: var(--bg); stroke-width: 3px; }
+  .lbl.graph { fill: var(--accent); }
+  .dot { fill: var(--seq); }
+  .caption { padding: 12px 16px; min-height: 92px; }
+  .caption .n { font-size: 11px; font-weight: 700; color: var(--seq); text-transform: uppercase; letter-spacing: .05em; }
+  .caption .say { margin-top: 2px; }
+  .ctrls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .steps { display: flex; gap: 4px; flex: 1; min-width: 120px; }
+  .steps i { flex: 1; height: 5px; border-radius: 4px; background: var(--chip); cursor: pointer; }
+  .steps i.done { background: var(--seq); opacity: .45; } .steps i.cur { background: var(--seq); }
+
+  /* --- inspector + 3D ------------------------------------------------------------------------------------------ */
+  .insp { padding: 12px 16px; }
+  .insp .kick { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .insp h4 { margin: 1px 0 4px; font-size: 17px; }
+  .insp .row { display: grid; grid-template-columns: 100px 1fr; gap: 3px 10px; font-size: 13px; }
+  .insp .row b { color: var(--muted); font-weight: 600; }
+  .insp .find { margin: 8px 0 2px; padding: 7px 10px; border-radius: 8px; font-size: 13px; }
+  .find.conflict { background: color-mix(in srgb, var(--conf) 14%, transparent); }
+  .find.gap { background: color-mix(in srgb, var(--gap) 12%, transparent); }
+  .find.ok { background: color-mix(in srgb, var(--ok) 11%, transparent); }
+  .insp .uses { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+  .stage { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+  .stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; pointer-events: none;
+    transition: opacity .35s; }
+  .stage iframe.on { opacity: 1; pointer-events: auto; }
+  .empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); text-align: center;
+    padding: 30px; font-size: 13px; }
+  .empty.gone { display: none; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; grid-auto-rows: max-content; overflow: auto; }
+    .left, .right { min-height: auto; } .stage { flex: none; height: 460px; }
+    .graph { flex: none; height: 560px; } .doc { flex: none; max-height: 560px; } }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="seg" id="seqs"></div>
+  <div class="seg" id="mode"><button data-mode="read" class="on">Read</button><button data-mode="sim">Simulate</button></div>
+  <span class="sp"></span>
+  <div class="legend">
+    <span><i class="sw"></i>Graph (BMS export)</span>
+    <span><i class="sw ctl"></i>From the sequence</span>
+    <span><i class="sw conf"></i>Classed differently</span>
+    <span><i class="sw gap"></i>Missing in the graph</span>
+  </div>
+</div>
+<main>
+  <section class="left">
+    <div class="card doc" id="doc"></div>
+    <div class="card graph" id="graph" hidden><svg id="g"></svg></div>
+    <div class="card caption" id="caption" hidden>
+      <div class="ctrls">
+        <button id="restart" title="Start over">⟲</button>
+        <button id="prev" title="Previous step">◀</button>
+        <button id="play" class="on">Simulate</button>
+        <button id="next" title="Next step">▶</button>
+        <div class="steps" id="stepbar"></div>
+      </div>
+      <div class="n" id="stepN"></div>
+      <div class="say" id="say"></div>
+    </div>
+  </section>
+  <section class="right">
+    <div class="card insp" id="insp"></div>
+    <div class="card stage" id="stage"><div class="empty" id="empty">Click a highlighted word in the sequence to see that
+      point, equipment or system here, in the graph and in 3D.</div></div>
+  </section>
+</main>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const KIND = { drives: "drives", feedback: "feedback", requires: "requires", resets: "resets", requests: "requests",
+               switches: "switches", feeds: "feeds", hasPart: "has part" };
+const GRAPH = new Set(["feeds", "hasPart", "hasPoint"]);
+let seq = D.sequences[0], mode = "read", selected = null;
+
+// --- helpers on refs ------------------------------------------------------------------------------------------
+const R = ref => seq.refs[ref];
+const nodeOf = ref => R(ref)?.node ? D.nodes[R(ref).node] : null;
+function refLabel(ref) {
+  const r = R(ref), n = nodeOf(ref);
+  return n ? n.label : r?.label ?? ref;
+}
+function tag(ref) {
+  const r = R(ref);
+  return `<span class="tag ${r.status}" data-ref="${esc(ref)}">${esc(refLabel(ref))}</span>`;
+}
+// The equipment a ref lives on (its bound alias), and whether that equipment has a 3D model.
+const ownerOf = ref => R(ref)?.col ? seq.bind[R(ref).col] : null;
+
+// --- read mode: the document with linked words, then what it adds to the graph ---------------------------------
+function renderDoc() {
+  const paras = seq.paras.map(p => `<p>${p.map(g => {
+    if (!g.ref) return esc(g.t);
+    const r = R(g.ref), eq = r.node && D.nodes[r.node]?.kind === "equipment";
+    return `<span class="m ${r.status}${eq ? " eq" : ""}${selected === g.ref ? " sel" : ""}" data-ref="${esc(g.ref)}">${esc(g.t)}</span>`;
+  }).join("").replace(/^([A-Z][a-z ]+\.)\s/, '<b class="lead">$1</b> ')}</p>`).join("");
+  const loops = seq.loops.map(l => `<div class="fact"><span class="k">loop</span><b>${esc(l.name)}</b>
+    ${l.setpoint ? tag(l.setpoint) + `<span class="arrow">and</span>` : ""}${tag(l.measured)}
+    <span class="arrow">→</span>${l.outputs.map(tag).join("")}</div>`).join("");
+  const links = seq.links.map(([a, b, k]) => `<div class="fact"><span class="k">${KIND[k]}</span>${tag(a)}
+    <span class="arrow">→</span>${tag(b)}</div>`).join("");
+  const vals = Object.entries(seq.values).map(([r, v]) => `<div class="fact"><span class="k">value</span>${tag(r)}
+    <span class="arrow">=</span>${esc(v)}</div>`).join("");
+  const f = Object.values(seq.refs).reduce((a, r) => (a[r.status] = (a[r.status] || 0) + 1, a), {});
+  $("#doc").innerHTML = `<h3>${esc(seq.title)}</h3><div class="scope">${esc(seq.scope)}</div>${paras}
+    <div class="adds"><h4>What this sequence adds to the graph</h4>${loops}${links}${vals}</div>
+    <div class="docnote">${esc(D.document)} · ${esc(D.status)} · ${esc(D.source_file)}. Links resolved against the graph:
+      ${f.ok || 0} found, ${f.conflict || 0} classed differently, ${f.gap || 0} missing.</div>`;
+  $("#doc").querySelectorAll("[data-ref]").forEach(e => e.addEventListener("click", () => select(e.dataset.ref)));
+}
+
+// --- inspector: the selected point / equipment / system, and how this sequence uses it ------------------------
+function uses(ref) {
+  const out = [];
+  for (const l of seq.loops) {
+    if (l.setpoint === ref) out.push(`Setpoint of the <b>${esc(l.name)}</b> loop`);
+    if (l.measured === ref) out.push(`Measured value of the <b>${esc(l.name)}</b> loop`);
+    if (l.outputs.includes(ref)) out.push(`Output of the <b>${esc(l.name)}</b> loop`);
+  }
+  for (const [a, b, k] of seq.links) {
+    if (a === ref) out.push(`${KIND[k]} → ${tag(b)}`);
+    if (b === ref) out.push(`${tag(a)} ${KIND[k]} → this`);
+  }
+  if (seq.values[ref]) out.push(`Intended value: <b>${esc(seq.values[ref])}</b>`);
+  return out;
+}
+function inspect(ref) {
+  const r = R(ref), n = nodeOf(ref), u = uses(ref);
+  let h;
+  if (!n) {
+    h = `<div class="kick">Not in the graph</div><h4>${esc(r.label)}</h4>
+      <div class="find gap">The sequence needs this, but the graph has no such point. Either it is missing from the
+        BMS export, or the equipment is built differently from what the sequence assumes.</div>`;
+  } else {
+    const p = n.prov || {};
+    const kind = n.kind === "point" ? "Point" : n.system ? "System" : "Equipment";
+    const on = n.kind === "point" && ownerOf(ref) ? `<b>On</b><span>${esc(D.nodes[ownerOf(ref)]?.label ?? ownerOf(ref).slice(3))}</span>` : "";
+    const find = r.status === "conflict"
+      ? `<div class="find conflict">The sequence uses this as <b>${esc(r.expected)}</b>; the graph classed it
+          <b>${esc(n.cls)}</b>. One of them is wrong: a finding to check.</div>`
+      : `<div class="find ok">Found in the graph with the class the sequence implies.</div>`;
+    h = `<div class="kick">${kind}${n.kind === "equipment" ? ` · ${n.points} points` : ""}</div><h4>${esc(n.label)}</h4>
+      <div class="row"><b>Class</b><span>${esc(n.cls || "none")}</span>${on}
+        <b>Source</b><span>${esc((p.source_file || "").split("/").pop())} · row ${esc(p.source_ref)}</span>
+        <b>Method</b><span>${esc(p.method)} · confidence ${p.confidence != null ? (+p.confidence).toFixed(2) : "–"}</span></div>
+      ${find}`;
+  }
+  if (u.length) h += `<div class="uses">${u.map(x => `<div>· ${x}</div>`).join("")}</div>`;
+  $("#insp").innerHTML = h;
+  $("#insp").querySelectorAll("[data-ref]").forEach(e => e.addEventListener("click", () => select(e.dataset.ref)));
+}
+
+// --- 3D: one viewer per equipment, created when first shown --------------------------------------------------
+const frames = {};
+const api = id => { try { return frames[id]?.contentWindow.__eq3dApi || null; } catch (e) { return null; } };
+const want = {};
+function drive(id) {
+  const a = api(id), w = want[id];
+  if (!w) return;
+  if (!a) { clearTimeout(w.timer); w.timer = setTimeout(() => drive(id), 300); return; }
+  if (w.point) a.point(w.point, { panel: true, dist: { vav: 8, ahu: 15, chiller: 11 }[D.equipment[id].equipment.template] || 9 });
+  else a.clear();
+  a.rotate(!w.point);
+}
+function show3d(equipId, pointId) {
+  for (const [k, f] of Object.entries(frames)) f.classList.toggle("on", k === equipId);
+  const empty = $("#empty");
+  if (!equipId || !D.equipment[equipId]) {
+    empty.classList.remove("gone");
+    empty.textContent = equipId ? `${D.nodes[equipId]?.label ?? equipId.slice(3)} has no 3D model (systems, towers and heat
+      exchangers are not drawn yet). Its place in the graph is on the left.` : "Nothing to show in 3D for this step.";
+    return;
+  }
+  empty.classList.add("gone");
+  if (!frames[equipId]) {
+    const f = document.createElement("iframe");
+    f.title = D.equipment[equipId].equipment.label;
+    f.srcdoc = D.viewer.replace(D.slot, () => JSON.stringify(D.equipment[equipId]).replace(/<\//g, "<\\/"));
+    $("#stage").append(f); frames[equipId] = f;
+    requestAnimationFrame(() => f.classList.add("on"));
+  }
+  want[equipId] = { point: pointId };
+  drive(equipId);
+}
+function select(ref) {
+  selected = ref;
+  document.querySelectorAll(".m").forEach(e => e.classList.toggle("sel", e.dataset.ref === ref));
+  inspect(ref);
+  const n = nodeOf(ref);
+  if (!n) { show3d(ownerOf(ref), null); }
+  else if (n.kind === "equipment") show3d(n.id, null);
+  else show3d(ownerOf(ref), n.id);
+  if (mode === "sim") { document.querySelectorAll(".pt, .hdr").forEach(e => e.classList.toggle("sel", e.dataset.ref === ref)); }
+}
+
+// --- simulate: the sequence's part of the graph, as columns of equipment with their points -----------------------
+const POS = {};
+let svg, linkLayer;
+function layout() {
+  for (const k of Object.keys(POS)) delete POS[k];
+  const cols = seq.columns, colW = 168, top = 34, rowH = 30;
+  // every ref used by the steps, placed under the column of the equipment it lives on; gap: refs next to what they
+  // link to
+  const order = [];
+  for (const st of seq.steps) for (const r of [...(st.lit || []), ...(st.links || []).flatMap(l => l.slice(0, 2))])
+    if (!order.includes(r)) order.push(r);
+  const colOf = ref => {
+    const r = R(ref);
+    if (r.col) return r.col;
+    for (const st of seq.steps) for (const [a, b] of st.links || []) {
+      if (a === ref && R(b).col) return R(b).col;
+      if (b === ref && R(a).col) return R(a).col;
+    }
+    return cols[0];
+  };
+  // Columns wrap onto a second band when there are many, so the graph keeps a readable shape.
+  const perBand = cols.length > 4 ? Math.ceil(cols.length / 2) : cols.length;
+  const rows = Object.fromEntries(cols.map(c => [c, 0]));
+  const colRef = Object.fromEntries(order.filter(r => !cols.includes(r)).map(r => [r, colOf(r)]));
+  for (const r of Object.values(colRef)) rows[r]++;
+  const bandH = b => Math.max(0, ...cols.slice(b * perBand, (b + 1) * perBand).map(c => rows[c])) * rowH + 96;
+  const bands = Math.ceil(cols.length / perBand), h0 = bandH(0), h1 = bands > 1 ? bandH(1) : 0;
+  for (const [i, c] of cols.entries()) {
+    POS[c] = { x: 20 + (i % perBand) * colW, y: top + (i >= perBand ? h0 : 0), hdr: true, col: c };
+    rows[c] = 0;
+  }
+  for (const [ref, c] of Object.entries(colRef)) POS[ref] = { x: POS[c].x + 14, y: POS[c].y + 62 + rows[c]++ * rowH, col: c };
+  return { w: 20 + perBand * colW, h: top + h0 + h1 };
+}
+function drawGraph() {
+  svg = $("#g");
+  const { w, h } = layout();
+  svg.setAttribute("viewBox", `0 0 ${w} ${Math.max(h, 360)}`);
+  let out = `<defs>${["seq", "accent", "gap"].map(c => `<marker id="ar-${c}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6"
+    markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--${c})"/></marker>`).join("")}</defs>`;
+  // has-point lines: from each column header down its points
+  for (const c of seq.columns) {
+    const pts = Object.entries(POS).filter(([r, p]) => !p.hdr && p.col === c && R(r).node);
+    if (pts.length) out += `<path class="hp" d="M ${POS[c].x + 6} ${POS[c].y + 22} V ${Math.max(...pts.map(([, p]) => p.y))}"/>` +
+      pts.map(([, p]) => `<path class="hp" d="M ${POS[c].x + 6} ${p.y} H ${p.x - 7}"/>`).join("");
+  }
+  out += `<g id="links"></g>`;
+  for (const c of seq.columns) {
+    const n = D.nodes[seq.bind[c]], p = POS[c];
+    out += `<g class="hdr${n.system ? " sys" : ""}" data-ref="${esc(c)}"><rect x="${p.x - 6}" y="${p.y - 14}" width="150"
+      height="36" rx="9"/><text x="${p.x + 4}" y="${p.y + 1}">${esc(short(n.label, 20))}</text>
+      <text class="cls" x="${p.x + 4}" y="${p.y + 14}">${esc(n.cls)}</text><title>${esc(n.label)}</title></g>`;
+  }
+  for (const [ref, p] of Object.entries(POS)) {
+    if (p.hdr) continue;
+    const r = R(ref);
+    out += `<g class="pt ${r.status}" data-ref="${esc(ref)}"><circle cx="${p.x}" cy="${p.y}" r="7"/>
+      <text x="${p.x + 12}" y="${p.y + 4}">${esc(short(refLabel(ref).replace(/ \(expected on .*\)| \(no point .*\)/, ""), 22))}</text>
+      <title>${esc(refLabel(ref))}</title></g>`;
+  }
+  svg.innerHTML = out;
+  linkLayer = svg.querySelector("#links");
+  svg.querySelectorAll("[data-ref]").forEach(e => e.addEventListener("click", () => select(e.dataset.ref)));
+}
+function short(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+function anchor(ref, toward) {
+  const p = POS[ref];
+  if (!p) return null;
+  return p.hdr ? { x: p.x + 72, y: p.y + (toward.y > p.y ? 22 : -14) } : { x: p.x, y: p.y };
+}
+async function drawLink(a, b, kind) {
+  const pa = POS[a], pb = POS[b];
+  if (!pa || !pb) return;
+  const A = anchor(a, pb), B = anchor(b, pa);
+  const graph = GRAPH.has(kind);
+  const missing = graph ? !seq.graph_links[`${a}|${b}|${kind}`] : R(a).status === "gap" || R(b).status === "gap";
+  const dx = B.x - A.x, bend = Math.abs(dx) < 30 ? 46 : 0;
+  const mx = (A.x + B.x) / 2 + bend, my = (A.y + B.y) / 2 - Math.min(60, Math.abs(dx) / 5) - (bend ? 0 : 6);
+  const d = `M ${A.x} ${A.y} Q ${mx} ${my} ${B.x} ${B.y}`;
+  const cls = `lnk ${graph ? "graph" : "ctl"}${missing ? " missing" : ""}`;
+  const mk = missing ? "gap" : graph ? "accent" : "seq";
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", d); path.setAttribute("class", cls); path.setAttribute("marker-end", `url(#ar-${mk})`);
+  linkLayer.append(path);
+  const len = path.getTotalLength();
+  const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  const mid = path.getPointAtLength(len / 2);
+  lbl.setAttribute("x", mid.x); lbl.setAttribute("y", mid.y - 4); lbl.setAttribute("text-anchor", "middle");
+  lbl.setAttribute("class", `lbl${graph ? " graph" : ""}`); lbl.textContent = KIND[kind] + (missing && graph ? " (not in graph)" : "");
+  if (S.instant) { linkLayer.append(lbl); return; }
+  // draw it, then send a dot along it
+  const dash = path.getAttribute("stroke-dasharray");
+  path.style.strokeDasharray = `${len}`; path.style.strokeDashoffset = `${len}`;
+  await anim(650, t => { path.style.strokeDashoffset = `${len * (1 - t)}`; });
+  path.style.strokeDasharray = ""; path.style.strokeDashoffset = "";
+  if (dash) path.setAttribute("stroke-dasharray", dash);
+  linkLayer.append(lbl);
+  const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  dot.setAttribute("r", 4); dot.setAttribute("class", "dot");
+  if (graph) dot.style.fill = "var(--accent)";
+  linkLayer.append(dot);
+  await anim(700, t => { const q = path.getPointAtLength(len * t); dot.setAttribute("cx", q.x); dot.setAttribute("cy", q.y); });
+  dot.remove();
+}
+// Timers, not requestAnimationFrame: a hidden frame gets no animation frames, and the walk must still finish.
+function anim(ms, fn) {
+  return new Promise(res => {
+    const t0 = performance.now(), tok = S.token;
+    const f = () => {
+      if (S.token !== tok) return res();
+      const t = Math.min(1, (performance.now() - t0) / ms);
+      fn(t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+      t < 1 ? setTimeout(f, 16) : res();
+    };
+    f();
+  });
+}
+
+// --- the walk ----------------------------------------------------------------------------------------------------
+const S = { step: -1, playing: false, token: 0, instant: false };
+function light(ref, on = true) {
+  svg.querySelector(`[data-ref="${CSS.escape(ref)}"]`)?.classList.toggle("lit", on);
+}
+async function runStep(i) {
+  const st = seq.steps[i], tok = S.token;
+  S.step = i;
+  renderStepbar();
+  $("#stepN").textContent = `Step ${i + 1} of ${seq.steps.length}`;
+  $("#say").textContent = st.say;
+  linkLayer.querySelectorAll(".lnk").forEach(p => p.classList.add("old"));
+  linkLayer.querySelectorAll(".lbl").forEach(p => p.remove());
+  svg.querySelectorAll(".lit").forEach(e => e.classList.remove("lit"));
+  const focus = st.focus || st.lit?.[0];
+  if (st.show) show3d(seq.bind[st.show], st.focus && nodeOf(st.focus)?.id);
+  else if (focus) show3d(ownerOf(focus), null);
+  if (focus) { selected = focus; inspect(focus); }
+  for (const r of st.lit || []) { light(r); if (!S.instant) await wait(170); if (S.token !== tok) return; }
+  for (const [a, b, k] of st.links || []) { light(a); light(b); await drawLink(a, b, k); if (S.token !== tok) return; }
+}
+function renderStepbar() {
+  $("#stepbar").innerHTML = seq.steps.map((_, i) => `<i class="${i < S.step ? "done" : i === S.step ? "cur" : ""}"
+    data-i="${i}" title="Step ${i + 1}"></i>`).join("");
+  $("#stepbar").querySelectorAll("i").forEach(e => e.addEventListener("click", () => jump(+e.dataset.i)));
+  $("#prev").disabled = S.step <= 0; $("#next").disabled = S.step >= seq.steps.length - 1;
+}
+async function play() {
+  S.playing = true; $("#play").textContent = "Pause";
+  const tok = ++S.token;
+  while (S.playing && S.token === tok && S.step < seq.steps.length - 1) {
+    await runStep(S.step + 1);
+    if (S.token !== tok) return;
+    await wait(2600);
+  }
+  if (S.token === tok) { S.playing = false; $("#play").textContent = S.step >= seq.steps.length - 1 ? "Replay" : "Resume"; }
+}
+function pause() { S.playing = false; S.token++; $("#play").textContent = "Resume"; }
+async function jump(i) {
+  pause();
+  drawGraph();
+  S.instant = true;
+  for (let k = 0; k < i; k++) await runStep(k);
+  S.instant = false;
+  S.token++;
+  await runStep(i);
+  $("#play").textContent = i >= seq.steps.length - 1 ? "Replay" : "Resume";
+}
+$("#play").addEventListener("click", () => {
+  if (S.playing) return pause();
+  if (S.step >= seq.steps.length - 1) { drawGraph(); S.step = -1; }
+  play();
+});
+$("#next").addEventListener("click", () => jump(Math.min(seq.steps.length - 1, S.step + 1)));
+$("#prev").addEventListener("click", () => jump(Math.max(0, S.step - 1)));
+$("#restart").addEventListener("click", () => { pause(); drawGraph(); S.step = -1; renderStepbar(); play(); });
+
+// --- switching ---------------------------------------------------------------------------------------------------
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll("#mode button").forEach(b => b.classList.toggle("on", b.dataset.mode === m));
+  $("#doc").hidden = m !== "read";
+  $("#graph").hidden = $("#caption").hidden = m !== "sim";
+  pause();
+  if (m === "sim") {
+    drawGraph(); S.step = -1; renderStepbar();
+    $("#stepN").textContent = `${seq.steps.length} steps`;
+    $("#say").textContent = "Press Simulate to watch the sequence run through the graph, node by node and link by link.";
+    $("#play").textContent = "Simulate";
+  }
+}
+function setSeq(id) {
+  seq = D.sequences.find(s => s.id === id);
+  document.querySelectorAll("#seqs button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+  selected = null;
+  renderDoc();
+  $("#insp").innerHTML = `<div class="kick">Sequence</div><h4>${esc(seq.title)}</h4><div>${esc(seq.scope)}</div>
+    <div class="uses"><div>· ${seq.loops.length} control loops, ${seq.links.length} interlocks, resets and requests,
+      ${Object.keys(seq.values).length} intended values</div><div>· ${seq.columns.length} equipment and systems:
+      ${seq.columns.map(c => tag(c)).join(" ")}</div></div>`;
+  $("#insp").querySelectorAll("[data-ref]").forEach(e => e.addEventListener("click", () => select(e.dataset.ref)));
+  show3d(seq.bind[seq.columns[0]] in D.equipment ? seq.bind[seq.columns[0]] : Object.values(seq.models)[0], null);
+  setMode(mode);
+}
+$("#seqs").innerHTML = D.sequences.map(s => `<button data-id="${s.id}">${esc(s.title)}</button>`).join("");
+document.querySelectorAll("#seqs button").forEach(b => b.addEventListener("click", () => setSeq(b.dataset.id)));
+document.querySelectorAll("#mode button").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+setSeq(D.sequences.some(s => s.id === D.start) ? D.start : D.sequences[0].id);
+if (D.start_mode === "sim") setMode("sim");
+</script>
+</body>
+</html>

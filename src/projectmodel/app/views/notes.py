@@ -1,6 +1,6 @@
 """All notes for one project: filter by topic, status and author. Orphaned notes (whose equipment,
 point or link is no longer in the graph) come first, so nothing written down gets lost silently.
-Notes are written and edited in the review app's Tree tab.
+Notes are written and edited on the project's Tree page.
 """
 
 import sys
@@ -24,7 +24,7 @@ if not projects:
 project = active_project(projects)  # the shared sidebar picker
 
 st.caption(f"{label(project)} · tribal knowledge: context about the building, never graph facts. "
-           "Add and edit notes in the review app's Tree tab.")
+           "Add and edit notes on the project's Tree page.")
 
 every = notes.notes_by_project(store, project, status=None)
 orphan_ids = {x["id"] for x in notes.orphaned(store, project)}

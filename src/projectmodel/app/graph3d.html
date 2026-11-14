@@ -16,6 +16,7 @@
     --m-parsed: #2f6fdb; --m-rule: #1a9e95; --m-template: #8250df; --m-llm: #e8590c; --m-human: #2da44e; --m-model: #c48a00;
     --s-proposed: #bf8700; --s-confirmed: #2da44e; --s-rejected: #cf222e; --notes: #d6336c;
     --r-hasPart: #5b8bd6; --r-hasPoint: #c4ccd4; --r-feeds: #e8590c; --r-type: #dcc07a; --r-subClassOf: #c48a00;
+    --r-behaviour: #c2369b; --m-document: #c2369b;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -26,6 +27,7 @@
       --m-parsed: #58a6ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #3fb950; --m-model: #f2b134;
       --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149; --notes: #f778ba;
       --r-hasPart: #6e9fe0; --r-hasPoint: #3d4a5a; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
+      --r-behaviour: #ef6fc8; --m-document: #ef6fc8;
     }
   }
   :root[data-theme="dark"] {
@@ -36,6 +38,7 @@
     --m-parsed: #58a6ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #3fb950; --m-model: #f2b134;
     --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149; --notes: #f778ba;
     --r-hasPart: #6e9fe0; --r-hasPoint: #3d4a5a; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
+    --r-behaviour: #ef6fc8; --m-document: #ef6fc8;
   }
   .tip { background: var(--panel); color: var(--text); border: 1px solid var(--line); padding: 4px 8px;
     border-radius: 6px; font: 12px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -134,6 +137,7 @@
     <label><input type="checkbox" id="showPoints" checked> Points</label>
     <label><input type="checkbox" id="showModel"> Knowledge model layer</label>
     <label><input type="checkbox" id="showFlow" checked> Animate feeds</label>
+    <label title="Loops, interlocks, resets, requests and modes from the sequences of operation (intent, not as built)"><input type="checkbox" id="showBehaviour"> Behaviour (sequences)</label>
   </div>
   <div style="display:flex; gap:6px; align-items:center;">
     <button id="clear">Clear selection</button>
@@ -158,14 +162,21 @@ const REL = {
   feeds:      { width: 1.6, arrow: 4, label: "feeds" },
   type:       { width: 0.2, arrow: 0, label: "is a (class)" },
   subClassOf: { width: 1.0, arrow: 3, label: "subclass of" },
+  // Behaviour, from the sequences of operation (method document): intent, off by default.
+  drives:     { width: 1.0, arrow: 3, label: "drives", behaviour: true },
+  feedback:   { width: 1.0, arrow: 3, label: "feeds back to", behaviour: true },
+  requires:   { width: 1.0, arrow: 3, label: "requires (interlock)", behaviour: true },
+  resets:     { width: 1.0, arrow: 3, label: "resets", behaviour: true },
+  requests:   { width: 1.0, arrow: 3, label: "requests", behaviour: true },
+  switches:   { width: 1.0, arrow: 3, label: "switches mode of", behaviour: true },
 };
 const P = {};  // page colours
 function readTheme() {
   const s = getComputedStyle(document.documentElement), v = n => s.getPropertyValue(n).trim();
   for (const k of ["equipment", "point", "class"]) KIND_COLOR[k] = v(`--k-${k}`);
-  for (const k of ["parsed", "rule", "template", "llm", "human", "model"]) METHOD_COLOR[k] = v(`--m-${k}`);
+  for (const k of ["parsed", "rule", "template", "llm", "human", "document", "model"]) METHOD_COLOR[k] = v(`--m-${k}`);
   for (const k of ["proposed", "confirmed", "rejected"]) STATUS_COLOR[k] = v(`--s-${k}`);
-  for (const k of Object.keys(REL)) REL[k].color = v(`--r-${k}`);
+  for (const k of Object.keys(REL)) REL[k].color = v(REL[k].behaviour ? "--r-behaviour" : `--r-${k}`);
   Object.assign(P, { bg: v("--bg"), dim: v("--dim"), none: v("--none"), clsLight: v("--cls-light"), notes: v("--notes") });
 }
 readTheme();
@@ -194,7 +205,7 @@ const confColor = c => {
   return `rgb(${r}, ${g}, 73)`;
 };
 
-const state = { colorBy: "kind", hops: 0, showPoints: true, showModel: false, showFlow: true, selected: null };
+const state = { colorBy: "kind", hops: 0, showPoints: true, showModel: false, showFlow: true, showBehaviour: false, selected: null };
 let highlight = null;  // Set of node ids to keep bright, or null
 
 function baseColor(n) {
@@ -219,6 +230,7 @@ function layerOk(n) {
 }
 function linkLayerOk(l) {
   if ((l.rel === "type" || l.rel === "subClassOf") && !state.showModel) return false;
+  if (REL[l.rel]?.behaviour && !state.showBehaviour) return false;
   return layerOk(byId.get(l.s)) && layerOk(byId.get(l.t));
 }
 function visible() {
@@ -258,7 +270,7 @@ const Graph = ForceGraph3D({ controlType: "orbit" })(el)
   .linkOpacity(0.55)
   .linkDirectionalArrowLength(l => REL[l.rel]?.arrow || 0)
   .linkDirectionalArrowRelPos(1)
-  .linkDirectionalParticles(l => state.showFlow && l.rel === "feeds" ? 3 : 0)
+  .linkDirectionalParticles(l => state.showFlow && (l.rel === "feeds" || REL[l.rel]?.behaviour) ? (l.rel === "feeds" ? 3 : 1) : 0)
   .linkDirectionalParticleWidth(1.6)
   .linkDirectionalParticleSpeed(0.006)
   .linkLabel(l => `<div class="tip">${esc(byId.get(l.s).label)} <b>${esc(REL[l.rel]?.label || l.rel)}</b> ${esc(byId.get(l.t).label)}</div>`)
@@ -480,7 +492,7 @@ resultsEl.addEventListener("click", e => {
 // --- controls, stats, legend -------------------------------------------------------------------
 document.getElementById("colorBy").onchange = e => { state.colorBy = e.target.value; refresh(false); };
 document.getElementById("hops").onchange = e => { state.hops = +e.target.value; refresh(true); };
-for (const k of ["showPoints", "showModel", "showFlow"]) {
+for (const k of ["showPoints", "showModel", "showFlow", "showBehaviour"]) {
   document.getElementById(k).onchange = e => {
     state[k] = e.target.checked;
     if (state.selected?.kind === "node" && !layerOk(byId.get(state.selected.id))) clearSelection();
@@ -516,7 +528,8 @@ ViewerControls.mount({
   keys: [["/", "Search", () => { setCollapsed(false); searchEl.focus(); }],
          ["Esc", "Clear the selection", () => clearSelection()],
          ["P", "Points on / off", () => toggleLayer("showPoints")],
-         ["M", "Knowledge model layer on / off", () => toggleLayer("showModel")]],
+         ["M", "Knowledge model layer on / off", () => toggleLayer("showModel")],
+         ["B", "Behaviour (sequences) on / off", () => toggleLayer("showBehaviour")]],
 });
 
 function renderStats() {

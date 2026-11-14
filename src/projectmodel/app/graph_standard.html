@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Complete graph</title>
+<style>
+  /* Tokens follow the other viewers (agent_tour.html, graph3d.html), with --bg set to Streamlit's page colour since this
+     page reads as part of the app: the app sets data-theme, standalone follows the system. --done / --part / --miss are the three states of a fact today. */
+  :root {
+    color-scheme: light;
+    --bg: #ffffff; --panel: #ffffff; --line: #e3e1dc; --text: #25231f; --muted: #77726b; --chip: #f1f0ed;
+    --accent: #1F7FCC; --accent-soft: rgba(31, 127, 204, 0.12);
+    --done: #1f9d55; --part: #c98a12; --miss: #b9b4ab; --miss-text: #8a857d;
+    --l-spaces: #7a5af5; --l-systems: #1aa6bf; --l-equipment: #1F7FCC; --l-points: #e0752d; --l-behaviour: #c2369b; --l-trust: #1f9d55;
+    --shadow: 0 6px 24px rgba(30, 25, 15, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e1117; --panel: #171a21; --line: #34322e; --text: #edebe8; --muted: #a29e98; --chip: #2a2925;
+      --accent: #4DA3E8; --accent-soft: rgba(77, 163, 232, 0.16);
+      --done: #3fd17a; --part: #f2b134; --miss: #57534d; --miss-text: #8f8a83;
+      --l-spaces: #9d86ff; --l-systems: #4fd2e6; --l-equipment: #4DA3E8; --l-points: #ff9a55; --l-behaviour: #ef6fc8; --l-trust: #3fd17a;
+      --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0e1117; --panel: #171a21; --line: #34322e; --text: #edebe8; --muted: #a29e98; --chip: #2a2925;
+    --accent: #4DA3E8; --accent-soft: rgba(77, 163, 232, 0.16);
+    --done: #3fd17a; --part: #f2b134; --miss: #57534d; --miss-text: #8f8a83;
+    --l-spaces: #9d86ff; --l-systems: #4fd2e6; --l-equipment: #4DA3E8; --l-points: #ff9a55; --l-behaviour: #ef6fc8; --l-trust: #3fd17a;
+    --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 "Source Sans Pro", "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { padding: 4px 2px 24px; }
+  h2 { font-size: 20px; margin: 30px 0 4px; letter-spacing: -0.01em; }
+  .lead { color: var(--muted); margin: 0 0 14px; max-width: 760px; }
+  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
+    padding: 4px 11px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 1px 8px;
+    border-radius: 99px; white-space: nowrap; }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .pill.done { color: var(--done); background: color-mix(in srgb, var(--done) 13%, transparent); }
+  .pill.partial { color: var(--part); background: color-mix(in srgb, var(--part) 15%, transparent); }
+  .pill.missing { color: var(--miss-text); background: color-mix(in srgb, var(--miss) 22%, transparent); }
+
+  /* --- definitions ------------------------------------------------------------------------------------------- */
+  .defs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .def { padding: 18px 20px; display: grid; grid-template-columns: 96px 1fr; gap: 18px; align-items: center; }
+  .def h3 { margin: 0; font-size: 19px; }
+  .def .line { margin: 2px 0 8px; color: var(--muted); }
+  .def ul { margin: 0; padding-left: 18px; }
+  .def li { margin: 2px 0; }
+  .ring text { font-weight: 700; fill: var(--text); }
+  .ring .sub { font-size: 9px; font-weight: 400; fill: var(--muted); }
+  .counts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; align-items: center; color: var(--muted);
+    font-size: 12.5px; }
+
+  /* --- layers ---------------------------------------------------------------------------------------------------- */
+  .layers { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .diagram { padding: 10px; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .band { cursor: pointer; }
+  .band rect.bg { transition: opacity .15s; }
+  .band:hover rect.bg { opacity: .95; }
+  .band.dim { opacity: .35; }
+  .node-label { font-size: 11px; fill: var(--text); }
+  .band-title { font-size: 13px; font-weight: 700; }
+  .band-sub { font-size: 10.5px; fill: var(--muted); }
+  .rel { font-size: 10px; fill: var(--muted); font-style: italic; }
+  .facts { display: flex; flex-direction: column; gap: 8px; }
+  .facts-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+  .facts-head h3 { margin: 0; font-size: 16px; }
+  .fact { padding: 10px 14px; cursor: pointer; border-left: 4px solid var(--lc, var(--line)); }
+  .fact:hover { border-color: var(--accent); border-left-color: var(--lc); }
+  .fact .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .fact .name { font-weight: 600; }
+  .fact .q { color: var(--muted); font-size: 13px; margin-top: 1px; }
+  .fact .more { display: none; margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 10px; }
+  .fact.open .more { display: block; }
+  .kv { display: grid; grid-template-columns: 112px 1fr; gap: 5px 10px; font-size: 13px; }
+  .kv b { color: var(--muted); font-weight: 600; }
+  .bar { height: 7px; background: var(--chip); border-radius: 9px; overflow: hidden; margin: 2px 0 3px; }
+  .bar i { display: block; height: 100%; border-radius: 9px; }
+  .srcs { display: flex; flex-wrap: wrap; gap: 5px; }
+  .src { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 1px 8px 1px 6px;
+    border-radius: 7px; background: var(--chip); border: 1px solid var(--line); }
+  .src.later, .src.next { opacity: .8; }
+
+  /* --- matrix ---------------------------------------------------------------------------------------------------- */
+  .toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 10px; }
+  .toolbar .label { color: var(--muted); font-size: 12.5px; margin-right: 4px; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; color: var(--muted); font-size: 12.5px;
+    margin-left: auto; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .matrix-wrap { overflow-x: auto; padding: 4px 0; }
+  table.matrix { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 860px; font-size: 13px; }
+  .matrix th, .matrix td { padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--line); }
+  .matrix th.rowh, .matrix td.rowh { text-align: left; padding-left: 12px; white-space: nowrap; }
+  .matrix thead th { vertical-align: bottom; font-weight: 600; font-size: 12px; cursor: pointer; }
+  .matrix thead th.col:hover { color: var(--accent); }
+  .matrix thead .grp th { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase;
+    letter-spacing: .04em; border-bottom: none; padding-bottom: 0; cursor: default; }
+  .matrix thead .grp th.g { border-left: 1px solid var(--line); }
+  .colname { display: block; max-width: 92px; margin: 0 auto; line-height: 1.2; }
+  .avail { display: block; font-size: 10px; font-weight: 600; margin-top: 3px; }
+  .avail.now { color: var(--done); } .avail.next { color: var(--accent); } .avail.later { color: var(--miss-text); }
+  .matrix td.g, .matrix th.g { border-left: 1px solid var(--line); }
+  .matrix tbody tr:hover td { background: var(--accent-soft); }
+  .matrix tr.layer td { background: transparent !important; text-align: left; font-weight: 700; font-size: 12px;
+    padding-top: 14px; color: var(--lc); border-bottom: 1px solid var(--lc); }
+  .matrix .off { opacity: .2; }
+  .matrix th.sel, .matrix td.sel { background: var(--accent-soft); }
+  .dot { display: inline-block; width: 13px; height: 13px; border-radius: 50%; vertical-align: middle; }
+  .dot.primary { background: var(--accent); }
+  .dot.support { background: linear-gradient(90deg, var(--accent) 50%, transparent 50%); border: 2px solid var(--accent); }
+  .dot.check { border: 2px solid var(--accent); }
+  .reach { font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .reach.yes { color: var(--done); } .reach.no { color: var(--miss-text); }
+  .srcinfo { margin-top: 12px; padding: 12px 16px; display: none; }
+  .srcinfo.show { display: block; }
+  .srcinfo h4 { margin: 0 0 4px; font-size: 15px; }
+  .srcinfo p { margin: 0 0 6px; }
+  .note { color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+
+  @media (max-width: 860px) {
+    .defs, .layers { grid-template-columns: 1fr; }
+    .def { grid-template-columns: 72px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<section class="defs" id="defs"></section>
+<div class="counts" id="counts"></div>
+
+<h2>The graph, layer by layer</h2>
+<p class="lead">Four layers describe what the building has, a fifth how it is meant to behave, and Trust makes every
+  fact in them usable. Click a layer to see
+  its facts, and a fact to see its rule, where it comes from and how far the current project is.</p>
+<section class="layers">
+  <div class="card diagram"><svg id="diagram" viewBox="0 0 560 584" role="img"
+    aria-label="Layers of the building graph"></svg></div>
+  <div>
+    <div class="facts-head"><h3 id="facts-title">All facts</h3><button id="show-all" hidden>Show all layers</button></div>
+    <div class="facts" id="facts"></div>
+  </div>
+</section>
+
+<h2>Where each fact comes from</h2>
+<p class="lead">Every fact has a primary source, sources that help infer it, and sources that confirm it. Pick what
+  you have to see which facts it can deliver. Click a source for what it contains.</p>
+<div class="toolbar">
+  <span class="label">Sources available:</span>
+  <button data-stage="now" class="on">Today (BMS names + folders)</button>
+  <button data-stage="next">+ Niagara / CPO adapters</button>
+  <button data-stage="later">+ Documents and live data</button>
+  <div class="legend">
+    <span><i class="dot primary"></i>Primary</span>
+    <span><i class="dot support"></i>Helps infer</span>
+    <span><i class="dot check"></i>Confirms</span>
+  </div>
+</div>
+<div class="card matrix-wrap"><table class="matrix" id="matrix"></table></div>
+<div class="card srcinfo" id="srcinfo"></div>
+<p class="note" id="foot"></p>
+
+<script>
+const DATA = /*__DATA__*/null;
+const STAGES = ["now", "next", "later"];
+const ROLE_RANK = { primary: 0, support: 1, check: 2 };
+const ROLE_TEXT = { primary: "primary", support: "helps infer", check: "confirms" };
+const STATE_TEXT = { done: "Done", partial: "Partial", missing: "Missing" };
+const SCORE = { done: 1, partial: 0.5, missing: 0 };
+const src = Object.fromEntries(DATA.sources.map(s => [s.id, s]));
+const layerOf = Object.fromEntries(DATA.layers.map(l => [l.id, l]));
+const lc = id => `var(--l-${id})`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let layerFilter = null, stage = "now", selectedSource = null;
+
+// --- definitions: two rings, one per quality, scored from the facts' states today -------------------------------
+function ring(pct, color) {
+  const r = 38, c = 2 * Math.PI * r, v = Math.max(0, Math.min(100, pct));
+  return `<svg class="ring" viewBox="0 0 96 96" width="96" height="96">
+    <circle cx="48" cy="48" r="${r}" fill="none" stroke="var(--chip)" stroke-width="9"/>
+    <circle cx="48" cy="48" r="${r}" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round"
+      stroke-dasharray="${c * v / 100} ${c}" transform="rotate(-90 48 48)"/>
+    <text x="48" y="50" text-anchor="middle" font-size="20">${Math.round(v)}%</text>
+    <text class="sub" x="48" y="64" text-anchor="middle">today</text></svg>`;
+}
+function quality(ids) {
+  const fs = DATA.facts.filter(f => ids(f));
+  return 100 * fs.reduce((a, f) => a + SCORE[DATA.status[f.id].state], 0) / fs.length;
+}
+document.getElementById("defs").innerHTML = ["complete", "reliable"].map(k => {
+  const d = DATA.definitions[k];
+  const pct = quality(f => k === "reliable" ? f.layer === "trust" : f.layer !== "trust");
+  return `<div class="card def">${ring(pct, k === "complete" ? "var(--accent)" : "var(--done)")}
+    <div><h3>${d.title}</h3><p class="line">${d.line}</p><ul>${d.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>
+  </div>`;
+}).join("");
+const counts = { done: 0, partial: 0, missing: 0 };
+DATA.facts.forEach(f => counts[DATA.status[f.id].state]++);
+document.getElementById("counts").innerHTML = `On <b>${esc(DATA.project_label)}</b> today:
+  <span class="pill done">${counts.done} done</span><span class="pill partial">${counts.partial} partial</span>
+  <span class="pill missing">${counts.missing} missing</span>
+  <span>of ${DATA.facts.length} facts. A fact counts once for done, half for partial.</span>`;
+
+// --- layer diagram: stacked bands with a few real-looking nodes and the links between layers --------------------
+function diagram() {
+  const svg = document.getElementById("diagram");
+  const bands = [
+    { id: "spaces", y: 10, nodes: ["Building", "Level 1", "Zone 1-2-81", "Room 1.24"] },
+    { id: "systems", y: 118, nodes: ["Chilled water", "Hot water", "Air system AHU-2"] },
+    { id: "equipment", y: 226, nodes: ["AHU-2", "VAV 1-2-81", "Supply fan", "CH-1"] },
+    { id: "points", y: 334, nodes: ["Supply air temp", "Damper cmd", "Zone temp", "Zone temp setpoint"] },
+    { id: "behaviour", y: 456, nodes: ["Zone cooling loop", "Fan proof", "Supply air reset", "Occupied mode"] },
+  ];
+  const W = 470, H = 96, X = 8;
+  let out = "";
+  for (const b of bands) {
+    const l = layerOf[b.id], fs = DATA.facts.filter(f => f.layer === b.id);
+    const sc = fs.reduce((a, f) => a + SCORE[DATA.status[f.id].state], 0) / fs.length;
+    const step = (W - 40) / b.nodes.length;
+    out += `<g class="band${layerFilter && layerFilter !== b.id ? " dim" : ""}" data-layer="${b.id}" tabindex="0">
+      <rect class="bg" x="${X}" y="${b.y}" width="${W}" height="${H}" rx="12" fill="${lc(b.id)}" opacity=".1"
+        stroke="${lc(b.id)}" stroke-opacity="${layerFilter === b.id ? 1 : .35}" stroke-width="${layerFilter === b.id ? 2 : 1}"/>
+      <text class="band-title" x="${X + 14}" y="${b.y + 21}" fill="${lc(b.id)}">${l.name}</text>
+      <text class="band-sub" x="${X + W - 14}" y="${b.y + 21}" text-anchor="end">${Math.round(sc * 100)}% today · ${fs.length} facts</text>
+      <rect x="${X + 14}" y="${b.y + 29}" width="${W - 28}" height="4" rx="2" fill="var(--chip)"/>
+      <rect x="${X + 14}" y="${b.y + 29}" width="${(W - 28) * sc}" height="4" rx="2" fill="${lc(b.id)}"/>
+      ${b.nodes.map((n, i) => {
+        const cx = X + 20 + step * i + step / 2;
+        return `<circle cx="${cx}" cy="${b.y + 58}" r="9" fill="var(--panel)" stroke="${lc(b.id)}" stroke-width="2.5"/>
+          <text class="node-label" x="${cx}" y="${b.y + 83}" text-anchor="middle">${n}</text>`;
+      }).join("")}
+    </g>`;
+  }
+  // relations between layers (drawn at the left gutter of each gap)
+  const rels = [[106, "serves ↑"], [214, "part of ↑"], [322, "has point ↓"], [436, "reads and writes points, across equipment ↑"]];
+  out += rels.map(([y, t]) => `<text class="rel" x="${X + 14}" y="${y + 8}">${t}</text>`).join("");
+  // within-layer links
+  out += `<path d="M ${X + 20 + 107.5 / 2 + 0} ${226 + 58} m 11 0 l ${107.5 - 24} 0" stroke="${lc("equipment")}"
+    stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+    <text class="rel" x="${X + 20 + 107.5}" y="${226 + 51}" text-anchor="middle">feeds</text>`;
+  // trust: one band across every layer
+  const sc = DATA.facts.filter(f => f.layer === "trust").reduce((a, f) => a + SCORE[DATA.status[f.id].state], 0) /
+    DATA.facts.filter(f => f.layer === "trust").length;
+  out += `<g class="band${layerFilter && layerFilter !== "trust" ? " dim" : ""}" data-layer="trust" tabindex="0">
+    <rect class="bg" x="488" y="10" width="64" height="542" rx="12" fill="${lc("trust")}" opacity=".1"
+      stroke="${lc("trust")}" stroke-opacity="${layerFilter === "trust" ? 1 : .35}" stroke-width="${layerFilter === "trust" ? 2 : 1}"/>
+    <text class="band-title" fill="${lc("trust")}" transform="translate(526 281) rotate(-90)" text-anchor="middle">Trust · on every fact</text>
+    <text class="band-sub" transform="translate(542 281) rotate(-90)" text-anchor="middle">${Math.round(sc * 100)}% today</text>
+    ${[60, 168, 276, 384, 504].map(y => `<path d="M 478 ${y} h 10" stroke="${lc("trust")}" stroke-width="2"/>`).join("")}
+  </g>
+  <text class="band-sub" x="10" y="576">Example nodes from Alpha. Spaces are not in the graph yet; behaviour comes from the sequences document.</text>
+  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L8 4 L0 8 z" fill="${lc("equipment")}"/></marker></defs>`;
+  svg.innerHTML = out;
+  svg.querySelectorAll(".band").forEach(g => {
+    const pick = () => { layerFilter = layerFilter === g.dataset.layer ? null : g.dataset.layer; render(); };
+    g.addEventListener("click", pick);
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+  });
+}
+
+// --- fact cards ---------------------------------------------------------------------------------------------------
+const openFacts = new Set();
+function factCards() {
+  const fs = DATA.facts.filter(f => !layerFilter || f.layer === layerFilter);
+  document.getElementById("facts-title").textContent = layerFilter
+    ? `${layerOf[layerFilter].name}: ${layerOf[layerFilter].what}` : "All facts";
+  document.getElementById("show-all").hidden = !layerFilter;
+  document.getElementById("facts").innerHTML = fs.map(f => {
+    const s = DATA.status[f.id];
+    const roles = Object.entries(f.sources).sort((a, b) => ROLE_RANK[a[1]] - ROLE_RANK[b[1]]);
+    const pct = s.pct == null ? null : Math.round(s.pct);
+    return `<div class="card fact${openFacts.has(f.id) ? " open" : ""}" data-fact="${f.id}" style="--lc:${lc(f.layer)}">
+      <div class="top"><span class="name">${esc(f.name)}</span><span class="pill ${s.state}">${STATE_TEXT[s.state]}</span></div>
+      <div class="q">“${esc(f.question)}”</div>
+      <div class="more"><div class="kv">
+        <b>Complete when</b><span>${esc(f.rule)}</span>
+        <b>How</b><span>${esc(f.how)}</span>
+        <b>Sources</b><span class="srcs">${roles.map(([id, r]) => `<span class="src ${src[id].today}">
+          <i class="dot ${r}"></i>${esc(src[id].name)} · ${ROLE_TEXT[r]}</span>`).join("")}</span>
+        <b>Today</b><span>${pct == null ? "" : `<div class="bar"><i style="width:${pct}%;background:var(--${
+          s.state === "done" ? "done" : s.state === "partial" ? "part" : "miss"})"></i></div>${pct}% · `}${esc(s.note)}</span>
+      </div></div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll(".fact").forEach(el => el.addEventListener("click", () => {
+    const id = el.dataset.fact;
+    openFacts.has(id) ? openFacts.delete(id) : openFacts.add(id);
+    el.classList.toggle("open");
+  }));
+}
+document.getElementById("show-all").addEventListener("click", () => { layerFilter = null; render(); });
+
+// --- matrix: facts x sources; the stage dims sources not available yet and says which facts have a primary source ---
+const GROUPS = [...new Set(DATA.sources.map(s => s.group))];
+const available = s => STAGES.indexOf(s.today) <= STAGES.indexOf(stage);
+function matrix() {
+  const cols = GROUPS.flatMap(g => DATA.sources.filter(s => s.group === g));
+  const first = new Set(GROUPS.map(g => DATA.sources.find(s => s.group === g).id));
+  const cls = s => `${first.has(s.id) ? "g " : ""}${available(s) ? "" : "off "}${selectedSource === s.id ? "sel" : ""}`;
+  let h = `<thead><tr class="grp"><th></th>${GROUPS.map(g => `<th class="g" colspan="${
+    DATA.sources.filter(s => s.group === g).length}">${g}</th>`).join("")}<th class="g"></th></tr>
+    <tr><th class="rowh">Fact</th>${cols.map(s => `<th class="col ${cls(s)}" data-src="${s.id}" title="${esc(s.gives)}">
+      <span class="colname">${esc(s.name)}</span><span class="avail ${s.today}">${
+        { now: "now", next: "next", later: "later" }[s.today]}</span></th>`).join("")}
+      <th class="g">Has a primary source?</th></tr></thead><tbody>`;
+  let reachable = 0;
+  for (const l of DATA.layers) {
+    h += `<tr class="layer" style="--lc:${lc(l.id)}"><td colspan="${cols.length + 2}">${l.name}</td></tr>`;
+    for (const f of DATA.facts.filter(x => x.layer === l.id)) {
+      const ok = Object.entries(f.sources).some(([id, r]) => r === "primary" && available(src[id]));
+      reachable += ok;
+      h += `<tr><td class="rowh">${esc(f.name)}</td>${cols.map(s => `<td class="${cls(s)}">${
+        f.sources[s.id] ? `<i class="dot ${f.sources[s.id]}" title="${esc(s.name)}: ${ROLE_TEXT[f.sources[s.id]]}"></i>` : ""
+      }</td>`).join("")}<td class="g"><span class="reach ${ok ? "yes" : "no"}">${ok ? "Yes" : "Not yet"}</span></td></tr>`;
+    }
+  }
+  const table = document.getElementById("matrix");
+  table.innerHTML = h + "</tbody>";
+  table.querySelectorAll("th.col").forEach(th => th.addEventListener("click", () => {
+    selectedSource = selectedSource === th.dataset.src ? null : th.dataset.src;
+    render();
+  }));
+  document.getElementById("foot").textContent = `With these sources, ${reachable} of ${DATA.facts.length} facts have ` +
+    "a primary source. The rest can only be guessed, or not filled at all.";
+  const info = document.getElementById("srcinfo");
+  if (!selectedSource) { info.classList.remove("show"); return; }
+  const s = src[selectedSource];
+  const fed = DATA.facts.filter(f => f.sources[s.id]).sort((a, b) => ROLE_RANK[a.sources[s.id]] - ROLE_RANK[b.sources[s.id]]);
+  info.classList.add("show");
+  info.innerHTML = `<h4>${esc(s.name)} <span class="avail ${s.today}" style="display:inline">· ${
+    { now: "in the input today", next: "with the Niagara / CPO adapters", later: "with documents and live data" }[s.today]
+  }</span></h4><p>${esc(s.gives)}</p><div class="srcs">${fed.map(f => `<span class="src"><i class="dot ${f.sources[s.id]}"></i>${
+    esc(f.name)} · ${ROLE_TEXT[f.sources[s.id]]}</span>`).join("")}</div>`;
+}
+document.querySelectorAll("[data-stage]").forEach(b => b.addEventListener("click", () => {
+  stage = b.dataset.stage;
+  document.querySelectorAll("[data-stage]").forEach(x => x.classList.toggle("on", x === b));
+  render();
+}));
+
+function render() { diagram(); factCards(); matrix(); }
+render();
+</script>
+</body>
+</html>

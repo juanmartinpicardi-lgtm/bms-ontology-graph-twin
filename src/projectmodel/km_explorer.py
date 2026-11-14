@@ -3,7 +3,7 @@
 Read-only. The YAML/TTL files in /knowledge_model stay the source of truth; this only measures them
 against a mapped project (and its ground truth, when there is one).
 
-- class_coverage:   per model class, instances in the project, accuracy against ground truth, open reviews
+- class_coverage:   per model class, instances in the project, accuracy against ground truth, low-confidence instances
 - missing_classes:  ground-truth classes the model does not have (the mapper can never get these right)
 - template_fit:     per template, how often each slot is filled on equipment of that type, and what else shows up
 - unknown_tokens:   words in point names the name rules don't know, most frequent first
@@ -72,8 +72,7 @@ def class_coverage(km: KnowledgeModel, store: Store, project: str, gt: GroundTru
             "class": c, "depth": depth, "kind": info.kind, "defined in": "BA extension" if info.source == "ba" else "Brick",
             "group": info.group, "parent": info.subset_parent or "",
             "instances": len(inst),
-            "to review": sum(1 for n in inst if n["status"] == "proposed" and n["method"] != "human"
-                             and n["confidence"] < accept),
+            "low confidence": sum(1 for n in inst if n["method"] != "human" and n["confidence"] < accept),
             "human decided": sum(1 for n in inst if n["method"] == "human"),
             "true points": true_count.get(c, 0),
             "precision %": _pct(right, len(pts)),

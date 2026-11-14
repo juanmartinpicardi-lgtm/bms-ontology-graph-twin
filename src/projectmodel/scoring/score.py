@@ -5,8 +5,9 @@ H1  grouping: share of points (that have true equipment) placed on the right equ
     merging equipment costs points. Ungrouped points count as wrong.
 H2  classification: share of points (that have a ground-truth class) with exactly the right class,
     overall and among auto-accepted points. "compatible" also counts a parent/child of the true class.
-Review: share of points not auto-accepted (confidence below the threshold, no class, or flagged by a
-    convention's ignore rule) and not already decided by a human.
+Low confidence (`review_pct`): share of points the mapper is not sure of (confidence below the threshold,
+    no class, or flagged by a convention's ignore rule) and not decided by a human. Every best guess is in
+    the graph regardless; this only measures how far the confidence can be trusted.
 Every result says which convention layers the latest run used (`conventions`), so a score always
 says what it was built with.
 Cost and time per 1,000 points come from the latest run and its logged LLM calls.
@@ -95,7 +96,7 @@ def score_project(store: Store, project: str, gt: GroundTruth, km: KnowledgeMode
     def accepted(n) -> bool:
         if n["status"] == "rejected":
             return False
-        if n["method"] == "human" or n["status"] == "confirmed":
+        if n["method"] == "human":
             return True
         return bool(n["class"]) and n["confidence"] >= accept and "ignore" not in json.loads(n["attrs"])
 
@@ -161,7 +162,7 @@ def score_project(store: Store, project: str, gt: GroundTruth, km: KnowledgeMode
         "H2_auto_accepted_exact_pct": _pct(len(auto_exact), len(auto)),
         "H2_unreachable_classes": unreachable,
         "review_pct": _pct(len(to_review), len(points)),
-        "human_decided": sum(1 for n in points if n["method"] == "human" or n["status"] != "proposed"),
+        "human_decided": sum(1 for n in points if n["method"] == "human"),
         "equipment_class_exact_pct": _pct(eq_exact, len(eq_pairs)),
         "equipment_matched": len(matched),
         "equipment_true": len(gt.equipment),

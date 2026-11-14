@@ -1,9 +1,8 @@
-"""Review screen: proposed items sorted by confidence; accept / fix / reject in bulk.
-Tree tab: equipment tree with points and the provenance of every node and edge, plus notes
+"""Tree: equipment tree with points and the provenance of every node and edge, plus notes
 (free-text tribal knowledge) on equipment, points, links and the whole project.
 
 Runs as a page of src/projectmodel/app/main.py; the project comes from the shared project picker.
-Decisions are written to data/kg.sqlite with method=human and survive mapper reruns.
+Every class is the mapper's best guess (or a person's earlier decision); there is no review queue.
 """
 
 import json
@@ -16,13 +15,13 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel import notes, review  # noqa: E402
+from projectmodel import notes  # noqa: E402
 from projectmodel.app.shell import active_project  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.equipment_view import load_anchors  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.scoring.score import DEFAULT_ACCEPT, GT_DIR, load_ground_truth, score_project  # noqa: E402
-from projectmodel.tree import UNPLACED, build_tree  # noqa: E402
+from projectmodel.tree import UNPLACED, build_tree, provenance  # noqa: E402
 
 DB = ROOT / "data/kg.sqlite"
 
@@ -39,129 +38,26 @@ def ground_truth(site: str):
 km = knowledge_model()
 store = Store(DB)
 
-# --- Header: reviewer, auto-accept threshold, live score ---------------------------------------
+# --- Header: live score ----------------------------------------------------------------------
 projects = [r[0] for r in store.conn.execute("SELECT DISTINCT project FROM nodes ORDER BY project")]
 if not projects:
     st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
     st.stop()
 project = active_project(projects)
 
-st.caption("Proposed items sorted by confidence · decisions are saved as method=human and survive mapper reruns")
-with st.container(horizontal=True, vertical_alignment="bottom", gap="medium"):
-    reviewer = st.text_input("Reviewer", value=st.session_state.get("reviewer", ""), placeholder="your name",
-                             width=220, help="Every decision is attributed to this name.")
-    st.session_state["reviewer"] = reviewer
-    with st.popover("Auto-accept ≥ " + f"{st.session_state.get('accept_at', DEFAULT_ACCEPT):.2f}",
-                    icon=":material/tune:"):
-        accept_at = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="accept_at")
+st.caption("Every equipment and point with the mapper's best guess · select a row for where each fact came from")
 site = project.split("/")[0]
 with st.container(horizontal=True, gap="small"):
     if (GT_DIR / site).exists():
-        s = score_project(store, project, ground_truth(site), km, accept_at)
+        s = score_project(store, project, ground_truth(site), km, DEFAULT_ACCEPT)
         for name, value, tip in [
                 ("Right equipment (H1)", f"{s['H1_grouped_right_pct']}%", "Points grouped on the right equipment"),
                 ("Class exact (H2)", f"{s['H2_exact_pct']}%", "Points with exactly the right class"),
-                ("Exact, auto-accepted", f"{s['H2_auto_accepted_exact_pct']}%", "Among auto-accepted points"),
-                ("To review", f"{s['review_pct']}%", "Share of points below the threshold or flagged"),
-                ("Decided by a human", s["human_decided"], "Accepted, fixed or rejected by a reviewer")]:
+                ("Class compatible", f"{s['H2_compatible_pct']}%", "Right class, or its parent or child"),
+                ("Equipment class", f"{s['equipment_class_exact_pct']}%", "Equipment with the right class")]:
             st.metric(name, value, help=tip, border=True, width="content")
     else:
         st.caption("No ground truth for this project, so no score.")
-
-
-def need_reviewer() -> bool:
-    if not reviewer.strip():
-        st.error("Enter your name in Reviewer above first, so every decision is attributed.")
-        return True
-    return False
-
-
-def frame(kind: str) -> pd.DataFrame:
-    rows = []
-    note_count = notes.active_counts(store, project)
-    hp = {e["dst"]: e["src"] for e in store.edges(project, "hasPoint") if e["status"] != "rejected"}
-    for n in store.nodes(project, kind):
-        a = json.loads(n["attrs"])
-        alts = ", ".join(f"{c} ({s:g})" for c, s in a.get("alternatives", [])[1:4])
-        rows.append({
-            "select": False, "id": n["id"], "name": n["label"],
-            "equipment": (hp.get(n["id"], "")[3:] if kind == "point" else a.get("template") or ""),
-            "class": n["class"] or "", "confidence": n["confidence"], "method": n["method"],
-            "status": n["status"], "alternatives": alts if kind == "point" else "",
-            "points": a.get("points", "") if kind == "equipment" else "",
-            "notes": note_count.get(("node", n["id"]), 0),
-            "flag": a["ignore"]["reason"] if "ignore" in a else "",
-        })
-    return pd.DataFrame(rows)
-
-
-def review_tab(kind: str):
-    df = frame(kind)
-    if df.empty:
-        st.info(f"No {kind} nodes.")
-        return
-    f1, f2, f3, f4 = st.columns([1.2, 1, 1.4, 1.4])
-    statuses = f1.multiselect("Status", ["proposed", "confirmed", "rejected"], ["proposed"], key=f"st_{kind}")
-    max_conf = f2.slider("Confidence ≤", 0.0, 1.0, 1.0, 0.05, key=f"mc_{kind}")
-    text = f3.text_input("Name / equipment contains", key=f"tx_{kind}")
-    cls_filter = f4.selectbox("Class", ["(any)"] + sorted(c for c in df["class"].unique() if c), key=f"cl_{kind}")
-    view = df[df["status"].isin(statuses) & (df["confidence"] <= max_conf)]
-    if text:
-        view = view[view["name"].str.contains(text, case=False) | view["equipment"].str.contains(text, case=False)]
-    if cls_filter != "(any)":
-        view = view[view["class"] == cls_filter]
-    view = view.sort_values(["confidence", "name"]).reset_index(drop=True)
-
-    limit = st.number_input("Rows shown", 10, 5000, 200, 50, key=f"lim_{kind}")
-    st.caption(f"{len(view)} {kind} items match, lowest confidence first. Showing {min(len(view), limit)}.")
-    view = view.head(int(limit))
-    if st.checkbox("Select all shown", key=f"all_{kind}"):
-        view["select"] = True
-    cols = ["select", "name", "equipment", "class", "notes", "confidence", "method", "status"]
-    cols += ["flag", "alternatives"] if kind == "point" else ["points"]
-    edited = st.data_editor(
-        view[cols + ["id"]], hide_index=True, width="stretch", height=420,
-        disabled=[c for c in cols + ["id"] if c != "select"],
-        column_config={"id": None, "confidence": st.column_config.ProgressColumn(min_value=0, max_value=1, format="%.2f"),
-                       "select": st.column_config.CheckboxColumn("✓", width="small"),
-                       "notes": st.column_config.NumberColumn("📝", width="small", help="Active notes")},
-        key=f"ed_{kind}_{project}",
-    )
-    chosen = edited[edited["select"]]["id"].tolist()
-    st.write(f"**{len(chosen)} selected**")
-
-    a1, a2, a3 = st.columns([1, 1, 2.5])
-    if a1.button("Accept", key=f"acc_{kind}", disabled=not chosen, type="primary"):
-        if not need_reviewer():
-            st.session_state["flash"] = f"Accepted {review.accept(store, project, chosen, reviewer)} {kind} items."
-            st.rerun()
-    if a2.button("Reject", key=f"rej_{kind}", disabled=not chosen):
-        if not need_reviewer():
-            st.session_state["flash"] = f"Rejected {review.reject(store, project, chosen, reviewer)} {kind} items."
-            st.rerun()
-    with a3.form(key=f"fix_{kind}", border=False):
-        options = km.by_kind("point") if kind == "point" else km.by_kind("equipment") + km.by_kind("system")
-        c_sel, c_btn = st.columns([3, 1])
-        new_cls = c_sel.selectbox("Fix class to", options, label_visibility="collapsed", key=f"fc_{kind}")
-        why = st.text_input("Why? (optional, saved as a note on each fixed item)", key=f"why_{kind}")
-        if c_btn.form_submit_button("Fix class", disabled=not chosen) and not need_reviewer():
-            n = review.fix_class(store, km, project, chosen, new_cls, reviewer)
-            if why.strip():
-                labels = dict(zip(edited["id"], edited["name"]))
-                for i in chosen:
-                    notes.add_note(store, project, "node", i, labels.get(i, i), "naming", why, reviewer,
-                                   source="review", source_ref=f"fix to {new_cls}")
-            st.session_state["flash"] = f"Set {n} {kind} items to {new_cls}."
-            st.rerun()
-    if kind == "point":
-        equips = sorted(n["id"] for n in store.nodes(project, "equipment"))
-        with st.form(key="move", border=False):
-            m1, m2 = st.columns([3, 1])
-            target = m1.selectbox("Move selected points to equipment", equips, format_func=lambda e: e[3:])
-            if m2.form_submit_button("Move", disabled=not chosen) and not need_reviewer():
-                n = review.move_points(store, project, chosen, target, reviewer)
-                st.session_state["flash"] = f"Moved {n} points to {target[3:]}."
-                st.rerun()
 
 
 def fact(what: str, p: dict | None) -> dict:
@@ -172,6 +68,24 @@ def fact(what: str, p: dict | None) -> dict:
             "status": p.get("status", ""), "ref": p.get("source_ref", ""), "revision": p.get("revision"),
             "reviewed": f"{r['action']} by {r['by']} at {r['at'][:16]}" if r else "",
             "convention": ", ".join(p.get("convention", [])), "source": p.get("source_file", "")}
+
+
+BEHAVIOUR = {"drives": ("drives", "driven by"), "feedback": ("feeds back to", "fed back by"),
+             "requires": ("requires", "required by"), "resets": ("resets", "reset by"),
+             "requests": ("requests", "requested by"), "switches": ("switches mode of", "mode switched by")}
+
+
+def behaviour_facts(tree, nid: str) -> list[dict]:
+    """The sequences' behaviour edges on this node (method document: intent, from the sequence of operation)."""
+    out = []
+    for e in store.edges(project):
+        if e["method"] != "document" or e["rel"] not in BEHAVIOUR or nid not in (e["src"], e["dst"]):
+            continue
+        other = e["dst"] if e["src"] == nid else e["src"]
+        verb = BEHAVIOUR[e["rel"]][e["src"] != nid]
+        label = tree.by_id[other].label if other in tree.by_id else other
+        out.append(fact(f"{verb} {label} (sequence, intent)", provenance(e)))
+    return out
 
 
 def provenance_table(rows: list[dict]):
@@ -224,11 +138,13 @@ def add_note_form(targets: list[tuple[str, str, str]], key: str):
             topic = st.selectbox("Topic", notes.TOPICS, key=f"natp_{key}")
             body = st.text_area("Note", key=f"nabd_{key}",
                                 placeholder="What should the next engineer know? e.g. 'RF VFD removed in 2022 retrofit'")
-            if st.form_submit_button("Save note") and not need_reviewer():
-                if not body.strip():
-                    st.error("Write something first.")
+            author = st.text_input("Your name", value=st.session_state.get("author", ""), key=f"nau_{key}")
+            if st.form_submit_button("Save note"):
+                if not body.strip() or not author.strip():
+                    st.error("Write the note and your name first.")
                 else:
-                    notes.add_note(store, project, t[0], t[1], t[2], topic, body, reviewer, source="manual")
+                    st.session_state["author"] = author
+                    notes.add_note(store, project, t[0], t[1], t[2], topic, body, author, source="manual")
                     st.session_state["flash"] = f"Note added to {t[2]}."
                     st.rerun()
 
@@ -248,13 +164,9 @@ def tree_tab():
     with st.expander(f"Project notes ({sum(x['status'] == 'active' for x in proj_notes)} active)"):
         show_notes(sorted(proj_notes, key=lambda x: (x["status"] != "active", x["id"])), "proj")
         add_note_form([("project", "", f"project {project}")], "proj")
-    f1, f2 = st.columns([2, 1])
-    text = f1.text_input("Find equipment or point", key="tree_tx").strip().lower()
-    only_open = f2.toggle("Only equipment with proposed items", key="tree_open")
+    text = st.text_input("Find equipment or point", key="tree_tx").strip().lower()
 
     def matches(n) -> bool:
-        if only_open and n.prov.get("status") != "proposed" and all(p.prov["status"] != "proposed" for p in n.points):
-            return False
         return not text or text in n.label.lower() or text in (n.cls or "").lower() or \
             any(text in p.label.lower() for p in n.points)
 
@@ -291,6 +203,7 @@ def tree_tab():
             facts.append(fact(f"part of {tree.by_id[tree.parent[n.id]].label}", n.via))
         facts += [fact(f"feeds {tree.by_id[d].label}", p) for d, p in tree.feeds_to(n.id)]
         facts += [fact(f"fed by {tree.by_id[s].label}", p) for s, p in tree.fed_by(n.id)]
+        facts += behaviour_facts(tree, n.id)
         if facts:
             provenance_table(facts)
         if n.attrs.get("template") or n.attrs.get("evidence"):
@@ -330,7 +243,8 @@ def tree_tab():
         if pev.selection.rows:
             p = tree.by_id[pts.iloc[pev.selection.rows[0]]["id"]]
             st.markdown(f"**{p.label}** · `{p.attrs.get('source_id', '')}`")
-            provenance_table([fact(f"class = {p.cls or '(none)'}", p.prov), fact(f"on {n.label}", p.via)])
+            provenance_table([fact(f"class = {p.cls or '(none)'}", p.prov), fact(f"on {n.label}", p.via)]
+                             + behaviour_facts(tree, p.id))
             a = p.attrs
             detail = {"name words": a.get("words"), "unknown tokens": a.get("unknown_tokens"),
                       "alternatives (class, score)": [f"{c} ({s:g})" for c, s in a.get("alternatives", [])],
@@ -338,7 +252,7 @@ def tree_tab():
             if "review" in a:
                 detail["before review"] = a["review"].get("previous")
             if "ignore" in a:
-                detail["flagged for review"] = f"{a['ignore']['reason']} ({a['ignore']['convention']})"
+                detail["flagged by convention"] = f"{a['ignore']['reason']} ({a['ignore']['convention']})"
             st.json({k: v for k, v in detail.items() if v}, expanded=True)
             targets = [("node", p.id, p.label)]
             if n.id != UNPLACED:
@@ -348,11 +262,4 @@ def tree_tab():
 
 if msg := st.session_state.pop("flash", None):
     st.success(msg)
-# Keyed so a save (flash + rerun) keeps the reviewer on the tab they were working in.
-tab_p, tab_e, tab_t = st.tabs(["Points", "Equipment", "Tree"], key="main_tab", on_change="rerun")
-with tab_p:
-    review_tab("point")
-with tab_e:
-    review_tab("equipment")
-with tab_t:
-    tree_tab()
+tree_tab()

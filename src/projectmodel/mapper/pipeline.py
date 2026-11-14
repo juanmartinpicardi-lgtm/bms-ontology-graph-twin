@@ -191,7 +191,9 @@ class Mapper:
         t = g.template
         for pid in g.points:
             guess = guesses[pid]
-            if not guess.cls or not t or guess.hint:  # a class hint is final
+            # A class hint is final. A fallback guess (no class name matched, so no alternatives) says only
+            # the point's function, too little to give it one of the template's slots.
+            if not guess.cls or not t or guess.hint or not guess.alternatives:
                 continue
             cls, conf, method = guess.cls, guess.confidence, "rule"
             slot_classes = [c for s in t.slots for c in s.classes]

@@ -72,9 +72,11 @@ def test_medium_feeds_need_evidence_and_a_single_source(km):
     assert not store2.edges("t", "feeds")
 
 
-def test_unknown_name_gets_no_class(km):
+def test_unknown_name_gets_generic_class(km):
     g = ClassMatcher(km, "point").classify("Zork Blarg")
-    assert g.cls is None and g.confidence == 0.0 and g.unknown == ["zork", "blarg"]
+    assert g.cls == "Sensor" and g.confidence == 0.1 and g.unknown == ["zork", "blarg"]
+    assert ClassMatcher(km, "point").classify("Zork Status").cls == "Status"
+    assert ClassMatcher(km, "equipment").classify("Zork Blarg").cls is None
 
 
 def test_equipment_ids_in_names(km):
@@ -115,7 +117,7 @@ def test_end_to_end_alpha(alpha_run):
     assert len(store.edges("alpha/names_paths", "hasPoint")) == len(recs)
     for n in points + store.nodes("alpha/names_paths", "equipment"):
         assert n["method"] in METHODS and 0 <= n["confidence"] <= 1
-        assert n["source_file"] and n["source_ref"] and n["status"] == "proposed" and n["revision"] == 1
+        assert n["source_file"] and n["source_ref"] and n["status"] == "confirmed" and n["revision"] == 1
     assert summary["llm_calls"] == 0
 
 

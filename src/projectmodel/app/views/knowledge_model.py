@@ -40,9 +40,9 @@ gt = ground_truth(site) if project and (GT_DIR / site).exists() else None
 with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
     st.caption("Shared by every project. Edit it in `knowledge_model/` and rerun the mapper; this page is read-only."
                if project else "No mapped projects yet, so only the model itself is shown.")
-    with st.popover("Auto-accept ≥ " + f"{st.session_state.get('km_accept', DEFAULT_ACCEPT):.2f}",
+    with st.popover("Low confidence < " + f"{st.session_state.get('km_accept', DEFAULT_ACCEPT):.2f}",
                     icon=":material/tune:"):
-        accept = st.slider("Auto-accept at confidence ≥", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="km_accept")
+        accept = st.slider("Count as low confidence below", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="km_accept")
 classes = km.classes.values()
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Classes", len(km.classes), help="Brick subset + BA extension")
@@ -75,7 +75,7 @@ with tab_c:
     if weak:
         view = view[(view["precision %"].fillna(100) < 80) | (view["recall %"].fillna(100) < 80)]
     view = view.assign(name=[" " * d + c for c, d in zip(view["class"], view["depth"])]).reset_index(drop=True)
-    cols = ["name", "kind", "defined in", "instances", "to review", "human decided", "true points",
+    cols = ["name", "kind", "defined in", "instances", "low confidence", "human decided", "true points",
             "precision %", "recall %", "used by templates"]
     st.caption(f"{len(view)} of {len(cov)} classes, indented under their parent in the model. "
                "Precision: of points we gave this class, % right. Recall: of points that truly are this class, % found. "

@@ -19,6 +19,7 @@ from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 from projectmodel.mapper.llm import get_provider  # noqa: E402
 from projectmodel.mapper.pipeline import Mapper  # noqa: E402
+from projectmodel.sequences import store_behaviour  # noqa: E402
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -33,5 +34,9 @@ if __name__ == "__main__":
     records = read_blind_export(ROOT / "data/blind" / args.site / f"{args.variant}.csv")
     km = load_knowledge_model(conventions=[] if args.blind else scopes_for(project))
     mapper = Mapper(km, llm=get_provider(args.llm))
-    summary = mapper.run(records, Store(args.db), project)
+    store = Store(args.db)
+    summary = mapper.run(records, store, project)
+    # The sequences' behaviour edges point at mapped nodes: reload them on the graph just built.
+    if (behaviour := store_behaviour(store, km, project)) is not None:
+        summary["behaviour"] = {k: behaviour[k] for k in ("stored", "edges")} | {"skipped": len(behaviour["skipped"])}
     print(json.dumps(summary, indent=2))

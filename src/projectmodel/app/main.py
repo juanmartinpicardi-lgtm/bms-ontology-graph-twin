@@ -4,7 +4,7 @@ Run: .venv/bin/streamlit run src/projectmodel/app/main.py
 
 An icon rail on the left picks the area; chips at the top pick the page inside it.
 
-Overview          why the knowledge graph matters, how it works
+Overview          why the knowledge graph matters, how it works, what a complete graph is
 Projects          every building, and adding a new one; then one project's pages, with the building and input
                   switched in the project header
 Digital twin      the active project as a building: floors, zones and equipment in 3D, with a floor plan
@@ -27,6 +27,8 @@ st.set_page_config(page_title="Project Model", page_icon=":material/hub:", layou
 overview = [
     st.Page(APP / "views/why.py", title="Why it matters", icon=":material/bolt:", default=True),
     st.Page(APP / "views/how.py", title="How it works", icon=":material/schema:", url_path="how-it-works"),
+    st.Page(APP / "views/complete_graph.py", title="Complete graph", icon=":material/task_alt:",
+            url_path="complete-graph"),
     st.Page(APP / "views/agent_tour.py", title="Agent tour", icon=":material/smart_toy:", url_path="agent-tour"),
 ]
 projects = [
@@ -34,10 +36,11 @@ projects = [
     st.Page(APP / "views/new_project.py", title="New project", icon=":material/add_business:", url_path="new-project"),
 ]
 this_project = [
-    st.Page(APP / "review_app.py", title="Review", icon=":material/fact_check:", url_path="review"),
+    st.Page(APP / "tree_app.py", title="Tree", icon=":material/account_tree:", url_path="tree"),
     st.Page(APP / "views/graph_3d.py", title="Graph 3D", icon=":material/bubble_chart:", url_path="Graph_3D"),
     st.Page(APP / "views/equipment_3d.py", title="Equipment 3D", icon=":material/view_in_ar:",
             url_path="Equipment_3D"),
+    st.Page(APP / "views/sequences.py", title="Sequences", icon=":material/sync_alt:", url_path="sequences"),
     st.Page(APP / "views/data_tables.py", title="Data tables", icon=":material/table:", url_path="data"),
     st.Page(APP / "views/notes.py", title="Notes", icon=":material/sticky_note_2:", url_path="Notes"),
 ]

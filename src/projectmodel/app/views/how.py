@@ -16,7 +16,7 @@ km = knowledge_model()
 store = get_store()
 info = summaries(store)
 
-st.write("Exports from engineering tools go in. A reviewed knowledge graph of the building comes out. "
+st.write("Exports from engineering tools go in. A complete knowledge graph of the building comes out. "
          "Data flows one way: nothing is ever written back to the source tools.")
 
 st.header("Four steps")
@@ -27,10 +27,10 @@ steps = [
                                      "Cheapest method first: structure → naming rules → equipment templates → "
                                      "an LLM only for what's left, with a short list of candidates.",
      "Every result gets a confidence between 0 and 1."),
-    ("fact_check", "3 · Review", "Confident results are accepted automatically. The rest go to a person, "
-                                 "sorted by confidence, to accept, fix or reject in bulk.",
-     "Every decision is saved as a human fact."),
-    ("hub", "4 · Use", "The graph powers the views here: tree, 3D graph, equipment, tables. "
+    ("hub", "3 · Build the graph", "Every point and equipment gets the best guess, linked into one graph: "
+                                   "points on equipment, parts, and what feeds what.",
+     "Each fact keeps its source, method and confidence."),
+    ("explore", "4 · Use", "The graph powers the views here: tree, 3D graph, equipment, tables. "
                        "Next: agents and plain-language questions.", "One graph per building."),
 ]
 for col, (icon, head, body, foot) in zip(st.columns(4), steps):
@@ -52,13 +52,13 @@ with left.container(border=True, height="stretch"):
     st.page_link("views/knowledge_model.py", label="Explore the knowledge model", icon=":material/arrow_forward:")
 with right.container(border=True, height="stretch"):
     st.markdown("#### :material/apartment: Inside each project")
-    st.markdown("**Building graph**: equipment, points and how they connect, with review decisions.")
+    st.markdown("**Building graph**: equipment, points and how they connect, with the source of every fact.")
     st.markdown("**Graphics**: 3D graph; 3D equipment :gray-badge[coming]")
     st.markdown("**Data tables**: points, equipment, links.")
     st.markdown("**Tribal knowledge, site part**: site conventions and notes, e.g. "
                 "*\"AHU-3 was replaced in 2022\"*. :gray-badge[coming]")
     st.page_link("views/projects.py", label="See the projects", icon=":material/arrow_forward:")
-st.caption("The loop: each project's review fixes become site conventions, good ones are promoted to contractor "
+st.caption("The loop: each project's naming habits become site conventions, good ones are promoted to contractor "
            "or customer conventions, and the best become knowledge-model rules. The next building maps better.")
 
 st.header("Every fact can be traced")

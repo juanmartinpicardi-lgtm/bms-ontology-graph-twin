@@ -1,8 +1,10 @@
 """SQLite store for the knowledge graph: nodes and edges, every one with provenance.
 
 Every node and edge stores: source_file, source_ref (row number or folder path), method
-(parsed | rule | template | llm | human), confidence (0-1), status (proposed | confirmed | rejected),
-revision. A mapper run replaces the project's machine-made rows and keeps human ones.
+(parsed | rule | template | llm | human | document), confidence (0-1), status (proposed | confirmed | rejected),
+revision. A mapper run replaces the project's machine-made rows and keeps human ones and document ones
+(behaviour edges read from a sequence of operation). The mapper's best guess is accepted as is (status
+confirmed); method and confidence still say how it was decided.
 """
 
 from __future__ import annotations
@@ -12,7 +14,8 @@ import sqlite3
 from dataclasses import dataclass, field
 from pathlib import Path
 
-METHODS = ("parsed", "rule", "template", "llm", "human")
+METHODS = ("parsed", "rule", "template", "llm", "human", "document")
+KEPT = ("human", "document")  # a mapper run never deletes these: people decided them, or a document states them
 STATUSES = ("proposed", "confirmed", "rejected")
 
 SCHEMA = f"""
@@ -116,7 +119,20 @@ class Store:
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(self.path)
         self.conn.row_factory = sqlite3.Row
+        self._migrate_methods()
         self.conn.executescript(SCHEMA)
+
+    def _migrate_methods(self) -> None:
+        """Older databases check method against a shorter list; rebuild those tables with the current check."""
+        for table in ("nodes", "edges"):
+            row = self.conn.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()
+            if not row or all(f"'{m}'" in row[0] for m in METHODS):
+                continue
+            with self.conn:
+                self.conn.execute(f"ALTER TABLE {table} RENAME TO {table}_old")
+                self.conn.executescript(SCHEMA)
+                self.conn.execute(f"INSERT INTO {table} SELECT * FROM {table}_old")
+                self.conn.execute(f"DROP TABLE {table}_old")
 
     def start_run(self, project: str, source_file: str) -> int:
         cur = self.conn.execute("SELECT COALESCE(MAX(revision), 0) + 1 FROM runs WHERE project = ?", (project,))
@@ -126,11 +142,11 @@ class Store:
         return revision
 
     def replace_machine_rows(self, project: str, revision: int, nodes: list[Node], edges: list[Edge]) -> None:
-        """Drop the project's non-human rows, then write this run's nodes and edges.
+        """Drop the project's machine rows (not human or document ones), then write this run's nodes and edges.
         Human rows win: a machine row never overwrites a node or edge a person already decided."""
         with self.conn:
-            self.conn.execute("DELETE FROM nodes WHERE project = ? AND method != 'human'", (project,))
-            self.conn.execute("DELETE FROM edges WHERE project = ? AND method != 'human'", (project,))
+            self.conn.execute(f"DELETE FROM nodes WHERE project = ? AND method NOT IN {KEPT}", (project,))
+            self.conn.execute(f"DELETE FROM edges WHERE project = ? AND method NOT IN {KEPT}", (project,))
             # A point a person placed on equipment keeps that placement only.
             placed = {r[0] for r in self.conn.execute(
                 "SELECT dst FROM edges WHERE project = ? AND rel = 'hasPoint' AND method = 'human'"
@@ -138,15 +154,28 @@ class Store:
             edges = [e for e in edges if not (e.rel == "hasPoint" and e.dst in placed)]
             self.conn.executemany(
                 "INSERT OR IGNORE INTO nodes (project, id, kind, label, class, source_file, source_ref, method,"
-                " confidence, revision, attrs) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                " confidence, status, revision, attrs) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed', ?, ?)",
                 [(project, n.id, n.kind, n.label, n.cls, n.source_file, n.source_ref, n.method,
                   round(n.confidence, 4), revision, json.dumps(n.attrs)) for n in nodes],
             )
             self.conn.executemany(
                 "INSERT OR IGNORE INTO edges (project, src, rel, dst, source_file, source_ref, method,"
-                " confidence, revision, attrs) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                " confidence, status, revision, attrs) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'confirmed', ?, ?)",
                 [(project, e.src, e.rel, e.dst, e.source_file, e.source_ref, e.method,
                   round(e.confidence, 4), revision, json.dumps(e.attrs)) for e in edges],
+            )
+
+    def replace_document_edges(self, project: str, source_file: str, revision: int, edges: list[Edge]) -> None:
+        """Replace every edge one document stated for this project (method document). Never touches a row
+        that already holds the same src, rel and dst from another method."""
+        with self.conn:
+            self.conn.execute("DELETE FROM edges WHERE project = ? AND method = 'document' AND source_file = ?",
+                              (project, source_file))
+            self.conn.executemany(
+                "INSERT OR IGNORE INTO edges (project, src, rel, dst, source_file, source_ref, method,"
+                " confidence, status, revision, attrs) VALUES (?, ?, ?, ?, ?, ?, 'document', ?, 'confirmed', ?, ?)",
+                [(project, e.src, e.rel, e.dst, source_file, e.source_ref, round(e.confidence, 4), revision,
+                  json.dumps(e.attrs)) for e in edges],
             )
 
     def finish_run(self, project: str, revision: int, seconds: float, summary: dict) -> None:

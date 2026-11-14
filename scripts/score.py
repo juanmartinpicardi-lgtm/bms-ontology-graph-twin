@@ -33,10 +33,10 @@ ROWS = [
     ("    ungrouped points", "H1_points_ungrouped", ""),
     ("H2  class exact (all labelled)", "H2_exact_pct", "%"),
     ("    class compatible (parent/child ok)", "H2_compatible_pct", "%"),
-    ("    auto-accepted (share of labelled)", "H2_auto_accepted_pct_of_labelled", "%"),
-    ("    class exact among auto-accepted", "H2_auto_accepted_exact_pct", "%"),
+    ("    above threshold (share of labelled)", "H2_auto_accepted_pct_of_labelled", "%"),
+    ("    class exact when above threshold", "H2_auto_accepted_exact_pct", "%"),
     ("    true class not in knowledge model", "H2_unreachable_classes", ""),
-    ("Sent to review", "review_pct", "%"),
+    ("Below confidence threshold", "review_pct", "%"),
     ("Decided by a human", "human_decided", ""),
     ("Equipment class exact (matched)", "equipment_class_exact_pct", "%"),
     ("LLM calls", "llm_calls", ""),
@@ -59,7 +59,7 @@ def column(r: dict) -> str:
 def print_report(results: list[dict]) -> None:
     cols = [column(r) for r in results]
     w = max(30, *(len(c) for c in cols)) + 2
-    print(f"\nScore report (auto-accept at confidence >= {results[0]['accept_threshold']})\n")
+    print(f"\nScore report (confidence threshold {results[0]['accept_threshold']})\n")
     print(" " * 40 + "".join(c.rjust(w) for c in cols))
     print("conventions".ljust(40) + "".join(
         (", ".join(r["conventions"]) or "none").rjust(w) for r in results))

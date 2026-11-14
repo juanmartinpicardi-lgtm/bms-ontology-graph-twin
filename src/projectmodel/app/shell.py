@@ -25,7 +25,8 @@ def viewer_options(key: str, default: int, note: str = "") -> int:
     own controls inside; this only holds what the app decides."""
     with st.popover("View", icon=":material/tune:"):
         height = st.slider("Viewer height", 500, 1400, default, 20, key=f"{key}_height")
-        st.caption("Review decisions show up here after a page refresh." + (f"\n\n{note}" if note else ""))
+        if note:
+            st.caption(note)
     return height
 
 
@@ -150,9 +151,7 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
                                  label_visibility="collapsed", on_change=_pick_project, args=(projects,),
                                  help="What the mapper was given: names only, or names plus equipment folders.")
         with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-            proposed = store.conn.execute("SELECT COUNT(*) FROM nodes WHERE project = ? AND status = 'proposed'",
-                                          (project,)).fetchone()[0]
-            chips(sections, current, {"Review": f"Review · {proposed:,}"})
+            chips(sections, current)
             st.space("stretch")
             # The right end of this row belongs to the page (page_tools): its scenario, view options, ...
             st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",

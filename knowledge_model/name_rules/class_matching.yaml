@@ -22,6 +22,8 @@ name_synonyms:
   dd: vav             # dual-duct terminal box
   economizer: damper  # an economizer command drives the outside-air damper
   plant: system       # "Hot Water Plant" -> Hot_Water_System
+  inlet: entering     # Brick says entering/leaving for water and air temperatures
+  outlet: leaving
 
 # class-name word(s) -> canonical word (multi-word keys are matched as phrases)
 class_word_synonyms:
@@ -37,6 +39,7 @@ class_word_synonyms:
 # For points only: a word that implies more words (a VFD signal is a speed command).
 point_implies:
   vfd: [speed]
+  static: [pressure]  # "Duct Static" is a static pressure
 
 # Functions a point can have. If a name has none of these but names a measurable quantity,
 # the mapper assumes `default_function`.
