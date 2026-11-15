@@ -8,3 +8,4 @@ __pycache__/
 .env
 reports/graph3d/
 reports/equipment3d/
+.streamlit/secrets.toml

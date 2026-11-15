@@ -37,6 +37,7 @@ projects = [
     st.Page(APP / "views/new_project.py", title="New project", icon=":material/add_business:", url_path="new-project"),
 ]
 this_project = [
+    st.Page(APP / "views/location.py", title="Location", icon=":material/location_on:", url_path="location"),
     st.Page(APP / "tree_app.py", title="Tree", icon=":material/account_tree:", url_path="tree"),
     st.Page(APP / "views/graph_3d.py", title="Graph 3D", icon=":material/bubble_chart:", url_path="Graph_3D"),
     st.Page(APP / "views/equipment_3d.py", title="Equipment 3D", icon=":material/view_in_ar:",

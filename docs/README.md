@@ -9,3 +9,4 @@ Feature specs (post Phase 0):
 
 - [`spec-tribal-knowledge.md`](spec-tribal-knowledge.md) — notes, per-contractor/site conventions, learning from review corrections
 - [`spec-equipment-3d.md`](spec-equipment-3d.md) — 3D equipment viewer with points placed via template slots, simulated live values
+- [`spec-submittals-workflow.md`](spec-submittals-workflow.md) — step 2: from submittals and floor plans to graph, sequences and graphics; architecture readiness per step
