@@ -84,19 +84,6 @@ CREATE TABLE IF NOT EXISTS notes (
     created_at   TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at   TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE TABLE IF NOT EXISTS sites (
-    site         TEXT PRIMARY KEY,
-    address      TEXT NOT NULL,
-    lat          REAL NOT NULL CHECK (lat BETWEEN -90 AND 90),
-    lng          REAL NOT NULL CHECK (lng BETWEEN -180 AND 180),
-    place_id     TEXT NOT NULL DEFAULT '',
-    components   TEXT NOT NULL DEFAULT '{{}}',
-    kind         TEXT NOT NULL DEFAULT '',
-    provider     TEXT NOT NULL CHECK (provider IN ('google', 'openstreetmap')),
-    query        TEXT NOT NULL DEFAULT '',
-    confirmed_by TEXT NOT NULL,
-    confirmed_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
 """
 
 

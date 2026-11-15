@@ -117,9 +117,29 @@ def get_geocoder(google_key: str | None) -> Geocoder:
 
 # storage -------------------------------------------------------------------------------------
 
+# Created here on first use, not with the store's schema: a running app that picks up this module without
+# restarting (Streamlit Cloud after a push) still has the store it loaded before, which knows nothing of this table.
+SITES_SCHEMA = """
+CREATE TABLE IF NOT EXISTS sites (
+    site         TEXT PRIMARY KEY,
+    address      TEXT NOT NULL,
+    lat          REAL NOT NULL CHECK (lat BETWEEN -90 AND 90),
+    lng          REAL NOT NULL CHECK (lng BETWEEN -180 AND 180),
+    place_id     TEXT NOT NULL DEFAULT '',
+    components   TEXT NOT NULL DEFAULT '{}',
+    kind         TEXT NOT NULL DEFAULT '',
+    provider     TEXT NOT NULL CHECK (provider IN ('google', 'openstreetmap')),
+    query        TEXT NOT NULL DEFAULT '',
+    confirmed_by TEXT NOT NULL,
+    confirmed_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+"""
+
+
 def save_location(store: Store, site: str, loc: Location, confirmed_by: str) -> None:
     """The site's location: one per site, replaced when a person confirms another."""
     with store.conn:
+        store.conn.executescript(SITES_SCHEMA)
         store.conn.execute(
             "INSERT OR REPLACE INTO sites (site, address, lat, lng, place_id, components, kind, provider, query,"
             " confirmed_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -128,6 +148,7 @@ def save_location(store: Store, site: str, loc: Location, confirmed_by: str) -> 
 
 
 def get_location(store: Store, site: str) -> dict | None:
+    store.conn.executescript(SITES_SCHEMA)
     row = store.conn.execute("SELECT * FROM sites WHERE site = ?", (site,)).fetchone()
     return dict(row) | {"components": json.loads(row["components"])} if row else None
 
