@@ -13,13 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.adapters.haystack import read_blind_export  # noqa: E402
-from projectmodel.conventions import scopes_for  # noqa: E402
-from projectmodel.db.store import Store  # noqa: E402
-from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
-from projectmodel.mapper.llm import get_provider  # noqa: E402
-from projectmodel.mapper.pipeline import Mapper  # noqa: E402
-from projectmodel.sequences import store_behaviour  # noqa: E402
+from projectmodel.build import map_project  # noqa: E402
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -29,14 +23,4 @@ if __name__ == "__main__":
     ap.add_argument("--llm", default="none")
     ap.add_argument("--blind", action="store_true", help="ignore the project's conventions")
     args = ap.parse_args()
-    project = f"{args.site}/{args.variant}"
-
-    records = read_blind_export(ROOT / "data/blind" / args.site / f"{args.variant}.csv")
-    km = load_knowledge_model(conventions=[] if args.blind else scopes_for(project))
-    mapper = Mapper(km, llm=get_provider(args.llm))
-    store = Store(args.db)
-    summary = mapper.run(records, store, project)
-    # The sequences' behaviour edges point at mapped nodes: reload them on the graph just built.
-    if (behaviour := store_behaviour(store, km, project)) is not None:
-        summary["behaviour"] = {k: behaviour[k] for k in ("stored", "edges")} | {"skipped": len(behaviour["skipped"])}
-    print(json.dumps(summary, indent=2))
+    print(json.dumps(map_project(args.site, args.variant, args.db, args.llm, args.blind), indent=2))

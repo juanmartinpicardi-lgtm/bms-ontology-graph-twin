@@ -34,6 +34,19 @@ def get_store() -> Store:
     return Store(DB)
 
 
+@st.cache_resource(show_spinner="First start: mapping Alpha into the knowledge graph (about a minute)…")
+def ensure_database() -> None:
+    """A fresh checkout (e.g. Streamlit Cloud) has no database, since data/*.sqlite is not in git: build it once from
+    the blind exports and the sequences, into a temporary file moved into place when complete."""
+    if DB.exists():
+        return
+    from projectmodel.build import build_all
+    tmp = DB.with_suffix(".building.sqlite")
+    tmp.unlink(missing_ok=True)
+    build_all(tmp)
+    tmp.replace(DB)
+
+
 def active_project(projects: list[str]) -> str:
     """A ?project= deep link wins once (each new link); after that the picker decides."""
     linked = st.query_params.get("project")

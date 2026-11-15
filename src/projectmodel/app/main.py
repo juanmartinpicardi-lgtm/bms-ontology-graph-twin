@@ -19,7 +19,8 @@ import streamlit as st
 APP = Path(__file__).resolve().parent
 sys.path.insert(0, str(APP.parents[1]))
 
-from projectmodel.app.shell import active_project, area_header, get_store, project_header, rail  # noqa: E402
+from projectmodel.app.shell import (active_project, area_header, ensure_database, get_store,  # noqa: E402
+                                   project_header, rail)
 from projectmodel.projects import list_projects  # noqa: E402
 
 st.set_page_config(page_title="Project Model", page_icon=":material/hub:", layout="wide")
@@ -52,6 +53,7 @@ shared = [
 ]
 
 page = st.navigation(overview + projects + this_project + twin + shared, position="hidden")
+ensure_database()
 store = get_store()
 if mapped := list_projects(store):
     active_project(mapped)  # every page: a ?project= deep link opens that project app-wide
