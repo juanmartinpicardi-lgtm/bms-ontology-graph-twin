@@ -24,6 +24,9 @@ and page.
 | 7 | **Review** | Everything proposed | Confirmed, fixed or rejected facts, each shown next to its source page | Reviewer accepts 138 VAVs in one click |
 | 8 | **Use** | The confirmed graph | Equipment graphics, digital twin with real floors, agent tools, checks | "Zone 2.14 is too warm" answered from the graph |
 
+The app walks these steps on Alpha under Projects → New project (`onboarding.py`, `app/views/new_project.py`):
+per step, what is submitted and what is created, counted on Alpha's graph, with what is not built marked simulated.
+
 Order matters: assets (3) before spaces (4) and links (5), because a floor plan or schematic is read by
 looking for tags already known. Sequences (6) come last, because they bind to points that must exist.
 

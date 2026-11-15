@@ -1,0 +1,20 @@
+# Site Alpha's location, loaded when the database has none (a fresh checkout, Streamlit Cloud).
+# Address given by the project owner on 2026-11-15; coordinates from OpenStreetMap (Nominatim) for that address.
+# The Haystack example site itself is in Hugo, CO: this address is the one chosen for the demo.
+address: "La Pièce 16, 1180 Rolle, Vaud, Switzerland"
+lat: 46.4600583
+lng: 6.3207558
+place_id: "relation/19377629"
+kind: commercial
+provider: openstreetmap
+query: "La Piece 16, 1180 Rolle, Vaud, Switzerland"
+confirmed_by: juan-martin
+components:
+  street_number: "16"
+  street: La Pièce
+  city: Rolle
+  county: District de Nyon
+  region: Vaud
+  postcode: "1180"
+  country: Switzerland
+  country_code: CH

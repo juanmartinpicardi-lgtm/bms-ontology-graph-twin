@@ -61,7 +61,8 @@ def test_provider_follows_the_key():
 
 def test_confirmed_location_is_stored_per_site():
     store = Store(":memory:")
-    assert get_location(store, "alpha") is None
+    assert get_location(store, "nowhere") is None
+    assert get_location(store, "alpha")["address"].startswith("La Pièce 16")  # from data/sites/alpha.yaml
     save_location(store, "alpha", parse_nominatim(NOMINATIM, "Hugo, CO")[0], "ana")
     save_location(store, "alpha", parse_google(GOOGLE, "googleplex")[0], "ben")  # a new confirmation replaces it
     got = get_location(store, "alpha")
@@ -83,5 +84,5 @@ def test_page_runs_without_a_key(monkeypatch):
     at.secrets["google_maps_api_key"] = at.secrets["google_maps_browser_key"] = ""  # whatever the local file holds
     at.run()
     assert not at.exception
-    assert at.text_input(key="loc_query").value == "Hugo, CO"
+    assert at.text_input(key="loc_query").value == "Rolle, Switzerland"
     assert any("OpenStreetMap" in c.value for c in at.caption)

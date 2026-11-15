@@ -3,12 +3,14 @@ read by every project page, so switching building switches every view at once.""
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import streamlit as st
 
 from projectmodel.db.store import Store
 from projectmodel.knowledge_model import load_knowledge_model
+from projectmodel.locate import google_map_html, osm_embed_url
 from projectmodel.projects import DEFAULT, INPUTS, SITES, list_projects, site_of, summaries
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -28,6 +30,21 @@ def viewer_options(key: str, default: int, note: str = "") -> int:
         if note:
             st.caption(note)
     return height
+
+
+def secret(name: str) -> str:
+    """From .streamlit/secrets.toml, else the environment (NAME in upper case). Empty when not set."""
+    try:
+        value = st.secrets.get(name, "")
+    except Exception:  # no secrets file at all
+        value = ""
+    return value or os.environ.get(name.upper(), "")
+
+
+def site_map(lat: float, lng: float, label: str, height: int) -> None:
+    """The spot on a map: Google's (satellite, with a 3D view) when a key is set, else OpenStreetMap's."""
+    key = secret("google_maps_browser_key") or secret("google_maps_api_key")
+    st.iframe(google_map_html(lat, lng, label, key) if key else osm_embed_url(lat, lng), height=height)
 
 
 def get_store() -> Store:

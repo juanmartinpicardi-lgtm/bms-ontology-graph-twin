@@ -15,10 +15,14 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 from typing import Protocol
+
+import yaml
 
 from .db.store import Store
 
+SEEDS = Path(__file__).resolve().parents[2] / "data/sites"
 GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 USER_AGENT = "projectmodel-prototype/0.1"  # Nominatim's policy asks for an identifying agent, not a library default
@@ -148,8 +152,16 @@ def save_location(store: Store, site: str, loc: Location, confirmed_by: str) -> 
 
 
 def get_location(store: Store, site: str) -> dict | None:
+    """The site's confirmed location. A site with none yet takes the one in data/sites/<site>.yaml, if any."""
     store.conn.executescript(SITES_SCHEMA)
     row = store.conn.execute("SELECT * FROM sites WHERE site = ?", (site,)).fetchone()
+    seed = SEEDS / f"{site}.yaml"
+    if row is None and seed.exists():
+        d = yaml.safe_load(seed.read_text())
+        save_location(store, site, Location(d["address"], d["lat"], d["lng"], d["provider"], d.get("place_id", ""),
+                                            d.get("components", {}), d.get("kind", ""), d.get("query", "")),
+                      d["confirmed_by"])
+        row = store.conn.execute("SELECT * FROM sites WHERE site = ?", (site,)).fetchone()
     return dict(row) | {"components": json.loads(row["components"])} if row else None
 
 

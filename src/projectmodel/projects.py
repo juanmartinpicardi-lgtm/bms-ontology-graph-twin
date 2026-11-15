@@ -23,7 +23,7 @@ class Site:
 
 
 SITES = {
-    "alpha": Site("Alpha", "Office · central plant + VAV", "Hugo, CO", "dev",
+    "alpha": Site("Alpha", "Office · central plant + VAV", "Rolle, Switzerland", "dev",
                   "Project Haystack example site, donated by BuildingFit"),
 }
 

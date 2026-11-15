@@ -5,7 +5,6 @@ With a Google Maps Platform key (.streamlit/secrets.toml) the search uses Google
 Google's, with a 3D view. Without one, the search uses OpenStreetMap and the map is OpenStreetMap's.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -15,19 +14,9 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store  # noqa: E402
-from projectmodel.locate import (LocateError, get_geocoder, get_location, google_map_html, osm_embed_url,  # noqa: E402
-                                 save_location)
+from projectmodel.app.shell import active_project, get_store, secret, site_map  # noqa: E402
+from projectmodel.locate import LocateError, get_geocoder, get_location, save_location  # noqa: E402
 from projectmodel.projects import list_projects, site_of  # noqa: E402
-
-
-def secret(name: str) -> str:
-    """From .streamlit/secrets.toml, else the environment (NAME in upper case). Empty when not set."""
-    try:
-        value = st.secrets.get(name, "")
-    except Exception:  # no secrets file at all
-        value = ""
-    return value or os.environ.get(name.upper(), "")
 
 
 store = get_store()
@@ -38,7 +27,6 @@ if not projects:
 project = active_project(projects)
 site_id, site = project.split("/")[0], site_of(project)
 server_key = secret("google_maps_api_key")
-browser_key = secret("google_maps_browser_key") or server_key
 geocoder = get_geocoder(server_key)
 provider = "Google Maps" if server_key else "OpenStreetMap"
 saved = get_location(store, site_id)
@@ -92,9 +80,7 @@ with right:
     lat, lng = (shown.lat, shown.lng) if shown else (saved["lat"], saved["lng"]) if saved else (None, None)
     if lat is None:
         st.caption("The map appears once the building is found.")
-    elif browser_key:
-        st.iframe(google_map_html(lat, lng, site.name, browser_key), height=620)
     else:
-        st.iframe(osm_embed_url(lat, lng), height=620)
+        site_map(lat, lng, site.name, 620)
     if shown:
         st.caption("Preview of the selected result. It is saved only when you press Use this location.")
