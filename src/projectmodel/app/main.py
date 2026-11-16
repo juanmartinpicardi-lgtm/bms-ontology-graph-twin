@@ -52,6 +52,8 @@ overview = [
 ]
 projects = [
     st.Page(APP / "views/projects.py", title="All projects", icon=":material/apartment:", url_path="projects"),
+    st.Page(APP / "views/add_building.py", title="Add a building", icon=":material/upload_file:",
+            url_path="add-building"),
     st.Page(APP / "views/new_project.py", title="New project", icon=":material/add_business:", url_path="new-project"),
 ]
 this_project = [

@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Building</title>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<style>
+  /* Same page tokens as graph3d.html; the scene reads them too. */
+  :root {
+    color-scheme: light;
+    --bg: #ffffff; --panel: rgba(255, 255, 255, 0.94); --line: #dcdad6; --text: #2f2d2b; --muted: #74706b;
+    --accent: #0969da; --chip: #f8f8f7;
+    --plate: #f2f4f7; --edge: #9fb3c8; --ink: #1c2733; --room: #0b5cad; --room-bg: rgba(226, 238, 250, .92);
+    --s-confirmed: #2da44e; --s-proposed: #2f6fdb; --s-ask: #d9820a; --sel: #e0245e;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #171614; --panel: rgba(32, 30, 28, 0.94); --line: #3a3835; --text: #e8e6e3; --muted: #a09c96;
+    --accent: #58a6ff; --chip: #262422;
+    --plate: #1b232d; --edge: #4a6a8c; --ink: #d5e3f2; --room: #9cc7ee; --room-bg: rgba(18, 50, 78, .9);
+    --s-confirmed: #3fb950; --s-proposed: #58a6ff; --s-ask: #f0a030; --sel: #ff5c8a;
+  }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
+    font: 12px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #stage { position: absolute; inset: 0; }
+  #stage canvas { display: block; outline: none; }
+  #labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .lb { position: absolute; left: 0; top: 0; white-space: nowrap; will-change: transform; }
+  .room { pointer-events: auto; cursor: pointer; font-size: 10px; padding: 0 4px; border-radius: 4px; color: var(--room);
+    background: var(--room-bg); border: 1px solid color-mix(in srgb, var(--room) 45%, transparent); }
+  .room.proposed { border-style: dashed; }
+  .room.ask { color: var(--s-ask); border-color: var(--s-ask); font-weight: 600; }
+  .room.sel { outline: 2px solid var(--sel); }
+  .room small { color: var(--muted); margin-left: 4px; font-size: 9px; }
+  .tag { font-size: 10px; font-weight: 600; color: var(--text); text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 3px var(--bg); }
+  .word { color: var(--ink); opacity: .78; font-family: Arial, Helvetica, sans-serif; line-height: 1; }
+  .floor { pointer-events: auto; cursor: pointer; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+    background: var(--panel); border: 1px solid var(--line); }
+  .floor small { font-weight: 400; color: var(--muted); margin-left: 6px; }
+  .floor:hover { border-color: var(--accent); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; backdrop-filter: blur(6px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .08); }
+  #hud { position: absolute; left: 12px; top: 12px; right: 12px; display: flex; gap: 8px; align-items: flex-start;
+    flex-wrap: wrap; z-index: 4; pointer-events: none; }
+  #hud > * { pointer-events: auto; }
+  .seg { display: flex; overflow: hidden; }
+  .seg button, .chipbtn { border: none; background: transparent; color: var(--text); padding: 6px 11px; font: inherit;
+    cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button:hover, .chipbtn:hover { color: var(--accent); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .chipbtn { border-radius: 10px; }
+  .chipbtn[aria-pressed="true"] { color: var(--s-ask); font-weight: 600; }
+  #ask { display: flex; align-items: center; }
+  #ask span { padding: 0 4px; color: var(--muted); min-width: 52px; text-align: center; }
+  #ask button:disabled { opacity: .35; cursor: default; }
+  .grow { flex: 1; }
+  #legend { position: absolute; left: 12px; bottom: 12px; z-index: 4; padding: 7px 10px; max-width: 62%; color: var(--muted);
+    display: flex; gap: 4px 12px; flex-wrap: wrap; font-size: 11px; }
+  #legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+  #legend i.ring { background: transparent; border: 2px solid; box-sizing: border-box; }
+  #tip { position: absolute; z-index: 8; pointer-events: none; padding: 8px 10px; max-width: 270px; display: none; }
+  #tip b { font-size: 13px; } #tip .m { color: var(--muted); } #tip .a { color: var(--s-ask); }
+  #qcard { position: absolute; z-index: 9; width: 290px; padding: 10px 12px; display: none; }
+  #qcard h5 { margin: 0 0 2px; font-size: 13px; }
+  #qcard .q { margin: 6px 0 4px; }
+  #qcard .m { color: var(--muted); font-size: 11px; }
+  #qcard .opts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  #qcard button { font: inherit; padding: 4px 9px; border-radius: 7px; border: 1px solid var(--line); background: var(--chip);
+    color: var(--text); cursor: pointer; }
+  #qcard button:hover { border-color: var(--accent); color: var(--accent); }
+  #qcard button.yes { background: var(--s-confirmed); border-color: var(--s-confirmed); color: #fff; }
+  #qcard button.sug { border-color: var(--s-ask); }
+  #qcard button.link { border: none; background: none; padding: 4px 2px; color: var(--accent); }
+  #qcard input { font: inherit; padding: 4px 7px; border-radius: 7px; border: 1px solid var(--line); background: var(--bg);
+    color: var(--text); width: 150px; }
+  #qcard .qs + .qs { border-top: 1px solid var(--line); margin-top: 9px; padding-top: 7px; }
+  #qcard .note { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+  #empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--muted);
+    font-size: 14px; text-align: center; padding: 30px; z-index: 3; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+<div id="hud">
+  <div class="card seg" id="mode">
+    <button data-m="3d" title="3D: drag to turn (3)">3D</button><button data-m="2d" title="2D plan: drag to move (2)">2D</button>
+  </div>
+  <div class="card seg" id="floors"></div>
+  <div class="grow"></div>
+  <div class="card" id="ask" title="Step through what needs your answer"></div>
+  <div class="card seg" id="show">
+    <button data-s="labels" title="Room numbers and unit tags">Labels</button><button data-s="text" title="The text of the drawing (2D, zoomed in)">Plan text</button>
+  </div>
+</div>
+<div id="legend" class="card"></div>
+<div id="tip" class="card"></div>
+<div id="qcard" class="card"></div>
+<div id="empty">Upload the floor plans: each level becomes a floor here, drawn from the lines of the PDF, with its rooms,<br>and every unit appears where the documents put it.</div>
+
+<script>/*__CONTROLS__*/</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const S = 100, GAP = 34, K = 10;            // plate width in world units; floor-to-floor; px per unit at 2D zoom 1
+const stage = document.getElementById("stage"), labels = document.getElementById("labels"), tip = document.getElementById("tip");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const emit = value => parent.postMessage({ pm: "event", value }, "*");
+
+let D = null, mode = "3d", focus = null, onlyAsk = false, wantOnly = false, show = { labels: true, text: true };
+const P = {};
+function readTheme() {
+  const s = getComputedStyle(document.documentElement), v = n => s.getPropertyValue(n).trim();
+  for (const k of ["bg", "plate", "edge", "ink", "s-confirmed", "s-proposed", "s-ask", "sel"]) P[k] = v("--" + k);
+}
+
+// --- scene ---------------------------------------------------------------------------------------
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+stage.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.position.set(60, 140, 80);
+scene.add(sun);
+const persp = new THREE.PerspectiveCamera(36, 1, 1, 5000);
+persp.position.set(120, 150, 190);
+const ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 5000);
+ortho.up.set(0, 0, -1);
+ortho.position.set(0, 800, 0);
+ortho.lookAt(0, 0, 0);
+const c3 = new OrbitControls(persp, renderer.domElement);
+Object.assign(c3, { enableDamping: true, dampingFactor: .12, zoomToCursor: true, maxPolarAngle: Math.PI * .495,
+                    minDistance: 6, maxDistance: 1200, autoRotateSpeed: 1.2 });
+const c2 = new OrbitControls(ortho, renderer.domElement);
+Object.assign(c2, { enableRotate: false, screenSpacePanning: true, zoomToCursor: true, minZoom: .3, maxZoom: 90,
+                    mouseButtons: { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN },
+                    touches: { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN } });
+const cam = () => mode === "2d" ? ortho : persp;
+const ctl = () => mode === "2d" ? c2 : c3;
+let W = 1, H = 1;
+function resize() {
+  W = stage.clientWidth || innerWidth; H = stage.clientHeight || innerHeight;
+  renderer.setSize(W, H);
+  persp.aspect = W / H; persp.updateProjectionMatrix();
+  Object.assign(ortho, { left: -W / 2 / K, right: W / 2 / K, top: H / 2 / K, bottom: -H / 2 / K });
+  ortho.updateProjectionMatrix();
+}
+addEventListener("resize", resize);
+
+// --- floors --------------------------------------------------------------------------------------
+const floors = new Map();   // id -> { group, plate, lines, markers, data, index, depth, key }
+const CYL = new THREE.CylinderGeometry(1, 1, 1, 28), RING = new THREE.RingGeometry(1.32, 1.72, 40), HALO = new THREE.RingGeometry(1.9, 2.25, 40);
+RING.rotateX(-Math.PI / 2); HALO.rotateX(-Math.PI / 2);
+const b64 = (s, T) => { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new T(u.buffer); };
+const world = (F, xy) => new THREE.Vector3((xy[0] - .5) * S, 0, (xy[1] - .5) * F.depth);
+
+function drawPlan(F) {
+  for (const o of [F.plate, F.lines, F.outline, F.picture]) if (o) { F.group.remove(o); o.geometry.dispose(); o.material.dispose(); }
+  F.picture = null;
+  const box = new THREE.BoxGeometry(S * 1.03, .6, F.depth * 1.03);
+  F.plate = new THREE.Mesh(box, new THREE.MeshBasicMaterial({ color: P.plate }));
+  F.plate.position.y = -.32;
+  F.outline = new THREE.LineSegments(new THREE.EdgesGeometry(box), new THREE.LineBasicMaterial({ color: P.edge }));
+  F.outline.position.y = -.32;
+  const g = F.data.geo, q = b64(g.seg, Int16Array), wt = b64(g.wt, Uint8Array), n = wt.length;
+  const pos = new Float32Array(n * 6), col = new Float32Array(n * 6);
+  const ink = new THREE.Color(P.ink), plate = new THREE.Color(P.plate), mix = [.55, .72, .92, 1].map(t => plate.clone().lerp(ink, t));
+  for (let i = 0; i < n; i++) {
+    const c = mix[wt[i]];
+    for (let e = 0; e < 2; e++) {
+      const o = i * 6 + e * 3;
+      pos[o] = (q[i * 4 + e * 2] / 32767 - .5) * S; pos[o + 1] = .04; pos[o + 2] = (q[i * 4 + e * 2 + 1] / 32767 - .5) * F.depth;
+      col[o] = c.r; col[o + 1] = c.g; col[o + 2] = c.b;
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  F.lines = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ vertexColors: true }));
+  F.group.add(F.plate, F.outline, F.lines);
+  if (g.image) {   // a scanned page: no vectors, a sharp picture instead
+    const tex = new THREE.TextureLoader().load(g.image);
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy(); tex.colorSpace = THREE.SRGBColorSpace;
+    F.picture = new THREE.Mesh(new THREE.PlaneGeometry(S, F.depth).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: tex }));
+    F.picture.position.y = .02;
+    F.group.add(F.picture);
+  }
+}
+
+const statusColor = s => P[s === "ask" ? "s-ask" : s === "confirmed" ? "s-confirmed" : "s-proposed"];
+
+// Equipment shapes: small models built from boxes, cylinders and domes, about to scale with the plan (1 unit is
+// roughly 0.6 m). `c` is the family colour; steel and dark parts are the same on every unit. Each returns the
+// footprint radius its status ring needs.
+const BOX = new THREE.BoxGeometry(1, 1, 1), CYLG = new THREE.CylinderGeometry(1, 1, 1, 24), DOME = new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+function kit(g, color) {
+  const m = { c: new THREE.MeshLambertMaterial({ color, transparent: true }),
+              steel: new THREE.MeshLambertMaterial({ color: 0xc9d1d9, transparent: true }),
+              dark: new THREE.MeshLambertMaterial({ color: 0x39424e, transparent: true }) };
+  const add = (geo, mat, sx, sy, sz, x, y, z) => { const o = new THREE.Mesh(geo, m[mat]); o.scale.set(sx, sy, sz); o.position.set(x, y, z); g.add(o); return o; };
+  return {
+    box: (mat, w, h, d, x, y, z) => add(BOX, mat, w, h, d, x, y + h / 2, z),
+    cylY: (mat, r, h, x, y, z) => add(CYLG, mat, r, h, r, x, y + h / 2, z),                        // standing
+    cylX: (mat, r, len, x, y, z) => { const o = add(CYLG, mat, r, len, r, x, y, z); o.rotation.z = Math.PI / 2; return o; },  // lying along x
+    cylZ: (mat, r, len, x, y, z) => { const o = add(CYLG, mat, r, len, r, x, y, z); o.rotation.x = Math.PI / 2; return o; },
+    dome: (mat, r, h, x, y, z) => add(DOME, mat, r, h, r, x, y, z),
+  };
+}
+const SHAPES = {
+  ahu(k) {            // casing in sections on a base rail, outside-air louvre at one end, supply duct stub at the other
+    k.box("dark", 6.4, .25, 2.3, 0, 0, 0); k.box("c", 6.2, 1.9, 2.1, 0, .25, 0);
+    for (const x of [-1.9, -.4, 1.3]) k.box("dark", .06, 1.92, 2.14, x, .25, 0);
+    k.box("dark", .08, 1.3, 1.6, -3.12, .5, 0); k.box("steel", .9, 1.1, 1.3, 3.5, .65, 0);
+    k.cylY("steel", .5, .35, 2.1, 2.15, 0);
+    return 3.6;
+  },
+  chiller(k) {        // air-cooled: condenser deck with a row of fans on top, compressors below
+    k.box("dark", 5.2, .3, 2.2, 0, 0, 0); k.box("c", 5, 1.5, 2, 0, .3, 0); k.box("steel", 5.05, .12, 2.05, 0, 1.8, 0);
+    for (const x of [-1.8, -.6, .6, 1.8]) { k.cylY("dark", .5, .16, x, 1.92, 0); k.cylY("steel", .16, .2, x, 1.92, 0); }
+    k.box("dark", 1, .9, .1, -1.4, .45, 1.03);
+    return 3;
+  },
+  boiler(k) {         // cabinet with a flue
+    k.box("c", 1.6, 2, 1.3, 0, 0, 0); k.cylY("steel", .22, 1.2, .3, 2, 0); k.box("dark", .7, .5, .06, 0, .9, .68);
+    return 1.3;
+  },
+  pump(k) {           // base-mounted: motor, coupling, volute with its discharge flange up
+    k.box("dark", 2, .18, .8, 0, 0, 0); k.cylX("c", .36, 1, -.45, .55, 0); k.cylX("steel", .2, .3, .2, .55, 0);
+    k.cylZ("c", .46, .42, .65, .55, 0); k.cylY("steel", .16, .55, .65, .9, 0); k.cylY("dark", .26, .08, .65, 1.42, 0);
+    return 1.25;
+  },
+  vav(k) {            // single-duct box: round inlet with its damper actuator, casing, control enclosure on the side
+    k.box("c", 1.3, .5, .9, .25, .35, 0); k.cylX("steel", .22, .75, -.75, .6, 0); k.box("dark", .3, .34, .16, -.2, .43, .53);
+    k.box("steel", .3, .4, .8, 1.02, .4, 0);
+    return 1.05;
+  },
+  fvav(k) {           // fan-powered box: larger casing, round primary inlet, fan intake grille on the side
+    k.box("c", 1.8, .7, 1.3, .2, .35, 0); k.cylX("steel", .25, .7, -1, .7, -.25); k.box("dark", .9, .5, .06, .3, .45, .68);
+    k.box("dark", .3, .36, .16, -.5, .5, .73); k.box("steel", .3, .5, 1.1, 1.22, .45, 0);
+    return 1.35;
+  },
+  fcu(k) { k.box("c", 1.5, .5, .8, 0, .35, 0); k.box("dark", 1.3, .06, .5, 0, .86, 0); k.cylX("steel", .08, .5, -.95, .5, .2); return 1.05; },
+  ef(k) {             // roof exhaust fan: curb, then the mushroom cap
+    k.box("steel", 1.2, .35, 1.2, 0, 0, 0); k.cylY("dark", .5, .3, 0, .35, 0); k.dome("c", .85, .55, 0, .65, 0); k.cylY("c", .86, .08, 0, .58, 0);
+    return 1.05;
+  },
+  uh(k) {             // unit heater: hung cabinet, louvres in front, fan behind
+    k.cylY("steel", .03, .5, -.3, 1.3, 0); k.cylY("steel", .03, .5, .3, 1.3, 0);
+    k.box("c", 1, .8, .55, 0, .5, 0); k.box("dark", .86, .64, .05, 0, .58, .3); k.cylZ("dark", .3, .14, 0, .9, -.34);
+    return .85;
+  },
+  split(k) {          // ductless split: the slim indoor unit
+    k.box("steel", 1.5, .42, .34, 0, .7, 0); k.box("c", 1.5, .08, .36, 0, .7, 0); k.box("dark", 1.3, .05, .1, 0, .76, .16);
+    return .95;
+  },
+  specialty(k) {      // tank on legs with a domed head
+    for (const [x, z] of [[-.3, -.3], [.3, -.3], [-.3, .3], [.3, .3]]) k.cylY("dark", .05, .35, x, 0, z);
+    k.cylY("c", .5, 1.3, 0, .35, 0); k.dome("c", .5, .28, 0, 1.65, 0); k.cylY("steel", .1, .25, 0, 1.9, 0);
+    return .85;
+  },
+  other(k) { k.box("c", 1.1, .8, .9, 0, 0, 0); k.box("dark", .5, .3, .05, 0, .3, .48); return .95; },
+};
+function drawMarkers(F) {
+  for (const m of F.markers.children) m.traverse(o => o.material?.dispose());
+  F.markers.clear();
+  for (const u of F.data.units) {
+    const g = new THREE.Group(), model = new THREE.Group();
+    g.position.copy(world(F, u.xy));
+    const r = (SHAPES[u.fam] || SHAPES.other)(kit(model, D.colors[u.fam] || "#888"));
+    const ring = new THREE.Mesh(RING, new THREE.MeshBasicMaterial({ color: statusColor(u.s), side: THREE.DoubleSide, transparent: true }));
+    ring.scale.setScalar(r / 1.5); ring.position.y = .09;
+    g.add(model, ring);
+    g.userData = { u, model, ring, r: r / 1.5, F };
+    F.markers.add(g);
+  }
+}
+
+function layout() {
+  for (const F of floors.values()) {
+    F.group.visible = !focus || focus === F.data.id;
+    F.group.position.y = focus ? 0 : F.index * GAP;
+  }
+}
+
+// --- labels (HTML over the scene: always sharp) --------------------------------------------------------
+let roomEls = [], tagEls = [], floorEls = [], wordPool = [];
+function buildLabels() {
+  labels.innerHTML = ""; roomEls = []; tagEls = []; floorEls = []; wordPool = [];
+  for (const F of floors.values()) {
+    F.skip = new Set([...F.data.rooms.map(r => r.n), ...F.data.units.map(u => u.tag)]);
+    for (const r of F.data.rooms) {
+      const el = document.createElement("div");
+      el.className = `lb room ${r.s}`;
+      el.innerHTML = `${esc(r.n)}<small>${esc(r.name || "")}</small>`;
+      el.onclick = () => pick(r, F);
+      el.onmouseenter = ev => hover(r, ev, roomTip(r));
+      el.onmouseleave = () => { hideTip(); if (qFor) closeCard(); };
+      labels.appendChild(el);
+      roomEls.push({ el, r, F, p: world(F, r.xy) });
+    }
+    for (const g of F.markers.children) {
+      const el = document.createElement("div");
+      el.className = "lb tag"; el.textContent = g.userData.u.tag;
+      labels.appendChild(el);
+      tagEls.push({ el, g, F });
+    }
+    const el = document.createElement("div");
+    el.className = "lb floor";
+    el.innerHTML = `${esc(F.data.name)}<small>${esc(F.data.sheet || "")} · ${F.data.rooms.length} rooms · ${F.data.units.length} units</small>`;
+    el.title = "Show this floor alone";
+    el.onclick = () => setFocus(F.data.id);
+    labels.appendChild(el);
+    floorEls.push({ el, F });
+  }
+}
+const v3 = new THREE.Vector3();
+function place(el, p, F, dx = 0, dy = 0, anchor = "-50%,-50%") {
+  v3.copy(p); v3.y += F.group.position.y;
+  v3.project(cam());
+  const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H;
+  const on = v3.z > -1 && v3.z < 1 && x > -60 && x < W + 60 && y > -30 && y < H + 30;
+  el.style.display = on ? "" : "none";
+  if (on) el.style.transform = `translate(${x + dx}px,${y + dy}px) translate(${anchor})`;
+  return on;
+}
+const hide = el => { if (el.style.display !== "none") el.style.display = "none"; };
+function updateLabels() {
+  const two = mode === "2d", ppu = K * ortho.zoom, near = two ? ppu >= 9 : c3.getDistance() < 120;
+  for (const { el, r, F, p } of roomEls) {
+    const sel = D.selected === r.id;
+    const on = F.group.visible && (sel || r.s === "ask" || (show.labels && (focus || two))) && !(onlyAsk && r.s !== "ask" && !sel);
+    if (!on) { hide(el); continue; }
+    el.classList.toggle("sel", sel);
+    el.querySelector("small").style.display = two && ppu >= 22 ? "" : "none";
+    place(el, p, F);
+  }
+  for (const { el, g, F } of tagEls) {
+    const u = g.userData.u, sel = isSel(u);
+    const on = F.group.visible && (sel || hovered === g || (show.labels && focus && near)) && !(onlyAsk && u.s !== "ask" && !sel);
+    if (!on) { hide(el); continue; }
+    place(el, g.position, F, 0, two ? g.userData.r * 1.75 * ppu + 8 : 16);
+  }
+  for (const { el, F } of floorEls) {
+    if (!F.group.visible || two || focus) { hide(el); continue; }
+    if (place(el, v3.set(-S / 2, 0, F.depth / 2).clone(), F, -8, 0, "-100%,-50%")) {   // keep it inside the left edge
+      const left = el.getBoundingClientRect().left;
+      if (left < 8) el.style.transform += ` translate(${8 - left}px,0)`;
+    }
+  }
+  // The drawing's own text, in 2D once it is large enough to read.
+  let k = 0;
+  const F = two && show.text && focus ? floors.get(focus) : null;
+  if (F) {
+    const hx = W / 2 / ppu, hz = H / 2 / ppu, tx = c2.target.x, tz = c2.target.z;
+    for (const [t, x, y, s] of F.data.geo.words) {
+      const px = s * F.depth * ppu;
+      if (px < 6.5 || F.skip.has(t)) continue;
+      const wx = (x - .5) * S, wz = (y - .5) * F.depth;
+      if (Math.abs(wx - tx) > hx + 4 || Math.abs(wz - tz) > hz + 2) continue;
+      if (show.labels && F.data.rooms.some(r => Math.abs(r.xy[0] - x) * S < 2.6 && Math.abs(r.xy[1] - y) * F.depth < .75)) continue;   // under a room label
+      if (k >= 700) break;
+      let el = wordPool[k];
+      if (!el) { el = wordPool[k] = document.createElement("div"); el.className = "lb word"; labels.prepend(el); }
+      if (el._t !== t) { el.textContent = t; el._t = t; }
+      el.style.display = ""; el.style.fontSize = px.toFixed(1) + "px";
+      el.style.transform = `translate(${W / 2 + (wx - tx) * ppu}px,${H / 2 + (wz - tz) * ppu}px) translate(-50%,-50%)`;
+      k++;
+    }
+  }
+  for (; k < wordPool.length; k++) hide(wordPool[k]);
+}
+
+// --- selection, hover, picking ---------------------------------------------------------------------------
+let hovered = null;
+const isSel = o => !!D.selected && (o.id === D.selected || (o.ids || []).includes(D.selected));
+const halo = new THREE.Mesh(HALO, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true }));
+halo.visible = false;
+scene.add(halo);
+function findSelected() {
+  for (const F of floors.values()) {
+    for (const g of F.markers.children) if (isSel(g.userData.u)) return { F, g, p: g.position, o: g.userData.u };
+    for (const r of F.data.rooms) if (isSel(r)) return { F, p: world(F, r.xy), o: r };
+  }
+  return null;
+}
+function paint() {    // marker looks that depend on selection and the "needs you" filter
+  for (const F of floors.values()) for (const g of F.markers.children) {
+    const u = g.userData.u, dim = onlyAsk && u.s !== "ask" && !isSel(u);
+    g.traverse(o => { if (o.material) o.material.opacity = dim ? .12 : 1; });
+  }
+}
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+function hit(ev) {
+  const b = renderer.domElement.getBoundingClientRect();
+  ptr.set((ev.clientX - b.left) / b.width * 2 - 1, -(ev.clientY - b.top) / b.height * 2 + 1);
+  ray.setFromCamera(ptr, cam());
+  const targets = [...floors.values()].filter(F => F.group.visible).map(F => F.markers);
+  let o = ray.intersectObjects(targets, true)[0]?.object;
+  while (o && !o.userData.u) o = o.parent;
+  return o || null;
+}
+const statusText = s => s === "ask" ? '<span class="a">Waiting for your answer</span>'
+  : s === "confirmed" ? "Confirmed" : "Proposed: waits for a second source";
+const unitTip = u => `<b>${esc(u.tag)}</b> <span class="m">${esc(u.cls)}</span>`
+  + `<div>${u.room ? esc(u.rel) + " room " + esc(u.room) + ` <span class="m">(${esc(u.rs)})</span>` : '<span class="m">no room yet</span>'}</div>`
+  + (u.ctrl ? `<div>Controller ${esc(u.ctrl)} · ${u.pts} points</div>` : "") + (u.bms ? `<div>BMS: ${esc(u.bms)}</div>` : "")
+  + (u.seq ? `<div class="m">Sequence: ${esc(u.seq)}</div>` : "") + notesTip(u) + `<div class="m">${statusText(u.s)}</div><div class="m">Click: open it in the document</div>`;
+const notesTip = o => (o.notes || []).map(n => `<div>📝 ${esc(n)}</div>`).join("");
+const roomTip = r => `<b>Room ${esc(r.n)}</b> ${esc(r.name)}<div class="m">${r.units.length ? "Units: " + esc(r.units.join(", ")) : "No unit placed here"}</div>${notesTip(r)}<div class="m">${statusText(r.s)}</div>`;
+function showTip(ev, html) { tip.innerHTML = html; tip.style.display = "block"; moveTip(ev); }
+function moveTip(ev) { tip.style.left = Math.min(ev.clientX + 14, W - 280) + "px"; tip.style.top = Math.min(ev.clientY + 14, H - 130) + "px"; }
+function hideTip() { tip.style.display = "none"; }
+// What needs you opens as a card on hover, and is answered right there. The card stays while the pointer is on the
+// item or on the card.
+const qcard = document.getElementById("qcard");
+let qFor = null, qTimer = 0;
+function questionCard(o, x, y) {
+  if (qFor === o && qcard.style.display === "block") { clearTimeout(qTimer); return; }
+  qFor = o;
+  clearTimeout(qTimer);
+  const title = o.tag ? `${esc(o.tag)} <span class="m">${esc(o.cls)}</span>` : `Room ${esc(o.n)} <span class="m">${esc(o.name || "")}</span>`;
+  qcard.innerHTML = `<h5>${title}</h5>` + o.q.map((q, i) => `<div class="qs" data-i="${i}"><div class="q">${esc(q.q)}</div>`
+    + `<div class="m">${esc(q.where)} · confidence ${Math.round(q.conf * 100)}%${q.proposed != null && q.proposed !== "" ? " · proposed: <b>" + esc(q.proposed) + "</b>" : ""}</div>`
+    + (q.field === "name" ? `<div class="opts"><input placeholder="Name from the plan" maxlength="60"><button data-do="name">Save name</button></div>` : "")
+    + `<div class="opts">` + q.options.map((op, k) => `<button data-do="opt" data-k="${k}" class="${op.value === q.proposed && q.proposed != null ? "sug" : ""}">${esc(op.label)}</button>`).join("")
+    + (q.issue ? `<button data-do="confirmed" class="yes">Noted</button><button data-do="rejected">Not an issue</button>`
+               : (q.options.length ? "" : `<button data-do="confirmed" class="yes">Yes, keep it</button>`) + `<button data-do="rejected">Reject</button>`)
+    + `</div></div>`).join("")
+    + `<div class="note"><button class="link" data-do="open">Open in the document</button></div>`;
+  qcard.style.display = "block";
+  const h = qcard.offsetHeight;
+  qcard.style.left = Math.max(8, x + 18 + 294 > W ? x - 18 - 294 : x + 18) + "px";   // beside the item, never over it
+  qcard.style.top = Math.max(8, Math.min(y - 20, H - h - 8)) + "px";
+}
+function closeCard(now) {
+  clearTimeout(qTimer);
+  const shut = () => { qcard.style.display = "none"; qFor = null; };
+  if (now) shut(); else qTimer = setTimeout(shut, 320);
+}
+qcard.onpointerenter = () => clearTimeout(qTimer);
+qcard.onpointerleave = () => closeCard();
+qcard.onclick = e => {
+  const b = e.target.closest("button");
+  if (!b || !qFor) return;
+  const o = qFor, box = b.closest(".qs"), q = box ? o.q[+box.dataset.i] : null, act = b.dataset.do;
+  if (act === "open") { closeCard(true); pick(o); return; }
+  let ev;
+  if (act === "opt") ev = { status: "fixed", value: q.options[+b.dataset.k].value };
+  else if (act === "name") { const v = box.querySelector("input").value.trim(); if (!v) return; ev = { status: "fixed", value: v }; }
+  else ev = { status: act };
+  emit({ name: "answer", id: q.id, ...ev });
+  box.innerHTML = `<div class="m">Saved…</div>`;
+  if (o.q.length === 1) closeCard();
+};
+qcard.onkeydown = e => { if (e.key === "Enter" && e.target.tagName === "INPUT") e.target.nextElementSibling.click(); e.stopPropagation(); };
+function hover(o, ev, tipHtml) {
+  if (o.q?.length) { hideTip(); questionCard(o, ev.clientX, ev.clientY); }
+  else { closeCard(); showTip(ev, tipHtml); }
+}
+let down = null;
+renderer.domElement.addEventListener("pointerdown", e => { down = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener("pointermove", e => {
+  if (e.buttons) { hideTip(); return; }
+  const g = hit(e);
+  if (g !== hovered) { hovered = g; renderer.domElement.style.cursor = g ? "pointer" : ""; }
+  if (g) hover(g.userData.u, e, unitTip(g.userData.u)); else { hideTip(); if (qFor) closeCard(); }
+});
+renderer.domElement.addEventListener("pointerleave", () => { hovered = null; hideTip(); if (qFor) closeCard(); });
+renderer.domElement.addEventListener("pointerup", e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+  const g = hit(e);
+  if (g) pick(g.userData.u, g.userData.F);
+});
+function pick(o, F) {
+  D.selected = o.id;
+  emit({ name: "pick", id: o.id });
+  paint(); hud(); flyToSelected();
+}
+
+// --- camera moves ----------------------------------------------------------------------------------------
+let tween = null;
+function fly(to, ms = 650) {   // to: { target, position?, zoom? }
+  const c = cam(), k = ctl();
+  tween = { t0: performance.now(), ms, c, k, from: { target: k.target.clone(), position: c.position.clone(), zoom: c.zoom }, to };
+}
+function stepTween(now) {
+  if (!tween) return;
+  const { t0, ms, c, k, from, to } = tween, t = Math.min(1, (now - t0) / ms), e = t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+  k.target.lerpVectors(from.target, to.target, e);
+  if (to.position) c.position.lerpVectors(from.position, to.position, e);
+  if (to.zoom) { c.zoom = from.zoom + (to.zoom - from.zoom) * e; c.updateProjectionMatrix(); }
+  if (t >= 1) tween = null;
+}
+const fitZoom = d => Math.min(W / (S * 1.06), (H - 130) / (d * 1.04)) / K;   // room for the bars above and below
+function fit(animate = true) {
+  const vis = [...floors.values()].filter(F => F.group.visible);
+  if (!vis.length) return;
+  const d = Math.max(...vis.map(F => F.depth)), ys = vis.map(F => F.group.position.y), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  let to;
+  if (mode === "2d") to = { target: new THREE.Vector3(0, 0, 0), position: new THREE.Vector3(0, 800, 0), zoom: fitZoom(d) };
+  else {
+    const target = new THREE.Vector3(0, (y0 + y1) / 2, 0), r = Math.hypot(S, d, y1 - y0) / 2;
+    const dist = r / Math.sin(THREE.MathUtils.degToRad(persp.fov / 2)) * (W / H < 1.2 ? 1.1 : y1 - y0 < 1 ? .56 : H < 600 ? .9 : .78);
+    to = { target, position: target.clone().add(new THREE.Vector3(.48, .6, .8).normalize().multiplyScalar(dist)) };
+  }
+  fly(to, animate ? 650 : 0);
+}
+function flyToSelected() {
+  const s = findSelected();
+  if (!s) return;
+  if (focus !== s.F.data.id) { focus = s.F.data.id; layout(); hud(); }   // its floor alone: the floors above would hide it
+  const p = s.p.clone(); p.y += s.F.group.position.y;
+  if (mode === "2d") fly({ target: new THREE.Vector3(p.x, 0, p.z), position: new THREE.Vector3(p.x, 800, p.z), zoom: Math.max(ortho.zoom, fitZoom(s.F.depth) * 3.2) });
+  else {
+    const off = persp.position.clone().sub(c3.target), dist = Math.min(off.length(), 95);
+    fly({ target: p, position: p.clone().add(off.normalize().multiplyScalar(dist)) });
+  }
+}
+function setMode(m) {
+  if (m === mode) return;
+  mode = m;
+  if (m === "2d" && !focus) focus = findSelected()?.F.data.id || [...floors.keys()][0] || null;
+  c3.enabled = m === "3d"; c2.enabled = m === "2d";
+  layout(); hud(); fit(false);
+}
+function setFocus(id) {
+  focus = id;
+  if (!focus && mode === "2d") mode = "3d", c3.enabled = true, c2.enabled = false;
+  layout(); hud(); fit(mode === "3d");
+}
+
+// --- controls on the page --------------------------------------------------------------------------------
+const asks = () => [...floors.values()].flatMap(F => [...F.data.units.filter(u => u.s === "ask").map(o => ({ o, F })),
+                                                       ...F.data.rooms.filter(r => r.s === "ask").map(o => ({ o, F }))]);
+function hud() {
+  document.querySelectorAll("#mode button").forEach(b => b.setAttribute("aria-pressed", b.dataset.m === mode));
+  document.querySelectorAll("#show button").forEach(b => b.setAttribute("aria-pressed", show[b.dataset.s]));
+  const list = [...floors.values()].sort((a, b) => b.index - a.index);
+  document.getElementById("floors").innerHTML = (list.length > 1 ? `<button data-f="" aria-pressed="${!focus}">All floors</button>` : "")
+    + list.map(F => `<button data-f="${esc(F.data.id)}" aria-pressed="${focus === F.data.id}">${esc(F.data.name)}</button>`).join("");
+  const a = asks(), i = a.findIndex(x => isSel(x.o));
+  document.getElementById("ask").innerHTML = a.length
+    ? `<button class="chipbtn" data-a="only" aria-pressed="${onlyAsk}" title="Show only what needs your answer">Needs you · ${a.length}</button>`
+      + `<button class="chipbtn" data-a="prev" aria-label="Previous question">‹</button><span>${i >= 0 ? i + 1 : "–"} / ${a.length}</span>`
+      + `<button class="chipbtn" data-a="next" aria-label="Next question">›</button>`
+    : `<span style="padding:6px 10px">Nothing here needs you</span>`;
+  const st = (c, t) => `<span><i class="ring" style="border-color:var(--${c})"></i>${t}</span>`;
+  document.getElementById("legend").innerHTML = D.legend.map(l => `<span><i style="background:${esc(l.color)}"></i>${esc(l.name)}</span>`).join("")
+    + st("s-confirmed", "confirmed") + st("s-proposed", "proposed") + st("s-ask", "needs you") + st("sel", "selected")
+    + (D.unplaced ? `<span>${D.unplaced} units not on a plan yet</span>` : "");
+}
+document.getElementById("mode").onclick = e => { const b = e.target.closest("button"); if (b) setMode(b.dataset.m); };
+document.getElementById("floors").onclick = e => { const b = e.target.closest("button"); if (b) setFocus(b.dataset.f || null); };
+document.getElementById("show").onclick = e => { const b = e.target.closest("button"); if (b) { show[b.dataset.s] = !show[b.dataset.s]; hud(); } };
+document.getElementById("ask").onclick = e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.a === "only") { onlyAsk = !onlyAsk; paint(); hud(); return; }
+  const a = asks(), i = a.findIndex(x => isSel(x.o)), n = a.length;
+  const next = a[b.dataset.a === "next" ? (i + 1) % n : (i <= 0 ? n - 1 : i - 1)];
+  if (next) pick(next.o, next.F);
+};
+const vc = ViewerControls.mount({
+  surface: renderer.domElement,
+  zoom: f => { if (mode === "2d") { ortho.zoom = THREE.MathUtils.clamp(ortho.zoom / f, c2.minZoom, c2.maxZoom); ortho.updateProjectionMatrix(); }
+               else persp.position.sub(c3.target).multiplyScalar(f).add(c3.target); },
+  fit: () => fit(),
+  rotate: on => { if (on && mode === "2d") setMode("3d"); c3.autoRotate = on; },
+  keys: [["2 / 3", "2D plan / 3D building", e => setMode(e.key === "2" ? "2d" : "3d")],
+         ["N", "Next thing that needs you", () => document.querySelector('#ask [data-a="next"]')?.click()],
+         ["A", "All floors", () => setFocus(null)]],
+  gestures: [["Drag", "3D: turn · 2D: move"], ["Right-drag", "Move"], ["Wheel / pinch", "Zoom to the pointer"],
+             ["Hover an amber item", "Answer its question in place"], ["Click a unit or room", "Open it in the document"], ["Click a floor name", "That floor alone"]],
+});
+
+// --- data from the app ---------------------------------------------------------------------------------
+function setData(d) {
+  const first = !D, before = D?.selected, shape = [...floors.keys()].join("|");
+  D = d;
+  document.documentElement.dataset.theme = d.theme === "light" ? "light" : "dark";
+  readTheme();
+  scene.background = new THREE.Color(P.bg);
+  document.getElementById("empty").style.display = d.floors.length ? "none" : "flex";
+  const ids = new Set(d.floors.map(f => f.id));
+  for (const [id, F] of floors) if (!ids.has(id)) { scene.remove(F.group); floors.delete(id); }
+  d.floors.forEach((f, i) => {
+    let F = floors.get(f.id);
+    if (!F) { F = { group: new THREE.Group(), markers: new THREE.Group() }; F.group.add(F.markers); scene.add(F.group); floors.set(f.id, F); }
+    Object.assign(F, { data: f, index: i, depth: S * f.aspect });
+    const key = f.geo.key + "|" + d.theme;
+    if (F.key !== key) { drawPlan(F); F.key = key; }
+    drawMarkers(F);
+  });
+  if (focus && !floors.has(focus)) focus = null;
+  if (d.only_ask !== wantOnly) onlyAsk = wantOnly = !!d.only_ask;   // the app's "needs you" view starts filtered
+  halo.material.color.set(P.sel);
+  if (qFor) closeCard(true);
+  layout(); buildLabels(); paint(); hud();
+  if (first || shape !== [...floors.keys()].join("|")) { resize(); fit(false); }
+  if (d.selected && d.selected !== before) flyToSelected();
+}
+addEventListener("message", e => { if (e.data?.pm === "data") setData(e.data.data); });
+
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!D) return;
+  stepTween(now);
+  ctl().update();
+  const pulse = 1 + .16 * Math.sin(now / 240);
+  for (const F of floors.values()) for (const g of F.markers.children)
+    g.userData.ring.scale.setScalar(g.userData.r * (g.userData.u.s === "ask" ? pulse : 1));
+  const s = findSelected();
+  halo.visible = !!s && s.F.group.visible;
+  if (halo.visible) {
+    halo.position.set(s.p.x, s.F.group.position.y + .12, s.p.z);
+    halo.scale.setScalar((s.g ? s.g.userData.r * .95 : .5) * (1.05 + .22 * Math.sin(now / 200)));
+  }
+  renderer.render(scene, cam());
+  updateLabels();
+}
+c2.enabled = false;
+resize();
+requestAnimationFrame(frame);
+parent.postMessage({ pm: "ready" }, "*");
+</script>
+</body>
+</html>

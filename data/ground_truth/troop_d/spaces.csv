@@ -1,0 +1,88 @@
+space_id,kind,rec_class,number,name,floor,parent,sheet
+td-site,site,rec:Building,,MSHP Troop D Crime Lab,,,
+td-L1,floor,rec:Level,L1,Level 1,L1,td-site,M-101
+td-L2,floor,rec:Level,L2,Level 2,L2,td-site,M-102
+td-L3,floor,rec:Level,L3,Level 3,L3,td-site,M-103
+td-RF,floor,rec:Level,RF,Roof,RF,td-site,M-104
+td-room-101,room,rec:Room,101,Evidence Receipt Lobby,L1,td-L1,M-101
+td-room-102,room,rec:Room,102,Check In/Out Counter,L1,td-L1,M-101
+td-room-103,room,rec:Room,103,Stairs,L1,td-L1,M-101
+td-room-104,room,rec:Room,104,Administrative Work Area,L1,td-L1,M-101
+td-room-105,room,rec:Room,105,Work Room,L1,td-L1,M-101
+td-room-106,room,rec:Room,106,Evidence Storage,L1,td-L1,M-101
+td-room-107,room,rec:Room,107,Future Office,L1,td-L1,M-101
+td-room-108,room,rec:Room,108,Corridor,L1,td-L1,M-101
+td-room-109,room,rec:Room,109,Conference,L1,td-L1,M-101
+td-room-110,room,rec:Room,110,Director's Office,L1,td-L1,M-101
+td-room-111,room,rec:Room,111,Break/Work,L1,td-L1,M-101
+td-room-112,room,rec:Room,112,Corridor,L1,td-L1,M-101
+td-room-112A,room,rec:Room,112A,Closet,L1,td-L1,M-101
+td-room-115,room,rec:Room,115,Dryer Cabinet Storage,L1,td-L1,M-101
+td-room-116,room,rec:Room,116,Record Storage,L1,td-L1,M-101
+td-room-117,room,rec:Room,117,Data/Server Room,L1,td-L1,M-101
+td-room-118,room,rec:Room,118,NIBIN Room,L1,td-L1,M-101
+td-room-119,room,rec:Room,119,Ammo Storage,L1,td-L1,M-101
+td-room-120,room,rec:Room,120,Firing Room,L1,td-L1,M-101
+td-room-121,room,rec:Room,121,Firearms Lab,L1,td-L1,M-101
+td-room-122,room,rec:Room,122,Biohazard,L1,td-L1,M-101
+td-room-123,room,rec:Room,123,Tool Room,L1,td-L1,M-101
+td-room-127,room,rec:Room,127,Corridor,L1,td-L1,M-101
+td-room-128,room,rec:Room,128,Gas Storage,L1,td-L1,M-101
+td-room-129,room,rec:Room,129,Expansion Room,L1,td-L1,M-101
+td-room-130,room,rec:Room,130,Storage,L1,td-L1,M-101
+td-room-131,room,rec:Room,131,Elec,L1,td-L1,M-101
+td-room-132,room,rec:Room,132,Stair,L1,td-L1,M-101
+td-room-134,room,rec:Room,134,Mens Restroom,L1,td-L1,M-101
+td-room-135,room,rec:Room,135,Womens Restroom,L1,td-L1,M-101
+td-room-136,room,rec:Room,136,Janitor,L1,td-L1,M-101
+td-room-137,room,rec:Room,137,Elevator Lobby,L1,td-L1,M-101
+td-room-138,room,rec:Room,138,Toilet,L1,td-L1,M-101
+td-room-139,room,rec:Room,139,Demarcation Room,L1,td-L1,M-101
+td-room-140,room,rec:Room,140,Vehicle Bay,L1,td-L1,M-101
+td-room-142,room,rec:Room,142,Electrical Room,L1,td-L1,M-101
+td-room-143,room,rec:Room,143,Elev. Machine Room,L1,td-L1,M-101
+td-room-144,room,rec:Room,144,Mechanical Room,L1,td-L1,M-101
+td-room-200,room,rec:Room,200,Stairs,L2,td-L2,M-102
+td-room-201,room,rec:Room,201,Open Work Area,L2,td-L2,M-102
+td-room-202,room,rec:Room,202,Latent Prints Lab,L2,td-L2,M-102
+td-room-203,room,rec:Room,203,Photo Lab,L2,td-L2,M-102
+td-room-204,room,rec:Room,204,DNA Clean Room,L2,td-L2,M-102
+td-room-205,room,rec:Room,205,Air-Lock,L2,td-L2,M-102
+td-room-206,room,rec:Room,206,DNA Extraction Room,L2,td-L2,M-102
+td-room-207,room,rec:Room,207,DNA Work Room,L2,td-L2,M-102
+td-room-208,room,rec:Room,208,DNA Exam Room,L2,td-L2,M-102
+td-room-209,room,rec:Room,209,DNA Exam Room,L2,td-L2,M-102
+td-room-210,room,rec:Room,210,Exam Room,L2,td-L2,M-102
+td-room-211,room,rec:Room,211,Exam Room,L2,td-L2,M-102
+td-room-212,room,rec:Room,212,Trace Evidence Lab,L2,td-L2,M-102
+td-room-213,room,rec:Room,213,Instrument Room,L2,td-L2,M-102
+td-room-214,room,rec:Room,214,Drug Chem Instrument Room,L2,td-L2,M-102
+td-room-215,room,rec:Room,215,Stairs,L2,td-L2,M-102
+td-room-216,room,rec:Room,216,Work/File Room,L2,td-L2,M-102
+td-room-217,room,rec:Room,217,Elec Room,L2,td-L2,M-102
+td-room-218,room,rec:Room,218,Data/Storage,L2,td-L2,M-102
+td-room-219,room,rec:Room,219,Janitor,L2,td-L2,M-102
+td-room-220,room,rec:Room,220,Data Room,L2,td-L2,M-102
+td-room-221,room,rec:Room,221,Women's Restroom,L2,td-L2,M-102
+td-room-222,room,rec:Room,222,Men's Restroom,L2,td-L2,M-102
+td-room-223,room,rec:Room,223,Lounge/Breakroom,L2,td-L2,M-102
+td-room-300,room,rec:Room,300,Stairs,L3,td-L3,M-103
+td-room-302,room,rec:Room,302,Toxicology Lab,L3,td-L3,M-103
+td-room-303,room,rec:Room,303,Instrument Room,L3,td-L3,M-103
+td-room-304,room,rec:Room,304,Shared Chem Storage,L3,td-L3,M-103
+td-room-305,room,rec:Room,305,Balance Room,L3,td-L3,M-103
+td-room-306,room,rec:Room,306,Work Room,L3,td-L3,M-103
+td-room-307,room,rec:Room,307,Drug Chemistry Lab,L3,td-L3,M-103
+td-room-308,room,rec:Room,308,Drug Chem Instrument Room,L3,td-L3,M-103
+td-room-309,room,rec:Room,309,Stairs,L3,td-L3,M-103
+td-room-319,room,rec:Room,319,Lounge/Breakroom,L3,td-L3,M-103
+td-room-320,room,rec:Room,320,Men's Restroom,L3,td-L3,M-103
+td-room-321,room,rec:Room,321,Women's Restroom,L3,td-L3,M-103
+td-room-322,room,rec:Room,322,Data Room,L3,td-L3,M-103
+td-room-323,room,rec:Room,323,Data/Storage,L3,td-L3,M-103
+td-room-324,room,rec:Room,324,Work/File Room,L3,td-L3,M-103
+td-room-325,room,rec:Room,325,Janitor,L3,td-L3,M-103
+td-room-333,room,rec:Room,333,Elec Room,L3,td-L3,M-103
+td-room-335,room,rec:Room,335,Open Work Area,L3,td-L3,M-103
+td-exterior,outdoor,rec:OutdoorSpace,,Chiller yard,L1,td-site,M-101
+td-roof,roof,rec:Space,,Roof,RF,td-RF,M-104

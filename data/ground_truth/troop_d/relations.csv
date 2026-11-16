@@ -1,0 +1,214 @@
+src,rel,dst,medium,source
+td-AHU01,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-SF,,M-303
+td-AHU01-SF,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-EF,,M-303
+td-AHU01-EF,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-CHWV,,M-303
+td-AHU01-CHWV,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-HUM,,M-303
+td-AHU01-HUM,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-ECON,,M-303
+td-AHU01-ECON,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-OAD,,M-303
+td-AHU01-OAD,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-RAD,,M-303
+td-AHU01-RAD,hasLocation,td-room-144,,floor plans
+td-AHU01,hasPart,td-AHU01-EAD,,M-303
+td-AHU01-EAD,hasLocation,td-room-144,,floor plans
+td-CHWS,hasPart,td-CH01a,,M-401
+td-CH01a,hasLocation,td-exterior,,floor plans
+td-CHWS,hasPart,td-CH01b,,M-401
+td-CH01b,hasLocation,td-exterior,,floor plans
+td-CHWS,hasPart,td-CWP01,,M-401
+td-CWP01,hasLocation,td-room-144,,floor plans
+td-CHWS,hasPart,td-CWP02,,M-401
+td-CWP02,hasLocation,td-room-144,,floor plans
+td-AHU01,feeds,td-VAV01,air,M-101..M-103 ductwork
+td-VAV01,hasLocation,td-room-109,,floor plans
+td-VAV01,feeds,td-room-109,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV02,air,M-101..M-103 ductwork
+td-VAV02,hasLocation,td-room-139,,floor plans
+td-VAV02,feeds,td-room-139,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV03,air,M-101..M-103 ductwork
+td-VAV03,hasLocation,td-room-116,,floor plans
+td-VAV03,feeds,td-room-116,air,thermostat on plan (medium)
+td-AHU01,feeds,td-VAV04,air,M-101..M-103 ductwork
+td-VAV04,hasLocation,td-room-117,,floor plans
+td-VAV04,feeds,td-room-117,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV05,air,M-101..M-103 ductwork
+td-VAV05,hasLocation,td-room-137,,floor plans
+td-VAV05,feeds,td-room-137,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV06,air,M-101..M-103 ductwork
+td-VAV06,hasLocation,td-room-119,,floor plans
+td-VAV06,feeds,td-room-119,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV07,air,M-101..M-103 ductwork
+td-VAV07,hasLocation,td-room-118,,floor plans
+td-VAV07,feeds,td-room-118,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV08,air,M-101..M-103 ductwork
+td-VAV08,hasLocation,td-room-131,,floor plans
+td-VAV08,feeds,td-room-131,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV09,air,M-101..M-103 ductwork
+td-VAV09,hasLocation,td-room-203,,floor plans
+td-VAV09,feeds,td-room-203,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV10,air,M-101..M-103 ductwork
+td-VAV10,hasLocation,td-room-220,,floor plans
+td-VAV10,feeds,td-room-220,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV11,air,M-101..M-103 ductwork
+td-VAV11,hasLocation,td-room-217,,floor plans
+td-VAV11,feeds,td-room-217,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV12,air,M-101..M-103 ductwork
+td-VAV12,hasLocation,td-room-216,,floor plans
+td-VAV12,feeds,td-room-216,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV13,air,M-101..M-103 ductwork
+td-VAV13,hasLocation,td-room-208,,floor plans
+td-VAV13,feeds,td-room-208,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV14,air,M-101..M-103 ductwork
+td-VAV14,hasLocation,td-room-321,,floor plans
+td-VAV14,feeds,td-room-321,air,thermostat on plan (medium)
+td-AHU01,feeds,td-VAV15,air,M-101..M-103 ductwork
+td-VAV15,hasLocation,td-room-333,,floor plans
+td-VAV15,feeds,td-room-333,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV16,air,M-101..M-103 ductwork
+td-VAV16,hasLocation,td-room-304,,floor plans
+td-VAV16,feeds,td-room-304,air,thermostat on plan (medium)
+td-AHU01,feeds,td-VAV17,air,M-101..M-103 ductwork
+td-VAV17,hasLocation,td-room-324,,floor plans
+td-VAV17,feeds,td-room-324,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAV18,air,M-101..M-103 ductwork
+td-VAV18,hasLocation,td-room-300,,floor plans
+td-VAV18,feeds,td-room-300,air,thermostat on plan (medium)
+td-AHU01,feeds,td-VAV19,air,M-101..M-103 ductwork
+td-VAV19,hasLocation,td-room-309,,floor plans
+td-VAV19,feeds,td-room-309,air,thermostat on plan (medium)
+td-AHU01,feeds,td-VAVE01,air,M-101..M-103 ductwork
+td-VAVE01,hasLocation,td-room-105,,floor plans
+td-VAVE01,feeds,td-room-105,air,thermostat on plan (medium)
+td-AHU01,feeds,td-VAVE02,air,M-101..M-103 ductwork
+td-VAVE02,hasLocation,td-room-110,,floor plans
+td-VAVE02,feeds,td-room-110,air,thermostat on plan (medium)
+td-AHU01,feeds,td-VAVE03,air,M-101..M-103 ductwork
+td-VAVE03,hasLocation,td-room-111,,floor plans
+td-VAVE03,feeds,td-room-111,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE04,air,M-101..M-103 ductwork
+td-VAVE04,hasLocation,td-room-120,,floor plans
+td-VAVE04,feeds,td-room-120,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE05,air,M-101..M-103 ductwork
+td-VAVE05,hasLocation,td-room-122,,floor plans
+td-VAVE05,feeds,td-room-122,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE06,air,M-101..M-103 ductwork
+td-VAVE06,hasLocation,td-room-123,,floor plans
+td-VAVE06,feeds,td-room-123,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE07,air,M-101..M-103 ductwork
+td-VAVE07,hasLocation,td-room-127,,floor plans
+td-VAVE07,feeds,td-room-127,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE08,air,M-101..M-103 ductwork
+td-VAVE08,hasLocation,td-room-223,,floor plans
+td-VAVE08,feeds,td-room-223,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE09,air,M-101..M-103 ductwork
+td-VAVE09,hasLocation,td-room-201,,floor plans
+td-VAVE09,feeds,td-room-201,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE10,air,M-101..M-103 ductwork
+td-VAVE10,hasLocation,td-room-201,,floor plans
+td-VAVE10,feeds,td-room-201,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE11,air,M-101..M-103 ductwork
+td-VAVE11,hasLocation,td-room-210,,floor plans
+td-VAVE11,feeds,td-room-210,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE12,air,M-101..M-103 ductwork
+td-VAVE12,hasLocation,td-room-211,,floor plans
+td-VAVE12,feeds,td-room-211,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE13,air,M-101..M-103 ductwork
+td-VAVE13,hasLocation,td-room-213,,floor plans
+td-VAVE13,feeds,td-room-213,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE14,air,M-101..M-103 ductwork
+td-VAVE14,hasLocation,td-room-214,,floor plans
+td-VAVE14,feeds,td-room-214,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE15,air,M-101..M-103 ductwork
+td-VAVE15,hasLocation,td-room-319,,floor plans
+td-VAVE15,feeds,td-room-319,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE16,air,M-101..M-103 ductwork
+td-VAVE16,hasLocation,td-room-302,,floor plans
+td-VAVE16,feeds,td-room-302,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE17,air,M-101..M-103 ductwork
+td-VAVE17,hasLocation,td-room-335,,floor plans
+td-VAVE17,feeds,td-room-335,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE18,air,M-101..M-103 ductwork
+td-VAVE18,hasLocation,td-room-305,,floor plans
+td-VAVE18,feeds,td-room-305,air,thermostat on plan (high)
+td-AHU01,feeds,td-VAVE19,air,M-101..M-103 ductwork
+td-VAVE19,hasLocation,td-room-204,,floor plans
+td-VAVE19,feeds,td-room-204,air,thermostat on plan (medium)
+td-AHU01,feeds,td-FVAV01,air,M-101..M-103 ductwork
+td-FVAV01,hasLocation,td-room-104,,floor plans
+td-FVAV01,feeds,td-room-104,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV02,air,M-101..M-103 ductwork
+td-FVAV02,hasLocation,td-room-101,,floor plans
+td-FVAV02,feeds,td-room-101,air,thermostat on plan (medium)
+td-AHU01,feeds,td-FVAV03,air,M-101..M-103 ductwork
+td-FVAV03,hasLocation,td-room-121,,floor plans
+td-FVAV03,feeds,td-room-121,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV04,air,M-101..M-103 ductwork
+td-FVAV04,hasLocation,td-room-201,,floor plans
+td-FVAV04,feeds,td-room-201,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV05,air,M-101..M-103 ductwork
+td-FVAV05,hasLocation,td-room-202,,floor plans
+td-FVAV05,feeds,td-room-202,air,thermostat on plan (medium)
+td-AHU01,feeds,td-FVAV06,air,M-101..M-103 ductwork
+td-FVAV06,hasLocation,td-room-308,,floor plans
+td-FVAV06,feeds,td-room-308,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV07,air,M-101..M-103 ductwork
+td-FVAV07,hasLocation,td-room-206,,floor plans
+td-FVAV07,feeds,td-room-206,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV08,air,M-101..M-103 ductwork
+td-FVAV08,hasLocation,td-room-207,,floor plans
+td-FVAV08,feeds,td-room-207,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV09,air,M-101..M-103 ductwork
+td-FVAV09,hasLocation,td-room-209,,floor plans
+td-FVAV09,feeds,td-room-209,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV10,air,M-101..M-103 ductwork
+td-FVAV10,hasLocation,td-room-212,,floor plans
+td-FVAV10,feeds,td-room-212,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV11,air,M-101..M-103 ductwork
+td-FVAV11,hasLocation,td-room-335,,floor plans
+td-FVAV11,feeds,td-room-335,air,thermostat on plan (medium)
+td-AHU01,feeds,td-FVAV12,air,M-101..M-103 ductwork
+td-FVAV12,hasLocation,td-room-302,,floor plans
+td-FVAV12,feeds,td-room-302,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV13,air,M-101..M-103 ductwork
+td-FVAV13,hasLocation,td-room-302,,floor plans
+td-FVAV13,feeds,td-room-302,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV14,air,M-101..M-103 ductwork
+td-FVAV14,hasLocation,td-room-303,,floor plans
+td-FVAV14,feeds,td-room-303,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV15,air,M-101..M-103 ductwork
+td-FVAV15,hasLocation,td-room-304,,floor plans
+td-FVAV15,feeds,td-room-304,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV16,air,M-101..M-103 ductwork
+td-FVAV16,hasLocation,td-room-306,,floor plans
+td-FVAV16,feeds,td-room-306,air,thermostat on plan (high)
+td-AHU01,feeds,td-FVAV17,air,M-101..M-103 ductwork
+td-FVAV17,hasLocation,td-room-307,,floor plans
+td-FVAV17,feeds,td-room-307,air,thermostat on plan (medium)
+td-AHU01,feeds,td-FVAV18,air,M-101..M-103 ductwork
+td-FVAV18,hasLocation,td-room-307,,floor plans
+td-FVAV18,feeds,td-room-307,air,thermostat on plan (high)
+td-EF-LAB1,hasLocation,td-roof,,floor plans
+td-EF-LAB2,hasLocation,td-roof,,floor plans
+td-EF-RR,hasLocation,td-roof,,floor plans
+td-EF-CONT,hasLocation,td-room-128,,floor plans
+td-EF-LOCAL,hasLocation,td-roof,,floor plans
+td-MS01,hasLocation,td-room-143,,floor plans
+td-MS02,hasLocation,td-room-144,,floor plans
+td-MS03,hasLocation,td-room-144,,floor plans
+td-UH01,hasLocation,td-room-103,,floor plans
+td-UH02,hasLocation,td-room-200,,floor plans
+td-UH03,hasLocation,td-room-132,,floor plans
+td-UH04,hasLocation,td-room-139,,floor plans
+td-UH05,hasLocation,td-room-142,,floor plans
+td-CWP01,feeds,td-CH01a,chilled_water,M-301 piping diagram
+td-CWP02,feeds,td-CH01a,chilled_water,M-301 piping diagram
+td-CH01a,feeds,td-AHU01,chilled_water,M-301 piping diagram
+td-CWP01,feeds,td-CH01b,chilled_water,M-301 piping diagram
+td-CWP02,feeds,td-CH01b,chilled_water,M-301 piping diagram
+td-CH01b,feeds,td-AHU01,chilled_water,M-301 piping diagram
+td-EF-RR,requires,td-AHU01,,M-304 EF-RR interlock

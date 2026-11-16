@@ -1,0 +1,237 @@
+# Troop D Crime Lab: the building as read from the public bid set, the single source for the synthetic
+# controls submittal, the synthetic BMS export and the answer key (scripts/build_troop_d.py).
+#
+# Source: State of Missouri project R2517-01 "Update HVAC & Chiller, Troop D Crime Lab", 425 East Phelps
+# Street, Springfield MO 65806. Bid plans and specs dated 2025-10-06 (data/raw/troop_d/, see SOURCES.md).
+# Every equipment row cites the sheet it comes from. Rooms and VAV locations are read from the floor plans
+# (M-101 level 1, M-102 level 2, M-103 level 3): a box serves the room its thermostat sits in.
+# `confidence: medium` marks a location where the plan is ambiguous (thermostat on a room boundary, in a
+# corridor, or on another floor); the reasoning is in `note`.
+#
+# What is NOT from the bid set (invented for the synthetic submittal, marked in the answer key as such):
+# controller models and addresses, the network, point names, BACnet instances, BMS names.
+
+site:
+  id: troop_d
+  name: MSHP Troop D Crime Lab
+  address: "425 East Phelps Street, Springfield, MO 65806, USA"
+  owner: State of Missouri, Department of Public Safety, Missouri State Highway Patrol
+  project: R2517-01
+  bas: Johnson Controls Metasys (existing; new equipment added to it, sheet M-303 note)
+
+floors:
+  - {id: L1, name: Level 1, sheet: M-101}
+  - {id: L2, name: Level 2, sheet: M-102}
+  - {id: L3, name: Level 3, sheet: M-103}
+  - {id: RF, name: Roof, sheet: M-104}
+
+# Room numbers and names as printed on the plans.
+rooms:
+  L1:
+    "101": Evidence Receipt Lobby
+    "102": Check In/Out Counter
+    "103": Stairs
+    "104": Administrative Work Area
+    "105": Work Room
+    "106": Evidence Storage
+    "107": Future Office
+    "108": Corridor
+    "109": Conference
+    "110": Director's Office
+    "111": Break/Work
+    "112": Corridor
+    "112A": Closet
+    "115": Dryer Cabinet Storage
+    "116": Record Storage
+    "117": Data/Server Room
+    "118": NIBIN Room
+    "119": Ammo Storage
+    "120": Firing Room
+    "121": Firearms Lab
+    "122": Biohazard
+    "123": Tool Room
+    "127": Corridor
+    "128": Gas Storage
+    "129": Expansion Room
+    "130": Storage
+    "131": Elec
+    "132": Stair
+    "134": Mens Restroom
+    "135": Womens Restroom
+    "136": Janitor
+    "137": Elevator Lobby
+    "138": Toilet
+    "139": Demarcation Room
+    "140": Vehicle Bay
+    "142": Electrical Room
+    "143": Elev. Machine Room
+    "144": Mechanical Room
+  L2:
+    "200": Stairs
+    "201": Open Work Area
+    "202": Latent Prints Lab
+    "203": Photo Lab
+    "204": DNA Clean Room
+    "205": Air-Lock
+    "206": DNA Extraction Room
+    "207": DNA Work Room
+    "208": DNA Exam Room
+    "209": DNA Exam Room
+    "210": Exam Room
+    "211": Exam Room
+    "212": Trace Evidence Lab
+    "213": Instrument Room
+    "214": Drug Chem Instrument Room
+    "215": Stairs
+    "216": Work/File Room
+    "217": Elec Room
+    "218": Data/Storage
+    "219": Janitor
+    "220": Data Room
+    "221": Women's Restroom
+    "222": Men's Restroom
+    "223": Lounge/Breakroom
+  L3:
+    "300": Stairs
+    "302": Toxicology Lab
+    "303": Instrument Room
+    "304": Shared Chem Storage
+    "305": Balance Room
+    "306": Work Room
+    "307": Drug Chemistry Lab
+    "308": Drug Chem Instrument Room
+    "309": Stairs
+    "319": Lounge/Breakroom
+    "320": Men's Restroom
+    "321": Women's Restroom
+    "322": Data Room
+    "323": Data/Storage
+    "324": Work/File Room
+    "325": Janitor
+    "333": Elec Room
+    "335": Open Work Area
+
+# ---- Equipment (sheet M-401 schedules unless noted) ----
+
+ahu:
+  - tag: AHU01
+    sheet: M-401
+    location: {floor: L1, room: "144"}       # mechanical room (M-104 shows the unit; ducts rise from 144)
+    make: Temtrol
+    supply_cfm: 34000
+    outside_cfm: 8500
+    exhaust_cfm: 17000
+    supply_fans: 9                            # fan wall, 3 rows of 3, two VFDs (one redundant)
+    exhaust_fans: 4                           # two exhaust fan walls, 2 rows of 2, two VFDs
+    preheat_kw: 178.3                         # electric preheat on primary outside air
+    cooling_mbh: 1367.2
+    chw_gpm: 183.0
+    humidifier: {make: Neptronic, model: SKE4-NM100M-480-3, kw: 100}
+    filters: 2in MERV 8
+
+chillers:
+  - {tag: CH01a, sheet: M-401, make: York, model: YLAA0070SJ46XFB, tons: 70, gpm: 105.9, ewt: 58, lwt: 42, location: {floor: L1, room: exterior}}
+  - {tag: CH01b, sheet: M-401, make: York, model: YLAA0070SJ46XFB, tons: 70, gpm: 105.9, ewt: 58, lwt: 42, location: {floor: L1, room: exterior}}
+
+pumps:
+  - {tag: CWP01, sheet: M-401, make: Bell & Gossett, model: 1510-2BD, gpm: 183, head_ft: 75, hp: 7.5, vfd: VFD01, location: {floor: L1, room: "144"}}
+  - {tag: CWP02, sheet: M-401, make: Bell & Gossett, model: 1510-2BD, gpm: 183, head_ft: 75, hp: 7.5, vfd: VFD02, location: {floor: L1, room: "144"}}
+
+# VAV: cooling only (Krueger LMHS, no heater). VAVE: electric reheat. FVAV: parallel fan powered, electric heat.
+# Columns: tag, cooling cfm, min cfm, heating cfm, heat kW, inlet, floor, room, confidence, note.
+vav:
+  - [VAV01, 685, 125, null, null, 10, L1, "109", high]
+  - [VAV02, 140, 40, null, null, 10, L1, "139", high]
+  - [VAV03, 635, 125, null, null, 10, L1, "116", medium, "thermostat on the corridor 112 side of the wall; ducts feed record storage"]
+  - [VAV04, 310, 65, null, null, 10, L1, "117", high]
+  - [VAV05, 300, 65, null, null, 10, L1, "137", high]
+  - [VAV06, 85, 40, null, null, 10, L1, "119", high]
+  - [VAV07, 375, 90, null, null, 10, L1, "118", high]
+  - [VAV08, 290, 65, null, null, 10, L1, "131", high]
+  - [VAV09, 130, 40, null, null, 10, L2, "203", high]
+  - [VAV10, 325, 65, null, null, 10, L2, "220", high]
+  - [VAV11, 280, 65, null, null, 10, L2, "217", high]
+  - [VAV12, 335, 65, null, null, 10, L2, "216", high]
+  - [VAV13, 210, 40, null, null, 10, L2, "208", high]
+  - [VAV14, 410, 90, null, null, 10, L3, "321", medium, "box by the level 3 restrooms; thermostat not labelled on M-103"]
+  - [VAV15, 310, 65, null, null, 10, L3, "333", high]
+  - [VAV16, 185, 40, null, null, 10, L3, "304", medium, "box at the balance room / chem storage corner; thermostat in 304"]
+  - [VAV17, 540, 125, null, null, 10, L3, "324", high]
+  - [VAV18, 945, 200, null, null, 13, L3, "300", medium, "west stair tower: box on level 3, thermostat on level 2 (stair 200)"]
+  - [VAV19, 520, 125, null, null, 10, L3, "309", medium, "east stair tower: box on level 3, thermostat on level 2 (stair 215)"]
+vave:
+  - [VAVE01, 305, 85, 85, 3, 10, L1, "105", medium, "thermostat in corridor 108 above the room"]
+  - [VAVE02, 540, 140, 140, 4, 10, L1, "110", medium, "thermostat in the corridor; label next to Director's Office"]
+  - [VAVE03, 330, 85, 85, 4, 10, L1, "111", high]
+  - [VAVE04, 210, 55, 55, 2.5, 10, L1, "120", high]
+  - [VAVE05, 270, 85, 85, 3, 10, L1, "122", high]
+  - [VAVE06, 345, 85, 85, 4, 10, L1, "123", high]
+  - [VAVE07, 1170, 300, 300, 15, 15, L1, "127", high]
+  - [VAVE08, 705, 215, 215, 10, 10, L2, "223", high]
+  - [VAVE09, 1140, 300, 300, 11, 15, L2, "201", high]
+  - [VAVE10, 945, 225, 225, 11, 15, L2, "201", high]
+  - [VAVE11, 420, 125, 125, 6, 10, L2, "210", high]
+  - [VAVE12, 510, 155, 155, 8, 15, L2, "211", high]
+  - [VAVE13, 900, 225, 225, 11, 10, L2, "213", high]
+  - [VAVE14, 665, 190, 190, 8.5, 10, L2, "214", high]
+  - [VAVE15, 550, 165, 165, 8, 15, L3, "319", high]
+  - [VAVE16, 2145, 575, 575, 24, 15, L3, "302", high]
+  - [VAVE17, 1620, 425, 425, 17, 15, L3, "335", high]
+  - [VAVE18, 1620, 425, 425, 17, 15, L3, "305", high]
+  - [VAVE19, 2060, 2060, 2060, 24, 15, L2, "204", medium, "thermostat at the air-lock 205 door; box supplies the DNA clean room (constant volume: min = max)"]
+fvav:
+  # tag, cooling cfm, min primary cfm, heating cfm, heat kW, unit size, fan cfm, floor, room, confidence, note
+  - [FVAV01, 1255, 380, 620, 10.5, 4, 620, L1, "104", high]
+  - [FVAV02, 1815, 550, 900, 14, 7, 900, L1, "101", medium, "box in the lobby, thermostat on the check-in counter 102 wall"]
+  - [FVAV03, 755, 230, 390, 9, 4, 390, L1, "121", high]
+  - [FVAV04, 890, 270, 445, 10, 4, 445, L2, "201", high]
+  - [FVAV05, 1530, 460, 765, 17, 7, 765, L2, "202", medium, "thermostat on the photo lab 203 side; ducts feed latent prints"]
+  - [FVAV06, 2240, 680, 1110, 17, 7, 1110, L3, "308", high]
+  - [FVAV07, 665, 200, 330, 8, 4, 330, L2, "206", high]
+  - [FVAV08, 1085, 330, 540, 10, 4, 540, L2, "207", high]
+  - [FVAV09, 810, 250, 400, 9, 4, 400, L2, "209", high]
+  - [FVAV10, 1360, 410, 680, 10, 4, 680, L2, "212", high]
+  - [FVAV11, 950, 285, 475, 10, 4, 475, L3, "335", medium, "box at the toxicology lab, thermostat by the lounge; taken as the open work area"]
+  - [FVAV12, 1240, 380, 610, 10, 4, 610, L3, "302", high]
+  - [FVAV13, 1240, 380, 610, 10, 4, 610, L3, "302", high]
+  - [FVAV14, 2520, 760, 1255, 19, 7, 1255, L3, "303", high]
+  - [FVAV15, 2800, 840, 360, 14, 7, 360, L3, "304", high]
+  - [FVAV16, 825, 250, 410, 9, 4, 410, L3, "306", high]
+  - [FVAV17, 1190, 360, 590, 10, 4, 590, L3, "307", medium, "thermostat near work room 306; box in the drug chemistry lab"]
+  - [FVAV18, 1190, 360, 590, 10, 4, 590, L3, "307", high]
+
+exhaust_fans:   # sheet M-104 (roof) and M-304 sequence; no exhaust fan schedule in the bid set
+  - {tag: EF-LAB1, kind: lab, on_bas: true, location: {floor: RF, room: roof}, note: "two EF-LAB on M-104, numbered here"}
+  - {tag: EF-LAB2, kind: lab, on_bas: true, location: {floor: RF, room: roof}}
+  - {tag: EF-RR, kind: restroom, on_bas: true, interlock: AHU01, location: {floor: RF, room: roof}}
+  - {tag: EF-CONT, kind: continuous, on_bas: true, location: {floor: L1, room: "128"}}
+  - {tag: EF-LOCAL, kind: local, on_bas: false, location: {floor: RF, room: roof}, note: "three on M-104, local controls, not on the BAS"}
+
+mini_splits:    # M-401, LG; controller for BAS monitoring only (note 3)
+  - {tag: MS01, make: LG, outdoor: KUSXB181A, indoor: KNUDB181A, mbh: 18, location: {floor: L1, room: "143"}}
+  - {tag: MS02, make: LG, outdoor: KUSXB181A, indoor: KNUDB181A, mbh: 18, location: {floor: L1, room: "144"}}
+  - {tag: MS03, make: LG, outdoor: KSUXA421A, indoor: KNSCB421A, mbh: 42, location: {floor: L1, room: "144"}}
+
+unit_heaters:   # M-401, Qmark electric, own thermostat, not on the BAS
+  - {tag: UH01, kw: 6.0, location: {floor: L1, room: "103"}}
+  - {tag: UH02, kw: 6.0, location: {floor: L2, room: "200"}}
+  - {tag: UH03, kw: 6.0, location: {floor: L1, room: "132"}}
+  - {tag: UH04, kw: 10.0, location: {floor: L1, room: "139"}}
+  - {tag: UH05, kw: 10.0, location: {floor: L1, room: "142"}}
+
+hydronic_specialties:   # M-401; no controls
+  - {tag: HS01, kind: buffer tank 250 gal}
+  - {tag: HS02, kind: shot feeder}
+  - {tag: HS03, kind: expansion tank}
+  - {tag: HS04, kind: air/dirt separator}
+
+# Known conflicts inside the bid set itself (kept as findings, not fixed).
+design_issues:
+  - id: DI-1
+    text: "M-304 'VAV terminal units' heating paragraph describes an electric reheat coil, but the 19 VAV boxes on M-401 have no heater. The heating paragraph only applies to VAVE boxes."
+  - id: DI-2
+    text: "M-304 sequence lettering skips D (AHU) and E (VAV/FVAV)."
+  - id: DI-3
+    text: "No exhaust fan schedule: EF-LAB, EF-RR, EF-CONT, EF-LOCAL appear only on M-104 and M-304."
+  - id: DI-4
+    text: "FVAV15 heating cfm (360) is below its minimum primary cfm (840); every other FVAV has heating cfm about half of cooling."
