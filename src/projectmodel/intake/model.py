@@ -45,6 +45,7 @@ def building(it: Intake) -> dict:
     for n, e in equip.items():
         p, c = place.get(n), check.get(n)
         e["floor"] = p["data"]["floor"] if p else (c["data"]["floor"] if c else None)
+        e["facts"] = [x["id"] for x in (p, c) if x] + [e["fact"]]  # every fact about this unit; plan position first
         e["xy"] = p["data"].get("unit_xy") if p else None
         e["at_xy"] = p["data"].get("at_xy") if p else None
         e["also_on"] = p["data"].get("also_on", []) if p else []
@@ -68,6 +69,7 @@ def building(it: Intake) -> dict:
         n = c["data"].get("equip")
         if n in equip:
             equip[n]["controller"] = {k: c["data"][k] for k in ("device", "controller", "trunk", "address")}
+            equip[n]["facts"].append(c["id"])
             by_device[c["data"]["device"]] = n
     for p in points:
         n = by_device.get(p["data"]["device"])
@@ -77,6 +79,7 @@ def building(it: Intake) -> dict:
         n = a["data"].get("equip")
         if n in equip:
             equip[n]["bms"] = a["data"]["device"]
+            equip[n]["facts"].append(a["id"])
     for s in seqs:
         for tag in s["data"]["applies_to"]:
             for e in equip.values():

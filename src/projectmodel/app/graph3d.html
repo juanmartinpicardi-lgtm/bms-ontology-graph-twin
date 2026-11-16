@@ -12,7 +12,7 @@
     color-scheme: light;
     --bg: #ffffff; --panel: rgba(255, 255, 255, 0.94); --line: #dcdad6; --text: #2f2d2b; --muted: #74706b;
     --accent: #0969da; --chip: #f8f8f7; --none: #a8b0b8; --dim: rgba(140, 149, 159, 0.16); --cls-light: 48%;
-    --k-equipment: #2f6fdb; --k-point: #8c959f; --k-class: #c48a00;
+    --k-equipment: #2f6fdb; --k-point: #8c959f; --k-class: #c48a00; --k-location: #1a9e95; --r-hasLocation: #1a9e95; --r-serves: #e8590c;
     --m-parsed: #2f6fdb; --m-rule: #1a9e95; --m-template: #8250df; --m-llm: #e8590c; --m-human: #2da44e; --m-model: #c48a00;
     --s-proposed: #bf8700; --s-confirmed: #2da44e; --s-rejected: #cf222e; --notes: #d6336c;
     --r-hasPart: #5b8bd6; --r-hasPoint: #c4ccd4; --r-feeds: #e8590c; --r-type: #dcc07a; --r-subClassOf: #c48a00;
@@ -23,7 +23,7 @@
       color-scheme: dark;
       --bg: #0e1117; --panel: rgba(22, 27, 34, 0.94); --line: #30363d; --text: #e6edf3; --muted: #8b949e;
       --accent: #58a6ff; --chip: #262730; --none: #555c66; --dim: rgba(48, 54, 61, 0.25); --cls-light: 60%;
-      --k-equipment: #58a6ff; --k-point: #8b949e; --k-class: #f2b134;
+      --k-equipment: #58a6ff; --k-point: #8b949e; --k-class: #f2b134; --k-location: #39c5bb; --r-hasLocation: #39c5bb; --r-serves: #f0883e;
       --m-parsed: #58a6ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #3fb950; --m-model: #f2b134;
       --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149; --notes: #f778ba;
       --r-hasPart: #6e9fe0; --r-hasPoint: #3d4a5a; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
@@ -34,7 +34,7 @@
     color-scheme: dark;
     --bg: #171614; --panel: rgba(33, 32, 29, 0.94); --line: #3b3935; --text: #edebe8; --muted: #a29e98;
     --accent: #58a6ff; --chip: #2a2925; --none: #5c5955; --dim: rgba(59, 57, 53, 0.25); --cls-light: 60%;
-    --k-equipment: #58a6ff; --k-point: #8b949e; --k-class: #f2b134;
+    --k-equipment: #58a6ff; --k-point: #8b949e; --k-class: #f2b134; --k-location: #39c5bb; --r-hasLocation: #39c5bb; --r-serves: #f0883e;
     --m-parsed: #58a6ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #3fb950; --m-model: #f2b134;
     --s-proposed: #d29922; --s-confirmed: #3fb950; --s-rejected: #f85149; --notes: #f778ba;
     --r-hasPart: #6e9fe0; --r-hasPoint: #3d4a5a; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
@@ -123,6 +123,7 @@
       <option value="method">Method</option>
       <option value="status">Review status</option>
       <option value="notes">Has notes</option>
+      <option value="doc" id="optDoc" hidden>Source document</option>
     </select>
   </label>
   <label class="row">Show around selection
@@ -135,6 +136,7 @@
   </label>
   <div class="toggles">
     <label><input type="checkbox" id="showPoints" checked> Points</label>
+    <label id="lblLocations" hidden><input type="checkbox" id="showLocations" checked> Floors and rooms</label>
     <label><input type="checkbox" id="showModel"> Knowledge model layer</label>
     <label><input type="checkbox" id="showFlow" checked> Animate feeds</label>
     <label title="Loops, interlocks, resets, requests and modes from the sequences of operation (intent, not as built)"><input type="checkbox" id="showBehaviour"> Behaviour (sequences)</label>
@@ -160,6 +162,8 @@ const REL = {
   hasPart:    { width: 1.2, arrow: 3, label: "has part" },
   hasPoint:   { width: 0.2, arrow: 0, label: "has point" },
   feeds:      { width: 1.6, arrow: 4, label: "feeds" },
+  hasLocation: { width: 0.5, arrow: 2, label: "is located in" },
+  serves:     { width: 0.5, arrow: 2, label: "serves (feeds a room)" },
   type:       { width: 0.2, arrow: 0, label: "is a (class)" },
   subClassOf: { width: 1.0, arrow: 3, label: "subclass of" },
   // Behaviour, from the sequences of operation (method document): intent, off by default.
@@ -173,7 +177,7 @@ const REL = {
 const P = {};  // page colours
 function readTheme() {
   const s = getComputedStyle(document.documentElement), v = n => s.getPropertyValue(n).trim();
-  for (const k of ["equipment", "point", "class"]) KIND_COLOR[k] = v(`--k-${k}`);
+  for (const k of ["equipment", "point", "class", "location"]) KIND_COLOR[k] = v(`--k-${k}`);
   for (const k of ["parsed", "rule", "template", "llm", "human", "document", "model"]) METHOD_COLOR[k] = v(`--m-${k}`);
   for (const k of ["proposed", "confirmed", "rejected"]) STATUS_COLOR[k] = v(`--s-${k}`);
   for (const k of Object.keys(REL)) REL[k].color = v(REL[k].behaviour ? "--r-behaviour" : `--r-${k}`);
@@ -205,7 +209,7 @@ const confColor = c => {
   return `rgb(${r}, ${g}, 73)`;
 };
 
-const state = { colorBy: "kind", hops: 0, showPoints: true, showModel: false, showFlow: true, showBehaviour: false, selected: null };
+const state = { colorBy: "kind", hops: 0, showLocations: true, showPoints: true, showModel: false, showFlow: true, showBehaviour: false, selected: null };
 let highlight = null;  // Set of node ids to keep bright, or null
 
 function baseColor(n) {
@@ -215,16 +219,19 @@ function baseColor(n) {
     case "method": return METHOD_COLOR[n.prov?.method] || P.none;
     case "status": return n.kind === "class" ? KIND_COLOR.class : (STATUS_COLOR[n.prov?.status] || P.none);
     case "notes": return n.notes ? P.notes : P.none;
+    case "doc": return n.kind === "class" ? KIND_COLOR.class : clsColor(n.prov?.source_file);
     default: return KIND_COLOR[n.kind];
   }
 }
 const nodeColor = n => highlight && !highlight.has(n.id) ? P.dim : baseColor(n);
 const nodeSize = n => n.kind === "equipment" ? 1 + Math.sqrt(n.attrs?.points || 1) * 0.5
-  : n.kind === "class" ? 1.2 + Math.sqrt(n.attrs?.instances || 0) * 0.3 : 0.35;
+  : n.kind === "class" ? 1.2 + Math.sqrt(n.attrs?.instances || 0) * 0.3
+  : n.kind === "location" ? (n.cls === "Floor" ? 3 : 0.3) : 0.35;
 
 // --- visibility ----------------------------------------------------------------------------------
 function layerOk(n) {
   if (n.kind === "point" && !state.showPoints) return false;
+  if (n.kind === "location" && !state.showLocations) return false;
   if (n.layer === "model" && !state.showModel) return false;
   return true;
 }
@@ -274,7 +281,7 @@ const Graph = ForceGraph3D({ controlType: "orbit" })(el)
   .linkDirectionalParticleWidth(1.6)
   .linkDirectionalParticleSpeed(0.006)
   .linkLabel(l => `<div class="tip">${esc(byId.get(l.s).label)} <b>${esc(REL[l.rel]?.label || l.rel)}</b> ${esc(byId.get(l.t).label)}</div>`)
-  .onNodeClick(n => selectNode(n.id, true))
+  .onNodeClick(n => { selectNode(n.id, true); if (n.fact && parent !== window) parent.postMessage({ pm: "event", value: { name: "pick", id: n.fact } }, "*"); })
   .onLinkClick(l => selectLink(l))
   .onBackgroundClick(() => clearSelection())
   .onNodeHover(n => { el.style.cursor = n ? "pointer" : null; })
@@ -492,7 +499,7 @@ resultsEl.addEventListener("click", e => {
 // --- controls, stats, legend -------------------------------------------------------------------
 document.getElementById("colorBy").onchange = e => { state.colorBy = e.target.value; refresh(false); };
 document.getElementById("hops").onchange = e => { state.hops = +e.target.value; refresh(true); };
-for (const k of ["showPoints", "showModel", "showFlow", "showBehaviour"]) {
+for (const k of ["showPoints", "showLocations", "showModel", "showFlow", "showBehaviour"]) {
   document.getElementById(k).onchange = e => {
     state[k] = e.target.checked;
     if (state.selected?.kind === "node" && !layerOk(byId.get(state.selected.id))) clearSelection();
@@ -500,6 +507,17 @@ for (const k of ["showPoints", "showModel", "showFlow", "showBehaviour"]) {
   };
 }
 document.getElementById("clear").onclick = clearSelection;
+// Shown only for graphs that have them: floors and rooms, and a source document per node (the guided setup).
+if (nodes.some(n => n.kind === "location")) document.getElementById("lblLocations").hidden = false;
+if (DATA.by_document) document.getElementById("optDoc").hidden = false;
+// Inside the app's guided setup the page that holds this viewer listens: a click on a node opens its source there,
+// and the app can select a node here. Harmless anywhere else.
+addEventListener("message", e => {
+  if (e.data?.pm !== "data") return;
+  const id = e.data.data?.select, n = id && nodes.find(n => n.fact === id || (n.facts || []).includes(id));
+  if (n && state.selected?.id !== n.id) selectNode(n.id, n.x !== undefined);
+});
+if (parent !== window) parent.postMessage({ pm: "ready" }, "*");
 const toolbar = document.getElementById("toolbar"), collapseBtn = document.getElementById("collapse");
 function setCollapsed(on) {
   toolbar.classList.toggle("collapsed", on);
@@ -540,9 +558,10 @@ function renderLegend() {
   const sw = (c, t) => `<div class="item"><span class="sw" style="background:${c}"></span>${esc(t)}</div>`;
   const ln = (c, t) => `<div class="item"><span class="ln" style="background:${c}"></span>${esc(t)}</div>`;
   let h = "";
-  if (state.colorBy === "kind") h += Object.entries(KIND_COLOR).filter(([k]) => k !== "class" || state.showModel).map(([k, c]) => sw(c, k)).join("");
+  if (state.colorBy === "kind") h += Object.entries(KIND_COLOR).filter(([k]) => (k !== "class" || state.showModel) && (k !== "location" || nodes.some(n => n.kind === "location"))).map(([k, c]) => sw(c, k)).join("");
   if (state.colorBy === "method") h += Object.entries(METHOD_COLOR).map(([k, c]) => sw(c, k)).join("");
   if (state.colorBy === "status") h += Object.entries(STATUS_COLOR).map(([k, c]) => sw(c, k)).join("");
+  if (state.colorBy === "doc") h += [...new Set(nodes.filter(n => n.layer !== "model").map(n => n.prov?.source_file).filter(Boolean))].map(f => sw(clsColor(f), f)).join("");
   if (state.colorBy === "notes") h += sw(P.notes, "has active notes") + sw(P.none, "no notes");
   if (state.colorBy === "confidence") h += [0, 0.5, 0.8, 1].map(v => sw(confColor(v), `confidence ${v}`)).join("") + sw(P.none, "no confidence");
   if (state.colorBy === "cls") {

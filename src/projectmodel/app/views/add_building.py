@@ -2,8 +2,9 @@
 
 Each step asks for one kind of document. When it arrives the reader runs in front of you, page by page, and what it
 built appears next to the document: the PDF on the left with every fact it read outlined, the building on the right
-in 3D, growing step by step. What the reader is not sure about is asked, one question at a time, with the place on
-the page it came from. Answers are kept (method = human) and survive a re-read.
+in 3D or as a 2D plan, growing step by step, and the knowledge graph next to it. A click on a unit, a room or a
+graph node opens its place in the document. What the reader is not sure about is asked, in a list or on the building
+itself, with the place on the page it came from. Answers are kept (method = human) and survive a re-read.
 
 The readers are rules (src/projectmodel/intake), no LLM. The test package in test_packages/troop_d/ has one file per
 step.
@@ -19,7 +20,10 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.intake import pdfdoc, score, steps, twin  # noqa: E402
+from projectmodel.app.bridge import frame  # noqa: E402
+from projectmodel.app.shell import knowledge_model  # noqa: E402
+from projectmodel.intake import graph, pdfdoc, score, steps, twin, vectors  # noqa: E402
+from projectmodel.viz import render_html  # noqa: E402
 from projectmodel.intake.model import building, missing, progress  # noqa: E402
 from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
 from projectmodel.intake.steps import STEPS, TEST_PACKAGE  # noqa: E402
@@ -29,6 +33,7 @@ KIND_NAME = {"floor": "Floors", "room": "Rooms", "placement": "Where units are",
              "relation": "Connections", "sequence": "Sequences", "issue": "Checks", "controller": "Controllers",
              "point": "Points", "room_check": "Room schedule check", "alias": "BMS devices", "bms_object": "BMS objects"}
 PER_PAGE = 6
+SPLIT, SPLIT_GRAPH = [1, 1.15], [0.72, 1.6]  # document | output; the graph needs the width for its panels
 
 st.html("""<style>
 .st-key-ab_steps button p { font-size: .86rem; }
@@ -76,7 +81,7 @@ st.session_state.setdefault("ab_sel", None)
 
 
 def go(to: str) -> None:
-    st.session_state.update(ab_step=to, ab_sel=None, ab_qpage=0)
+    st.session_state.update(ab_step=to, ab_sel=None, ab_qpage=0, ab_left="ask")
 
 
 def select(fid: str | None) -> None:
@@ -125,23 +130,80 @@ with st.expander(f"What is missing · {len(gaps)}", icon=":material/checklist:",
 
 # ---------------------------------------------------------------- shared pieces
 
-@st.cache_data(show_spinner=False, max_entries=24)
-def plate(path: str, page: int, crop: tuple | None, sha: str) -> str:  # sha: a new upload refreshes it
-    return twin.plate_image(Path(path), page, list(crop) if crop else None)
+@st.cache_data(show_spinner="Drawing the floor from the PDF…", max_entries=24)
+def plan_geo(path: str, page: int, crop: tuple, sha: str) -> dict:  # sha: a new upload refreshes it
+    return dict(vectors.plan(Path(path), page, list(crop)), key=f"{sha[:12]}:{page}:{crop}")
 
 
 def file_sha(name: str) -> str:
     return next((f["sha256"] for fs in it.s["files"].values() for f in fs if f["name"] == name), "")
 
 
-def twin_view(height: int = 620) -> None:
-    images = {}
+def picked(ev: dict | None) -> None:
+    """A click in the building or the graph: select that fact, so the document opens at its place."""
+    if ev and ev.get("name") == "pick" and ev.get("id") and ev["id"] != st.session_state["ab_sel"]:
+        st.session_state.update(ab_sel=ev["id"], ab_left_want="doc")  # the review's left side switches on rerun
+        st.rerun()
+
+
+def twin_view(height: int = 640, only_ask: bool = False) -> None:
+    plans = {}
     for f in b["floors"]:
         path = it.file_by_name(f["file"])
         if path and f["crop"]:
-            images[f["id"]] = plate(str(path), f["page"], tuple(f["crop"]), file_sha(f["file"]))
+            plans[f["id"]] = plan_geo(str(path), f["page"], tuple(f["crop"]), file_sha(f["file"]))
     needs = {f["id"] for f in it.open_questions()}
-    st.iframe(twin.render(twin.payload(b, images, st.session_state["ab_sel"], needs), height), height=height)
+    data = twin.payload(b, plans, st.session_state["ab_sel"], needs, st.context.theme.type or "dark")
+    data["only_ask"] = only_ask
+    picked(frame(twin.page(), data, height, key="ab_twin", title="The building"))
+    selection_panel()
+
+
+def graph_view(height: int = 720) -> None:
+    g = graph.payload(it, b, knowledge_model())
+    if not g["nodes"]:
+        st.info("The graph is empty until the first document is read. Every document then adds to it: floors and "
+                "rooms, units, their links, their points.", icon=":material/hub:")
+        return
+    n = g["counts"]["nodes"]
+    st.caption(f"{n.get('location', 0)} floors and rooms · {n.get('equipment', 0)} units · {n.get('point', 0)} points · "
+               f"{len(g['links'])} links. Click a node: its source opens in the document. **Colour by** kind, class, "
+               "confidence, method, review status or source document.")
+    picked(frame(render_html(g, st.context.theme.type), {"select": st.session_state["ab_sel"]}, height,
+                 key="ab_graph", title="Knowledge graph"))
+    selection_panel()
+
+
+def selection_panel() -> None:
+    """Under the building or the graph: what is selected, its open questions, and every document that mentions it."""
+    fid = st.session_state["ab_sel"]
+    if not fid or not it.fact(fid):
+        st.caption("Click a unit, a room or a node: its place in the document opens, and if it needs an answer the "
+                   "question opens here.")
+        return
+    unit = next((e for e in b["equip"].values() if fid in e["facts"]), None)
+    facts = [f for f in (it.fact(i) for i in dict.fromkeys(unit["facts"] if unit else [fid])) if f]
+    with st.container(border=True):
+        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+            if unit:
+                room = f" · {unit['rel']} room {unit['room']} ({unit['room_source']})" if unit["room"] else " · no room yet"
+                st.markdown(f"**{unit['tag']}** · {unit['class']}{room}")
+            else:
+                st.markdown(f"**{facts[0]['label']}** · {KIND_NAME.get(facts[0]['kind'], facts[0]['kind'])}")
+            st.space("stretch")
+            st.button("Clear", key="clear_sel_panel", type="tertiary", on_click=select, args=(None,))
+        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+            st.caption("In the documents:")
+            for k, f in enumerate(facts):
+                st.button(f"{KIND_NAME.get(f['kind'], f['kind'])} · {where(f)}", key=f"src_{k}", on_click=show_fact,
+                          args=(f["id"],), type="primary" if f["id"] == fid else "secondary",
+                          icon=":material/description:")
+        for k, f in enumerate(f for f in facts if f["status"] == "proposed" and f.get("ask")):
+            question_card(f, f"sel{k}")
+
+
+def show_fact(fid: str) -> None:
+    st.session_state.update(ab_sel=fid, ab_left="doc")  # a callback: runs before the widgets are made
 
 
 def status_of(f: dict) -> str:
@@ -162,7 +224,7 @@ def answer(f: dict, value, field) -> None:
         it.decide(f["id"], "confirmed")
 
 
-def question_card(f: dict, i: int) -> None:
+def question_card(f: dict, i) -> None:
     ask = f["ask"]
     with st.container(border=True, key=f"q_{i}"):
         st.markdown(ask["q"])
@@ -173,13 +235,13 @@ def question_card(f: dict, i: int) -> None:
                    + (f" · proposed: **{proposed}**" if proposed not in (None, "") else ""))
         if ask.get("field") == "name":  # a room with no name on the plan: type it
             with st.container(horizontal=True, vertical_alignment="bottom", gap="small"):
-                typed = st.text_input("Room name", key=f"name_{f['id']}", placeholder="Name from the plan",
+                typed = st.text_input("Room name", key=f"name_{i}_{f['id']}", placeholder="Name from the plan",
                                       label_visibility="collapsed", width=260)
                 st.button("Save name", key=f"savename_{i}", disabled=not typed,
-                          on_click=lambda f=f, k=f"name_{f['id']}": it.decide(f["id"], "fixed",
+                          on_click=lambda f=f, k=f"name_{i}_{f['id']}": it.decide(f["id"], "fixed",
                                                                               st.session_state[k].title(), "name"))
         with st.container(horizontal=True, gap="small"):
-            st.button("Show", key=f"show_{i}", icon=":material/visibility:", on_click=select, args=(f["id"],),
+            st.button("Show", key=f"show_{i}", icon=":material/visibility:", on_click=show_fact, args=(f["id"],),
                       type="tertiary")
             for k, o in enumerate(ask["options"]):
                 st.button(o["label"], key=f"opt_{i}_{k}", on_click=answer, args=(f, o["value"], ask["field"]))
@@ -291,6 +353,9 @@ def viewer(step_files: list[str]) -> None:
                 st.caption(f"Row {row}: the selected item")
                 df = df.iloc[max(0, row - 2 - 6):row - 2 + 14]
             st.dataframe(df, hide_index=False, height=560)
+        else:
+            st.info("Click a unit, a room or a graph node, or **Show** on a question: the document opens here at "
+                    "that place.", icon=":material/description:")
         return
     if st.session_state.get("ab_vfile") not in pdfs:
         st.session_state["ab_vfile"] = pdfs[0]
@@ -369,10 +434,19 @@ if step_id == "review":
     conf = sum(1 for f in all_facts if f["status"] == "confirmed")
     cols[4].metric("Facts confirmed", f"{round(100 * conf / max(1, len(all_facts)))}%",
                    f"{len(it.open_questions())} questions open", border=True, delta_color="off")
-    left, right = st.columns([1, 1.15], gap="large")
+    left, right = st.columns(SPLIT_GRAPH if st.session_state.get("ab_view") == "graph" else SPLIT, gap="large")
     with left:
-        st.markdown("##### Open questions, all steps")
-        questions([s.id for s in STEPS[:-1]])
+        nq = len(it.open_questions())
+        lefts = {"ask": f"Open questions ({nq})", "doc": "Document"}
+        if st.session_state.get("ab_left") not in lefts:
+            st.session_state["ab_left"] = "ask"
+        if want := st.session_state.pop("ab_left_want", None):
+            st.session_state["ab_left"] = want
+        if st.segmented_control("Left", list(lefts), format_func=lefts.get, key="ab_left",
+                                label_visibility="collapsed") == "doc":
+            viewer([f["name"] for fs in it.s["files"].values() for f in fs])
+        else:
+            questions([s.id for s in STEPS[:-1]])
         proposed = [f for f in all_facts if f["status"] == "proposed" and not f.get("ask")]
         if proposed:
             st.markdown("##### Proposed, waiting for a second source")
@@ -384,8 +458,14 @@ if step_id == "review":
                 it.save()
                 st.rerun()
     with right:
-        st.markdown("##### The building")
-        twin_view(560)
+        views = {"twin": "Building", "graph": "Graph"}
+        if st.session_state.get("ab_view") not in views:
+            st.session_state["ab_view"] = "twin"
+        if st.segmented_control("View", list(views), format_func=views.get, key="ab_view",
+                                label_visibility="collapsed") == "graph":
+            graph_view(680)
+        else:
+            twin_view(560)
         keys = score.answer_keys()
         if keys:
             st.markdown("##### Score against an answer key")
@@ -440,36 +520,49 @@ if files:
         st.warning(f"{', '.join(stale)} changed since this step was read. **Read again** to use the latest.",
                    icon=":material/sync_problem:")
 
-if not it.done(step_id):
-    left, right = st.columns([1, 1.15], gap="large")
-    with left:
+names_here = [f["name"] for f in files]
+left, right = st.columns(SPLIT_GRAPH if st.session_state.get("ab_view") == "graph" else SPLIT, gap="large")
+with left:
+    if it.done(step_id) or st.session_state["ab_sel"]:
+        viewer(names_here)
+    else:
         st.info("Nothing read yet for this step. Upload the document above"
                 + (" or use the test file." if (TEST_PACKAGE / step.test_file).exists() else "."),
                 icon=":material/upload_file:")
         if needs := [steps.BY_ID[n] for n in step.needs if not it.done(n)]:
             st.caption("Works best after: " + ", ".join(f"step {n.n} ({n.title.lower()})" for n in needs) + ".")
-    with right:
-        st.markdown("##### The building so far")
+with right:
+    nq = len(it.open_questions(step_id))
+    views = {"twin": "Building", "ask": f"Needs you ({nq})", "graph": "Graph", "built": "What was read",
+             "log": "Reading log"}
+    if st.session_state.get("ab_view") not in views:
+        st.session_state["ab_view"] = "twin"
+    view = st.segmented_control("View", list(views), format_func=views.get, key="ab_view",
+                                label_visibility="collapsed") or "twin"
+    if view == "twin":
         twin_view()
-else:
-    names_here = [f["name"] for f in files]
-    left, right = st.columns([1, 1.15], gap="large")
-    with left:
-        viewer(names_here)
-    with right:
-        nq = len(it.open_questions(step_id))
-        views = {"twin": "Building", "ask": f"Needs you ({nq})", "built": "What was read", "log": "Reading log"}
-        view = st.segmented_control("View", list(views), format_func=views.get, key="ab_view", default="twin",
-                                    label_visibility="collapsed") or "twin"
-        if view == "twin":
-            twin_view()
-        elif view == "ask":
+    elif view == "graph":
+        graph_view()
+    elif view == "ask":
+        located = {"placement", "room", "room_check"}
+        on_plan = sum(1 for f in it.open_questions(step_id) if f["kind"] in located)
+        how = st.segmented_control("How", ["List", "On the building"], default="List", key="ab_ask_how",
+                                   label_visibility="collapsed") or "List"
+        if how == "List":
             questions([step_id])
-        elif view == "built":
+        else:
+            st.caption(f"{on_plan} of this step's {nq} questions have a place on a plan: they pulse in amber. Step "
+                       "through them with **‹ ›** in the viewer (or the N key), answer under it. The others "
+                       "(controllers, checks) are in the list.")
+            twin_view(only_ask=True)
+    elif view == "built":
+        if it.done(step_id):
             built_tables([step_id])
         else:
-            for line in it.log(step_id):
-                st.markdown(("- " if not line.startswith("  ") else "    - ") + line.strip())
+            st.caption("Nothing read yet for this step.")
+    else:
+        for line in it.log(step_id) or ["Nothing read yet for this step."]:
+            st.markdown(("- " if not line.startswith("  ") else "    - ") + line.strip())
 
 st.divider()
 with st.container(horizontal=True, gap="small"):
