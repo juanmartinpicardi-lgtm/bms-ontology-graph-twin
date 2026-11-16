@@ -43,9 +43,18 @@ st.html("""<style>
 .st-key-ab_steps button { border-radius: 12px; }
 .st-key-ab_steps button p { font-size: .86rem; }
 [class*="st-key-q_"] { border-left: 3px solid #F0A030 !important; border-radius: 12px !important; }
-/* The outputs panel stays in view while the step scrolls; it scrolls inside itself when taller than the screen. */
-[data-testid="stColumn"]:has(> div > .st-key-box_out) { position: sticky; top: 3.2rem; align-self: flex-start; }
-[data-testid="stColumn"] .st-key-box_out { max-height: calc(100vh - 4.4rem); overflow-y: auto; }
+/* The document (left) and the outputs (right) sit side by side, the same height, sized to fit the screen under the
+   header and the step: no page scroll. Each scrolls inside itself when its content is taller. */
+:root { --panelh: max(480px, calc(100vh - 436px)); }
+[data-testid="stColumn"] .st-key-box_out, .st-key-box_work,
+[data-testid="stColumn"] [data-testid="stLayoutWrapper"]:has(> .st-key-box_out),
+[data-testid="stLayoutWrapper"]:has(> .st-key-box_work) {
+  height: var(--panelh) !important; max-height: var(--panelh); flex: 0 0 auto !important; box-sizing: border-box; }
+[data-testid="stColumn"] .st-key-box_out, .st-key-box_work { overflow-y: auto; }
+.block-container { padding-bottom: 1rem !important; }
+.st-key-box_work [data-testid="stImage"] img { max-height: calc(var(--panelh) - 150px); object-fit: contain; }
+.st-key-box_step { padding: 12px 18px !important; }
+.st-key-box_step h3 { padding: 0; margin: 0; font-size: 1.35rem; }
 .st-key-ab_reopen button { height: 168px; writing-mode: vertical-rl; border-radius: 14px; padding: 12px 6px; }
 </style>""")
 
@@ -155,6 +164,8 @@ def out_mode(mode: str) -> None:
 # ---------------------------------------------------------------- header: building, progress, steps
 
 prog = progress(it)
+b = building(it)
+gaps = missing(it, b)
 kn = knowledge.get(it)
 n_known = len(kn["tags"]) + len(kn["terms"]) + len(kn["notes"])
 with box("head"):
@@ -170,6 +181,19 @@ with box("head"):
                                         f"{sum(s['open'] for s in prog['steps'].values())} questions open")
         if st.session_state["ab_out"] == "hidden":
             st.button("Show graph & twin", icon=":material/right_panel_open:", on_click=out_mode, args=("side",))
+        with st.popover(f"What is missing · {len(gaps) + (0 if it.location else 1)}", icon=":material/checklist:"):
+            if not it.location:
+                with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                    st.markdown(":material/location_off: The building is not located yet")
+                    st.button("Go to step 0", key="gap_locate", on_click=go, args=("locate",), type="tertiary")
+            if not gaps and it.location:
+                st.write("Nothing: the building is located, every document is read and every question answered.")
+            for sid, kind, text in gaps:
+                icon = {"todo": ":material/upload_file:", "ask": ":material/help:", "gap": ":material/report:"}[kind]
+                with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                    st.markdown(f"{icon} {text}")
+                    st.button(f"Go to step {steps.BY_ID[sid].n}", key=f"gap_{sid}_{kind}_{hash(text)}", on_click=go,
+                              args=(sid,), type="tertiary")
 
     with st.container(horizontal=True, gap="small", key="ab_steps"):
         for sid, n, title in FLOW:
@@ -190,21 +214,6 @@ with box("head"):
             st.button(f"{n} · {title}{extra}", key=f"ab_go_{sid}", icon=icon, on_click=go, args=(sid,),
                       type="primary" if sid == step_id else "secondary")
 
-    b = building(it)
-    gaps = missing(it, b)
-    with st.expander(f"What is missing · {len(gaps) + (0 if it.location else 1)}", icon=":material/checklist:"):
-        if not it.location:
-            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-                st.markdown(":material/location_off: The building is not located yet")
-                st.button("Go to step 0", key="gap_locate", on_click=go, args=("locate",), type="tertiary")
-        if not gaps and it.location:
-            st.write("Nothing: the building is located, every document is read and every question answered.")
-        for sid, kind, text in gaps:
-            icon = {"todo": ":material/upload_file:", "ask": ":material/help:", "gap": ":material/report:"}[kind]
-            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-                st.markdown(f"{icon} {text}")
-                st.button(f"Go to step {steps.BY_ID[sid].n}", key=f"gap_{sid}_{kind}_{hash(text)}", on_click=go,
-                          args=(sid,), type="tertiary")
 
 
 # ---------------------------------------------------------------- shared pieces
@@ -243,7 +252,7 @@ def picked(ev: dict | None) -> None:
         st.rerun()
 
 
-def twin_view(height: int = 640, only_ask: bool = False, key: str = "ab_twin", panel: bool = True) -> None:
+def twin_view(height: int | str = 640, only_ask: bool = False, key: str = "ab_twin", panel: bool = True) -> None:
     plans = {}
     for f in b["floors"]:
         path = it.file_by_name(f["file"])
@@ -258,7 +267,7 @@ def twin_view(height: int = 640, only_ask: bool = False, key: str = "ab_twin", p
         selection_panel()
 
 
-def graph_view(height: int = 720) -> None:
+def graph_view(height: int | str = 720) -> None:
     g = graph.payload(it, b, knowledge_model())
     if not g["nodes"]:
         st.info("The graph is empty until the first document is read. Every document then adds to it: floors and "
@@ -623,6 +632,9 @@ def viewer(step_files: list[str]) -> None:
 
 # ---------------------------------------------------------------- the outputs: graph and twin, on the right
 
+FIT = "calc(var(--panelh) - 118px)"  # a viewer's height inside the side panel or the document box
+
+
 def outputs_panel() -> None:
     """The two outputs the whole setup builds: the building (twin) and its knowledge graph. On the right of every
     step; it can be hidden, or opened full screen."""
@@ -645,8 +657,9 @@ def outputs_panel() -> None:
                 st.button("", icon=":material/right_panel_close:", on_click=out_mode, args=("hidden",),
                           type="tertiary", help="Hide the graph and the twin")
         view = st.session_state.get("ab_view") or "twin"
+        h = 1000 if full else FIT
         if view == "graph":
-            graph_view(1000 if full else 700)
+            graph_view(h)
         elif view == "review":
             review_live()
         elif not it.done("plans"):
@@ -655,9 +668,9 @@ def outputs_panel() -> None:
                 st.caption(f"{it.location['address']}. The building rises here as soon as the floor plans are read: "
                            "each level becomes a floor, with its rooms and the units on it.")
             else:
-                twin_view(1000 if full else 660)
+                twin_view(h)
         else:
-            twin_view(1000 if full else 660)
+            twin_view(h)
 
 
 def review_live() -> None:
@@ -711,17 +724,24 @@ def layout():
     return main
 
 
-def footer() -> None:
-    with box("nav"):
-        with st.container(horizontal=True, gap="small", vertical_alignment="center"):
-            i = FLOW_IDS.index(step_id)
-            if i > 0:
-                st.button(f"Back: {FLOW[i - 1][2]}", icon=":material/arrow_back:", on_click=go, args=(FLOW[i - 1][0],))
+def nav(short: bool = False) -> None:
+    """Back and Next. `short`: inside the step box, at its top right, so the page needs no scroll to move on."""
+    i = FLOW_IDS.index(step_id)
+    with st.container(horizontal=True, gap="small", vertical_alignment="center", width="content" if short else "stretch"):
+        if i > 0:
+            st.button("Back" if short else f"Back: {FLOW[i - 1][2]}", icon=":material/arrow_back:", on_click=go,
+                      args=(FLOW[i - 1][0],), key=f"nav_back_{short}", help=FLOW[i - 1][2])
+        if not short:
             st.space("stretch")
             st.caption(f"Step {FLOW[i][1]} of {FLOW[-1][1]}")
-            if i + 1 < len(FLOW):
-                st.button(f"Next: {FLOW[i + 1][2]}", icon=":material/arrow_forward:", type="primary", on_click=go,
-                          args=(FLOW[i + 1][0],))
+        if i + 1 < len(FLOW):
+            st.button(f"Next: {FLOW[i + 1][2]}", icon=":material/arrow_forward:", type="primary", on_click=go,
+                      args=(FLOW[i + 1][0],), key=f"nav_next_{short}")
+
+
+def footer() -> None:
+    with box("nav"):
+        nav()
 
 
 # ---------------------------------------------------------------- step 0: locate
@@ -849,17 +869,20 @@ def review_step() -> None:
     live_eq = list(b["equip"].values())
     pts = b["points"]
     all_facts = it.facts()
+    conf = sum(1 for f in all_facts if f["status"] == "confirmed")
+    with box("step"), st.container(horizontal=True, vertical_alignment="center", gap="small"):
+        st.markdown(f"### 6 · Review: {it.name}", width="content")
+        for label, value, delta in [
+                ("Floors", len(b["floors"]), None), ("Rooms", len(b["rooms"]), None),
+                ("Equipment", len(live_eq), f"{sum(1 for e in live_eq if e['room'])} placed"),
+                ("Points", len(pts), f"{sum(1 for p in pts if p['status'] == 'confirmed')} confirmed"),
+                ("Facts confirmed", f"{round(100 * conf / max(1, len(all_facts)))}%",
+                 f"{len(it.open_questions())} questions open")]:
+            st.metric(label, value, delta, border=True, delta_color="off" if label == "Facts confirmed" else "normal",
+                      width="content")
+        st.space("stretch")
+        nav(short=True)
     main = layout()
-    with main, box("step", f"Step 6 · Review: {it.name}", "fact_check"):
-        cols = st.columns(5)
-        cols[0].metric("Floors", len(b["floors"]), border=True)
-        cols[1].metric("Rooms", len(b["rooms"]), border=True)
-        cols[2].metric("Equipment", len(live_eq), f"{sum(1 for e in live_eq if e['room'])} placed", border=True)
-        cols[3].metric("Points", len(pts), f"{sum(1 for p in pts if p['status'] == 'confirmed')} confirmed",
-                       border=True)
-        conf = sum(1 for f in all_facts if f["status"] == "confirmed")
-        cols[4].metric("Facts confirmed", f"{round(100 * conf / max(1, len(all_facts)))}%",
-                       f"{len(it.open_questions())} questions open", border=True, delta_color="off")
     with main:
         with box("work"):
             nq = len(it.open_questions())
@@ -899,11 +922,12 @@ def review_step() -> None:
 
 def document_step() -> None:
     files = it.files(step_id)
-    main = layout()
-    with main, box("step", f"Step {step.n} · {step.title}", "upload_file"):
-        st.markdown(f"### {step.ask}")
-        st.caption(f"**Builds:** {step.builds}  \n**Looks for:** {step.looks_for}")
-        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+    with box("step"):
+        head, load = st.columns([1, 1.15], gap="medium", vertical_alignment="center")
+        with head:
+            st.markdown(f"### {step.n} · {step.ask}")
+            st.caption(f"**Builds:** {step.builds}", help=f"Looks for: {step.looks_for}")
+        with load, st.container(horizontal=True, vertical_alignment="center", gap="small"):
             up = st.file_uploader(step.ask, type=list(step.types), accept_multiple_files=True,
                                   key=f"up_{step_id}_{st.session_state.get('ab_nonce', 0)}",
                                   label_visibility="collapsed")
@@ -911,9 +935,10 @@ def document_step() -> None:
             use_test = (test.exists() and not any(f["name"] == step.test_file for f in files)
                         and st.button(f"Use the test file ({step.test_file})", icon=":material/science:",
                                       type="tertiary"))
+            nav(short=True)
         reread = False
         if files:
-            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+            with load, st.container(horizontal=True, vertical_alignment="center", gap="small"):
                 for f in files:
                     st.badge(f"{f['name']} · {f['size'] / 1e6:.1f} MB", icon=":material/description:", color="gray")
                 reread = st.button("Read again", icon=":material/refresh:", type="tertiary",
@@ -937,6 +962,7 @@ def document_step() -> None:
                        icon=":material/sync_problem:")
 
     names_here = [f["name"] for f in files]
+    main = layout()
     with main, box("work"):
         nq = len(it.open_questions(step_id))
         tabs = {"doc": "Document", "ask": f"Needs you ({nq})", "built": "What was read", "log": "Reading log"}
@@ -962,7 +988,7 @@ def document_step() -> None:
                 st.caption(f"{on_plan} of this step's {nq} questions have a place on a plan: they pulse in amber. "
                            "Hover one to answer it there, or step through them with the arrows in the viewer (or "
                            "the N key). The others (controllers, checks) are in the list.")
-                twin_view(only_ask=True, key="ab_twin_ask", panel=False)
+                twin_view(FIT, only_ask=True, key="ab_twin_ask", panel=False)
         elif work == "built":
             if it.done(step_id):
                 built_tables([step_id])
@@ -985,4 +1011,5 @@ elif step_id == "review":
     review_step()
 else:
     document_step()
-footer()
+if step_id in ("locate", "knowledge"):
+    footer()
