@@ -143,7 +143,7 @@ CSS = """
   --muted: color-mix(in srgb, var(--fg) 64%, transparent); --line: color-mix(in srgb, var(--fg) 13%, transparent);
   --card: color-mix(in srgb, var(--fg) 3.5%, var(--bg)); --tint: color-mix(in srgb, var(--acc) 10%, var(--bg));
   --soft: color-mix(in srgb, var(--acc) 16%, var(--bg)); --ease: cubic-bezier(.19, 1, .22, 1);
-  container-type: inline-size; color: var(--fg); font-family: var(--st-font, inherit); max-width: 1380px; }
+  container-type: inline-size; color: var(--fg); font-family: var(--st-font, inherit); width: 100%; }
 .story *, .story *::before, .story *::after { box-sizing: border-box; }
 .story .ms { font-family: 'Material Symbols Rounded'; font-weight: 400; font-style: normal; font-size: 20px;
   line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr;
@@ -323,6 +323,10 @@ CSS = """
 .story svg .num + text { fill: var(--bg); font-weight: 600; font-size: 14px; }
 .story svg .big { font-size: 14px; font-weight: 600; }
 
+/* Large screens: the cards use the width, the visuals grow with it. */
+@container (min-width: 1700px) { .grid { grid-template-columns: 250px minmax(0, 1fr); gap: 56px; }
+  .card { padding: 34px; min-height: min(640px, 80vh); gap: 48px; } .vis { min-height: 440px; }
+  .vis > * { max-width: 620px; } .txt p { font-size: 1.04rem; max-width: 40em; } }
 @container (max-width: 1080px) {
   .grid { gap: 24px; grid-template-columns: 190px minmax(0, 1fr); }
   .card { grid-template-columns: 1fr; gap: 20px; min-height: 0; }
@@ -455,6 +459,6 @@ def story(sections: list[Section], key: str) -> None:
 
 def hero(title: str, lead_html: str) -> None:
     """The top of an Overview page: its claim, and one paragraph."""
-    st.html("<style>.lead{font-size:1.3rem;line-height:1.5;opacity:.85;max-width:52rem;margin:0}</style>")
+    st.html("<style>.lead{font-size:1.3rem;line-height:1.5;opacity:.85;max-width:70rem;margin:0}</style>")
     st.title(title)
     st.html(f'<p class="lead">{lead_html}</p>')

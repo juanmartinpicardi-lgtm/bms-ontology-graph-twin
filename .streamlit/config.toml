@@ -2,6 +2,8 @@
 # section keep Streamlit's light/dark switch in the menu, where a single [theme] would remove it.
 [theme.light]
 primaryColor = "#1F7FCC"
+baseRadius = "0.75rem"  # soft rounded edges on every box, button and input
 
 [theme.dark]
 primaryColor = "#4DA3E8"
+baseRadius = "0.75rem"

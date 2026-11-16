@@ -1,6 +1,8 @@
-"""Add a building: a guided setup from its documents, one step at a time.
+"""Add a building: a guided setup, one step at a time. Locate the building, upload its documents, review, then add
+what people know about it (tribal knowledge). The knowledge graph and the building (its twin) are built along the
+way and stay open on the right: hide them, or open them full screen.
 
-Each step asks for one kind of document. When it arrives the reader runs in front of you, page by page, and what it
+Each document step asks for one kind of document. When it arrives the reader runs in front of you, page by page, and what it
 built appears next to the document: the PDF on the left with every fact it read outlined, the building on the right
 in 3D or as a 2D plan, growing step by step, and the knowledge graph next to it. A click on a unit, a room or a
 graph node opens its place in the document. What the reader is not sure about is asked, in a list or on the building
@@ -21,7 +23,8 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.bridge import frame  # noqa: E402
-from projectmodel.app.shell import knowledge_model  # noqa: E402
+from projectmodel.app.shell import box, knowledge_model, secret, site_map  # noqa: E402
+from projectmodel.locate import LocateError, get_geocoder, location_dict  # noqa: E402
 from projectmodel import notes as project_notes  # noqa: E402
 from projectmodel.intake import graph, knowledge, pdfdoc, score, steps, twin, vectors  # noqa: E402
 from projectmodel.viz import render_html  # noqa: E402
@@ -34,41 +37,56 @@ KIND_NAME = {"floor": "Floors", "room": "Rooms", "placement": "Where units are",
              "relation": "Connections", "sequence": "Sequences", "issue": "Checks", "controller": "Controllers",
              "point": "Points", "room_check": "Room schedule check", "alias": "BMS devices", "bms_object": "BMS objects"}
 PER_PAGE = 6
-SPLIT, SPLIT_GRAPH = [1, 1.15], [0.72, 1.6]  # document | output; the graph needs the width for its panels
 
 st.html("""<style>
+.st-key-ab_steps button { border-radius: 12px; }
 .st-key-ab_steps button p { font-size: .86rem; }
-[class*="st-key-q_"] { border-left: 3px solid #F0A030 !important; }
+[class*="st-key-q_"] { border-left: 3px solid #F0A030 !important; border-radius: 12px !important; }
+/* The outputs panel stays in view while the step scrolls; it scrolls inside itself when taller than the screen. */
+[data-testid="stColumn"]:has(> div > .st-key-box_out) { position: sticky; top: 3.2rem; align-self: flex-start; }
+[data-testid="stColumn"] .st-key-box_out { max-height: calc(100vh - 4.4rem); overflow-y: auto; }
+.st-key-ab_reopen button { height: 168px; writing-mode: vertical-rl; border-radius: 14px; padding: 12px 6px; }
 </style>""")
+
+# The flow: locate, the five documents, review, then what people know. Locate and knowledge are steps of this page;
+# the document steps and review are the intake's (intake/steps.py).
+FLOW = [("locate", 0, "Locate the building")] + [(s.id, s.n, s.title) for s in STEPS] + [
+    ("knowledge", len(STEPS) + 1, "Add knowledge")]
+FLOW_IDS = [f[0] for f in FLOW]
 
 
 # ---------------------------------------------------------------- building picker
 
 def start_form(key: str, compact: bool = False) -> None:
-    with st.form(key, border=not compact):
+    with st.form(key, border=False):
         if not compact:
             st.markdown("#### Start a new building")
-            st.caption("Give it a name. Then upload its documents one step at a time; each one adds to the building.")
+            st.caption("Give it a name. Then locate it, and upload its documents one step at a time; each one adds to "
+                       "the knowledge graph and to the building.")
         name = st.text_input("Building name", placeholder="e.g. Troop D Crime Lab")
-        address = st.text_input("Address (optional)", placeholder="Street, city")
+        address = st.text_input("Address or place (optional)", placeholder="Street, city",
+                                help="Used to find the building on the map in the first step.")
         if st.form_submit_button("Start", type="primary", icon=":material/arrow_forward:"):
             if not name.strip():
                 st.error("A name is needed.")
             else:
                 it = Intake.create(name.strip(), address.strip())
-                st.session_state.update(ab_slug=it.slug, ab_step="plans", ab_sel=None)
+                st.session_state.update(ab_slug=it.slug, ab_step="locate", ab_sel=None, ab_work=None,
+                                        ab_loc_query=address.strip() or name.strip())
                 st.rerun()
 
 
 existing = list_intakes()
 if not existing:
-    st.markdown("### Add a building from its documents")
-    st.write("Six steps: floor plans, equipment schedules, sequences, controls submittal, BMS export, review. Each "
-             "document you upload is read in front of you and turned into part of the building: floors and rooms, "
-             "units in them, their controllers and points. You confirm what the reader is not sure about.")
-    st.info(f"To try it end to end, use the test package: one file per step in `{TEST_PACKAGE.relative_to(ROOT)}/`.",
-            icon=":material/science:")
-    start_form("ab_new")
+    with box("intro", "Add a building", "add_business"):
+        st.markdown("### Add a building, step by step")
+        st.write("Eight steps: locate the building, then floor plans, equipment schedules, sequences, controls "
+                 "submittal, BMS export, review, and finally what people know about it. Each document you upload is "
+                 "read in front of you and turned into part of the building: floors and rooms, units in them, their "
+                 "controllers and points. The knowledge graph and the building's twin grow at every step.")
+        st.info(f"To try it end to end, use the test package: one file per step in "
+                f"`{TEST_PACKAGE.relative_to(ROOT)}/`.", icon=":material/science:")
+        start_form("ab_new")
     st.stop()
 
 slugs = [s["slug"] for s in existing]
@@ -77,57 +95,77 @@ if st.session_state.get("ab_slug") not in slugs:
 names = {s["slug"]: s["name"] for s in existing}
 it = Intake(st.session_state["ab_slug"])
 knowledge.apply(it)  # this building's own rules are the ones in force for everything below
-step_id = st.session_state.setdefault("ab_step", "plans")
-step = steps.BY_ID[step_id]
+if st.session_state.get("ab_step") not in FLOW_IDS:
+    st.session_state["ab_step"] = "locate" if not it.location else "plans"
+step_id = st.session_state["ab_step"]
+step = steps.BY_ID.get(step_id)
 st.session_state.setdefault("ab_sel", None)
+st.session_state.setdefault("ab_out", "side")  # the outputs panel: side, hidden or full
 
 
 def go(to: str) -> None:
-    st.session_state.update(ab_step=to, ab_sel=None, ab_qpage=0, ab_left="ask")
+    st.session_state.update(ab_step=to, ab_sel=None, ab_qpage=0, ab_work=None)
 
 
 def select(fid: str | None) -> None:
     st.session_state["ab_sel"] = fid
 
 
+def out_mode(mode: str) -> None:
+    st.session_state["ab_out"] = mode
+
+
 # ---------------------------------------------------------------- header: building, progress, steps
 
 prog = progress(it)
-with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-    st.selectbox("Building", slugs, key="ab_slug", format_func=lambda s: names[s], label_visibility="collapsed",
-                 width=260, on_change=lambda: st.session_state.update(ab_sel=None))
-    with st.popover("New building", icon=":material/add:"):
-        start_form("ab_new_pop", compact=True)
-    st.progress(prog["share"], text=f"**{round(prog['share'] * 100)}% built** · "
-                                    f"{sum(1 for s in prog['steps'].values() if s['read'])} of 5 documents read · "
-                                    f"{sum(s['open'] for s in prog['steps'].values())} questions open")
+kn = knowledge.get(it)
+n_known = len(kn["tags"]) + len(kn["terms"]) + len(kn["notes"])
+with box("head"):
+    with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+        st.selectbox("Building", slugs, key="ab_slug", format_func=lambda s: names[s], label_visibility="collapsed",
+                     width=260, on_change=lambda: st.session_state.update(ab_sel=None, ab_step=None))
+        with st.popover("New building", icon=":material/add:"):
+            start_form("ab_new_pop", compact=True)
+        st.progress(prog["share"], text=f"**{round(prog['share'] * 100)}% built** · "
+                                        f"{sum(1 for s in prog['steps'].values() if s['read'])} of 5 documents read · "
+                                        f"{sum(s['open'] for s in prog['steps'].values())} questions open")
+        if st.session_state["ab_out"] == "hidden":
+            st.button("Show graph & twin", icon=":material/right_panel_open:", on_click=out_mode, args=("side",))
 
-with st.container(horizontal=True, gap="small", key="ab_steps"):
-    for s in STEPS:
-        p = prog["steps"].get(s.id)
-        if s.id == "review":
-            icon = ":material/fact_check:"
-        elif not p["read"]:
-            icon = ":material/radio_button_unchecked:"
-        elif p["open"]:
-            icon = ":material/pending:"
-        else:
-            icon = ":material/check_circle:"
-        label = f"{s.n} · {s.title}" + (f" ({p['open']})" if p and p["open"] else "")
-        st.button(label, key=f"ab_go_{s.id}", icon=icon, on_click=go, args=(s.id,),
-                  type="primary" if s.id == step_id else "secondary")
+    with st.container(horizontal=True, gap="small", key="ab_steps"):
+        for sid, n, title in FLOW:
+            p = prog["steps"].get(sid)
+            if sid == "locate":
+                icon = ":material/check_circle:" if it.location else ":material/location_on:"
+            elif sid == "review":
+                icon = ":material/fact_check:"
+            elif sid == "knowledge":
+                icon = ":material/check_circle:" if n_known else ":material/psychology:"
+            elif not p["read"]:
+                icon = ":material/radio_button_unchecked:"
+            elif p["open"]:
+                icon = ":material/pending:"
+            else:
+                icon = ":material/check_circle:"
+            extra = f" ({p['open']})" if p and p["open"] else f" ({n_known})" if sid == "knowledge" and n_known else ""
+            st.button(f"{n} · {title}{extra}", key=f"ab_go_{sid}", icon=icon, on_click=go, args=(sid,),
+                      type="primary" if sid == step_id else "secondary")
 
-b = building(it)
-gaps = missing(it, b)
-with st.expander(f"What is missing · {len(gaps)}", icon=":material/checklist:", expanded=False):
-    if not gaps:
-        st.write("Nothing: every document is read and every question answered.")
-    for sid, kind, text in gaps:
-        icon = {"todo": ":material/upload_file:", "ask": ":material/help:", "gap": ":material/report:"}[kind]
-        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-            st.markdown(f"{icon} {text}")
-            st.button(f"Go to step {steps.BY_ID[sid].n}", key=f"gap_{sid}_{kind}_{hash(text)}", on_click=go,
-                      args=(sid,), type="tertiary")
+    b = building(it)
+    gaps = missing(it, b)
+    with st.expander(f"What is missing · {len(gaps) + (0 if it.location else 1)}", icon=":material/checklist:"):
+        if not it.location:
+            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                st.markdown(":material/location_off: The building is not located yet")
+                st.button("Go to step 0", key="gap_locate", on_click=go, args=("locate",), type="tertiary")
+        if not gaps and it.location:
+            st.write("Nothing: the building is located, every document is read and every question answered.")
+        for sid, kind, text in gaps:
+            icon = {"todo": ":material/upload_file:", "ask": ":material/help:", "gap": ":material/report:"}[kind]
+            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                st.markdown(f"{icon} {text}")
+                st.button(f"Go to step {steps.BY_ID[sid].n}", key=f"gap_{sid}_{kind}_{hash(text)}", on_click=go,
+                          args=(sid,), type="tertiary")
 
 
 # ---------------------------------------------------------------- shared pieces
@@ -147,7 +185,7 @@ def picked(ev: dict | None) -> None:
     if not ev or not ev.get("id"):
         return
     if ev.get("name") == "pick" and ev["id"] != st.session_state["ab_sel"]:
-        st.session_state.update(ab_sel=ev["id"], ab_left_want="doc")  # the review's left side switches on rerun
+        st.session_state.update(ab_sel=ev["id"], ab_work_want="doc")  # the step's work area shows the document
         st.rerun()
     if ev.get("name") == "answer":
         f = it.fact(ev["id"])
@@ -166,7 +204,7 @@ def picked(ev: dict | None) -> None:
         st.rerun()
 
 
-def twin_view(height: int = 640, only_ask: bool = False) -> None:
+def twin_view(height: int = 640, only_ask: bool = False, key: str = "ab_twin", panel: bool = True) -> None:
     plans = {}
     for f in b["floors"]:
         path = it.file_by_name(f["file"])
@@ -176,8 +214,9 @@ def twin_view(height: int = 640, only_ask: bool = False) -> None:
     data = twin.payload(b, plans, st.session_state["ab_sel"], needs, st.context.theme.type or "dark",
                         knowledge.notes_for(it))
     data["only_ask"] = only_ask
-    picked(frame(twin.page(), data, height, key="ab_twin", title="The building"))
-    selection_panel()
+    picked(frame(twin.page(), data, height, key=key, title="The building"))
+    if panel:
+        selection_panel()
 
 
 def graph_view(height: int = 720) -> None:
@@ -227,7 +266,7 @@ def selection_panel() -> None:
             for n in knowledge.notes_for(it).get(target[0], []):
                 st.markdown(f":material/sticky_note_2: {n['body']}  \n:small[{n['topic']} · {n['author']}]")
             st.button(f"Add a note about {target[1]}", key="note_here", type="tertiary", icon=":material/add_comment:",
-                      on_click=lambda: st.session_state.update(ab_view="know", ab_know="Note", ab_note_target=target[0]))
+                      on_click=lambda: (go("knowledge"), st.session_state.update(ab_know="Note", ab_note_target=target[0])))
 
 
 def knowledge_view() -> None:
@@ -273,9 +312,11 @@ def knowledge_view() -> None:
             with st.form("know_note", border=True, clear_on_submit=True):
                 c = st.columns([2, 1, 1])
                 target = c[0].selectbox("About", list(targets), format_func=targets.get, key="ab_note_target")
-                topic = c[1].selectbox("Topic", project_notes.TOPICS)
+                if st.session_state.get("ab_note_topic") not in project_notes.TOPICS:
+                    st.session_state["ab_note_topic"] = project_notes.TOPICS[0]
+                topic = c[1].selectbox("Topic", project_notes.TOPICS, key="ab_note_topic")
                 author = c[2].text_input("Your name", key="ab_author")
-                body = st.text_area("What should people know?", height=90,
+                body = st.text_area(st.session_state.get("ab_note_q") or "What should people know?", height=90,
                                     placeholder="e.g. Replaced in 2022; the old return-fan points are unused.")
                 if st.form_submit_button("Add the note", icon=":material/add_comment:") and body and author:
                     knowledge.add_note(it, target, targets[target], topic, body, author)
@@ -335,14 +376,8 @@ def knowledge_view() -> None:
         st.caption("Nothing added yet.")
 
 
-def know_label() -> str:
-    k = knowledge.get(it)
-    n = len(k["tags"]) + len(k["terms"]) + len(k["notes"])
-    return f"Knowledge ({n})" if n else "Knowledge"
-
-
 def show_fact(fid: str) -> None:
-    st.session_state.update(ab_sel=fid, ab_left="doc")  # a callback: runs before the widgets are made
+    st.session_state.update(ab_sel=fid, ab_work="doc")  # a callback: runs before the widgets are made
 
 
 def status_of(f: dict) -> str:
@@ -547,173 +582,325 @@ def viewer(step_files: list[str]) -> None:
             st.button("Clear selection", key="clear_sel", type="tertiary", on_click=select, args=(None,))
 
 
-# ---------------------------------------------------------------- one step
+# ---------------------------------------------------------------- the outputs: graph and twin, on the right
+
+def outputs_panel() -> None:
+    """The two outputs the whole setup builds: the building (twin) and its knowledge graph. On the right of every
+    step; it can be hidden, or opened full screen."""
+    full = st.session_state["ab_out"] == "full"
+    with box("out"):
+        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+            st.caption(":material/hub: **Built so far**", width="content")
+            outs = {"twin": "Building (twin)", "graph": "Knowledge graph"}
+            if st.session_state.get("ab_view") not in outs:
+                st.session_state["ab_view"] = "twin"
+            st.segmented_control("Output", list(outs), format_func=outs.get, key="ab_view",
+                                 label_visibility="collapsed")
+            st.space("stretch")
+            if full:
+                st.button("Exit full screen", icon=":material/close_fullscreen:", on_click=out_mode, args=("side",),
+                          type="tertiary")
+            else:
+                st.button("", icon=":material/open_in_full:", on_click=out_mode, args=("full",), type="tertiary",
+                          help="Open full screen")
+                st.button("", icon=":material/right_panel_close:", on_click=out_mode, args=("hidden",),
+                          type="tertiary", help="Hide the graph and the twin")
+        if (st.session_state.get("ab_view") or "twin") == "graph":
+            graph_view(1000 if full else 700)
+        else:
+            twin_view(1000 if full else 660)
+
+
+def layout():
+    """The step's own column, with the outputs beside it, hidden behind a tab on the right, or full screen above."""
+    mode = st.session_state["ab_out"]
+    if mode == "full":
+        outputs_panel()
+        return st.container()
+    if mode == "hidden":
+        main, tab = st.columns([1, 0.035], gap="small")
+        with tab, st.container(key="ab_reopen"):
+            st.button("Graph & twin", icon=":material/right_panel_open:", on_click=out_mode, args=("side",),
+                      help="Show the knowledge graph and the building")
+        return main
+    main, side = st.columns([1.2, 1], gap="medium")
+    with side:
+        outputs_panel()
+    return main
+
+
+def footer() -> None:
+    with box("nav"):
+        with st.container(horizontal=True, gap="small", vertical_alignment="center"):
+            i = FLOW_IDS.index(step_id)
+            if i > 0:
+                st.button(f"Back: {FLOW[i - 1][2]}", icon=":material/arrow_back:", on_click=go, args=(FLOW[i - 1][0],))
+            st.space("stretch")
+            st.caption(f"Step {FLOW[i][1]} of {FLOW[-1][1]}")
+            if i + 1 < len(FLOW):
+                st.button(f"Next: {FLOW[i + 1][2]}", icon=":material/arrow_forward:", type="primary", on_click=go,
+                          args=(FLOW[i + 1][0],))
+
+
+# ---------------------------------------------------------------- step 0: locate
+
+def locate_step() -> None:
+    server_key = secret("google_maps_api_key")
+    provider = "Google Maps" if server_key else "OpenStreetMap"
+    saved = it.location
+    with box("step", "Step 0 · Locate the building", "location_on"):
+        st.markdown("### Where is the building?")
+        st.caption("Type its name or address, pick the right result and confirm it. The building keeps the full "
+                   "address, its parts and the coordinates, with who confirmed them.")
+        if saved:
+            st.success(f"**{saved['address']}** · {saved['lat']:.5f}, {saved['lng']:.5f} · confirmed by "
+                       f"{saved['confirmed_by']} on {saved['confirmed_at']} · from {saved['provider']}",
+                       icon=":material/where_to_vote:")
+    left, right = st.columns([1, 1.25], gap="medium")
+    with left, box("loc_form", "Find it" if not saved else "Change the location", "search"):
+        st.session_state.setdefault("ab_loc_query", it.s.get("address") or it.name)
+        with st.form("ab_locate", border=False):
+            query = st.text_input("Building name or address", key="ab_loc_query")
+            who = st.text_input("Your name", key="ab_loc_who", help="Recorded with the location you confirm.")
+            search = st.form_submit_button("Search", icon=":material/search:")
+        st.caption(f"The text you search for is sent to {provider}. Nothing else leaves the app.")
+        if search and query.strip():
+            try:
+                st.session_state["ab_loc_results"] = get_geocoder(server_key).search(query.strip())
+            except LocateError as e:
+                st.session_state["ab_loc_results"] = []
+                st.error(str(e))
+        results = st.session_state.get("ab_loc_results")
+        if results == []:
+            st.warning("Nothing found. Try the street address with the city.")
+        elif results:
+            i = st.radio("Results", range(len(results)), key="ab_loc_pick",
+                         format_func=lambda i: f"{results[i].address}  ({results[i].lat:.5f}, {results[i].lng:.5f})")
+            if st.button("Use this location", type="primary", disabled=not who.strip(),
+                         icon=":material/where_to_vote:", help=None if who.strip() else "Enter your name first."):
+                it.set_location(location_dict(results[i]), who.strip())
+                del st.session_state["ab_loc_results"]
+                st.rerun()
+    with right, box("loc_map", "Map", "map"):
+        picked_ = st.session_state.get("ab_loc_results") or []
+        shown = picked_[st.session_state.get("ab_loc_pick", 0) or 0] if picked_ else None
+        lat, lng = (shown.lat, shown.lng) if shown else (saved["lat"], saved["lng"]) if saved else (None, None)
+        if lat is None:
+            st.caption("The map appears once the building is found.")
+        else:
+            site_map(lat, lng, it.name, 460)
+        if shown:
+            st.caption("Preview of the selected result. It is saved only when you press **Use this location**.")
+
+
+# ---------------------------------------------------------------- the last step: what people know
+
+def prompts() -> list[tuple[str, str, str]]:
+    """(about, topic, question): what to ask the people who know the building, from what the graph holds."""
+    out = [("building", "operations", "How is the building really run? Schedules, overrides, seasons, what the "
+                                      "operators change by hand."),
+           ("building", "history", "What was replaced, added or abandoned since the drawings were made?")]
+    fams: dict[str, list[dict]] = {}
+    for n, e in sorted(b["equip"].items()):
+        fams.setdefault(e["family"], []).append((n, e))
+    for fam, units in fams.items():
+        n, e = units[0]
+        name = twin.FAMILY_NAME.get(fam, fam)
+        out.append((f"unit:{n}", "maintenance", f"{name}{'es' if name.endswith(('x', 's')) else 's'} ({len(units)}): any unit with a known fault, a quirk, or "
+                                                f"points that are unused? Start with {e['tag']}."))
+    if b["equip"]:
+        out.append(("building", "naming", "Any names the documents and the BMS use differently (abbreviations, "
+                                          "renumbered units, the contractor's own habits)?"))
+    return out[:7]
+
+
+def ask_prompt(target: str, topic: str, question: str) -> None:
+    st.session_state.update(ab_know="Note", ab_note_target=target, ab_note_topic=topic, ab_note_q=question)
+
+
+def knowledge_step() -> None:
+    with box("step", f"Step {FLOW[-1][1]} · Add knowledge", "psychology"):
+        st.markdown("### What people know that no document says")
+        st.caption("Tribal knowledge from the engineers, operators and contractors: notes about the building, a unit "
+                   "or a room, and rules that teach the reader this job's names. Every entry becomes part of the "
+                   "knowledge graph, with who said it, and travels with it. Rules also re-read the documents.")
+        c = st.columns(4)
+        c[0].metric("Notes", len(kn["notes"]), border=True)
+        c[1].metric("Tag rules", len(kn["tags"]), border=True)
+        c[2].metric("Point terms", len(kn["terms"]), border=True)
+        c[3].metric("Units with a note", sum(1 for k in knowledge.notes_for(it) if k.startswith("unit:")), border=True)
+    with box("prompts", "Questions to ask the people who know it", "forum"):
+        st.caption("Drawn from what the graph holds. **Answer** opens the note form below, about the right thing.")
+        for k, (target, topic, q) in enumerate(prompts()):
+            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                st.markdown(f":material/help: {q}")
+                st.space("stretch")
+                st.button("Answer", key=f"prompt_{k}", type="tertiary", icon=":material/edit_note:",
+                          on_click=ask_prompt, args=(target, topic, q))
+    with box("know", "Add to the graph", "add_circle"):
+        knowledge_view()
+
+
+# ---------------------------------------------------------------- the document steps
 
 def read_now(files: list[tuple[str, bytes]]) -> None:
     for name, data in files:
         it.add_file(step_id, name, data)
-    with st.status(f"Reading {', '.join(n for n, _ in files) or 'the documents'}…", expanded=True) as box:
-        n = steps.run(it, step_id, lambda m: box.write(m))
-        box.update(label=f"Read: {n} facts", state="complete", expanded=False)
+    with st.status(f"Reading {', '.join(n for n, _ in files) or 'the documents'}…", expanded=True) as status_box:
+        n = steps.run(it, step_id, lambda m: status_box.write(m))
+        status_box.update(label=f"Read: {n} facts", state="complete", expanded=False)
     st.session_state.update(ab_sel=None, ab_qpage=0, ab_nonce=st.session_state.get("ab_nonce", 0) + 1)
     st.toast(f"{step.title}: read", icon=":material/check_circle:")
     st.rerun()
 
 
-if step_id == "review":
-    st.markdown(f"### 6 · Review: {it.name}")
+def work_tabs(tabs: dict[str, str], default: str) -> str:
+    if want := st.session_state.pop("ab_work_want", None):
+        st.session_state["ab_work"] = want
+    if st.session_state.get("ab_work") not in tabs:
+        st.session_state["ab_work"] = default
+    return st.segmented_control("Work", list(tabs), format_func=tabs.get, key="ab_work",
+                                label_visibility="collapsed") or default
+
+
+def review_step() -> None:
     live_eq = list(b["equip"].values())
     pts = b["points"]
-    cols = st.columns(5)
-    cols[0].metric("Floors", len(b["floors"]), border=True)
-    cols[1].metric("Rooms", len(b["rooms"]), border=True)
-    cols[2].metric("Equipment", len(live_eq), f"{sum(1 for e in live_eq if e['room'])} placed", border=True)
-    cols[3].metric("Points", len(pts), f"{sum(1 for p in pts if p['status'] == 'confirmed')} confirmed", border=True)
     all_facts = it.facts()
-    conf = sum(1 for f in all_facts if f["status"] == "confirmed")
-    cols[4].metric("Facts confirmed", f"{round(100 * conf / max(1, len(all_facts)))}%",
-                   f"{len(it.open_questions())} questions open", border=True, delta_color="off")
-    left, right = st.columns(SPLIT_GRAPH if st.session_state.get("ab_view") == "graph" else SPLIT, gap="large")
-    with left:
-        nq = len(it.open_questions())
-        lefts = {"ask": f"Open questions ({nq})", "doc": "Document"}
-        if st.session_state.get("ab_left") not in lefts:
-            st.session_state["ab_left"] = "ask"
-        if want := st.session_state.pop("ab_left_want", None):
-            st.session_state["ab_left"] = want
-        if st.segmented_control("Left", list(lefts), format_func=lefts.get, key="ab_left",
-                                label_visibility="collapsed") == "doc":
-            viewer([f["name"] for fs in it.s["files"].values() for f in fs])
-        else:
-            questions([s.id for s in STEPS[:-1]])
+    main = layout()
+    with main, box("step", f"Step 6 · Review: {it.name}", "fact_check"):
+        cols = st.columns(5)
+        cols[0].metric("Floors", len(b["floors"]), border=True)
+        cols[1].metric("Rooms", len(b["rooms"]), border=True)
+        cols[2].metric("Equipment", len(live_eq), f"{sum(1 for e in live_eq if e['room'])} placed", border=True)
+        cols[3].metric("Points", len(pts), f"{sum(1 for p in pts if p['status'] == 'confirmed')} confirmed",
+                       border=True)
+        conf = sum(1 for f in all_facts if f["status"] == "confirmed")
+        cols[4].metric("Facts confirmed", f"{round(100 * conf / max(1, len(all_facts)))}%",
+                       f"{len(it.open_questions())} questions open", border=True, delta_color="off")
+    with main:
+        with box("work"):
+            nq = len(it.open_questions())
+            if work_tabs({"ask": f"Open questions ({nq})", "doc": "Document"}, "ask") == "doc":
+                viewer([f["name"] for fs in it.s["files"].values() for f in fs])
+            else:
+                questions([s.id for s in STEPS[:-1]])
         proposed = [f for f in all_facts if f["status"] == "proposed" and not f.get("ask")]
         if proposed:
-            st.markdown("##### Proposed, waiting for a second source")
-            st.caption(f"{len(proposed)} facts nobody contradicted but no second document confirmed either "
-                       f"({', '.join(sorted({KIND_NAME.get(f['kind'], f['kind']) for f in proposed}))}).")
-            if st.button(f"Confirm these {len(proposed)}", icon=":material/done_all:"):
-                for f in proposed:
-                    it.s["decisions"][f["id"]] = {"status": "confirmed", "value": None, "field": None, "at": 0}
-                it.save()
-                st.rerun()
-    with right:
-        views = {"twin": "Building", "graph": "Graph", "know": know_label()}
-        if st.session_state.get("ab_view") not in views:
-            st.session_state["ab_view"] = "twin"
-        view = st.segmented_control("View", list(views), format_func=views.get, key="ab_view",
-                                    label_visibility="collapsed")
-        if view == "graph":
-            graph_view(680)
-        elif view == "know":
-            knowledge_view()
-        else:
-            twin_view(560)
-        keys = score.answer_keys()
-        if keys:
-            st.markdown("##### Score against an answer key")
-            default = next((k for k in keys if k.split("_")[0] in it.slug), None)
-            key = st.selectbox("Answer key", ["(none)"] + keys, index=(keys.index(default) + 1) if default else 0,
-                               help="Test buildings only. The readers never see the answer key; it is used here to "
-                                    "measure them, before and after your answers.")
-            if key != "(none)":
-                rows = score.score(it, key)
-                df = pd.DataFrame(rows)
-                df["machine %"] = (df["machine"] / df["out of"].clip(lower=1) * 100).round(0)
-                df["with you %"] = (df["with you"] / df["out of"].clip(lower=1) * 100).round(0)
-                st.dataframe(df[["measure", "machine", "with you", "out of", "machine %", "with you %", "what"]],
-                             hide_index=True)
-        graph = {"building": it.name, "facts": all_facts}
-        st.download_button("Download the knowledge graph (JSON, with provenance)", json.dumps(graph, indent=1),
-                           file_name=f"{it.slug}_graph.json", icon=":material/download:")
-    st.stop()
-
-st.markdown(f"### Step {step.n} · {step.ask}")
-st.caption(f"**Builds:** {step.builds}  \n**Looks for:** {step.looks_for}")
-
-files = it.files(step_id)
-with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-    up = st.file_uploader(step.ask, type=list(step.types), accept_multiple_files=True,
-                          key=f"up_{step_id}_{st.session_state.get('ab_nonce', 0)}", label_visibility="collapsed")
-    test = TEST_PACKAGE / step.test_file
-    use_test = (test.exists() and not any(f["name"] == step.test_file for f in files)
-                and st.button(f"Use the test file ({step.test_file})", icon=":material/science:", type="tertiary"))
-reread = False
-if files:
-    with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-        for f in files:
-            st.badge(f"{f['name']} · {f['size'] / 1e6:.1f} MB", icon=":material/description:", color="gray")
-        reread = st.button("Read again", icon=":material/refresh:", type="tertiary",
-                           help="Reads the files again with what the earlier steps know now. Your answers are kept.")
-        with st.popover("Remove a file", icon=":material/delete:"):
-            for f in files:
-                if st.button(f"Remove {f['name']}", key=f"rm_{f['sha256'][:8]}"):
-                    it.remove_file(step_id, f["name"])
-                    steps.run(it, step_id, lambda m: None)
+            with box("proposed", "Proposed, waiting for a second source", "hourglass_top"):
+                st.caption(f"{len(proposed)} facts nobody contradicted but no second document confirmed either "
+                           f"({', '.join(sorted({KIND_NAME.get(f['kind'], f['kind']) for f in proposed}))}).")
+                if st.button(f"Confirm these {len(proposed)}", icon=":material/done_all:"):
+                    for f in proposed:
+                        it.s["decisions"][f["id"]] = {"status": "confirmed", "value": None, "field": None, "at": 0}
+                    it.save()
                     st.rerun()
-# Reading runs here, below the upload row, so its live log has the page width.
-if up:
-    read_now([(u.name, u.getvalue()) for u in up])
-elif use_test:
-    read_now([(test.name, test.read_bytes())])
-elif reread:
-    read_now([])
-if files:
-    if stale := steps.stale(it, step_id):
-        st.warning(f"{', '.join(stale)} changed since this step was read. **Read again** to use the latest.",
-                   icon=":material/sync_problem:")
+        keys = score.answer_keys()
+        with box("score", "Score and export", "analytics"):
+            if keys:
+                default = next((k for k in keys if k.split("_")[0] in it.slug), None)
+                key = st.selectbox("Answer key", ["(none)"] + keys, index=(keys.index(default) + 1) if default else 0,
+                                   help="Test buildings only. The readers never see the answer key; it is used here "
+                                        "to measure them, before and after your answers.")
+                if key != "(none)":
+                    df = pd.DataFrame(score.score(it, key))
+                    df["machine %"] = (df["machine"] / df["out of"].clip(lower=1) * 100).round(0)
+                    df["with you %"] = (df["with you"] / df["out of"].clip(lower=1) * 100).round(0)
+                    st.dataframe(df[["measure", "machine", "with you", "out of", "machine %", "with you %", "what"]],
+                                 hide_index=True)
+            graph_json = {"building": it.name, "location": it.location, "facts": all_facts,
+                          "knowledge": knowledge.get(it)}
+            st.download_button("Download the knowledge graph (JSON, with provenance)",
+                               json.dumps(graph_json, indent=1), file_name=f"{it.slug}_graph.json",
+                               icon=":material/download:")
 
-names_here = [f["name"] for f in files]
-left, right = st.columns(SPLIT_GRAPH if st.session_state.get("ab_view") == "graph" else SPLIT, gap="large")
-with left:
-    if it.done(step_id) or st.session_state["ab_sel"]:
-        viewer(names_here)
-    else:
-        st.info("Nothing read yet for this step. Upload the document above"
-                + (" or use the test file." if (TEST_PACKAGE / step.test_file).exists() else "."),
-                icon=":material/upload_file:")
-        if needs := [steps.BY_ID[n] for n in step.needs if not it.done(n)]:
-            st.caption("Works best after: " + ", ".join(f"step {n.n} ({n.title.lower()})" for n in needs) + ".")
-with right:
-    nq = len(it.open_questions(step_id))
-    views = {"twin": "Building", "ask": f"Needs you ({nq})", "graph": "Graph", "know": know_label(),
-             "built": "What was read", "log": "Reading log"}
-    if st.session_state.get("ab_view") not in views:
-        st.session_state["ab_view"] = "twin"
-    view = st.segmented_control("View", list(views), format_func=views.get, key="ab_view",
-                                label_visibility="collapsed") or "twin"
-    if view == "twin":
-        twin_view()
-    elif view == "graph":
-        graph_view()
-    elif view == "know":
-        knowledge_view()
-    elif view == "ask":
-        located = {"placement", "room", "room_check"}
-        on_plan = sum(1 for f in it.open_questions(step_id) if f["kind"] in located)
-        how = st.segmented_control("How", ["List", "On the building"], default="List", key="ab_ask_how",
-                                   label_visibility="collapsed") or "List"
-        if how == "List":
-            questions([step_id])
-        else:
-            st.caption(f"{on_plan} of this step's {nq} questions have a place on a plan: they pulse in amber. Hover "
-                       "one to answer it there, or step through them with the arrows in the viewer (or the N key). "
-                       "The others (controllers, checks) are in the list.")
-            twin_view(only_ask=True)
-    elif view == "built":
-        if it.done(step_id):
-            built_tables([step_id])
-        else:
-            st.caption("Nothing read yet for this step.")
-    else:
-        for line in it.log(step_id) or ["Nothing read yet for this step."]:
-            st.markdown(("- " if not line.startswith("  ") else "    - ") + line.strip())
 
-st.divider()
-with st.container(horizontal=True, gap="small"):
-    i = [s.id for s in STEPS].index(step_id)
-    if i > 0:
-        st.button(f"Back: {STEPS[i - 1].title}", icon=":material/arrow_back:", on_click=go, args=(STEPS[i - 1].id,))
-    st.space("stretch")
-    nxt = STEPS[i + 1]
-    st.button(f"Next: {nxt.ask.lower() if nxt.id != 'review' else 'review'}", icon=":material/arrow_forward:",
-              type="primary", on_click=go, args=(nxt.id,))
+def document_step() -> None:
+    files = it.files(step_id)
+    main = layout()
+    with main, box("step", f"Step {step.n} · {step.title}", "upload_file"):
+        st.markdown(f"### {step.ask}")
+        st.caption(f"**Builds:** {step.builds}  \n**Looks for:** {step.looks_for}")
+        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+            up = st.file_uploader(step.ask, type=list(step.types), accept_multiple_files=True,
+                                  key=f"up_{step_id}_{st.session_state.get('ab_nonce', 0)}",
+                                  label_visibility="collapsed")
+            test = TEST_PACKAGE / step.test_file
+            use_test = (test.exists() and not any(f["name"] == step.test_file for f in files)
+                        and st.button(f"Use the test file ({step.test_file})", icon=":material/science:",
+                                      type="tertiary"))
+        reread = False
+        if files:
+            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                for f in files:
+                    st.badge(f"{f['name']} · {f['size'] / 1e6:.1f} MB", icon=":material/description:", color="gray")
+                reread = st.button("Read again", icon=":material/refresh:", type="tertiary",
+                                   help="Reads the files again with what the earlier steps know now. Your answers "
+                                        "are kept.")
+                with st.popover("Remove a file", icon=":material/delete:"):
+                    for f in files:
+                        if st.button(f"Remove {f['name']}", key=f"rm_{f['sha256'][:8]}"):
+                            it.remove_file(step_id, f["name"])
+                            steps.run(it, step_id, lambda m: None)
+                            st.rerun()
+        # Reading runs here, below the upload row, so its live log has the box's width.
+        if up:
+            read_now([(u.name, u.getvalue()) for u in up])
+        elif use_test:
+            read_now([(test.name, test.read_bytes())])
+        elif reread:
+            read_now([])
+        if files and (stale := steps.stale(it, step_id)):
+            st.warning(f"{', '.join(stale)} changed since this step was read. **Read again** to use the latest.",
+                       icon=":material/sync_problem:")
+
+    names_here = [f["name"] for f in files]
+    with main, box("work"):
+        nq = len(it.open_questions(step_id))
+        tabs = {"doc": "Document", "ask": f"Needs you ({nq})", "built": "What was read", "log": "Reading log"}
+        work = work_tabs(tabs, "ask" if nq else "doc")
+        if work == "doc":
+            if it.done(step_id) or st.session_state["ab_sel"]:
+                viewer(names_here)
+            else:
+                st.info("Nothing read yet for this step. Upload the document above"
+                        + (" or use the test file." if (TEST_PACKAGE / step.test_file).exists() else "."),
+                        icon=":material/upload_file:")
+                if needs := [steps.BY_ID[n] for n in step.needs if not it.done(n)]:
+                    st.caption("Works best after: " + ", ".join(f"step {n.n} ({n.title.lower()})" for n in needs)
+                               + ".")
+        elif work == "ask":
+            located = {"placement", "room", "room_check"}
+            on_plan = sum(1 for f in it.open_questions(step_id) if f["kind"] in located)
+            how = st.segmented_control("How", ["List", "On the building"], default="List", key="ab_ask_how",
+                                       label_visibility="collapsed") or "List"
+            if how == "List":
+                questions([step_id])
+            else:
+                st.caption(f"{on_plan} of this step's {nq} questions have a place on a plan: they pulse in amber. "
+                           "Hover one to answer it there, or step through them with the arrows in the viewer (or "
+                           "the N key). The others (controllers, checks) are in the list.")
+                twin_view(only_ask=True, key="ab_twin_ask", panel=False)
+        elif work == "built":
+            if it.done(step_id):
+                built_tables([step_id])
+            else:
+                st.caption("Nothing read yet for this step.")
+        else:
+            for line in it.log(step_id) or ["Nothing read yet for this step."]:
+                st.markdown(("- " if not line.startswith("  ") else "    - ") + line.strip())
+
+
+if step_id == "locate":
+    main = layout()
+    with main:
+        locate_step()
+elif step_id == "knowledge":
+    main = layout()
+    with main:
+        knowledge_step()
+elif step_id == "review":
+    review_step()
+else:
+    document_step()
+footer()

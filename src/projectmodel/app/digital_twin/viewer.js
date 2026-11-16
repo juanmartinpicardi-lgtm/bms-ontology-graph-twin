@@ -68,7 +68,8 @@ export function createViewer(host, cb) {
   const skyScene = new THREE.Scene(); const skyForEnv = new Sky(); skyForEnv.scale.setScalar(4000); skyScene.add(skyForEnv);
   ["turbidity", "rayleigh", "mieCoefficient", "mieDirectionalG"].forEach(k => skyForEnv.material.uniforms[k].value = sky.material.uniforms[k].value);
   let skyEnv = null;
-  const grid = new THREE.GridHelper(400, 100, 0x23262b, 0x16181b); grid.position.y = -6.4; scene.add(grid);
+  const LIGHT = document.documentElement.dataset.theme === "light" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: light)").matches);
+  const grid = new THREE.GridHelper(400, 100, LIGHT ? 0xc9ced4 : 0x23262b, LIGHT ? 0xe1e4e8 : 0x16181b); grid.position.y = -6.4; scene.add(grid);
 
   // ---------- content ----------
   const base = baseMaterials();
@@ -198,7 +199,7 @@ export function createViewer(host, cb) {
       grid.visible = false; site.visible = true;
     } else {
       if (sky.parent) scene.remove(sky);
-      scene.environment = roomEnv; scene.environmentIntensity = .55; scene.background = new THREE.Color(0x0b0c0d); scene.fog = new THREE.Fog(0x0b0c0d, 300, 700);
+      scene.environment = roomEnv; scene.environmentIntensity = .55; const bgc = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b0c0d"); scene.background = bgc; scene.fog = new THREE.Fog(bgc, 300, 700);
       sun.position.set(80, 160, 60); sun.intensity = 1.5; sun.color.set(0xffffff); hemi.intensity = .7; hemi.color.set(0xdfeaff);
       renderer.toneMappingExposure = .9; bloom.strength = .18; bloom.threshold = .97;
       for (const fl of B.floors.values()) fl.M.light.emissiveIntensity = 0;
@@ -267,7 +268,7 @@ export function createViewer(host, cb) {
       const wantMap = real ? B.floors.get(z.floor).M.carpet.map : null;
       if (z.floorMat.map !== wantMap) { z.floorMat.map = wantMap; z.floorMat.needsUpdate = true; }
       if (!real) {
-        z.floorMat.color.copy(on ? col : new THREE.Color(0x2a2d31)); z.floorMat.emissive.copy(on ? col : new THREE.Color(0)).multiplyScalar(.28);
+        z.floorMat.color.copy(on ? col : new THREE.Color(LIGHT ? 0xd5d9de : 0x2a2d31)); z.floorMat.emissive.copy(on ? col : new THREE.Color(0)).multiplyScalar(.28);
         z.volMat.color.copy(col); z.volMat.opacity = on ? (s.status === "normal" && V.color === "status" ? .1 : .3) : .02;
       } else {
         const tint = V.overlay && on; z.floorMat.color.copy(tint ? WHITE.clone().lerp(col, .75) : WHITE);
@@ -279,7 +280,7 @@ export function createViewer(host, cb) {
       const e = byId.get(id), on = V.match(e), col = new THREE.Color(colorOf(e, V.color));
       for (const m of q.tint) {
         if (real) { m.color.setHex(m.userData.orig); m.emissive?.set(0); }
-        else { m.color.copy(on ? col : new THREE.Color(0x34373c)); m.emissive?.copy(on ? col : new THREE.Color(0)).multiplyScalar(.15); }
+        else { m.color.copy(on ? col : new THREE.Color(LIGHT ? 0xc3c8ce : 0x34373c)); m.emissive?.copy(on ? col : new THREE.Color(0)).multiplyScalar(.15); }
       }
     }
     for (const fl of B.floors.values()) {

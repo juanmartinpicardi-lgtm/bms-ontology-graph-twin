@@ -83,21 +83,35 @@ def set_project(project: str) -> None:
 # No sidebar anywhere: a fixed icon rail picks the area (Overview, Projects, Shared knowledge), chips pick the page
 # inside it, and the project header switches building and input. Page controls live on the page.
 ACCENT = "#4DA3E8"
-CHROME_CSS = f"""<style>
+RAIL = {"dark": {"bg": "#0E0F10", "line": "#24262A", "fg": "#9AA0A6", "hover": "#1E2023", "hover_fg": "#E8E9EA",
+                 "on": "#23324A", "on_fg": "#8CC5F2", "box": "rgba(255,255,255,.025)", "box_line": "rgba(255,255,255,.10)"},
+        "light": {"bg": "#F4F5F7", "line": "#DDE0E4", "fg": "#5F6670", "hover": "#E6E9ED", "hover_fg": "#16181D",
+                  "on": "#DCEBFA", "on_fg": "#1F6FB5", "box": "rgba(16,24,40,.018)", "box_line": "rgba(16,24,40,.12)"}}
+
+
+def theme() -> str:
+    return "light" if st.context.theme.type == "light" else "dark"
+
+
+def chrome_css() -> str:
+    """The app's chrome for the current light/dark theme: the rail, the chips, and the boxes every section sits in
+    (a container keyed box_<name> is a soft rounded panel). Content uses the full width of the screen."""
+    c = RAIL[theme()]
+    return f"""<style>
 [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {{
   display: none !important; }}
-.block-container {{ padding-top: 1.4rem; padding-left: calc(64px + 2rem); }}
+.block-container {{ padding-top: 1.4rem; padding-left: calc(64px + 2rem); padding-right: 2rem; max-width: none; }}
 [data-testid="stHeader"], [data-testid="stHeader"] * {{ background: transparent; pointer-events: none; }}
 [data-testid="stHeader"] button, [data-testid="stHeader"] button * {{ pointer-events: auto; }}
 [data-testid="stAppDeployButton"] {{ display: none; }}
-.st-key-rail {{ position: fixed; left: 0; top: 0; bottom: 0; width: 64px; z-index: 999995; background: #0E0F10;
-  border-right: 1px solid #24262A; padding: 14px 0; align-items: center; gap: 6px; }}
+.st-key-rail {{ position: fixed; left: 0; top: 0; bottom: 0; width: 64px; z-index: 999995; background: {c["bg"]};
+  border-right: 1px solid {c["line"]}; padding: 14px 0; align-items: center; gap: 6px; }}
 .st-key-rail [data-testid="stPageLink-NavLink"] {{ width: 44px; height: 44px; justify-content: center; padding: 0;
-  border-radius: 10px; color: #9AA0A6; }}
+  border-radius: 10px; color: {c["fg"]}; }}
 .st-key-rail [data-testid="stPageLink-NavLink"] [data-testid="stMarkdownContainer"] {{ display: none; }}
 .st-key-rail [data-testid="stPageLink-NavLink"] span {{ margin: 0; font-size: 22px; color: inherit !important; }}
-.st-key-rail [data-testid="stPageLink-NavLink"]:hover {{ background: #1E2023; color: #E8E9EA; }}
-.st-key-rail_on [data-testid="stPageLink-NavLink"] {{ background: #23324A; color: #8CC5F2; }}
+.st-key-rail [data-testid="stPageLink-NavLink"]:hover {{ background: {c["hover"]}; color: {c["hover_fg"]}; }}
+.st-key-rail_on [data-testid="stPageLink-NavLink"] {{ background: {c["on"]}; color: {c["on_fg"]}; }}
 .rail-logo {{ width: 36px; height: 36px; border-radius: 10px; background: {ACCENT}; display: flex;
   align-items: center; justify-content: center; margin: 0 auto 14px; }}
 [class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ border: 1px solid rgba(128,128,128,.35);
@@ -108,7 +122,19 @@ CHROME_CSS = f"""<style>
 .st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid rgba(128,128,128,.22); padding-bottom: 14px;
   margin-bottom: 6px; }}
 .st-key-projsite [data-baseweb="select"] > div {{ font-size: 1.25rem; font-weight: 600; }}
+[class*="st-key-box_"] {{ border: 1px solid {c["box_line"]} !important; border-radius: 16px !important;
+  background: {c["box"]}; padding: 18px 20px !important; }}
+[class*="st-key-box_"] [class*="st-key-box_"] {{ padding: 14px 16px !important; }}
 </style>"""
+
+
+def box(name: str, title: str = "", icon: str = "", **kw):
+    """A section of a page: a soft rounded panel with an optional small title. Use as a context manager."""
+    c = st.container(key=f"box_{name}", **kw)
+    if title:
+        c.caption(f":material/{icon}: **{title}**" if icon else f"**{title}**")
+    return c
+
 
 RAIL_LOGO = """<div class="rail-logo" title="Project Model"><span aria-hidden="true"
 style="font-family: 'Material Symbols Rounded'; font-size: 22px; color: #0B1A28">hub</span></div>"""
@@ -116,7 +142,7 @@ style="font-family: 'Material Symbols Rounded'; font-size: 22px; color: #0B1A28"
 
 def rail(areas: list[tuple[str, str, list]], current) -> None:
     """The fixed icon rail on the left: one icon per area, linking to the area's first page."""
-    st.html(CHROME_CSS)
+    st.html(chrome_css())
     with st.container(key="rail"):
         st.html(RAIL_LOGO)
         for name, icon, pages in areas:

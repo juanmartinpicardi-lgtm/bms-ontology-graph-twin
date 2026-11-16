@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.shell import get_store, set_project  # noqa: E402
+from projectmodel.intake.model import progress  # noqa: E402
+from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
 from projectmodel.projects import INPUTS, list_projects, site_of, summaries  # noqa: E402
 
 store = get_store()
@@ -47,7 +49,27 @@ for i, (site_id, plist) in enumerate(sorted(by_site.items())):
             if st.button("Open", key=f"open_{p}", icon=":material/arrow_forward:", on_click=set_project, args=(p,)):
                 st.switch_page("tree_app.py")
 
-with cols[len(by_site) % 3].container(border=True, height="stretch"):
-    st.markdown("### :material/add: New project")
-    st.write("Add a building from a Haystack, Niagara or CPO Studio export.")
-    st.page_link("views/new_project.py", label="Start", icon=":material/arrow_forward:")
+def open_intake(slug: str) -> None:
+    st.session_state.update(ab_slug=slug, ab_sel=None)
+
+
+k = len(by_site)
+for s in list_intakes():  # buildings added from their documents, set up step by step
+    it = Intake(s["slug"])
+    share = progress(it)["share"]
+    with cols[k % 3].container(border=True, height="stretch"):
+        st.markdown(f"### {it.name}")
+        loc = it.s.get("location") or {}
+        st.markdown(loc.get("address") or it.s.get("address") or "Not located yet")
+        st.badge("Guided setup", color="violet", icon=":material/add_business:")
+        st.progress(share, text=f"{round(share * 100)}% built")
+        if st.button("Continue the setup", key=f"intake_{it.slug}", icon=":material/arrow_forward:",
+                     on_click=open_intake, args=(it.slug,)):
+            st.switch_page("views/add_building.py")
+    k += 1
+
+with cols[k % 3].container(border=True, height="stretch"):
+    st.markdown("### :material/add: Add a building")
+    st.write("Locate it, upload its documents one step at a time (plans, schedules, sequences, controls submittal, "
+             "BMS export), review, then add what people know. The graph and the twin grow at every step.")
+    st.page_link("views/add_building.py", label="Start", icon=":material/arrow_forward:")

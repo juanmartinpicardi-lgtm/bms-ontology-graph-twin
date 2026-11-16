@@ -24,8 +24,8 @@ and page.
 | 7 | **Review** | Everything proposed | Confirmed, fixed or rejected facts, each shown next to its source page | Reviewer accepts 138 VAVs in one click |
 | 8 | **Use** | The confirmed graph | Equipment graphics, digital twin with real floors, agent tools, checks | "Zone 2.14 is too warm" answered from the graph |
 
-The app walks these steps on Alpha under Projects → New project (`onboarding.py`, `app/views/new_project.py`):
-per step, what is submitted and what is created, counted on Alpha's graph, with what is not built marked simulated.
+The app runs these steps on a new building's own documents under Projects → Add a building
+(`app/views/add_building.py`, `intake/`): locate, upload each document, review, then add tribal knowledge.
 
 Order matters: assets (3) before spaces (4) and links (5), because a floor plan or schematic is read by
 looking for tags already known. Sequences (6) come last, because they bind to points that must exist.
@@ -82,7 +82,7 @@ Readiness: **ready** (works today), **partial** (the foundation is there, needs 
 | # | Step | Readiness | What exists | What is missing |
 |---|---|---|---|---|
 | 0 | Locate the building | partial | Location page (`app/views/location.py`, `locate.py`): search by Google Geocoding or OpenStreetMap, a person confirms, address parts and coordinates stored per site (`sites` table); Google map with 3D view, or OpenStreetMap without a key | Search as you type (Places Autocomplete); the site as a node of the graph (comes with space nodes); the Google path has not been run with a real key yet |
-| 1 | Drop documents | missing | `data/raw/` convention; a disabled placeholder page (`app/views/new_project.py`) | Upload, a `documents` table (file, hash, pages), projects created at run time (`projects.SITES` is hard-coded) |
+| 1 | Drop documents | missing | `data/raw/` convention; the guided setup (`app/views/add_building.py`) takes uploads per step | Upload, a `documents` table (file, hash, pages), projects created at run time (`projects.SITES` is hard-coded) |
 | 2 | Read and sort | missing | The `LLMProvider` interface and the `llm_calls` log (`mapper/llm.py`, `db/store.py`) | A real provider (only `none` exists), PDF text and table extraction, a page classifier, a `pages` table |
 | 3 | Build assets | partial | Raw record shape with unit, kind, device and object id fields (`records.py`); the whole mapper; templates say which points a unit must have; `method=document` rows survive mapper runs | A document adapter producing raw records; equipment rows from a schedule (nameplate in `attrs`); the mapper ignores units and kind today |
 | 4 | Place in building | missing | `hasLocation` is in the Brick subset; the twin page draws floors (inferred, rooms generated: `twin_view.py`) | Node kinds for site, floor, room, zone (`nodes.kind` allows only `point`, `equipment`); floor plan reading; the twin reading real spaces |

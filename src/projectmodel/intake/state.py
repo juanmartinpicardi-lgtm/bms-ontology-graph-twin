@@ -61,6 +61,17 @@ class Intake:
     def name(self) -> str:
         return self.s["name"]
 
+    @property
+    def location(self) -> dict | None:
+        """Where the building is, as a person confirmed it (step 0): address, its parts, coordinates, provider."""
+        return self.s.get("location")
+
+    def set_location(self, loc: dict, confirmed_by: str) -> None:
+        self.s["location"] = dict(loc, confirmed_by=confirmed_by, confirmed_at=time.strftime("%Y-%m-%d"),
+                                  method="human")
+        self.s["address"] = loc.get("address", self.s.get("address", ""))
+        self.save()
+
     def save(self) -> None:
         self.dir.mkdir(parents=True, exist_ok=True)
         self.s["updated"] = time.time()
