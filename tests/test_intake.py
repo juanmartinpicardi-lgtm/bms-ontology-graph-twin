@@ -175,3 +175,39 @@ def test_test_buildings_cleared_on_restart(tmp_path):
     assert sorted(gone) == ["troop-d-crime-lab", "troop-d-crime-lab-2"]
     left = {p.parent.name for p in tmp_path.glob("*/state.json")}
     assert left == {real.slug, "old"}
+
+
+def test_publish_makes_a_project(intake):
+    """A finished setup becomes a project the app's pages read: equipment, points, links, notes, provenance."""
+    from projectmodel import notes
+    from projectmodel.db.store import Store
+    from projectmodel.intake import knowledge
+    from projectmodel.intake.publish import publish
+    from projectmodel.twin_view import twin_payload
+    store = Store(":memory:")
+    knowledge.add_note(intake, "building", "the whole building", "history", "Chiller 2 replaced in 2021.", "Sam")
+    project = publish(intake, store)
+    assert project == f"{intake.slug}/documents"
+    eq, pts = store.nodes(project, "equipment"), store.nodes(project, "point")
+    assert len(eq) >= 70 and len(pts) >= 800
+    assert len(store.edges(project, "hasPoint")) == len(pts)
+    assert store.edges(project, "feeds")
+    assert all(n["source_file"] and n["method"] in ("rule", "human", "parsed") for n in eq)
+    assert [n["body"] for n in notes.notes_by_project(store, project)] == ["Chiller 2 replaced in 2021."]
+    twin = twin_payload(store, project, intake.name)
+    assert {e["floor"] for e in twin["equip"]} & {"L1", "L2", "L3"}
+    assert publish(intake, store) == project and len(store.nodes(project, "equipment")) == len(eq)  # replaces
+
+
+def test_reset_and_delete(tmp_path):
+    it = Intake.create("Some building", "Somewhere", root=tmp_path)
+    it.set_location({"address": "1 Main St", "lat": 1.0, "lng": 2.0, "provider": "openstreetmap"}, "Sam")
+    f = PACKAGE / steps.STEPS[0].test_file
+    if f.exists():
+        it.add_file("plans", f.name, f.read_bytes())
+    it.reset()
+    again = Intake(it.slug, tmp_path)
+    assert again.files("plans") == [] and again.s["facts"] == {} and again.location["address"] == "1 Main St"
+    assert not (it.dir / "uploads").exists()
+    again.delete()
+    assert not it.dir.exists()

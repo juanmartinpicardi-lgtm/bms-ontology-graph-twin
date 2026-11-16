@@ -6,7 +6,7 @@ import { createPlan } from "./plan.js";
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const ALL = { sys: ["Airside", "Waterside", "Metering"], type: [...new Set(equip.map(e => e.type))] };
-const S = { floor: null, sel: null, color: "status", q: "", f: { sys: new Set(), status: new Set(), type: new Set() },
+const S = { surroundings: true, floor: null, sel: null, color: "status", q: "", f: { sys: new Set(), status: new Set(), type: new Set() },
   mode: "analysis", exploded: false, plan: false, hours: 15.5, cut: null, overlay: false, systems: true, labels: true, hq: true };
 const matchesExcept = (e, skip) => {
   if (S.q) { const q = S.q.toLowerCase();
@@ -141,7 +141,8 @@ function renderToolbar() {
   $("#explodeSeg").style.display = S.mode === "analysis" ? "" : "none";
   $("#explodeSeg").querySelectorAll("button").forEach(b => b.classList.toggle("on", +b.dataset.x === +S.exploded));
   $("#overlayBtn").style.display = S.mode === "realistic" ? "" : "none";
-  for (const [id, on] of [["overlayBtn", S.overlay], ["systemsBtn", S.systems], ["labelsBtn", S.labels], ["cutBtn", S.cut != null], ["planBtn", S.plan], ["hqBtn", S.hq]]) $("#" + id).classList.toggle("on", on);
+  $("#surrBtn").style.display = S.mode === "realistic" ? "" : "none";
+  for (const [id, on] of [["overlayBtn", S.overlay], ["systemsBtn", S.systems], ["labelsBtn", S.labels], ["cutBtn", S.cut != null], ["planBtn", S.plan], ["hqBtn", S.hq], ["surrBtn", S.surroundings]]) $("#" + id).classList.toggle("on", on);
   $("#cutBox").classList.toggle("on", S.cut != null);
   $("#timeBox").classList.toggle("on", S.mode === "realistic");
   $("#dock").classList.toggle("on", S.plan);
@@ -160,6 +161,7 @@ $("#explodeSeg").querySelectorAll("button").forEach(b => b.onclick = () => { S.e
 $("#overlayBtn").onclick = () => { S.overlay = !S.overlay; update({ overlay: S.overlay }); };
 $("#systemsBtn").onclick = () => { S.systems = !S.systems; update({ systems: S.systems }); };
 $("#labelsBtn").onclick = () => { S.labels = !S.labels; update({ labels: S.labels }); };
+$("#surrBtn").onclick = () => { S.surroundings = !S.surroundings; update({ surroundings: S.surroundings }); };
 $("#hqBtn").onclick = () => { S.hq = !S.hq; update({ hq: S.hq }); };
 $("#cutBtn").onclick = () => { S.cut = S.cut == null ? +$("#cutRange").value : null; update({ cut: S.cut }); };
 $("#cutRange").oninput = ev => { S.cut = +ev.target.value; viewer.set({ cut: S.cut }); };

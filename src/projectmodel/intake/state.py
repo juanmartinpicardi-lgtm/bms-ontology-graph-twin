@@ -90,6 +90,19 @@ class Intake:
         self.s["address"] = loc.get("address", self.s.get("address", ""))
         self.save()
 
+    def reset(self) -> None:
+        """Start the building over: every upload, fact, answer and piece of knowledge goes; its name, address and
+        location stay."""
+        shutil.rmtree(self.dir / "uploads", ignore_errors=True)
+        keep = {k: self.s[k] for k in ("name", "address", "location", "test", "created") if k in self.s}
+        self.s = {**keep, "files": {}, "facts": {}, "decisions": {}, "log": {}}
+        self.save()
+
+    def delete(self) -> None:
+        """Remove the building and everything uploaded for it."""
+        shutil.rmtree(self.dir, ignore_errors=True)
+        self.s = None
+
     def save(self) -> None:
         self.dir.mkdir(parents=True, exist_ok=True)
         self.s["updated"] = time.time()

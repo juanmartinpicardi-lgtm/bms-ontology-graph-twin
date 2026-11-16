@@ -11,7 +11,7 @@ import streamlit as st
 from projectmodel.db.store import Store
 from projectmodel.knowledge_model import load_knowledge_model
 from projectmodel.locate import google_map_html, osm_embed_url
-from projectmodel.projects import DEFAULT, INPUTS, SITES, list_projects, site_of, summaries
+from projectmodel.projects import DEFAULT, INPUTS, list_projects, site_of, summaries
 
 ROOT = Path(__file__).resolve().parents[3]
 DB = ROOT / "data/kg.sqlite"
@@ -128,12 +128,71 @@ def chrome_css() -> str:
 </style>"""
 
 
-def box(name: str, title: str = "", icon: str = "", **kw):
-    """A section of a page: a soft rounded panel with an optional small title. Use as a context manager."""
-    c = st.container(key=f"box_{name}", **kw)
+def box(name: str, title: str = "", icon: str = "", fit: bool = False, **kw):
+    """A section of a page: a soft rounded panel with an optional small title. Use as a context manager.
+    `fit`: the box runs from where it starts to the bottom of the screen, and its main viewer (its tallest frame)
+    grows or shrinks to fill it, wherever the header above ends (FIT_JS). Boxes side by side get the same height."""
+    c = st.container(key=f"box_fit_{name}" if fit else f"box_{name}", **kw)
     if title:
         c.caption(f":material/{icon}: **{title}**" if icon else f"**{title}**")
     return c
+
+
+# Sizes every fit box to the screen: measured in the page, so it holds when the header wraps or the window resizes.
+# A fit box's height is the screen's bottom minus its top (at least MIN); its tallest frame then takes whatever
+# height is left once everything else in the box is laid out. Runs once per browser tab, on resize and changes.
+FIT_JS = """
+export default function () {
+  if (window.__pmFit) return;
+  window.__pmFit = true;
+  const MIN = 460, MIN_FRAME = 300, GAP = 14;
+  const frames = el => {
+    const out = [...el.querySelectorAll("iframe")];
+    el.querySelectorAll("*").forEach(n => { if (n.shadowRoot) out.push(...n.shadowRoot.querySelectorAll("iframe")); });
+    return out;
+  };
+  function fit() {
+    const main = document.querySelector('[data-testid="stMain"]');
+    const scrolled = main ? main.scrollTop : 0;
+    for (const box of document.querySelectorAll('[class*="st-key-box_fit_"]')) {
+      const r = box.getBoundingClientRect();
+      if (!r.width) continue;
+      const h = Math.max(MIN, Math.round(innerHeight - (r.top + scrolled) - GAP));
+      for (const el of [box, box.parentElement]) {
+        if (Math.abs(el.getBoundingClientRect().height - h) > 1 || el.style.height !== h + "px") {
+          el.style.height = h + "px"; el.style.maxHeight = h + "px"; el.style.flex = "0 0 auto";
+        }
+      }
+      box.style.overflowY = "auto";
+      box.style.setProperty("--fit", h + "px");
+      const fr = frames(box).sort((a, b) => b.offsetHeight - a.offsetHeight)[0];
+      const kids = [...box.children].filter(k => k.offsetHeight);
+      if (!fr || !kids.length) continue;
+      const pad = parseFloat(getComputedStyle(box).paddingBottom) || 0;
+      const used = kids[kids.length - 1].getBoundingClientRect().bottom - box.getBoundingClientRect().top
+                   + box.scrollTop;
+      const slack = h - pad - used;
+      const want = Math.max(MIN_FRAME, Math.round(fr.offsetHeight + slack));
+      if (Math.abs(want - fr.offsetHeight) <= 2) continue;
+      // The frame's wrappers (Streamlit's element container, a component's host) keep the height they were given:
+      // grow or shrink each one that wraps the frame tightly, so what sits below the frame moves with it.
+      for (let el = fr.parentNode; el && el !== box; el = el.parentNode || el.host) {
+        if (el.nodeType === 1 && Math.abs(el.offsetHeight - fr.offsetHeight) <= 4) {
+          el.style.height = want + "px"; el.style.flex = "0 0 auto";  // Streamlit sizes it by flex-basis
+        }
+      }
+      fr.style.height = want + "px";
+    }
+  }
+  let queued = false;
+  const later = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; fit(); }); } };
+  addEventListener("resize", later);
+  new MutationObserver(later).observe(document.body, { childList: true, subtree: true });
+  setInterval(fit, 800);
+  fit();
+}
+"""
+_fit = st.components.v2.component("projectmodel.fit", js=FIT_JS)
 
 
 RAIL_LOGO = """<div class="rail-logo" title="Project Model"><span aria-hidden="true"
@@ -145,6 +204,7 @@ def rail(areas: list[tuple[str, str, list]], current) -> None:
     st.html(chrome_css())
     with st.container(key="rail"):
         st.html(RAIL_LOGO)
+        _fit(key="fit")
         for name, icon, pages in areas:
             on = any(p.url_path == current.url_path for p in pages)
             with st.container(key="rail_on" if on else f"rail_{name}", width="content"):
@@ -191,11 +251,13 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
         with st.container(horizontal=True, vertical_alignment="center", gap="small"):
             st.page_link(all_projects, label="Projects", icon=":material/arrow_back:")
             st.selectbox("Building", list(dict.fromkeys(p.split("/")[0] for p in projects)), key="_site",
-                         format_func=lambda s: SITES[s].name if s in SITES else s.title(),
+                         format_func=lambda s: site_of(f"{s}/").name,
                          label_visibility="collapsed", width=170, on_change=_pick_project, args=(projects,),
                          help="Every project page shows this building. Switch it here at any time.")
             if site.role == "test":
                 st.badge("Test set · measure only, never tune", color="orange", icon=":material/science:")
+            elif site.source.startswith("Guided setup"):
+                st.badge("Added from its documents", color="violet", icon=":material/add_business:")
             else:
                 st.badge("Dev set", color="blue")
             n = summaries(store).get(project, {}).get("nodes", {})

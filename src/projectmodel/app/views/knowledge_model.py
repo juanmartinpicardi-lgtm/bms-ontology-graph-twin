@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import km_explorer as kx  # noqa: E402
-from projectmodel.app.shell import active_project  # noqa: E402
+from projectmodel.app.shell import active_project, box  # noqa: E402
 from projectmodel.conventions import CONV_DIR, ConventionError, apply_conventions, load_layers, scopes_for  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
@@ -44,20 +44,21 @@ with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
                     icon=":material/tune:"):
         accept = st.slider("Count as low confidence below", 0.0, 1.0, DEFAULT_ACCEPT, 0.05, key="km_accept")
 classes = km.classes.values()
-c1, c2, c3, c4, c5 = st.columns(5)
+summary = box("km_summary", "The knowledge model", "account_tree")
+c1, c2, c3, c4, c5 = summary.columns(5)
 c1.metric("Classes", len(km.classes), help="Brick subset + BA extension")
 c2.metric("Equipment / point classes", f"{sum(i.kind == 'equipment' for i in classes)} / {sum(i.kind == 'point' for i in classes)}")
 c3.metric("From the BA extension", sum(i.source == "ba" for i in classes))
 c4.metric("Templates", len(km.templates))
 c5.metric("Abbreviations / words", f"{len(km.name_rules.abbreviations)} / {len(km.name_rules.vocabulary)}")
-st.caption(f"Brick {km.brick_version} subset · relations: {', '.join(km.relations)} · "
+summary.caption(f"Brick {km.brick_version} subset · relations: {', '.join(km.relations)} · "
            f"BA relations: {', '.join(km.ba_relations)}"
            + (f" · measured against **{project}**" + (" with ground truth" if gt else " (no ground truth)") if project else ""))
 
 if not project:
     st.stop()
 
-tab_c, tab_t, tab_u, tab_r, tab_m, tab_v = st.tabs(["Classes", "Templates", "Unknown words", "Relations",
+tab_c, tab_t, tab_u, tab_r, tab_m, tab_v = box("km_tabs").tabs(["Classes", "Templates", "Unknown words", "Relations",
                                                     "Missing from the model", "Conventions"])
 
 # --- Classes -----------------------------------------------------------------------------------

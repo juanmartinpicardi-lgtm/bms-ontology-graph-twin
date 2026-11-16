@@ -9,7 +9,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
 
 store = get_store()
@@ -28,7 +28,8 @@ equipment = pd.DataFrame([{k: n[k] for k in COLS} for n in store.nodes(project, 
 links = pd.DataFrame([{k: e[k] for k in ("src", "rel", "dst", "confidence", "method", "status", "source_ref")}
                       for e in store.edges(project)])
 
-query = st.text_input("Search", placeholder="name, class, equipment…")
+tables = box("tables", "Points, equipment and links", "table", fit=True)
+query = tables.text_input("Search", placeholder="name, class, equipment…")
 
 
 def show(df: pd.DataFrame, name: str) -> None:
@@ -41,7 +42,7 @@ def show(df: pd.DataFrame, name: str) -> None:
                        mime="text/csv", icon=":material/download:", key=f"dl_{name}")
 
 
-tabs = st.tabs([f"Points ({len(points):,})", f"Equipment ({len(equipment):,})", f"Links ({len(links):,})"])
+tabs = tables.tabs([f"Points ({len(points):,})", f"Equipment ({len(equipment):,})", f"Links ({len(links):,})"])
 with tabs[0]:
     show(points, "points")
 with tabs[1]:

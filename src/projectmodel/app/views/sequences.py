@@ -12,7 +12,8 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store, knowledge_model, page_tools  # noqa: E402
+from projectmodel.intake.state import Intake  # noqa: E402
 from projectmodel.equipment_view import MODULES  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
 from projectmodel.sequences import document_path, render_html, sequences_payload  # noqa: E402
@@ -36,6 +37,20 @@ if not projects:
     st.stop()
 project = active_project(projects)
 doc = document_path(project.split("/")[0])
+setup = Intake(project.split("/")[0]) if project.endswith("/documents") else None
+if setup and setup.s and not doc.exists():  # a building added from its documents: the sequences its reader found
+    seqs = setup.facts(kind="sequence", live=True)
+    with box("seq_read", "Sequences of operation, as read from the documents", "sync_alt", fit=True):
+        if not seqs:
+            st.info("No sequence of operation was read for this building.", icon=":material/info:")
+        for s in seqs:
+            d = s["data"]
+            with st.expander(f"**{d['title']}** · applies to {len(d['applies_to'])} units · "
+                             f"{len(d.get('setpoints', []))} setpoints · {s['src'].get('file', '')}"):
+                st.caption(", ".join(d["applies_to"]))
+                for x in d.get("sections", []):
+                    st.markdown(f"**{x['letter']}. {x['title']}**: {x['text']}")
+    st.stop()
 if not doc.exists():
     st.info(f"No sequences of operation for this building yet. Add them in `{doc.relative_to(ROOT)}`.")
     st.stop()
@@ -49,7 +64,8 @@ if html is None:
     st.info("The sequences talk about equipment this input does not have (names only gives no equipment folders). "
             "Switch the input to names + paths in the project header.")
     st.stop()
-st.iframe(html, height=900)
-st.caption("Read: click a highlighted word to see that point, equipment or system on the right, in 3D where there "
-           "is a model. Simulate: watch the sequence run through the graph. Solid links come from the BMS export, "
-           "dashed ones from the sequence; amber and red mark what the sequence found wrong or missing in the graph.")
+with box("sequences", fit=True):
+    st.iframe(html, height=860)
+    st.caption("Read: click a highlighted word to see that point, equipment or system on the right, in 3D where there "
+               "is a model. Simulate: watch the sequence run through the graph. Solid links come from the BMS export, "
+               "dashed ones from the sequence; amber and red mark what the sequence found wrong or missing in the graph.")

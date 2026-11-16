@@ -30,12 +30,22 @@ SITES = {
 INPUTS = {
     "names_paths": ("Names + folders", "Point names and the equipment folder each sits in, like a Niagara station tree"),
     "names_only": ("Names only", "Point names alone: the hardest case"),
+    "documents": ("From documents", "Plans, schedules, sequences, controls submittal and BMS export, read in the "
+                                    "guided setup (Projects → Add a building)"),
 }
 
 
 def site_of(project: str) -> Site:
     s = project.split("/")[0]
-    return SITES.get(s, Site(s.title(), "", "", "dev", ""))
+    if s in SITES:
+        return SITES[s]
+    from .intake.state import Intake  # a building added in the guided setup
+    it = Intake(s)
+    if it.s:
+        loc = it.location or {}
+        return Site(it.name, "Added from its documents", loc.get("address") or it.s.get("address", ""),
+                    "dev", "Guided setup" + (" · test package" if it.s.get("test") else ""))
+    return Site(s.title(), "", "", "dev", "")
 
 
 def input_label(project: str) -> str:
