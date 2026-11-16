@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import bms, floorplans, schedules, sequence_text, submittal
+from . import bms, floorplans, knowledge, schedules, sequence_text, submittal
 from .state import Intake
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -68,6 +68,7 @@ def run(it: Intake, step_id: str, log) -> int:
         lines.append(msg)
         log(msg)
 
+    knowledge.apply(it)
     files = [(it.path(f), f["name"]) for f in it.files(step_id)]
     if not files:
         it.clear_step(step_id)
@@ -104,4 +105,5 @@ def stale(it: Intake, step_id: str) -> list[str]:
     if not it.done(step_id):
         return []
     t = it.read_at(step_id)
-    return [BY_ID[n].title for n in BY_ID[step_id].needs if it.changed_since(n, t)]
+    out = [BY_ID[n].title for n in BY_ID[step_id].needs if it.changed_since(n, t)]
+    return out + (["The rules you added"] if knowledge.rules_at(it) > t else [])

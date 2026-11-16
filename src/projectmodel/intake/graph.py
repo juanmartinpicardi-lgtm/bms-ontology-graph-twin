@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from ..knowledge_model import KnowledgeModel
 from ..viz import add_model_layer
+from . import knowledge
 from .state import Intake
 
 
@@ -31,10 +32,28 @@ def _prov(f: dict) -> dict:
 def payload(it: Intake, b: dict, km: KnowledgeModel | None = None) -> dict:
     nodes, links = [], []
     facts = {f["id"]: f for f in it.facts(live=True)}
+    said = knowledge.notes_for(it)
+    notes: dict[str, list[dict]] = {}
+
+    def note(node: dict, key: str) -> dict:
+        """Attach the tribal notes about this node, in the shape the viewer's panel shows."""
+        mine = said.get(key, [])
+        if mine:
+            notes[node["id"]] = [{"id": n["id"], "topic": n["topic"], "body": n["body"], "author": n["author"],
+                                  "source": "manual", "updated_at": _when(n["at"])} for n in mine]
+        node["notes"] = len(mine)
+        return node
+
     floor_ids = set()
-    for f in it.facts(kind="floor", live=True):
+    floors = it.facts(kind="floor", live=True)
+    if floors:  # the building itself: where its floors hang, and where notes about the whole building sit
+        nodes.append(note({"id": "building", "label": it.name, "kind": "location", "cls": "Building", "layer": "instance",
+                           "prov": {"source_file": "", "source_ref": "", "method": "human", "confidence": 1.0,
+                                    "status": "confirmed"}, "fact": None, "attrs": {}}, "building"))
+    for f in floors:
         fid = f"floor:{f['data']['floor']}"
         floor_ids.add(fid)
+        links.append({"source": "building", "target": fid, "rel": "hasPart", "prov": _prov(f)})
         nodes.append({"id": fid, "label": f["data"]["name"], "kind": "location", "cls": "Floor", "layer": "instance",
                       "prov": _prov(f), "fact": f["id"], "attrs": {}})
     room_ids = {}
@@ -42,8 +61,8 @@ def payload(it: Intake, b: dict, km: KnowledgeModel | None = None) -> dict:
         f = facts[r["fact"]]
         rid = f"room:{r['number']}"
         room_ids[r["number"]] = rid
-        nodes.append({"id": rid, "label": f"{r['number']} {r['name']}".strip(), "kind": "location", "cls": "Room",
-                      "layer": "instance", "prov": _prov(f), "fact": f["id"], "attrs": {}})
+        nodes.append(note({"id": rid, "label": f"{r['number']} {r['name']}".strip(), "kind": "location", "cls": "Room",
+                           "layer": "instance", "prov": _prov(f), "fact": f["id"], "attrs": {}}, f"room:{r['number']}"))
         if f"floor:{r['floor']}" in floor_ids:
             links.append({"source": f"floor:{r['floor']}", "target": rid, "rel": "hasPart", "prov": _prov(f)})
 
@@ -54,10 +73,12 @@ def payload(it: Intake, b: dict, km: KnowledgeModel | None = None) -> dict:
             continue
         uid = f"unit:{n}"
         unit_ids[n] = uid
-        nodes.append({"id": uid, "label": e["tag"], "kind": "equipment", "cls": e["class"], "layer": "instance",
-                      "prov": _prov(f), "fact": e["facts"][0], "facts": e["facts"],
-                      "attrs": {"points": e["points"], **({"template": e["schedule"].title()} if e["schedule"] else {}),
-                                **({"evidence": f"room from: {e['room_source']}"} if e.get("room_source") else {})}})
+        nodes.append(note({"id": uid, "label": e["tag"], "kind": "equipment", "cls": e["class"], "layer": "instance",
+                           "prov": _prov(f), "fact": e["facts"][0], "facts": e["facts"],
+                           "attrs": {"points": e["points"],
+                                     **({"template": e["schedule"].title()} if e["schedule"] else {}),
+                                     **({"evidence": f"room from: {e['room_source']}"} if e.get("room_source") else {})}},
+                          f"unit:{n}"))
         where = facts.get(e.get("room_fact") or "")
         if e["room"] in room_ids and where:
             links.append({"source": uid, "target": room_ids[e["room"]], "rel": "serves" if e["terminal"] else "hasLocation",
@@ -91,4 +112,9 @@ def payload(it: Intake, b: dict, km: KnowledgeModel | None = None) -> dict:
     for link in links:
         rels[link["rel"]] = rels.get(link["rel"], 0) + 1
     return {"project": it.name, "nodes": nodes, "links": links, "counts": {"nodes": kinds, "links": rels},
-            "notes": {}, "by_document": True}
+            "notes": notes, "by_document": True}
+
+
+def _when(t: float) -> str:
+    import datetime
+    return datetime.datetime.fromtimestamp(t).strftime("%Y-%m-%d %H:%M")

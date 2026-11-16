@@ -22,7 +22,8 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.bridge import frame  # noqa: E402
 from projectmodel.app.shell import knowledge_model  # noqa: E402
-from projectmodel.intake import graph, pdfdoc, score, steps, twin, vectors  # noqa: E402
+from projectmodel import notes as project_notes  # noqa: E402
+from projectmodel.intake import graph, knowledge, pdfdoc, score, steps, twin, vectors  # noqa: E402
 from projectmodel.viz import render_html  # noqa: E402
 from projectmodel.intake.model import building, missing, progress  # noqa: E402
 from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
@@ -75,6 +76,7 @@ if st.session_state.get("ab_slug") not in slugs:
     st.session_state["ab_slug"] = slugs[0]
 names = {s["slug"]: s["name"] for s in existing}
 it = Intake(st.session_state["ab_slug"])
+knowledge.apply(it)  # this building's own rules are the ones in force for everything below
 step_id = st.session_state.setdefault("ab_step", "plans")
 step = steps.BY_ID[step_id]
 st.session_state.setdefault("ab_sel", None)
@@ -140,9 +142,27 @@ def file_sha(name: str) -> str:
 
 
 def picked(ev: dict | None) -> None:
-    """A click in the building or the graph: select that fact, so the document opens at its place."""
-    if ev and ev.get("name") == "pick" and ev.get("id") and ev["id"] != st.session_state["ab_sel"]:
+    """What the building or the graph sent back. A click selects that fact, so the document opens at its place.
+    An answer given on the building is checked against the question as it stands here, then saved like any other."""
+    if not ev or not ev.get("id"):
+        return
+    if ev.get("name") == "pick" and ev["id"] != st.session_state["ab_sel"]:
         st.session_state.update(ab_sel=ev["id"], ab_left_want="doc")  # the review's left side switches on rerun
+        st.rerun()
+    if ev.get("name") == "answer":
+        f = it.fact(ev["id"])
+        if not f or not f.get("ask") or f["status"] != "proposed":
+            return
+        ask, status, value = f["ask"], ev.get("status"), ev.get("value")
+        if status == "fixed" and ask.get("field") == "name" and isinstance(value, str) and value.strip():
+            it.decide(f["id"], "fixed", value.strip()[:60].title(), "name")
+        elif status == "fixed" and any(o["value"] == value for o in ask.get("options", [])):
+            answer(f, value, ask.get("field"))
+        elif status in ("confirmed", "rejected"):
+            it.decide(f["id"], status)
+        else:
+            return
+        st.toast(f"Saved: {f['label']}", icon=":material/check_circle:")
         st.rerun()
 
 
@@ -152,8 +172,9 @@ def twin_view(height: int = 640, only_ask: bool = False) -> None:
         path = it.file_by_name(f["file"])
         if path and f["crop"]:
             plans[f["id"]] = plan_geo(str(path), f["page"], tuple(f["crop"]), file_sha(f["file"]))
-    needs = {f["id"] for f in it.open_questions()}
-    data = twin.payload(b, plans, st.session_state["ab_sel"], needs, st.context.theme.type or "dark")
+    needs = {f["id"]: f for f in it.open_questions()}
+    data = twin.payload(b, plans, st.session_state["ab_sel"], needs, st.context.theme.type or "dark",
+                        knowledge.notes_for(it))
     data["only_ask"] = only_ask
     picked(frame(twin.page(), data, height, key="ab_twin", title="The building"))
     selection_panel()
@@ -200,6 +221,124 @@ def selection_panel() -> None:
                           icon=":material/description:")
         for k, f in enumerate(f for f in facts if f["status"] == "proposed" and f.get("ask")):
             question_card(f, f"sel{k}")
+        target = (f"unit:{unit['normal']}", unit["tag"]) if unit else (
+            (f"room:{facts[0]['data']['number']}", f"room {facts[0]['data']['number']}") if facts[0]["kind"] == "room" else None)
+        if target:
+            for n in knowledge.notes_for(it).get(target[0], []):
+                st.markdown(f":material/sticky_note_2: {n['body']}  \n:small[{n['topic']} · {n['author']}]")
+            st.button(f"Add a note about {target[1]}", key="note_here", type="tertiary", icon=":material/add_comment:",
+                      on_click=lambda: st.session_state.update(ab_view="know", ab_know="Note", ab_note_target=target[0]))
+
+
+def knowledge_view() -> None:
+    """Add to the knowledge model for this building (rules that change the reading), or tribal knowledge (notes)."""
+    k = knowledge.get(it)
+    km = knowledge_model()
+    st.caption("**Rules** extend the knowledge model for this building: they change how its documents are read. "
+               "**Notes** are what people know that no document says: they change nothing, and travel with the graph.")
+    kinds = ["Tag rule", "Point term", "Note", "From a file"]
+    if st.session_state.get("ab_know") not in kinds:
+        st.session_state["ab_know"] = kinds[0]
+    kind = st.segmented_control("Add", kinds, key="ab_know", label_visibility="collapsed") or kinds[0]
+    try:
+        if kind == "Tag rule":
+            st.caption("A tag prefix the model does not know, or reads wrongly here. Example: on this job **CRAC** "
+                       "is a computer-room unit.")
+            with st.form("know_tag", border=True, clear_on_submit=True):
+                c = st.columns([1, 2, 1.4])
+                prefix = c[0].text_input("Prefix", placeholder="CRAC", max_chars=6)
+                cls = c[1].selectbox("Is a (class)", km.by_kind("equipment"), index=None, placeholder="Choose a class")
+                family = c[2].selectbox("Drawn and scheduled like", knowledge.FAMILIES,
+                                        format_func=lambda f: twin.FAMILY_NAME.get(f, f))
+                terminal = st.checkbox("Serves a room (its room comes from its thermostat on the plan)")
+                if st.form_submit_button("Add the rule", icon=":material/add:") and prefix and cls:
+                    knowledge.add_tag(it, prefix, cls, family, terminal)
+                    st.rerun()
+        elif kind == "Point term":
+            st.caption("A phrase or short name in a point list that settles the point's class. Example: "
+                       "**DA-T** is a discharge air temperature sensor.")
+            with st.form("know_term", border=True, clear_on_submit=True):
+                c = st.columns([1, 2])
+                phrase = c[0].text_input("Phrase or short name", placeholder="DA-T")
+                cls = c[1].selectbox("Is a (class)", km.by_kind("point"), index=None, placeholder="Choose a class")
+                if st.form_submit_button("Add the rule", icon=":material/add:") and phrase and cls:
+                    knowledge.add_term(it, phrase, cls)
+                    st.rerun()
+        elif kind == "Note":
+            targets = {"building": "the whole building"}
+            targets |= {f"unit:{n}": e["tag"] for n, e in sorted(b["equip"].items())}
+            targets |= {f"room:{r['number']}": f"room {r['number']} {r['name']}".strip() for r in b["rooms"]}
+            if st.session_state.get("ab_note_target") not in targets:
+                st.session_state["ab_note_target"] = "building"
+            with st.form("know_note", border=True, clear_on_submit=True):
+                c = st.columns([2, 1, 1])
+                target = c[0].selectbox("About", list(targets), format_func=targets.get, key="ab_note_target")
+                topic = c[1].selectbox("Topic", project_notes.TOPICS)
+                author = c[2].text_input("Your name", key="ab_author")
+                body = st.text_area("What should people know?", height=90,
+                                    placeholder="e.g. Replaced in 2022; the old return-fan points are unused.")
+                if st.form_submit_button("Add the note", icon=":material/add_comment:") and body and author:
+                    knowledge.add_note(it, target, targets[target], topic, body, author)
+                    st.rerun()
+        else:
+            st.caption("A YAML file with `tags`, `terms` and `notes`, in the shape the download below gives: what "
+                       "another building taught, or a list an engineer prepared.")
+            up = st.file_uploader("Knowledge file", type=["yaml", "yml"], key=f"know_up_{st.session_state.get('ab_knonce', 0)}",
+                                  label_visibility="collapsed")
+            if up:
+                classes = {"equipment": set(km.by_kind("equipment")), "point": set(km.by_kind("point"))}
+                added, problems = knowledge.load(it, up.getvalue().decode("utf-8", "replace"), classes)
+                st.session_state["ab_knonce"] = st.session_state.get("ab_knonce", 0) + 1
+                st.session_state["ab_know_msg"] = (added, problems)
+                st.rerun()
+            if msg := st.session_state.pop("ab_know_msg", None):
+                st.success(f"{msg[0]} added from the file.", icon=":material/check_circle:")
+                for line in msg[1]:
+                    st.warning(line, icon=":material/report:")
+    except ValueError as e:
+        st.error(str(e))
+
+    read = [s for s in STEPS[:-1] if it.done(s.id)]
+    late = [s for s in read if knowledge.rules_at(it) > it.read_at(s.id)]
+    if late:
+        with st.container(border=True):
+            st.markdown(f":material/sync_problem: {len(late)} of the documents were read before your latest rule.")
+            if st.button("Read the documents again with these rules", type="primary", icon=":material/refresh:"):
+                with st.status("Reading again…", expanded=True) as box:
+                    for s in read:
+                        box.write(f"**{s.title}**")
+                        steps.run(it, s.id, lambda m: None)
+                        box.write(it.log(s.id)[-1])
+                    box.update(label="Read again with your rules", state="complete", expanded=False)
+                st.rerun()
+
+    def listing(title: str, kind: str, text) -> None:
+        if not k[kind]:
+            return
+        st.markdown(f"###### {title} · {len(k[kind])}")
+        for i, row in enumerate(k[kind]):
+            with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+                st.markdown(text(row))
+                st.space("stretch")
+                st.button("Remove", key=f"know_rm_{kind}_{i}", type="tertiary", on_click=knowledge.remove,
+                          args=(it, kind, i))
+
+    listing("Tag rules", "tags", lambda t: f"**{t['prefix']}** is a {t['class']} · {twin.FAMILY_NAME.get(t['family'], t['family'])}"
+            + (" · serves a room" if t.get("terminal") else "") + f" :small[· {t['by']}]")
+    listing("Point terms", "terms", lambda t: f"**{t['phrase']}** is a {t['class']} :small[· {t['by']}]")
+    listing("Notes", "notes", lambda n: f"**{n['label']}** · {n['topic']}: {n['body']} :small[· {n['author']}]")
+    if any(k[x] for x in ("tags", "terms", "notes")):
+        st.download_button("Download this building's knowledge (YAML)", knowledge.export(it),
+                           file_name=f"{it.slug}_knowledge.yaml", icon=":material/download:",
+                           help="To review and move into the shared knowledge model, or to give to the next building.")
+    else:
+        st.caption("Nothing added yet.")
+
+
+def know_label() -> str:
+    k = knowledge.get(it)
+    n = len(k["tags"]) + len(k["terms"]) + len(k["notes"])
+    return f"Knowledge ({n})" if n else "Knowledge"
 
 
 def show_fact(fid: str) -> None:
@@ -458,12 +597,15 @@ if step_id == "review":
                 it.save()
                 st.rerun()
     with right:
-        views = {"twin": "Building", "graph": "Graph"}
+        views = {"twin": "Building", "graph": "Graph", "know": know_label()}
         if st.session_state.get("ab_view") not in views:
             st.session_state["ab_view"] = "twin"
-        if st.segmented_control("View", list(views), format_func=views.get, key="ab_view",
-                                label_visibility="collapsed") == "graph":
+        view = st.segmented_control("View", list(views), format_func=views.get, key="ab_view",
+                                    label_visibility="collapsed")
+        if view == "graph":
             graph_view(680)
+        elif view == "know":
+            knowledge_view()
         else:
             twin_view(560)
         keys = score.answer_keys()
@@ -533,8 +675,8 @@ with left:
             st.caption("Works best after: " + ", ".join(f"step {n.n} ({n.title.lower()})" for n in needs) + ".")
 with right:
     nq = len(it.open_questions(step_id))
-    views = {"twin": "Building", "ask": f"Needs you ({nq})", "graph": "Graph", "built": "What was read",
-             "log": "Reading log"}
+    views = {"twin": "Building", "ask": f"Needs you ({nq})", "graph": "Graph", "know": know_label(),
+             "built": "What was read", "log": "Reading log"}
     if st.session_state.get("ab_view") not in views:
         st.session_state["ab_view"] = "twin"
     view = st.segmented_control("View", list(views), format_func=views.get, key="ab_view",
@@ -543,6 +685,8 @@ with right:
         twin_view()
     elif view == "graph":
         graph_view()
+    elif view == "know":
+        knowledge_view()
     elif view == "ask":
         located = {"placement", "room", "room_check"}
         on_plan = sum(1 for f in it.open_questions(step_id) if f["kind"] in located)
@@ -551,9 +695,9 @@ with right:
         if how == "List":
             questions([step_id])
         else:
-            st.caption(f"{on_plan} of this step's {nq} questions have a place on a plan: they pulse in amber. Step "
-                       "through them with **‹ ›** in the viewer (or the N key), answer under it. The others "
-                       "(controllers, checks) are in the list.")
+            st.caption(f"{on_plan} of this step's {nq} questions have a place on a plan: they pulse in amber. Hover "
+                       "one to answer it there, or step through them with the arrows in the viewer (or the N key). "
+                       "The others (controllers, checks) are in the list.")
             twin_view(only_ask=True)
     elif view == "built":
         if it.done(step_id):

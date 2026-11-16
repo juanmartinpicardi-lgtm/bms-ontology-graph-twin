@@ -226,7 +226,7 @@ function baseColor(n) {
 const nodeColor = n => highlight && !highlight.has(n.id) ? P.dim : baseColor(n);
 const nodeSize = n => n.kind === "equipment" ? 1 + Math.sqrt(n.attrs?.points || 1) * 0.5
   : n.kind === "class" ? 1.2 + Math.sqrt(n.attrs?.instances || 0) * 0.3
-  : n.kind === "location" ? (n.cls === "Floor" ? 3 : 0.3) : 0.35;
+  : n.kind === "location" ? (n.cls === "Building" ? 8 : n.cls === "Floor" ? 3 : 0.3) : 0.35;
 
 // --- visibility ----------------------------------------------------------------------------------
 function layerOk(n) {

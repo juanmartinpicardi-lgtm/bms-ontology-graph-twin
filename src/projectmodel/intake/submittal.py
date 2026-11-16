@@ -37,7 +37,18 @@ def _matcher():
     return ClassMatcher(load_knowledge_model(), "point")
 
 
+_terms: list[tuple[str, str]] = []  # (phrase, class) a person added for the building being read
+
+
+def use_terms(terms: list[tuple[str, str]]) -> None:
+    global _terms
+    _terms = sorted(terms, key=lambda t: -len(t[0]))  # the longest phrase wins
+
+
 def classify(description: str, short: str) -> tuple[str | None, float]:
+    for phrase, cls in _terms:
+        if short.lower() == phrase.lower() or re.search(rf"(?<!\w){re.escape(phrase)}(?!\w)", description, re.I):
+            return cls, 0.95
     g = _matcher().classify(re.sub(r"\(.*?\)", "", description))
     return g.cls, round(g.confidence, 2)
 

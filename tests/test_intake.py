@@ -98,19 +98,67 @@ def test_twin_payload_units_point_back_to_the_plan(intake):
     b = model.building(intake)
     plans = {f["id"]: {"key": f["id"], "n": 0, "seg": "", "wt": "", "words": [], "image": ""} for f in b["floors"]}
     needs = {f["id"] for f in intake.open_questions()}
-    data = twin.payload(b, plans, None, needs)
+    data = twin.payload(b, plans, None, {f["id"]: f for f in intake.open_questions()})
     units = [u for f in data["floors"] for u in f["units"]]
     assert len(units) >= 70 and len({u["tag"] for u in units}) == len(units)
     for u in units:
         assert u["id"] in u["ids"] and intake.fact(u["id"])
-        assert (u["s"] == "ask") == any(i in needs for i in u["ids"])
+        assert (u["s"] == "ask") == any(i in needs for i in u["ids"]) == bool(u["q"])
+        assert all(q["id"] in needs and q["q"] for q in u["q"])
 
 
 def test_graph_payload(intake):
     from projectmodel.intake import graph
     g = graph.payload(intake, model.building(intake))
     ids = {n["id"] for n in g["nodes"]}
-    assert g["counts"]["nodes"]["location"] == 84 and g["counts"]["nodes"]["point"] > 800
+    assert g["counts"]["nodes"]["location"] == 85 and g["counts"]["nodes"]["point"] > 800
     assert all(link["source"] in ids and link["target"] in ids for link in g["links"])
-    assert all(n["fact"] and intake.fact(n["fact"]) for n in g["nodes"])
+    assert all(n["fact"] and intake.fact(n["fact"]) for n in g["nodes"] if n["id"] != "building")
     assert {"hasPart", "serves", "feeds", "hasPoint"} <= set(g["counts"]["links"])
+
+
+def test_knowledge_rules_change_the_reading_and_notes_reach_the_graph(intake):
+    from projectmodel.intake import graph, knowledge, twin
+    try:
+        assert tags.normal("CRAC-3") is None
+        knowledge.add_tag(intake, "crac", "AHU", "ahu", False)
+        assert tags.normal("CRAC-3") == "CRAC3" and tags.parse("CRAC-3").cls == "AHU"
+        assert steps.stale(intake, "plans") == ["The rules you added"]
+
+        knowledge.add_term(intake, "SF-C", "Fan_Command")
+        steps.run(intake, "submittal", lambda msg: None)
+        sf = next(p for p in intake.facts("submittal", kind="point") if p["data"]["short"] == "SF-C")
+        assert sf["data"]["class"] == "Fan_Command" and sf["status"] == "confirmed"
+
+        unit = next(iter(model.building(intake)["equip"].values()))
+        knowledge.add_note(intake, f"unit:{unit['normal']}", unit["tag"], "history", "Replaced in 2022.", "Ana")
+        g = graph.payload(intake, model.building(intake))
+        assert g["notes"][f"unit:{unit['normal']}"][0]["body"] == "Replaced in 2022."
+        b = model.building(intake)
+        plans = {f["id"]: {"key": "", "n": 0, "seg": "", "wt": "", "words": [], "image": ""} for f in b["floors"]}
+        data = twin.payload(b, plans, None, {}, notes=knowledge.notes_for(intake))
+        assert any(u["notes"] for f in data["floors"] for u in f["units"])
+
+        text = knowledge.export(intake)
+        other = Intake.create("Other", root=intake.dir.parent)
+        added, problems = knowledge.load(other, text, {"equipment": {"AHU"}, "point": set()})
+        assert added == 2 and len(problems) == 1 and "Fan_Command" in problems[0]  # a class the model lacks is refused
+    finally:
+        intake.s["knowledge"] = {}
+        intake.save()
+        knowledge.apply(intake)
+        steps.run(intake, "submittal", lambda msg: None)
+    assert tags.normal("CRAC-3") is None
+
+
+def test_scanned_plan_falls_back_to_a_picture(tmp_path):
+    """A page with no vector lines (a scan) is drawn from a sharp picture of the plan area instead."""
+    from PIL import Image, ImageDraw
+
+    from projectmodel.intake import vectors
+    img = Image.new("RGB", (1200, 800), "white")
+    ImageDraw.Draw(img).rectangle([100, 100, 1100, 700], outline="black", width=4)
+    scan = tmp_path / "scan.pdf"
+    img.save(scan, "PDF", resolution=100)
+    geo = vectors.plan(scan, 0, [0, 0, 864, 576])
+    assert geo["n"] == 0 and geo["words"] == [] and geo["image"].startswith("data:image/png;base64,")

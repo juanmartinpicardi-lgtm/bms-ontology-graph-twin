@@ -21,8 +21,23 @@ FAMILY_NAME = {"ahu": "Air handler", "vav": "VAV box", "fvav": "Fan-powered box"
 TEMPLATE = Path(__file__).resolve().parents[1] / "app" / "intake_twin.html"
 
 
-def payload(b: dict, plans: dict[str, dict], selected: str | None, needs_you: set[str], theme: str = "dark") -> dict:
-    """What the viewer draws. `plans` is vectors.plan() per floor id, each with a `key` that changes with the file."""
+def _question(f: dict) -> dict:
+    """An open question in the shape the viewer's card needs, to be answered in place."""
+    ask, s = f["ask"], f["src"]
+    proposed = f["data"].get(ask["field"]) if ask.get("field") else None
+    if isinstance(proposed, list):
+        proposed = f"{len(proposed)} units"
+    where = (s.get("sheet") or s.get("file", "")) + (f" p{s['page'] + 1}" if s.get("page") is not None else "")
+    return {"id": f["id"], "q": ask["q"], "field": ask.get("field"), "options": ask.get("options", []),
+            "proposed": proposed, "where": where, "conf": f["conf"], "issue": f["kind"] == "issue"}
+
+
+def payload(b: dict, plans: dict[str, dict], selected: str | None, needs_you: dict[str, dict], theme: str = "dark",
+            notes: dict[str, list[dict]] | None = None) -> dict:
+    """What the viewer draws. `plans` is vectors.plan() per floor id, each with a `key` that changes with the file.
+    `needs_you` is the open questions by fact id; `notes` the tribal notes by target ("unit:VAV7", "room:101")."""
+    notes = notes or {}
+    said = lambda key: [f"{n['body']} ({n['author']})" for n in notes.get(key, [])]  # noqa: E731
     floors = []
     anchors = {r["number"]: (r["floor"], r["anchor"]) for r in b["rooms"]}
     placed = set()
@@ -33,7 +48,9 @@ def payload(b: dict, plans: dict[str, dict], selected: str | None, needs_you: se
         w, h = crop[2] - crop[0], crop[3] - crop[1]
         norm = lambda xy: [round((xy[0] - crop[0]) / w, 4), round((xy[1] - crop[1]) / h, 4)]  # noqa: E731
         rooms = [{"n": r["number"], "name": r["name"], "xy": norm(r["anchor"]),
-                  "s": "ask" if r["fact"] in needs_you else r["status"], "units": r["units"], "id": r["fact"]}
+                  "s": "ask" if r["fact"] in needs_you else r["status"], "units": r["units"], "id": r["fact"],
+                  "q": [_question(needs_you[r["fact"]])] if r["fact"] in needs_you else [],
+                  "notes": said(f"room:{r['number']}")}
                  for r in b["rooms"] if r["floor"] == f["id"]]
         units = []
         for e in b["equip"].values():
@@ -48,7 +65,9 @@ def payload(b: dict, plans: dict[str, dict], selected: str | None, needs_you: se
                           "s": "ask" if ask else e["status"] if e["room_status"] in (None, "confirmed") else "proposed",
                           "room": e["room"], "rs": e.get("room_source"), "rel": e["rel"], "pts": e["points"],
                           "ctrl": (e["controller"] or {}).get("device"), "seq": e["sequence"], "bms": e["bms"],
-                          "id": (ask or e["facts"])[0], "ids": e["facts"]})
+                          "id": (ask or e["facts"])[0], "ids": e["facts"],
+                          "q": [_question(needs_you[i]) for i in dict.fromkeys(ask)],
+                          "notes": said(f"unit:{e['normal']}")})
         floors.append({"id": f["id"], "name": f["name"], "sheet": f["sheet"], "geo": plans[f["id"]],
                        "aspect": round(h / w, 4), "rooms": rooms, "units": units})
     legend = sorted({u["fam"] for f in floors for u in f["units"]})

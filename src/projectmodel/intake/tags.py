@@ -29,9 +29,23 @@ class Tag:
         return f"{self.prefix}{self.number}{self.suffix}"
 
 
+_extra: dict = {}  # prefixes a person added for the building being read (intake/knowledge.py)
+
+
+def use(extra: dict | None) -> None:
+    """Add prefixes to the model's own for the readings that follow; None or {} goes back to the model alone."""
+    global _extra
+    extra = {k.upper(): v for k, v in (extra or {}).items()}
+    if extra != _extra:
+        _extra = extra
+        rules.cache_clear()
+        _pattern.cache_clear()
+
+
 @lru_cache
 def rules() -> dict:
-    return yaml.safe_load(RULES.read_text())
+    r = yaml.safe_load(RULES.read_text())
+    return dict(r, prefixes={**r["prefixes"], **_extra})
 
 
 @lru_cache

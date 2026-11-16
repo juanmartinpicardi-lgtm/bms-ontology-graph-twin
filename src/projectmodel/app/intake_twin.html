@@ -66,6 +66,21 @@
   #legend i.ring { background: transparent; border: 2px solid; box-sizing: border-box; }
   #tip { position: absolute; z-index: 8; pointer-events: none; padding: 8px 10px; max-width: 270px; display: none; }
   #tip b { font-size: 13px; } #tip .m { color: var(--muted); } #tip .a { color: var(--s-ask); }
+  #qcard { position: absolute; z-index: 9; width: 290px; padding: 10px 12px; display: none; }
+  #qcard h5 { margin: 0 0 2px; font-size: 13px; }
+  #qcard .q { margin: 6px 0 4px; }
+  #qcard .m { color: var(--muted); font-size: 11px; }
+  #qcard .opts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  #qcard button { font: inherit; padding: 4px 9px; border-radius: 7px; border: 1px solid var(--line); background: var(--chip);
+    color: var(--text); cursor: pointer; }
+  #qcard button:hover { border-color: var(--accent); color: var(--accent); }
+  #qcard button.yes { background: var(--s-confirmed); border-color: var(--s-confirmed); color: #fff; }
+  #qcard button.sug { border-color: var(--s-ask); }
+  #qcard button.link { border: none; background: none; padding: 4px 2px; color: var(--accent); }
+  #qcard input { font: inherit; padding: 4px 7px; border-radius: 7px; border: 1px solid var(--line); background: var(--bg);
+    color: var(--text); width: 150px; }
+  #qcard .qs + .qs { border-top: 1px solid var(--line); margin-top: 9px; padding-top: 7px; }
+  #qcard .note { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
   #empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--muted);
     font-size: 14px; text-align: center; padding: 30px; z-index: 3; }
 </style>
@@ -86,6 +101,7 @@
 </div>
 <div id="legend" class="card"></div>
 <div id="tip" class="card"></div>
+<div id="qcard" class="card"></div>
 <div id="empty">Upload the floor plans: each level becomes a floor here, drawn from the lines of the PDF, with its rooms,<br>and every unit appears where the documents put it.</div>
 
 <script>/*__CONTROLS__*/</script>
@@ -180,23 +196,90 @@ function drawPlan(F) {
 }
 
 const statusColor = s => P[s === "ask" ? "s-ask" : s === "confirmed" ? "s-confirmed" : "s-proposed"];
-const isBig = u => ["ahu", "chiller", "boiler"].includes(u.fam);
+
+// Equipment shapes: small models built from boxes, cylinders and domes, about to scale with the plan (1 unit is
+// roughly 0.6 m). `c` is the family colour; steel and dark parts are the same on every unit. Each returns the
+// footprint radius its status ring needs.
+const BOX = new THREE.BoxGeometry(1, 1, 1), CYLG = new THREE.CylinderGeometry(1, 1, 1, 24), DOME = new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+function kit(g, color) {
+  const m = { c: new THREE.MeshLambertMaterial({ color, transparent: true }),
+              steel: new THREE.MeshLambertMaterial({ color: 0xc9d1d9, transparent: true }),
+              dark: new THREE.MeshLambertMaterial({ color: 0x39424e, transparent: true }) };
+  const add = (geo, mat, sx, sy, sz, x, y, z) => { const o = new THREE.Mesh(geo, m[mat]); o.scale.set(sx, sy, sz); o.position.set(x, y, z); g.add(o); return o; };
+  return {
+    box: (mat, w, h, d, x, y, z) => add(BOX, mat, w, h, d, x, y + h / 2, z),
+    cylY: (mat, r, h, x, y, z) => add(CYLG, mat, r, h, r, x, y + h / 2, z),                        // standing
+    cylX: (mat, r, len, x, y, z) => { const o = add(CYLG, mat, r, len, r, x, y, z); o.rotation.z = Math.PI / 2; return o; },  // lying along x
+    cylZ: (mat, r, len, x, y, z) => { const o = add(CYLG, mat, r, len, r, x, y, z); o.rotation.x = Math.PI / 2; return o; },
+    dome: (mat, r, h, x, y, z) => add(DOME, mat, r, h, r, x, y, z),
+  };
+}
+const SHAPES = {
+  ahu(k) {            // casing in sections on a base rail, outside-air louvre at one end, supply duct stub at the other
+    k.box("dark", 6.4, .25, 2.3, 0, 0, 0); k.box("c", 6.2, 1.9, 2.1, 0, .25, 0);
+    for (const x of [-1.9, -.4, 1.3]) k.box("dark", .06, 1.92, 2.14, x, .25, 0);
+    k.box("dark", .08, 1.3, 1.6, -3.12, .5, 0); k.box("steel", .9, 1.1, 1.3, 3.5, .65, 0);
+    k.cylY("steel", .5, .35, 2.1, 2.15, 0);
+    return 3.6;
+  },
+  chiller(k) {        // air-cooled: condenser deck with a row of fans on top, compressors below
+    k.box("dark", 5.2, .3, 2.2, 0, 0, 0); k.box("c", 5, 1.5, 2, 0, .3, 0); k.box("steel", 5.05, .12, 2.05, 0, 1.8, 0);
+    for (const x of [-1.8, -.6, .6, 1.8]) { k.cylY("dark", .5, .16, x, 1.92, 0); k.cylY("steel", .16, .2, x, 1.92, 0); }
+    k.box("dark", 1, .9, .1, -1.4, .45, 1.03);
+    return 3;
+  },
+  boiler(k) {         // cabinet with a flue
+    k.box("c", 1.6, 2, 1.3, 0, 0, 0); k.cylY("steel", .22, 1.2, .3, 2, 0); k.box("dark", .7, .5, .06, 0, .9, .68);
+    return 1.3;
+  },
+  pump(k) {           // base-mounted: motor, coupling, volute with its discharge flange up
+    k.box("dark", 2, .18, .8, 0, 0, 0); k.cylX("c", .36, 1, -.45, .55, 0); k.cylX("steel", .2, .3, .2, .55, 0);
+    k.cylZ("c", .46, .42, .65, .55, 0); k.cylY("steel", .16, .55, .65, .9, 0); k.cylY("dark", .26, .08, .65, 1.42, 0);
+    return 1.25;
+  },
+  vav(k) {            // single-duct box: round inlet with its damper actuator, casing, control enclosure on the side
+    k.box("c", 1.3, .5, .9, .25, .35, 0); k.cylX("steel", .22, .75, -.75, .6, 0); k.box("dark", .3, .34, .16, -.2, .43, .53);
+    k.box("steel", .3, .4, .8, 1.02, .4, 0);
+    return 1.05;
+  },
+  fvav(k) {           // fan-powered box: larger casing, round primary inlet, fan intake grille on the side
+    k.box("c", 1.8, .7, 1.3, .2, .35, 0); k.cylX("steel", .25, .7, -1, .7, -.25); k.box("dark", .9, .5, .06, .3, .45, .68);
+    k.box("dark", .3, .36, .16, -.5, .5, .73); k.box("steel", .3, .5, 1.1, 1.22, .45, 0);
+    return 1.35;
+  },
+  fcu(k) { k.box("c", 1.5, .5, .8, 0, .35, 0); k.box("dark", 1.3, .06, .5, 0, .86, 0); k.cylX("steel", .08, .5, -.95, .5, .2); return 1.05; },
+  ef(k) {             // roof exhaust fan: curb, then the mushroom cap
+    k.box("steel", 1.2, .35, 1.2, 0, 0, 0); k.cylY("dark", .5, .3, 0, .35, 0); k.dome("c", .85, .55, 0, .65, 0); k.cylY("c", .86, .08, 0, .58, 0);
+    return 1.05;
+  },
+  uh(k) {             // unit heater: hung cabinet, louvres in front, fan behind
+    k.cylY("steel", .03, .5, -.3, 1.3, 0); k.cylY("steel", .03, .5, .3, 1.3, 0);
+    k.box("c", 1, .8, .55, 0, .5, 0); k.box("dark", .86, .64, .05, 0, .58, .3); k.cylZ("dark", .3, .14, 0, .9, -.34);
+    return .85;
+  },
+  split(k) {          // ductless split: the slim indoor unit
+    k.box("steel", 1.5, .42, .34, 0, .7, 0); k.box("c", 1.5, .08, .36, 0, .7, 0); k.box("dark", 1.3, .05, .1, 0, .76, .16);
+    return .95;
+  },
+  specialty(k) {      // tank on legs with a domed head
+    for (const [x, z] of [[-.3, -.3], [.3, -.3], [-.3, .3], [.3, .3]]) k.cylY("dark", .05, .35, x, 0, z);
+    k.cylY("c", .5, 1.3, 0, .35, 0); k.dome("c", .5, .28, 0, 1.65, 0); k.cylY("steel", .1, .25, 0, 1.9, 0);
+    return .85;
+  },
+  other(k) { k.box("c", 1.1, .8, .9, 0, 0, 0); k.box("dark", .5, .3, .05, 0, .3, .48); return .95; },
+};
 function drawMarkers(F) {
   for (const m of F.markers.children) m.traverse(o => o.material?.dispose());
   F.markers.clear();
-  F.pick = [];
   for (const u of F.data.units) {
-    const r = isBig(u) ? 1.05 : .52, h = isBig(u) ? 2.2 : 1, g = new THREE.Group();
+    const g = new THREE.Group(), model = new THREE.Group();
     g.position.copy(world(F, u.xy));
-    const body = new THREE.Mesh(CYL, new THREE.MeshLambertMaterial({ color: D.colors[u.fam] || "#888", transparent: true }));
-    body.scale.set(r, h, r); body.position.y = h / 2 + .06;
+    const r = (SHAPES[u.fam] || SHAPES.other)(kit(model, D.colors[u.fam] || "#888"));
     const ring = new THREE.Mesh(RING, new THREE.MeshBasicMaterial({ color: statusColor(u.s), side: THREE.DoubleSide, transparent: true }));
-    ring.scale.setScalar(r); ring.position.y = .09;
-    g.add(body, ring);
-    g.userData = { u, body, ring, r };
-    body.userData.g = g;
+    ring.scale.setScalar(r / 1.5); ring.position.y = .09;
+    g.add(model, ring);
+    g.userData = { u, model, ring, r: r / 1.5, F };
     F.markers.add(g);
-    F.pick.push(body);
   }
 }
 
@@ -218,7 +301,8 @@ function buildLabels() {
       el.className = `lb room ${r.s}`;
       el.innerHTML = `${esc(r.n)}<small>${esc(r.name || "")}</small>`;
       el.onclick = () => pick(r, F);
-      el.onmouseenter = ev => showTip(ev, roomTip(r)); el.onmouseleave = hideTip;
+      el.onmouseenter = ev => hover(r, ev, roomTip(r));
+      el.onmouseleave = () => { hideTip(); if (qFor) closeCard(); };
       labels.appendChild(el);
       roomEls.push({ el, r, F, p: world(F, r.xy) });
     }
@@ -262,7 +346,7 @@ function updateLabels() {
     const u = g.userData.u, sel = isSel(u);
     const on = F.group.visible && (sel || hovered === g || (show.labels && focus && near)) && !(onlyAsk && u.s !== "ask" && !sel);
     if (!on) { hide(el); continue; }
-    place(el, g.position, F, 0, two ? g.userData.r * ppu + 9 : 14);
+    place(el, g.position, F, 0, two ? g.userData.r * 1.75 * ppu + 8 : 16);
   }
   for (const { el, F } of floorEls) {
     if (!F.group.visible || two || focus) { hide(el); continue; }
@@ -281,6 +365,7 @@ function updateLabels() {
       if (px < 6.5 || F.skip.has(t)) continue;
       const wx = (x - .5) * S, wz = (y - .5) * F.depth;
       if (Math.abs(wx - tx) > hx + 4 || Math.abs(wz - tz) > hz + 2) continue;
+      if (show.labels && F.data.rooms.some(r => Math.abs(r.xy[0] - x) * S < 2.6 && Math.abs(r.xy[1] - y) * F.depth < .75)) continue;   // under a room label
       if (k >= 700) break;
       let el = wordPool[k];
       if (!el) { el = wordPool[k] = document.createElement("div"); el.className = "lb word"; labels.prepend(el); }
@@ -309,8 +394,7 @@ function findSelected() {
 function paint() {    // marker looks that depend on selection and the "needs you" filter
   for (const F of floors.values()) for (const g of F.markers.children) {
     const u = g.userData.u, dim = onlyAsk && u.s !== "ask" && !isSel(u);
-    g.userData.body.material.opacity = dim ? .12 : 1;
-    g.userData.ring.material.opacity = dim ? .12 : 1;
+    g.traverse(o => { if (o.material) o.material.opacity = dim ? .12 : 1; });
   }
 }
 const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
@@ -318,32 +402,82 @@ function hit(ev) {
   const b = renderer.domElement.getBoundingClientRect();
   ptr.set((ev.clientX - b.left) / b.width * 2 - 1, -(ev.clientY - b.top) / b.height * 2 + 1);
   ray.setFromCamera(ptr, cam());
-  const targets = [...floors.values()].filter(F => F.group.visible).flatMap(F => F.pick || []);
-  return ray.intersectObjects(targets, false)[0]?.object.userData.g || null;
+  const targets = [...floors.values()].filter(F => F.group.visible).map(F => F.markers);
+  let o = ray.intersectObjects(targets, true)[0]?.object;
+  while (o && !o.userData.u) o = o.parent;
+  return o || null;
 }
-const statusText = s => s === "ask" ? '<span class="a">Waiting for your answer: click to open the question</span>'
+const statusText = s => s === "ask" ? '<span class="a">Waiting for your answer</span>'
   : s === "confirmed" ? "Confirmed" : "Proposed: waits for a second source";
 const unitTip = u => `<b>${esc(u.tag)}</b> <span class="m">${esc(u.cls)}</span>`
   + `<div>${u.room ? esc(u.rel) + " room " + esc(u.room) + ` <span class="m">(${esc(u.rs)})</span>` : '<span class="m">no room yet</span>'}</div>`
   + (u.ctrl ? `<div>Controller ${esc(u.ctrl)} · ${u.pts} points</div>` : "") + (u.bms ? `<div>BMS: ${esc(u.bms)}</div>` : "")
-  + (u.seq ? `<div class="m">Sequence: ${esc(u.seq)}</div>` : "") + `<div class="m">${statusText(u.s)}</div><div class="m">Click: open it in the document</div>`;
-const roomTip = r => `<b>Room ${esc(r.n)}</b> ${esc(r.name)}<div class="m">${r.units.length ? "Units: " + esc(r.units.join(", ")) : "No unit placed here"}</div><div class="m">${statusText(r.s)}</div>`;
+  + (u.seq ? `<div class="m">Sequence: ${esc(u.seq)}</div>` : "") + notesTip(u) + `<div class="m">${statusText(u.s)}</div><div class="m">Click: open it in the document</div>`;
+const notesTip = o => (o.notes || []).map(n => `<div>📝 ${esc(n)}</div>`).join("");
+const roomTip = r => `<b>Room ${esc(r.n)}</b> ${esc(r.name)}<div class="m">${r.units.length ? "Units: " + esc(r.units.join(", ")) : "No unit placed here"}</div>${notesTip(r)}<div class="m">${statusText(r.s)}</div>`;
 function showTip(ev, html) { tip.innerHTML = html; tip.style.display = "block"; moveTip(ev); }
 function moveTip(ev) { tip.style.left = Math.min(ev.clientX + 14, W - 280) + "px"; tip.style.top = Math.min(ev.clientY + 14, H - 130) + "px"; }
 function hideTip() { tip.style.display = "none"; }
+// What needs you opens as a card on hover, and is answered right there. The card stays while the pointer is on the
+// item or on the card.
+const qcard = document.getElementById("qcard");
+let qFor = null, qTimer = 0;
+function questionCard(o, x, y) {
+  if (qFor === o && qcard.style.display === "block") { clearTimeout(qTimer); return; }
+  qFor = o;
+  clearTimeout(qTimer);
+  const title = o.tag ? `${esc(o.tag)} <span class="m">${esc(o.cls)}</span>` : `Room ${esc(o.n)} <span class="m">${esc(o.name || "")}</span>`;
+  qcard.innerHTML = `<h5>${title}</h5>` + o.q.map((q, i) => `<div class="qs" data-i="${i}"><div class="q">${esc(q.q)}</div>`
+    + `<div class="m">${esc(q.where)} · confidence ${Math.round(q.conf * 100)}%${q.proposed != null && q.proposed !== "" ? " · proposed: <b>" + esc(q.proposed) + "</b>" : ""}</div>`
+    + (q.field === "name" ? `<div class="opts"><input placeholder="Name from the plan" maxlength="60"><button data-do="name">Save name</button></div>` : "")
+    + `<div class="opts">` + q.options.map((op, k) => `<button data-do="opt" data-k="${k}" class="${op.value === q.proposed && q.proposed != null ? "sug" : ""}">${esc(op.label)}</button>`).join("")
+    + (q.issue ? `<button data-do="confirmed" class="yes">Noted</button><button data-do="rejected">Not an issue</button>`
+               : (q.options.length ? "" : `<button data-do="confirmed" class="yes">Yes, keep it</button>`) + `<button data-do="rejected">Reject</button>`)
+    + `</div></div>`).join("")
+    + `<div class="note"><button class="link" data-do="open">Open in the document</button></div>`;
+  qcard.style.display = "block";
+  const h = qcard.offsetHeight;
+  qcard.style.left = Math.max(8, x + 18 + 294 > W ? x - 18 - 294 : x + 18) + "px";   // beside the item, never over it
+  qcard.style.top = Math.max(8, Math.min(y - 20, H - h - 8)) + "px";
+}
+function closeCard(now) {
+  clearTimeout(qTimer);
+  const shut = () => { qcard.style.display = "none"; qFor = null; };
+  if (now) shut(); else qTimer = setTimeout(shut, 320);
+}
+qcard.onpointerenter = () => clearTimeout(qTimer);
+qcard.onpointerleave = () => closeCard();
+qcard.onclick = e => {
+  const b = e.target.closest("button");
+  if (!b || !qFor) return;
+  const o = qFor, box = b.closest(".qs"), q = box ? o.q[+box.dataset.i] : null, act = b.dataset.do;
+  if (act === "open") { closeCard(true); pick(o); return; }
+  let ev;
+  if (act === "opt") ev = { status: "fixed", value: q.options[+b.dataset.k].value };
+  else if (act === "name") { const v = box.querySelector("input").value.trim(); if (!v) return; ev = { status: "fixed", value: v }; }
+  else ev = { status: act };
+  emit({ name: "answer", id: q.id, ...ev });
+  box.innerHTML = `<div class="m">Saved…</div>`;
+  if (o.q.length === 1) closeCard();
+};
+qcard.onkeydown = e => { if (e.key === "Enter" && e.target.tagName === "INPUT") e.target.nextElementSibling.click(); e.stopPropagation(); };
+function hover(o, ev, tipHtml) {
+  if (o.q?.length) { hideTip(); questionCard(o, ev.clientX, ev.clientY); }
+  else { closeCard(); showTip(ev, tipHtml); }
+}
 let down = null;
 renderer.domElement.addEventListener("pointerdown", e => { down = [e.clientX, e.clientY]; });
 renderer.domElement.addEventListener("pointermove", e => {
   if (e.buttons) { hideTip(); return; }
   const g = hit(e);
   if (g !== hovered) { hovered = g; renderer.domElement.style.cursor = g ? "pointer" : ""; }
-  if (g) showTip(e, unitTip(g.userData.u)); else hideTip();
+  if (g) hover(g.userData.u, e, unitTip(g.userData.u)); else { hideTip(); if (qFor) closeCard(); }
 });
-renderer.domElement.addEventListener("pointerleave", () => { hovered = null; hideTip(); });
+renderer.domElement.addEventListener("pointerleave", () => { hovered = null; hideTip(); if (qFor) closeCard(); });
 renderer.domElement.addEventListener("pointerup", e => {
   if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
   const g = hit(e);
-  if (g) pick(g.userData.u, [...floors.values()].find(F => F.markers.children.includes(g)));
+  if (g) pick(g.userData.u, g.userData.F);
 });
 function pick(o, F) {
   D.selected = o.id;
@@ -374,7 +508,7 @@ function fit(animate = true) {
   if (mode === "2d") to = { target: new THREE.Vector3(0, 0, 0), position: new THREE.Vector3(0, 800, 0), zoom: fitZoom(d) };
   else {
     const target = new THREE.Vector3(0, (y0 + y1) / 2, 0), r = Math.hypot(S, d, y1 - y0) / 2;
-    const dist = r / Math.sin(THREE.MathUtils.degToRad(persp.fov / 2)) * (W / H < 1.2 ? 1.1 : y1 - y0 < 1 ? .56 : .74);
+    const dist = r / Math.sin(THREE.MathUtils.degToRad(persp.fov / 2)) * (W / H < 1.2 ? 1.1 : y1 - y0 < 1 ? .56 : H < 600 ? .9 : .78);
     to = { target, position: target.clone().add(new THREE.Vector3(.48, .6, .8).normalize().multiplyScalar(dist)) };
   }
   fly(to, animate ? 650 : 0);
@@ -444,7 +578,7 @@ const vc = ViewerControls.mount({
          ["N", "Next thing that needs you", () => document.querySelector('#ask [data-a="next"]')?.click()],
          ["A", "All floors", () => setFocus(null)]],
   gestures: [["Drag", "3D: turn · 2D: move"], ["Right-drag", "Move"], ["Wheel / pinch", "Zoom to the pointer"],
-             ["Click a unit or room", "Open it in the document"], ["Click a floor name", "That floor alone"]],
+             ["Hover an amber item", "Answer its question in place"], ["Click a unit or room", "Open it in the document"], ["Click a floor name", "That floor alone"]],
 });
 
 // --- data from the app ---------------------------------------------------------------------------------
@@ -468,6 +602,7 @@ function setData(d) {
   if (focus && !floors.has(focus)) focus = null;
   if (d.only_ask !== wantOnly) onlyAsk = wantOnly = !!d.only_ask;   // the app's "needs you" view starts filtered
   halo.material.color.set(P.sel);
+  if (qFor) closeCard(true);
   layout(); buildLabels(); paint(); hud();
   if (first || shape !== [...floors.keys()].join("|")) { resize(); fit(false); }
   if (d.selected && d.selected !== before) flyToSelected();
@@ -486,7 +621,7 @@ function frame(now) {
   halo.visible = !!s && s.F.group.visible;
   if (halo.visible) {
     halo.position.set(s.p.x, s.F.group.position.y + .12, s.p.z);
-    halo.scale.setScalar((s.g ? s.g.userData.r : .6) * (1.05 + .22 * Math.sin(now / 200)));
+    halo.scale.setScalar((s.g ? s.g.userData.r * .95 : .5) * (1.05 + .22 * Math.sin(now / 200)));
   }
   renderer.render(scene, cam());
   updateLabels();
