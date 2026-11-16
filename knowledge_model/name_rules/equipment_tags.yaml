@@ -1,0 +1,73 @@
+# Equipment tag rules: how to recognise an equipment tag on a drawing, schedule or BMS name, and what it means.
+#
+# Used by the document intake (src/projectmodel/intake). A tag is a prefix, an optional separator and a number,
+# with an optional letter suffix: VAVE07, VAVE-07, CH-1A, CH01a, EF-LAB1, AHU-1.
+# `normal` is how two spellings of one tag are compared: prefix in upper case, number without leading zeros,
+# suffix in upper case. VAVE07, VAVE-07 and VAVE 7 are the same unit.
+#
+#   class     Brick class proposed for the tag alone (before a schedule says more)
+#   family    groups tags that share one schedule and one sequence
+#   terminal  true for units that serve a room (the room is found from the thermostat on the plan)
+#   ambiguous a note when the prefix alone does not settle the class; the intake then asks the schedule
+#
+# Longer prefixes are tried first (FVAV before VAV).
+
+prefixes:
+  VAVE:
+    class: RVAV
+    family: vav
+    terminal: true
+    ambiguous: "VAVE is electric-reheat VAV on some jobs and exhaust VAV on others: heater kW in the schedule decides"
+  FVAV:
+    class: RVAV
+    family: fvav
+    terminal: true
+    note: "fan-powered VAV: Brick has no fan-powered box class, RVAV is the closest"
+  VAV:
+    class: VAV
+    family: vav
+    terminal: true
+  FPB:
+    class: RVAV
+    family: fvav
+    terminal: true
+  FCU:
+    class: FCU
+    family: fcu
+    terminal: true
+  AHU:
+    class: AHU
+    family: ahu
+  RTU:
+    class: AHU
+    family: ahu
+  CH:
+    class: Chiller
+    family: chiller
+  CWP:
+    class: Chilled_Water_Pump
+    family: pump
+  HWP:
+    class: Hot_Water_Pump
+    family: pump
+  B:
+    class: Boiler
+    family: boiler
+    strict: true          # one letter: only with a separator or two digits (B-1, B01), never inside words
+  EF:
+    class: Exhaust_Fan
+    family: ef
+  MS:
+    class: HVAC_Equipment
+    family: split
+    note: "ductless mini-split: no Brick class"
+  UH:
+    class: Unit_Heater
+    family: uh
+  HS:
+    class: Equipment
+    family: specialty
+    note: "hydronic specialty (tank, separator, feeder): class from its description"
+
+# Named units with letters instead of a number: EF-LAB1, EF-RR, EF-CONT. A prefix followed by a dash and a word.
+named_suffix: '(?:LAB\d?|RR|CONT|LOCAL|KIT|TOI)'

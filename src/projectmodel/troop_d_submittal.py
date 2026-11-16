@@ -250,6 +250,8 @@ def _room_schedule(spec: dict, equips: list[Equip]):
 
 
 def render(model: dict, path: Path = DOC_DIR / "submittal_230900_controls.pdf") -> Path:
+    from reportlab import rl_config
+    rl_config.invariant = 1  # no build timestamp or random id: the same input gives the same file
     spec, equips = model["spec"], model["equips"]
     by = lambda k: [e for e in equips if e.kind == k]  # noqa: E731
     doc = _Doc(str(path), pagesize=PAGE, title="Troop D Crime Lab - 23 09 00 Controls Submittal (synthetic)",

@@ -422,6 +422,38 @@ def write_bms_export(model: dict, path: Path = DOC_DIR / "bms_export.csv") -> in
     return len(rows)
 
 
+PACKAGE_DIR = ROOT / "test_packages/troop_d"
+RAW_PLANS = ROOT / "data/raw/troop_d/R2517-01_Final_Bid_Plans.pdf"
+# Upload order of the guided setup, and the bid-set pages (0-based) that go in each file.
+PACKAGE = [
+    ("1_floor_plans.pdf", [7, 8, 9, 10], "M-101 to M-104: mechanical plans, levels 1-3 and roof"),
+    ("2_equipment_schedules.pdf", [18, 14, 15, 16], "M-401 schedules; M-301 piping, M-302 AHU, M-303 controls diagrams"),
+    ("3_sequences.pdf", [17], "M-304 BAS sequence of operations"),
+]
+
+
+def write_test_package(out: Path = PACKAGE_DIR) -> list[Path]:
+    """The files a tester uploads, one per guided-setup step: the bid set split by step, then the synthetic
+    submittal and BMS export. Pages are copied as they are."""
+    import shutil
+
+    import pypdfium2 as pdfium
+
+    out.mkdir(parents=True, exist_ok=True)
+    src = pdfium.PdfDocument(RAW_PLANS)
+    written = []
+    for name, pages, _ in PACKAGE:
+        doc = pdfium.PdfDocument.new()
+        doc.import_pages(src, pages)
+        doc.save(out / name)
+        written.append(out / name)
+    for name, source in [("4_controls_submittal.pdf", DOC_DIR / "submittal_230900_controls.pdf"),
+                         ("5_bms_export.csv", DOC_DIR / "bms_export.csv")]:
+        shutil.copyfile(source, out / name)
+        written.append(out / name)
+    return written
+
+
 def _csv(path: Path, rows: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as f:

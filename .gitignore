@@ -11,3 +11,5 @@ reports/equipment3d/
 .streamlit/secrets.toml
 # large public bid PDFs: re-download, see data/raw/SOURCES.md
 data/raw/troop_d/*.pdf
+# guided setup: uploaded documents and answers, per building
+data/intake/
