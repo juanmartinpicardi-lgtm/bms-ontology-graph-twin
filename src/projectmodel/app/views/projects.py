@@ -50,7 +50,7 @@ for i, (site_id, plist) in enumerate(sorted(by_site.items())):
                 st.switch_page("tree_app.py")
 
 def open_intake(slug: str) -> None:
-    st.session_state.update(ab_slug=slug, ab_sel=None)
+    st.session_state.update(ab_started=True, ab_slug=slug, ab_sel=None, ab_step=None, ab_work=None)
 
 
 k = len(by_site)

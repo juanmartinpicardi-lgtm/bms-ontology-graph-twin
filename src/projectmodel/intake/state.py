@@ -34,7 +34,8 @@ def list_intakes() -> list[dict]:
     out = []
     for f in sorted(INTAKE_DIR.glob("*/state.json")):
         s = json.loads(f.read_text())
-        out.append({"slug": f.parent.name, "name": s["name"], "updated": s.get("updated", 0)})
+        out.append({"slug": f.parent.name, "name": s["name"], "updated": s.get("updated", 0),
+                    "created": s.get("created", 0)})
     return sorted(out, key=lambda s: -s["updated"])
 
 

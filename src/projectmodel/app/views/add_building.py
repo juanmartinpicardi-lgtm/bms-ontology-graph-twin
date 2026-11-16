@@ -14,6 +14,7 @@ step.
 
 import json
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -70,29 +71,63 @@ def start_form(key: str, compact: bool = False) -> None:
             if not name.strip():
                 st.error("A name is needed.")
             else:
-                it = Intake.create(name.strip(), address.strip())
-                st.session_state.update(ab_slug=it.slug, ab_step="locate", ab_sel=None, ab_work=None,
-                                        ab_loc_query=address.strip() or name.strip())
+                begin(name.strip(), address.strip())
                 st.rerun()
 
 
+TEST_NAME, TEST_PLACE = "Troop D Crime Lab", "Missouri State Highway Patrol Troop D, Springfield, Missouri"
+
+
+def begin(name: str, address: str = "") -> None:
+    """A new, empty building: nothing read, nothing built. The graph, the twin and the review grow from here."""
+    it = Intake.create(name, address)
+    st.session_state.update(ab_started=True, ab_slug=it.slug, ab_step="locate", ab_sel=None, ab_work=None,
+                            ab_view="twin", ab_out="side", ab_loc_query=address or name, ab_loc_results=None)
+
+
+def resume(slug: str) -> None:
+    st.session_state.update(ab_started=True, ab_slug=slug, ab_step=None, ab_sel=None, ab_work=None)
+
+
 existing = list_intakes()
-if not existing:
+# Pickers map a choice back by its label, so two buildings with the same name get the time they were started.
+_count = {}
+for _s in existing:
+    _count[_s["name"]] = _count.get(_s["name"], 0) + 1
+names = {s["slug"]: s["name"] + (time.strftime(" · started %d %b %H:%M:%S", time.localtime(s["created"]))
+                                 if _count[s["name"]] > 1 else "") for s in existing}
+# Every visit starts like a real onboarding: an empty building, nothing pre-built. A building in progress opens
+# only when someone picks it (here, or Continue on All projects).
+if not st.session_state.get("ab_started") or st.session_state.get("ab_slug") not in {s["slug"] for s in existing}:
     with box("intro", "Add a building", "add_business"):
         st.markdown("### Add a building, step by step")
         st.write("Eight steps: locate the building, then floor plans, equipment schedules, sequences, controls "
                  "submittal, BMS export, review, and finally what people know about it. Each document you upload is "
-                 "read in front of you and turned into part of the building: floors and rooms, units in them, their "
-                 "controllers and points. The knowledge graph and the building's twin grow at every step.")
-        st.info(f"To try it end to end, use the test package: one file per step in "
-                f"`{TEST_PACKAGE.relative_to(ROOT)}/`.", icon=":material/science:")
+                 "read in front of you and turned into part of the building. The knowledge graph, the building's "
+                 "twin and the review start empty and grow at every step, on the right of the page.")
+    left, right = st.columns(2, gap="medium")
+    with left, box("try", "Try it with the test building", "science", height="stretch"):
+        st.markdown(f"#### {TEST_NAME}")
+        st.write("A real public bid set (plans, schedules, sequences) plus a synthetic controls submittal and BMS "
+                 "export. You start from an empty building: each step has a **Use the test file** button that loads "
+                 "that step's document, and you watch it being read.")
+        st.caption(f"Files: `{TEST_PACKAGE.relative_to(ROOT)}/`")
+        st.button("Start with the test building", type="primary", icon=":material/play_arrow:", on_click=begin,
+                  args=(TEST_NAME, TEST_PLACE))
+    with right, box("own", "Your own building", "add_business", height="stretch"):
         start_form("ab_new")
+    if existing:
+        with box("resume", "Buildings in progress", "history"):
+            with st.container(horizontal=True, vertical_alignment="bottom", gap="small"):
+                pick = st.selectbox("Continue", [s["slug"] for s in existing], label_visibility="collapsed",
+                                    format_func=names.get,
+                                    width=320)
+                st.button("Continue", icon=":material/arrow_forward:", on_click=resume, args=(pick,))
     st.stop()
 
 slugs = [s["slug"] for s in existing]
 if st.session_state.get("ab_slug") not in slugs:
     st.session_state["ab_slug"] = slugs[0]
-names = {s["slug"]: s["name"] for s in existing}
 it = Intake(st.session_state["ab_slug"])
 knowledge.apply(it)  # this building's own rules are the ones in force for everything below
 if st.session_state.get("ab_step") not in FLOW_IDS:
@@ -125,6 +160,8 @@ with box("head"):
         st.selectbox("Building", slugs, key="ab_slug", format_func=lambda s: names[s], label_visibility="collapsed",
                      width=260, on_change=lambda: st.session_state.update(ab_sel=None, ab_step=None))
         with st.popover("New building", icon=":material/add:"):
+            st.button(f"Start {TEST_NAME} again (test files)", icon=":material/science:", on_click=begin,
+                      args=(TEST_NAME, TEST_PLACE), type="tertiary")
             start_form("ab_new_pop", compact=True)
         st.progress(prog["share"], text=f"**{round(prog['share'] * 100)}% built** · "
                                         f"{sum(1 for s in prog['steps'].values() if s['read'])} of 5 documents read · "
@@ -591,7 +628,7 @@ def outputs_panel() -> None:
     with box("out"):
         with st.container(horizontal=True, vertical_alignment="center", gap="small"):
             st.caption(":material/hub: **Built so far**", width="content")
-            outs = {"twin": "Building (twin)", "graph": "Knowledge graph"}
+            outs = {"twin": "Building (twin)", "graph": "Knowledge graph", "review": f"Review ({len(it.open_questions())})"}
             if st.session_state.get("ab_view") not in outs:
                 st.session_state["ab_view"] = "twin"
             st.segmented_control("Output", list(outs), format_func=outs.get, key="ab_view",
@@ -605,10 +642,53 @@ def outputs_panel() -> None:
                           help="Open full screen")
                 st.button("", icon=":material/right_panel_close:", on_click=out_mode, args=("hidden",),
                           type="tertiary", help="Hide the graph and the twin")
-        if (st.session_state.get("ab_view") or "twin") == "graph":
+        view = st.session_state.get("ab_view") or "twin"
+        if view == "graph":
             graph_view(1000 if full else 700)
+        elif view == "review":
+            review_live()
+        elif not it.done("plans"):
+            if it.location:
+                site_map(it.location["lat"], it.location["lng"], it.name, 1000 if full else 560)
+                st.caption(f"{it.location['address']}. The building rises here as soon as the floor plans are read: "
+                           "each level becomes a floor, with its rooms and the units on it.")
+            else:
+                twin_view(1000 if full else 660)
         else:
             twin_view(1000 if full else 660)
+
+
+def review_live() -> None:
+    """The review as it stands after the steps read so far: what is confirmed, what waits for a second source,
+    what needs you. It grows with every document; step 6 is where it is finished."""
+    facts = it.facts()
+    if not facts and not it.location:
+        st.info("Nothing to review yet. Every fact the reader finds lands here, with its source and confidence, "
+                "as each document is read.", icon=":material/fact_check:")
+        return
+    conf = sum(1 for f in facts if f["status"] == "confirmed")
+    asks = it.open_questions()
+    waiting = sum(1 for f in facts if f["status"] == "proposed" and not f.get("ask"))
+    c = st.columns(4)
+    c[0].metric("Facts read", len(facts), border=True)
+    c[1].metric("Confirmed", conf, f"{round(100 * conf / max(1, len(facts)))}%", border=True, delta_color="off")
+    c[2].metric("Waiting for a 2nd source", waiting, border=True)
+    c[3].metric("Need you", len(asks), border=True)
+    rows = [{"step": "0 · Locate", "status": "confirmed" if it.location else "to do",
+             "facts": 1 if it.location else 0, "confirmed": 1 if it.location else 0, "need you": 0}]
+    for s_ in STEPS[:-1]:
+        fs = it.facts(s_.id)
+        rows.append({"step": f"{s_.n} · {s_.title}", "status": "read" if it.done(s_.id) else "to do",
+                     "facts": len(fs), "confirmed": sum(1 for f in fs if f["status"] == "confirmed"),
+                     "need you": len(it.open_questions(s_.id))})
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+    if asks:
+        st.markdown("###### Latest questions")
+        for i, f in enumerate(asks[-3:]):
+            question_card(f, f"live{i}")
+        if len(asks) > 3:
+            st.button(f"See all {len(asks)} in the review", icon=":material/fact_check:", type="tertiary",
+                      on_click=go, args=("review",))
 
 
 def layout():
