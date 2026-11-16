@@ -1,0 +1,848 @@
+point_id,equip_id,short_name,bms_name,description,io,object_type,instance,units,brick_class,role
+td-AHU01.SF-C,td-AHU01,SF-C,TROOPD-NAE01/FC-1.AHU-1.SF-C,Supply Fan Wall Start/Stop,BO,binary-output,1,,Start_Stop_Command,supply_fan_cmd
+td-AHU01.SF-O,td-AHU01,SF-O,TROOPD-NAE01/FC-1.AHU-1.SF-O,Supply Fan Wall Speed (VFD),AO,analog-output,1,%,Fan_Speed_Command,supply_fan_speed
+td-AHU01.SF1-S,td-AHU01,SF1-S,TROOPD-NAE01/FC-1.AHU-1.SF1-S,Supply Fan 1 Status,BI,binary-input,1,,Fan_Status,supply_fan_status
+td-AHU01.SF2-S,td-AHU01,SF2-S,TROOPD-NAE01/FC-1.AHU-1.SF2-S,Supply Fan 2 Status,BI,binary-input,2,,Fan_Status,supply_fan_status
+td-AHU01.SF3-S,td-AHU01,SF3-S,TROOPD-NAE01/FC-1.AHU-1.SF3-S,Supply Fan 3 Status,BI,binary-input,3,,Fan_Status,supply_fan_status
+td-AHU01.SF4-S,td-AHU01,SF4-S,TROOPD-NAE01/FC-1.AHU-1.SF4-S,Supply Fan 4 Status,BI,binary-input,4,,Fan_Status,supply_fan_status
+td-AHU01.SF5-S,td-AHU01,SF5-S,TROOPD-NAE01/FC-1.AHU-1.SF5-S,Supply Fan 5 Status,BI,binary-input,5,,Fan_Status,supply_fan_status
+td-AHU01.SF6-S,td-AHU01,SF6-S,TROOPD-NAE01/FC-1.AHU-1.SF6-S,Supply Fan 6 Status,BI,binary-input,6,,Fan_Status,supply_fan_status
+td-AHU01.SF7-S,td-AHU01,SF7-S,TROOPD-NAE01/FC-1.AHU-1.SF7-S,Supply Fan 7 Status,BI,binary-input,7,,Fan_Status,supply_fan_status
+td-AHU01.SF8-S,td-AHU01,SF8-S,TROOPD-NAE01/FC-1.AHU-1.SF8-S,Supply Fan 8 Status,BI,binary-input,8,,Fan_Status,supply_fan_status
+td-AHU01.SF9-S,td-AHU01,SF9-S,TROOPD-NAE01/FC-1.AHU-1.SF9-S,Supply Fan 9 Status,BI,binary-input,9,,Fan_Status,supply_fan_status
+td-AHU01.EF1-C,td-AHU01,EF1-C,TROOPD-NAE01/FC-1.AHU-1.EF1-C,Exhaust Fan Wall 1 Start/Stop,BO,binary-output,2,,Start_Stop_Command,exhaust_fan_cmd
+td-AHU01.EF2-C,td-AHU01,EF2-C,TROOPD-NAE01/FC-1.AHU-1.EF2-C,Exhaust Fan Wall 2 Start/Stop,BO,binary-output,3,,Start_Stop_Command,exhaust_fan_cmd
+td-AHU01.EF1-O,td-AHU01,EF1-O,TROOPD-NAE01/FC-1.AHU-1.EF1-O,Exhaust Fan Wall 1 Speed (VFD),AO,analog-output,2,%,Fan_Speed_Command,exhaust_fan_speed
+td-AHU01.EF2-O,td-AHU01,EF2-O,TROOPD-NAE01/FC-1.AHU-1.EF2-O,Exhaust Fan Wall 2 Speed (VFD),AO,analog-output,3,%,Fan_Speed_Command,exhaust_fan_speed
+td-AHU01.EF1-S,td-AHU01,EF1-S,TROOPD-NAE01/FC-1.AHU-1.EF1-S,Exhaust Fan Wall 1 Status,BI,binary-input,10,,Fan_Status,exhaust_fan_status
+td-AHU01.EF2-S,td-AHU01,EF2-S,TROOPD-NAE01/FC-1.AHU-1.EF2-S,Exhaust Fan Wall 2 Status,BI,binary-input,11,,Fan_Status,exhaust_fan_status
+td-AHU01.DA-T,td-AHU01,DA-T,TROOPD-NAE01/FC-1.AHU-1.DA-T,Supply Air Temperature,AI,analog-input,1,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-AHU01.CCLA-T,td-AHU01,CCLA-T,TROOPD-NAE01/FC-1.AHU-1.CCLA-T,Cooling Coil Leaving Air Temperature,AI,analog-input,2,°F,Air_Temperature_Sensor,coil_leaving_temp
+td-AHU01.MA-T,td-AHU01,MA-T,TROOPD-NAE01/FC-1.AHU-1.MA-T,Mixed Air Temperature,AI,analog-input,3,°F,Mixed_Air_Temperature_Sensor,mixed_temp
+td-AHU01.RA-T,td-AHU01,RA-T,TROOPD-NAE01/FC-1.AHU-1.RA-T,Return Air Temperature,AI,analog-input,4,°F,Return_Air_Temperature_Sensor,return_temp
+td-AHU01.RA-H,td-AHU01,RA-H,TROOPD-NAE01/FC-1.AHU-1.RA-H,Return Air Humidity,AI,analog-input,5,%RH,Return_Air_Humidity_Sensor,return_humidity
+td-AHU01.OA-T,td-AHU01,OA-T,TROOPD-NAE01/FC-1.AHU-1.OA-T,Outdoor Air Temperature,AI,analog-input,6,°F,Outside_Air_Temperature_Sensor,outside_temp
+td-AHU01.OA-H,td-AHU01,OA-H,TROOPD-NAE01/FC-1.AHU-1.OA-H,Outdoor Air Humidity,AI,analog-input,7,%RH,Outside_Air_Humidity_Sensor,outside_humidity
+td-AHU01.OA-F,td-AHU01,OA-F,TROOPD-NAE01/FC-1.AHU-1.OA-F,Minimum Outdoor Airflow (flow station),AI,analog-input,8,cfm,Outside_Air_Flow_Sensor,outside_flow
+td-AHU01.SA-F,td-AHU01,SA-F,TROOPD-NAE01/FC-1.AHU-1.SA-F,Supply Airflow (flow station),AI,analog-input,9,cfm,Supply_Air_Flow_Sensor,supply_flow
+td-AHU01.DA-P,td-AHU01,DA-P,TROOPD-NAE01/FC-1.AHU-1.DA-P,Supply Duct Static Pressure,AI,analog-input,10,in.wc,Supply_Air_Static_Pressure_Sensor,static_pressure
+td-AHU01.BLDG-P,td-AHU01,BLDG-P,TROOPD-NAE01/FC-1.AHU-1.BLDG-P,Building Static Pressure,AI,analog-input,11,in.wc,Building_Air_Static_Pressure_Sensor,building_pressure
+td-AHU01.FLT-DP,td-AHU01,FLT-DP,TROOPD-NAE01/FC-1.AHU-1.FLT-DP,Filter Differential Pressure,AI,analog-input,12,in.wc,Filter_Differential_Pressure_Sensor,filter_dp
+td-AHU01.HUM-H,td-AHU01,HUM-H,TROOPD-NAE01/FC-1.AHU-1.HUM-H,Steam Generator Leaving Air Humidity,AI,analog-input,13,%RH,Discharge_Air_Humidity_Sensor,supply_humidity
+td-AHU01.CHWS-T,td-AHU01,CHWS-T,TROOPD-NAE01/FC-1.AHU-1.CHWS-T,Coil Chilled Water Supply Temperature,AI,analog-input,14,°F,Entering_Chilled_Water_Temperature_Sensor,chw_entering_temp
+td-AHU01.CHWR-T,td-AHU01,CHWR-T,TROOPD-NAE01/FC-1.AHU-1.CHWR-T,Coil Chilled Water Return Temperature,AI,analog-input,15,°F,Leaving_Chilled_Water_Temperature_Sensor,chw_leaving_temp
+td-AHU01.LT-A,td-AHU01,LT-A,TROOPD-NAE01/FC-1.AHU-1.LT-A,Low Temperature Detector (Freezestat),BI,binary-input,12,,Freeze_Status,freeze
+td-AHU01.HSP-A,td-AHU01,HSP-A,TROOPD-NAE01/FC-1.AHU-1.HSP-A,High Static Pressure Switch,BI,binary-input,13,,Alarm,high_static_alarm
+td-AHU01.LSP-A,td-AHU01,LSP-A,TROOPD-NAE01/FC-1.AHU-1.LSP-A,Low Static Pressure Switch,BI,binary-input,14,,Alarm,low_static_alarm
+td-AHU01.SMK-A,td-AHU01,SMK-A,TROOPD-NAE01/FC-1.AHU-1.SMK-A,Duct Smoke Detector,BI,binary-input,15,,Smoke_Detection_Alarm,smoke
+td-AHU01.LEAK-A,td-AHU01,LEAK-A,TROOPD-NAE01/FC-1.AHU-1.LEAK-A,Drain Pan Water Sensor,BI,binary-input,16,,Leak_Alarm,leak
+td-AHU01.CHWV-O,td-AHU01,CHWV-O,TROOPD-NAE01/FC-1.AHU-1.CHWV-O,Chilled Water 3-Way Valve,AO,analog-output,4,%,Valve_Position_Command,chw_valve
+td-AHU01.PH-E,td-AHU01,PH-E,TROOPD-NAE01/FC-1.AHU-1.PH-E,Electric Preheat Enable,BO,binary-output,4,,Heating_Enable_Command,preheat_enable
+td-AHU01.PH-O,td-AHU01,PH-O,TROOPD-NAE01/FC-1.AHU-1.PH-O,Electric Preheat Output,AO,analog-output,5,%,Preheat_Command,preheat
+td-AHU01.HUM-E,td-AHU01,HUM-E,TROOPD-NAE01/FC-1.AHU-1.HUM-E,Steam Humidifier Enable,BO,binary-output,5,,Enable_Command,humidifier_enable
+td-AHU01.HUM-O,td-AHU01,HUM-O,TROOPD-NAE01/FC-1.AHU-1.HUM-O,Steam Humidifier Output,AO,analog-output,6,%,Humidify_Command,humidifier
+td-AHU01.ECON-O,td-AHU01,ECON-O,TROOPD-NAE01/FC-1.AHU-1.ECON-O,Economizer Damper,AO,analog-output,7,%,Damper_Position_Command,economizer_damper
+td-AHU01.MOA-O,td-AHU01,MOA-O,TROOPD-NAE01/FC-1.AHU-1.MOA-O,Minimum Outdoor Air Damper,AO,analog-output,8,%,Damper_Position_Command,min_oa_damper
+td-AHU01.RAD-O,td-AHU01,RAD-O,TROOPD-NAE01/FC-1.AHU-1.RAD-O,Return Air Damper,AO,analog-output,9,%,Damper_Position_Command,return_damper
+td-AHU01.EAD1-O,td-AHU01,EAD1-O,TROOPD-NAE01/FC-1.AHU-1.EAD1-O,Exhaust Air Damper 1,AO,analog-output,10,%,Damper_Position_Command,exhaust_damper
+td-AHU01.EAD2-O,td-AHU01,EAD2-O,TROOPD-NAE01/FC-1.AHU-1.EAD2-O,Exhaust Air Damper 2,AO,analog-output,11,%,Damper_Position_Command,exhaust_damper
+td-AHU01.OCC-SCHEDULE,td-AHU01,OCC-SCHEDULE,TROOPD-NAE01/FC-1.AHU-1.OCC-SCHEDULE,Occupancy Schedule,BV,binary-value,1,,Occupancy_Command,occupancy
+td-AHU01.DA-SP,td-AHU01,DA-SP,TROOPD-NAE01/FC-1.AHU-1.DA-SP,Supply Air Temperature Setpoint (53 °F),AV,analog-value,1,°F,Discharge_Air_Temperature_Setpoint,discharge_temp_sp
+td-AHU01.DAP-SP,td-AHU01,DAP-SP,TROOPD-NAE01/FC-1.AHU-1.DAP-SP,Duct Static Pressure Setpoint (set by TAB),AV,analog-value,2,in.wc,Supply_Air_Static_Pressure_Setpoint,static_pressure_sp
+td-AHU01.BLDGP-SP,td-AHU01,BLDGP-SP,TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP,Building Pressure Setpoint (+0.02 in.wc),AV,analog-value,3,in.wc,Building_Air_Static_Pressure_Setpoint,building_pressure_sp
+td-AHU01.MA-SP,td-AHU01,MA-SP,TROOPD-NAE01/FC-1.AHU-1.MA-SP,Mixed Air Temperature Setpoint (55 °F),AV,analog-value,4,°F,Mixed_Air_Temperature_Setpoint,mixed_temp_sp
+td-AHU01.HUM-SP,td-AHU01,HUM-SP,TROOPD-NAE01/FC-1.AHU-1.HUM-SP,Supply Humidity Setpoint (45 %RH),AV,analog-value,5,%RH,Discharge_Air_Humidity_Setpoint,humidity_sp
+td-AHU01.SYS-RESET,td-AHU01,SYS-RESET,TROOPD-NAE01/FC-1.AHU-1.SYS-RESET,"Safety Reset (freezestat, static switches)",BV,binary-value,2,,Command,reset
+td-CHWS.CWS-T,td-CHWS,CWS-T,TROOPD-NAE01/FC-1.CHW-PLANT.CWS-T,Chilled Water Supply Temperature,AI,analog-input,1,°F,Leaving_Chilled_Water_Temperature_Sensor,supply_temp
+td-CHWS.CWR-T,td-CHWS,CWR-T,TROOPD-NAE01/FC-1.CHW-PLANT.CWR-T,Chilled Water Return Temperature,AI,analog-input,2,°F,Entering_Chilled_Water_Temperature_Sensor,return_temp
+td-CHWS.CW-F,td-CHWS,CW-F,TROOPD-NAE01/FC-1.CHW-PLANT.CW-F,Chilled Water Flow,AI,analog-input,3,gpm,Chilled_Water_Flow_Sensor,flow
+td-CHWS.CH-LEAD,td-CHWS,CH-LEAD,TROOPD-NAE01/FC-1.CHW-PLANT.CH-LEAD,Lead Chiller Select (rotates weekly),MV,multi-state-value,1,,Lead_Lag_Command,chiller_lead
+td-CHWS.CWP-LEAD,td-CHWS,CWP-LEAD,TROOPD-NAE01/FC-1.CHW-PLANT.CWP-LEAD,Duty Pump Select (rotates weekly),MV,multi-state-value,2,,Lead_Lag_Command,pump_lead
+td-CHWS.LAG-ON-SP,td-CHWS,LAG-ON-SP,TROOPD-NAE01/FC-1.CHW-PLANT.LAG-ON-SP,Lag Chiller Enable Flow (140 gpm),AV,analog-value,1,gpm,Setpoint,lag_on_flow
+td-CHWS.LAG-OFF-SP,td-CHWS,LAG-OFF-SP,TROOPD-NAE01/FC-1.CHW-PLANT.LAG-OFF-SP,Lag Chiller Disable Flow (130 gpm),AV,analog-value,2,gpm,Setpoint,lag_off_flow
+td-CH01a.CH-E,td-CH01a,CH-E,TROOPD-NAE01/FC-1.CH-1A.CH-E,Chiller Enable,BO,binary-output,1,,Enable_Command,enable
+td-CH01a.ISOV-C,td-CH01a,ISOV-C,TROOPD-NAE01/FC-1.CH-1A.ISOV-C,Chiller Isolation Valve Open/Close,BO,binary-output,2,,Valve_Command,isolation_valve
+td-CH01a.COMM,td-CH01a,COMM,TROOPD-NAE01/FC-1.CH-1A.COMM,BACnet Communication Status,BN,analog-value,1,,Communication_Loss_Alarm,comm
+td-CH01a.MODE,td-CH01a,MODE,TROOPD-NAE01/FC-1.CH-1A.MODE,Operation Mode,BN,analog-value,2,,Mode_Status,mode
+td-CH01a.EEWT,td-CH01a,EEWT,TROOPD-NAE01/FC-1.CH-1A.EEWT,Entering Evaporator Water Temperature,BN,analog-value,3,°F,Entering_Chilled_Water_Temperature_Sensor,chw_entering_temp
+td-CH01a.LEWT,td-CH01a,LEWT,TROOPD-NAE01/FC-1.CH-1A.LEWT,Leaving Evaporator Water Temperature,BN,analog-value,4,°F,Leaving_Chilled_Water_Temperature_Sensor,chw_leaving_temp
+td-CH01a.AMB-T,td-CH01a,AMB-T,TROOPD-NAE01/FC-1.CH-1A.AMB-T,Ambient Temperature,BN,analog-value,5,°F,Outside_Air_Temperature_Sensor,outside_temp
+td-CH01a.EVAP-FS,td-CH01a,EVAP-FS,TROOPD-NAE01/FC-1.CH-1A.EVAP-FS,Evaporator Flow Switch,BN,analog-value,6,,Status,flow_switch
+td-CH01a.SUCT-T,td-CH01a,SUCT-T,TROOPD-NAE01/FC-1.CH-1A.SUCT-T,Suction Temperature,BN,analog-value,7,°F,Temperature_Sensor,suction_temp
+td-CH01a.COND-P,td-CH01a,COND-P,TROOPD-NAE01/FC-1.CH-1A.COND-P,Condensing Pressure,BN,analog-value,8,psig,Pressure_Sensor,condensing_pressure
+td-CH01a.EVAP-P,td-CH01a,EVAP-P,TROOPD-NAE01/FC-1.CH-1A.EVAP-P,Evaporating Pressure,BN,analog-value,9,psig,Pressure_Sensor,evaporating_pressure
+td-CH01a.LCHWT-SP,td-CH01a,LCHWT-SP,TROOPD-NAE01/FC-1.CH-1A.LCHWT-SP,Leaving Chilled Water Setpoint (42 °F),BN,analog-value,10,°F,Leaving_Chilled_Water_Temperature_Setpoint,chw_leaving_sp
+td-CH01b.CH-E,td-CH01b,CH-E,TROOPD-NAE01/FC-1.CH-1B.CH-E,Chiller Enable,BO,binary-output,1,,Enable_Command,enable
+td-CH01b.ISOV-C,td-CH01b,ISOV-C,TROOPD-NAE01/FC-1.CH-1B.ISOV-C,Chiller Isolation Valve Open/Close,BO,binary-output,2,,Valve_Command,isolation_valve
+td-CH01b.COMM,td-CH01b,COMM,TROOPD-NAE01/FC-1.CH-1B.COMM,BACnet Communication Status,BN,analog-value,1,,Communication_Loss_Alarm,comm
+td-CH01b.MODE,td-CH01b,MODE,TROOPD-NAE01/FC-1.CH-1B.MODE,Operation Mode,BN,analog-value,2,,Mode_Status,mode
+td-CH01b.EEWT,td-CH01b,EEWT,TROOPD-NAE01/FC-1.CH-1B.EEWT,Entering Evaporator Water Temperature,BN,analog-value,3,°F,Entering_Chilled_Water_Temperature_Sensor,chw_entering_temp
+td-CH01b.LEWT,td-CH01b,LEWT,TROOPD-NAE01/FC-1.CH-1B.LEWT,Leaving Evaporator Water Temperature,BN,analog-value,4,°F,Leaving_Chilled_Water_Temperature_Sensor,chw_leaving_temp
+td-CH01b.AMB-T,td-CH01b,AMB-T,TROOPD-NAE01/FC-1.CH-1B.AMB-T,Ambient Temperature,BN,analog-value,5,°F,Outside_Air_Temperature_Sensor,outside_temp
+td-CH01b.EVAP-FS,td-CH01b,EVAP-FS,TROOPD-NAE01/FC-1.CH-1B.EVAP-FS,Evaporator Flow Switch,BN,analog-value,6,,Status,flow_switch
+td-CH01b.SUCT-T,td-CH01b,SUCT-T,TROOPD-NAE01/FC-1.CH-1B.SUCT-T,Suction Temperature,BN,analog-value,7,°F,Temperature_Sensor,suction_temp
+td-CH01b.COND-P,td-CH01b,COND-P,TROOPD-NAE01/FC-1.CH-1B.COND-P,Condensing Pressure,BN,analog-value,8,psig,Pressure_Sensor,condensing_pressure
+td-CH01b.EVAP-P,td-CH01b,EVAP-P,TROOPD-NAE01/FC-1.CH-1B.EVAP-P,Evaporating Pressure,BN,analog-value,9,psig,Pressure_Sensor,evaporating_pressure
+td-CH01b.LCHWT-SP,td-CH01b,LCHWT-SP,TROOPD-NAE01/FC-1.CH-1B.LCHWT-SP,Leaving Chilled Water Setpoint (42 °F),BN,analog-value,10,°F,Leaving_Chilled_Water_Temperature_Setpoint,chw_leaving_sp
+td-CWP01.C,td-CWP01,C,TROOPD-NAE01/FC-1.CWP-1.CWP-1-C,Pump Start/Stop,BO,binary-output,1,,Start_Stop_Command,cmd
+td-CWP01.S,td-CWP01,S,TROOPD-NAE01/FC-1.CWP-1.CWP-1-S,Pump Status,BI,binary-input,1,,Run_Status,status
+td-CWP01.O,td-CWP01,O,TROOPD-NAE01/FC-1.CWP-1.CWP-1-O,Pump Speed (VFD),AO,analog-output,1,%,Speed_Command,speed
+td-CWP01.A,td-CWP01,A,TROOPD-NAE01/FC-1.CWP-1.CWP-1-A,VFD Fault,BI,binary-input,2,,Fault_Status,fault
+td-CWP02.C,td-CWP02,C,TROOPD-NAE01/FC-1.CWP-2.CWP-2-C,Pump Start/Stop,BO,binary-output,1,,Start_Stop_Command,cmd
+td-CWP02.S,td-CWP02,S,TROOPD-NAE01/FC-1.CWP-2.CWP-2-S,Pump Status,BI,binary-input,1,,Run_Status,status
+td-CWP02.O,td-CWP02,O,TROOPD-NAE01/FC-1.CWP-2.CWP-2-O,Pump Speed (VFD),AO,analog-output,1,%,Speed_Command,speed
+td-CWP02.A,td-CWP02,A,TROOPD-NAE01/FC-1.CWP-2.CWP-2-A,VFD Fault,BI,binary-input,2,,Fault_Status,fault
+td-VAV01.ZN-T,td-VAV01,ZN-T,TROOPD-NAE01/FC-2.VAV-01.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV01.ZN-SP,td-VAV01,ZN-SP,TROOPD-NAE01/FC-2.VAV-01.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV01.DA-T,td-VAV01,DA-T,TROOPD-NAE01/FC-2.VAV-01.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV01.SA-F,td-VAV01,SA-F,TROOPD-NAE01/FC-2.VAV-01.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV01.DPR-O,td-VAV01,DPR-O,TROOPD-NAE01/FC-2.VAV-01.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV01.SAFLOW-SP,td-VAV01,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-01.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV01.OCC-SCHEDULE,td-VAV01,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-01.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV01.OCC-CLG-SP,td-VAV01,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-01.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV01.OCC-HTG-SP,td-VAV01,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-01.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV01.UNOCC-CLG-SP,td-VAV01,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-01.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV01.UNOCC-HTG-SP,td-VAV01,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-01.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV02.ZN-T,td-VAV02,ZN-T,TROOPD-NAE01/FC-2.VAV-02.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV02.ZN-SP,td-VAV02,ZN-SP,TROOPD-NAE01/FC-2.VAV-02.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV02.DA-T,td-VAV02,DA-T,TROOPD-NAE01/FC-2.VAV-02.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV02.SA-F,td-VAV02,SA-F,TROOPD-NAE01/FC-2.VAV-02.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV02.DPR-O,td-VAV02,DPR-O,TROOPD-NAE01/FC-2.VAV-02.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV02.SAFLOW-SP,td-VAV02,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-02.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV02.OCC-SCHEDULE,td-VAV02,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-02.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV02.OCC-CLG-SP,td-VAV02,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-02.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV02.OCC-HTG-SP,td-VAV02,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-02.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV02.UNOCC-CLG-SP,td-VAV02,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-02.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV02.UNOCC-HTG-SP,td-VAV02,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-02.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV03.ZN-T,td-VAV03,ZN-T,TROOPD-NAE01/FC-2.VAV-03.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV03.ZN-SP,td-VAV03,ZN-SP,TROOPD-NAE01/FC-2.VAV-03.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV03.DA-T,td-VAV03,DA-T,TROOPD-NAE01/FC-2.VAV-03.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV03.SA-F,td-VAV03,SA-F,TROOPD-NAE01/FC-2.VAV-03.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV03.DPR-O,td-VAV03,DPR-O,TROOPD-NAE01/FC-2.VAV-03.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV03.SAFLOW-SP,td-VAV03,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-03.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV03.OCC-SCHEDULE,td-VAV03,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-03.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV03.OCC-CLG-SP,td-VAV03,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-03.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV03.OCC-HTG-SP,td-VAV03,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-03.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV03.UNOCC-CLG-SP,td-VAV03,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-03.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV03.UNOCC-HTG-SP,td-VAV03,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-03.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV04.ZN-T,td-VAV04,ZN-T,TROOPD-NAE01/FC-2.VAV-04.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV04.ZN-SP,td-VAV04,ZN-SP,TROOPD-NAE01/FC-2.VAV-04.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV04.DA-T,td-VAV04,DA-T,TROOPD-NAE01/FC-2.VAV-04.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV04.SA-F,td-VAV04,SA-F,TROOPD-NAE01/FC-2.VAV-04.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV04.DPR-O,td-VAV04,DPR-O,TROOPD-NAE01/FC-2.VAV-04.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV04.SAFLOW-SP,td-VAV04,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-04.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV04.OCC-SCHEDULE,td-VAV04,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-04.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV04.OCC-CLG-SP,td-VAV04,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-04.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV04.OCC-HTG-SP,td-VAV04,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-04.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV04.UNOCC-CLG-SP,td-VAV04,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-04.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV04.UNOCC-HTG-SP,td-VAV04,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-04.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV05.ZN-T,td-VAV05,ZN-T,TROOPD-NAE01/FC-2.VAV-05.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV05.ZN-SP,td-VAV05,ZN-SP,TROOPD-NAE01/FC-2.VAV-05.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV05.DA-T,td-VAV05,DA-T,TROOPD-NAE01/FC-2.VAV-05.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV05.SA-F,td-VAV05,SA-F,TROOPD-NAE01/FC-2.VAV-05.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV05.DPR-O,td-VAV05,DPR-O,TROOPD-NAE01/FC-2.VAV-05.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV05.SAFLOW-SP,td-VAV05,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-05.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV05.OCC-SCHEDULE,td-VAV05,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-05.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV05.OCC-CLG-SP,td-VAV05,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-05.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV05.OCC-HTG-SP,td-VAV05,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-05.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV05.UNOCC-CLG-SP,td-VAV05,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-05.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV05.UNOCC-HTG-SP,td-VAV05,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-05.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV06.ZN-T,td-VAV06,ZN-T,TROOPD-NAE01/FC-2.VAV-06.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV06.ZN-SP,td-VAV06,ZN-SP,TROOPD-NAE01/FC-2.VAV-06.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV06.DA-T,td-VAV06,DA-T,TROOPD-NAE01/FC-2.VAV-06.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV06.SA-F,td-VAV06,SA-F,TROOPD-NAE01/FC-2.VAV-06.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV06.DPR-O,td-VAV06,DPR-O,TROOPD-NAE01/FC-2.VAV-06.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV06.SAFLOW-SP,td-VAV06,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-06.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV06.OCC-SCHEDULE,td-VAV06,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-06.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV06.OCC-CLG-SP,td-VAV06,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-06.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV06.OCC-HTG-SP,td-VAV06,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-06.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV06.UNOCC-CLG-SP,td-VAV06,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-06.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV06.UNOCC-HTG-SP,td-VAV06,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-06.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV07.ZN-T,td-VAV07,ZN-T,TROOPD-NAE01/FC-2.VAV-07.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV07.ZN-SP,td-VAV07,ZN-SP,TROOPD-NAE01/FC-2.VAV-07.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV07.DA-T,td-VAV07,DA-T,TROOPD-NAE01/FC-2.VAV-07.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV07.SA-F,td-VAV07,SA-F,TROOPD-NAE01/FC-2.VAV-07.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV07.DPR-O,td-VAV07,DPR-O,TROOPD-NAE01/FC-2.VAV-07.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV07.SAFLOW-SP,td-VAV07,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-07.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV07.OCC-SCHEDULE,td-VAV07,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-07.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV07.OCC-CLG-SP,td-VAV07,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-07.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV07.OCC-HTG-SP,td-VAV07,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-07.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV07.UNOCC-CLG-SP,td-VAV07,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-07.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV07.UNOCC-HTG-SP,td-VAV07,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-07.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV08.ZN-T,td-VAV08,ZN-T,TROOPD-NAE01/FC-2.VAV-08.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV08.ZN-SP,td-VAV08,ZN-SP,TROOPD-NAE01/FC-2.VAV-08.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV08.DA-T,td-VAV08,DA-T,TROOPD-NAE01/FC-2.VAV-08.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV08.SA-F,td-VAV08,SA-F,TROOPD-NAE01/FC-2.VAV-08.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV08.DPR-O,td-VAV08,DPR-O,TROOPD-NAE01/FC-2.VAV-08.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV08.SAFLOW-SP,td-VAV08,SAFLOW-SP,TROOPD-NAE01/FC-2.VAV-08.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV08.OCC-SCHEDULE,td-VAV08,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAV-08.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV08.OCC-CLG-SP,td-VAV08,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-08.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV08.OCC-HTG-SP,td-VAV08,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-08.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV08.UNOCC-CLG-SP,td-VAV08,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAV-08.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV08.UNOCC-HTG-SP,td-VAV08,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAV-08.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV09.ZN-T,td-VAV09,ZN-T,TROOPD-NAE01/FC-3.VAV-09.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV09.ZN-SP,td-VAV09,ZN-SP,TROOPD-NAE01/FC-3.VAV-09.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV09.DA-T,td-VAV09,DA-T,TROOPD-NAE01/FC-3.VAV-09.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV09.SA-F,td-VAV09,SA-F,TROOPD-NAE01/FC-3.VAV-09.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV09.DPR-O,td-VAV09,DPR-O,TROOPD-NAE01/FC-3.VAV-09.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV09.SAFLOW-SP,td-VAV09,SAFLOW-SP,TROOPD-NAE01/FC-3.VAV-09.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV09.OCC-SCHEDULE,td-VAV09,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAV-09.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV09.OCC-CLG-SP,td-VAV09,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-09.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV09.OCC-HTG-SP,td-VAV09,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-09.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV09.UNOCC-CLG-SP,td-VAV09,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-09.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV09.UNOCC-HTG-SP,td-VAV09,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-09.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV10.ZN-T,td-VAV10,ZN-T,TROOPD-NAE01/FC-3.VAV-10.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV10.ZN-SP,td-VAV10,ZN-SP,TROOPD-NAE01/FC-3.VAV-10.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV10.DA-T,td-VAV10,DA-T,TROOPD-NAE01/FC-3.VAV-10.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV10.SA-F,td-VAV10,SA-F,TROOPD-NAE01/FC-3.VAV-10.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV10.DPR-O,td-VAV10,DPR-O,TROOPD-NAE01/FC-3.VAV-10.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV10.SAFLOW-SP,td-VAV10,SAFLOW-SP,TROOPD-NAE01/FC-3.VAV-10.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV10.OCC-SCHEDULE,td-VAV10,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAV-10.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV10.OCC-CLG-SP,td-VAV10,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-10.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV10.OCC-HTG-SP,td-VAV10,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-10.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV10.UNOCC-CLG-SP,td-VAV10,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-10.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV10.UNOCC-HTG-SP,td-VAV10,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-10.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV11.ZN-T,td-VAV11,ZN-T,TROOPD-NAE01/FC-3.VAV-11.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV11.ZN-SP,td-VAV11,ZN-SP,TROOPD-NAE01/FC-3.VAV-11.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV11.DA-T,td-VAV11,DA-T,TROOPD-NAE01/FC-3.VAV-11.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV11.SA-F,td-VAV11,SA-F,TROOPD-NAE01/FC-3.VAV-11.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV11.DPR-O,td-VAV11,DPR-O,TROOPD-NAE01/FC-3.VAV-11.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV11.SAFLOW-SP,td-VAV11,SAFLOW-SP,TROOPD-NAE01/FC-3.VAV-11.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV11.OCC-SCHEDULE,td-VAV11,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAV-11.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV11.OCC-CLG-SP,td-VAV11,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-11.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV11.OCC-HTG-SP,td-VAV11,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-11.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV11.UNOCC-CLG-SP,td-VAV11,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-11.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV11.UNOCC-HTG-SP,td-VAV11,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-11.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV12.ZN-T,td-VAV12,ZN-T,TROOPD-NAE01/FC-3.VAV-12.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV12.ZN-SP,td-VAV12,ZN-SP,TROOPD-NAE01/FC-3.VAV-12.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV12.DA-T,td-VAV12,DA-T,TROOPD-NAE01/FC-3.VAV-12.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV12.SA-F,td-VAV12,SA-F,TROOPD-NAE01/FC-3.VAV-12.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV12.DPR-O,td-VAV12,DPR-O,TROOPD-NAE01/FC-3.VAV-12.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV12.SAFLOW-SP,td-VAV12,SAFLOW-SP,TROOPD-NAE01/FC-3.VAV-12.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV12.OCC-SCHEDULE,td-VAV12,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAV-12.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV12.OCC-CLG-SP,td-VAV12,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-12.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV12.OCC-HTG-SP,td-VAV12,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-12.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV12.UNOCC-CLG-SP,td-VAV12,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-12.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV12.UNOCC-HTG-SP,td-VAV12,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-12.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV13.ZN-T,td-VAV13,ZN-T,TROOPD-NAE01/FC-3.VAV-13.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV13.ZN-SP,td-VAV13,ZN-SP,TROOPD-NAE01/FC-3.VAV-13.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV13.DA-T,td-VAV13,DA-T,TROOPD-NAE01/FC-3.VAV-13.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV13.SA-F,td-VAV13,SA-F,TROOPD-NAE01/FC-3.VAV-13.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV13.DPR-O,td-VAV13,DPR-O,TROOPD-NAE01/FC-3.VAV-13.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV13.SAFLOW-SP,td-VAV13,SAFLOW-SP,TROOPD-NAE01/FC-3.VAV-13.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV13.OCC-SCHEDULE,td-VAV13,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAV-13.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV13.OCC-CLG-SP,td-VAV13,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-13.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV13.OCC-HTG-SP,td-VAV13,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-13.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV13.UNOCC-CLG-SP,td-VAV13,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAV-13.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV13.UNOCC-HTG-SP,td-VAV13,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAV-13.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV14.ZN-T,td-VAV14,ZN-T,TROOPD-NAE01/FC-4.VAV-14.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV14.ZN-SP,td-VAV14,ZN-SP,TROOPD-NAE01/FC-4.VAV-14.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV14.DA-T,td-VAV14,DA-T,TROOPD-NAE01/FC-4.VAV-14.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV14.SA-F,td-VAV14,SA-F,TROOPD-NAE01/FC-4.VAV-14.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV14.DPR-O,td-VAV14,DPR-O,TROOPD-NAE01/FC-4.VAV-14.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV14.SAFLOW-SP,td-VAV14,SAFLOW-SP,TROOPD-NAE01/FC-4.VAV-14.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV14.OCC-SCHEDULE,td-VAV14,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAV-14.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV14.OCC-CLG-SP,td-VAV14,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-14.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV14.OCC-HTG-SP,td-VAV14,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-14.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV14.UNOCC-CLG-SP,td-VAV14,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-14.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV14.UNOCC-HTG-SP,td-VAV14,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-14.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV15.ZN-T,td-VAV15,ZN-T,TROOPD-NAE01/FC-4.VAV-15.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV15.ZN-SP,td-VAV15,ZN-SP,TROOPD-NAE01/FC-4.VAV-15.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV15.DA-T,td-VAV15,DA-T,TROOPD-NAE01/FC-4.VAV-15.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV15.SA-F,td-VAV15,SA-F,TROOPD-NAE01/FC-4.VAV-15.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV15.DPR-O,td-VAV15,DPR-O,TROOPD-NAE01/FC-4.VAV-15.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV15.SAFLOW-SP,td-VAV15,SAFLOW-SP,TROOPD-NAE01/FC-4.VAV-15.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV15.OCC-SCHEDULE,td-VAV15,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAV-15.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV15.OCC-CLG-SP,td-VAV15,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-15.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV15.OCC-HTG-SP,td-VAV15,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-15.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV15.UNOCC-CLG-SP,td-VAV15,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-15.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV15.UNOCC-HTG-SP,td-VAV15,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-15.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV16.ZN-T,td-VAV16,ZN-T,TROOPD-NAE01/FC-4.VAV-16.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV16.ZN-SP,td-VAV16,ZN-SP,TROOPD-NAE01/FC-4.VAV-16.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV16.DA-T,td-VAV16,DA-T,TROOPD-NAE01/FC-4.VAV-16.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV16.SA-F,td-VAV16,SA-F,TROOPD-NAE01/FC-4.VAV-16.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV16.DPR-O,td-VAV16,DPR-O,TROOPD-NAE01/FC-4.VAV-16.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV16.SAFLOW-SP,td-VAV16,SAFLOW-SP,TROOPD-NAE01/FC-4.VAV-16.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV16.OCC-SCHEDULE,td-VAV16,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAV-16.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV16.OCC-CLG-SP,td-VAV16,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-16.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV16.OCC-HTG-SP,td-VAV16,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-16.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV16.UNOCC-CLG-SP,td-VAV16,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-16.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV16.UNOCC-HTG-SP,td-VAV16,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-16.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV17.ZN-T,td-VAV17,ZN-T,TROOPD-NAE01/FC-4.VAV-17.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV17.ZN-SP,td-VAV17,ZN-SP,TROOPD-NAE01/FC-4.VAV-17.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV17.DA-T,td-VAV17,DA-T,TROOPD-NAE01/FC-4.VAV-17.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV17.SA-F,td-VAV17,SA-F,TROOPD-NAE01/FC-4.VAV-17.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV17.DPR-O,td-VAV17,DPR-O,TROOPD-NAE01/FC-4.VAV-17.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV17.SAFLOW-SP,td-VAV17,SAFLOW-SP,TROOPD-NAE01/FC-4.VAV-17.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV17.OCC-SCHEDULE,td-VAV17,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAV-17.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV17.OCC-CLG-SP,td-VAV17,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-17.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV17.OCC-HTG-SP,td-VAV17,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-17.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV17.UNOCC-CLG-SP,td-VAV17,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-17.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV17.UNOCC-HTG-SP,td-VAV17,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-17.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV18.ZN-T,td-VAV18,ZN-T,TROOPD-NAE01/FC-4.VAV-18.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV18.ZN-SP,td-VAV18,ZN-SP,TROOPD-NAE01/FC-4.VAV-18.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV18.DA-T,td-VAV18,DA-T,TROOPD-NAE01/FC-4.VAV-18.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV18.SA-F,td-VAV18,SA-F,TROOPD-NAE01/FC-4.VAV-18.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV18.DPR-O,td-VAV18,DPR-O,TROOPD-NAE01/FC-4.VAV-18.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV18.SAFLOW-SP,td-VAV18,SAFLOW-SP,TROOPD-NAE01/FC-4.VAV-18.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV18.OCC-SCHEDULE,td-VAV18,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAV-18.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV18.OCC-CLG-SP,td-VAV18,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-18.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV18.OCC-HTG-SP,td-VAV18,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-18.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV18.UNOCC-CLG-SP,td-VAV18,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-18.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV18.UNOCC-HTG-SP,td-VAV18,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-18.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAV19.ZN-T,td-VAV19,ZN-T,TROOPD-NAE01/FC-4.VAV-19.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAV19.ZN-SP,td-VAV19,ZN-SP,TROOPD-NAE01/FC-4.VAV-19.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAV19.DA-T,td-VAV19,DA-T,TROOPD-NAE01/FC-4.VAV-19.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAV19.SA-F,td-VAV19,SA-F,TROOPD-NAE01/FC-4.VAV-19.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAV19.DPR-O,td-VAV19,DPR-O,TROOPD-NAE01/FC-4.VAV-19.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAV19.SAFLOW-SP,td-VAV19,SAFLOW-SP,TROOPD-NAE01/FC-4.VAV-19.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAV19.OCC-SCHEDULE,td-VAV19,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAV-19.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAV19.OCC-CLG-SP,td-VAV19,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-19.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAV19.OCC-HTG-SP,td-VAV19,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-19.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAV19.UNOCC-CLG-SP,td-VAV19,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAV-19.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAV19.UNOCC-HTG-SP,td-VAV19,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAV-19.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE01.ZN-T,td-VAVE01,ZN-T,TROOPD-NAE01/FC-2.VAVE-01.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE01.ZN-SP,td-VAVE01,ZN-SP,TROOPD-NAE01/FC-2.VAVE-01.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE01.DA-T,td-VAVE01,DA-T,TROOPD-NAE01/FC-2.VAVE-01.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE01.SA-F,td-VAVE01,SA-F,TROOPD-NAE01/FC-2.VAVE-01.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE01.DPR-O,td-VAVE01,DPR-O,TROOPD-NAE01/FC-2.VAVE-01.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE01.SAFLOW-SP,td-VAVE01,SAFLOW-SP,TROOPD-NAE01/FC-2.VAVE-01.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE01.OCC-SCHEDULE,td-VAVE01,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAVE-01.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE01.OCC-CLG-SP,td-VAVE01,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-01.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE01.OCC-HTG-SP,td-VAVE01,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-01.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE01.UNOCC-CLG-SP,td-VAVE01,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-01.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE01.UNOCC-HTG-SP,td-VAVE01,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-01.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE01.HTG-E,td-VAVE01,HTG-E,TROOPD-NAE01/FC-2.VAVE-01.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE01.HTG-O,td-VAVE01,HTG-O,TROOPD-NAE01/FC-2.VAVE-01.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE02.ZN-T,td-VAVE02,ZN-T,TROOPD-NAE01/FC-2.VAVE-02.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE02.ZN-SP,td-VAVE02,ZN-SP,TROOPD-NAE01/FC-2.VAVE-02.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE02.DA-T,td-VAVE02,DA-T,TROOPD-NAE01/FC-2.VAVE-02.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE02.SA-F,td-VAVE02,SA-F,TROOPD-NAE01/FC-2.VAVE-02.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE02.DPR-O,td-VAVE02,DPR-O,TROOPD-NAE01/FC-2.VAVE-02.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE02.SAFLOW-SP,td-VAVE02,SAFLOW-SP,TROOPD-NAE01/FC-2.VAVE-02.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE02.OCC-SCHEDULE,td-VAVE02,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAVE-02.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE02.OCC-CLG-SP,td-VAVE02,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-02.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE02.OCC-HTG-SP,td-VAVE02,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-02.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE02.UNOCC-CLG-SP,td-VAVE02,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-02.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE02.UNOCC-HTG-SP,td-VAVE02,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-02.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE02.HTG-E,td-VAVE02,HTG-E,TROOPD-NAE01/FC-2.VAVE-02.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE02.HTG-O,td-VAVE02,HTG-O,TROOPD-NAE01/FC-2.VAVE-02.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE03.ZN-T,td-VAVE03,ZN-T,TROOPD-NAE01/FC-2.VAVE-03.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE03.ZN-SP,td-VAVE03,ZN-SP,TROOPD-NAE01/FC-2.VAVE-03.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE03.DA-T,td-VAVE03,DA-T,TROOPD-NAE01/FC-2.VAVE-03.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE03.SA-F,td-VAVE03,SA-F,TROOPD-NAE01/FC-2.VAVE-03.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE03.DPR-O,td-VAVE03,DPR-O,TROOPD-NAE01/FC-2.VAVE-03.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE03.SAFLOW-SP,td-VAVE03,SAFLOW-SP,TROOPD-NAE01/FC-2.VAVE-03.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE03.OCC-SCHEDULE,td-VAVE03,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAVE-03.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE03.OCC-CLG-SP,td-VAVE03,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-03.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE03.OCC-HTG-SP,td-VAVE03,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-03.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE03.UNOCC-CLG-SP,td-VAVE03,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-03.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE03.UNOCC-HTG-SP,td-VAVE03,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-03.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE03.HTG-E,td-VAVE03,HTG-E,TROOPD-NAE01/FC-2.VAVE-03.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE03.HTG-O,td-VAVE03,HTG-O,TROOPD-NAE01/FC-2.VAVE-03.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE04.ZN-T,td-VAVE04,ZN-T,TROOPD-NAE01/FC-2.VAVE-04.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE04.ZN-SP,td-VAVE04,ZN-SP,TROOPD-NAE01/FC-2.VAVE-04.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE04.DA-T,td-VAVE04,DA-T,TROOPD-NAE01/FC-2.VAVE-04.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE04.SA-F,td-VAVE04,SA-F,TROOPD-NAE01/FC-2.VAVE-04.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE04.DPR-O,td-VAVE04,DPR-O,TROOPD-NAE01/FC-2.VAVE-04.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE04.SAFLOW-SP,td-VAVE04,SAFLOW-SP,TROOPD-NAE01/FC-2.VAVE-04.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE04.OCC-SCHEDULE,td-VAVE04,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAVE-04.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE04.OCC-CLG-SP,td-VAVE04,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-04.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE04.OCC-HTG-SP,td-VAVE04,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-04.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE04.UNOCC-CLG-SP,td-VAVE04,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-04.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE04.UNOCC-HTG-SP,td-VAVE04,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-04.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE04.HTG-E,td-VAVE04,HTG-E,TROOPD-NAE01/FC-2.VAVE-04.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE04.HTG-O,td-VAVE04,HTG-O,TROOPD-NAE01/FC-2.VAVE-04.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE05.ZN-T,td-VAVE05,ZN-T,TROOPD-NAE01/FC-2.VAVE-05.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE05.ZN-SP,td-VAVE05,ZN-SP,TROOPD-NAE01/FC-2.VAVE-05.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE05.DA-T,td-VAVE05,DA-T,TROOPD-NAE01/FC-2.VAVE-05.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE05.SA-F,td-VAVE05,SA-F,TROOPD-NAE01/FC-2.VAVE-05.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE05.DPR-O,td-VAVE05,DPR-O,TROOPD-NAE01/FC-2.VAVE-05.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE05.SAFLOW-SP,td-VAVE05,SAFLOW-SP,TROOPD-NAE01/FC-2.VAVE-05.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE05.OCC-SCHEDULE,td-VAVE05,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAVE-05.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE05.OCC-CLG-SP,td-VAVE05,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-05.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE05.OCC-HTG-SP,td-VAVE05,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-05.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE05.UNOCC-CLG-SP,td-VAVE05,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-05.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE05.UNOCC-HTG-SP,td-VAVE05,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-05.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE05.HTG-E,td-VAVE05,HTG-E,TROOPD-NAE01/FC-2.VAVE-05.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE05.HTG-O,td-VAVE05,HTG-O,TROOPD-NAE01/FC-2.VAVE-05.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE06.ZN-T,td-VAVE06,ZN-T,TROOPD-NAE01/FC-2.VAVE-06.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE06.ZN-SP,td-VAVE06,ZN-SP,TROOPD-NAE01/FC-2.VAVE-06.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE06.DA-T,td-VAVE06,DA-T,TROOPD-NAE01/FC-2.VAVE-06.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE06.SA-F,td-VAVE06,SA-F,TROOPD-NAE01/FC-2.VAVE-06.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE06.DPR-O,td-VAVE06,DPR-O,TROOPD-NAE01/FC-2.VAVE-06.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE06.SAFLOW-SP,td-VAVE06,SAFLOW-SP,TROOPD-NAE01/FC-2.VAVE-06.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE06.OCC-SCHEDULE,td-VAVE06,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAVE-06.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE06.OCC-CLG-SP,td-VAVE06,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-06.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE06.OCC-HTG-SP,td-VAVE06,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-06.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE06.UNOCC-CLG-SP,td-VAVE06,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-06.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE06.UNOCC-HTG-SP,td-VAVE06,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-06.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE06.HTG-E,td-VAVE06,HTG-E,TROOPD-NAE01/FC-2.VAVE-06.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE06.HTG-O,td-VAVE06,HTG-O,TROOPD-NAE01/FC-2.VAVE-06.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE07.ZN-T,td-VAVE07,ZN-T,TROOPD-NAE01/FC-2.VAVE-07.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE07.ZN-SP,td-VAVE07,ZN-SP,TROOPD-NAE01/FC-2.VAVE-07.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE07.DA-T,td-VAVE07,DA-T,TROOPD-NAE01/FC-2.VAVE-07.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE07.SA-F,td-VAVE07,SA-F,TROOPD-NAE01/FC-2.VAVE-07.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE07.DPR-O,td-VAVE07,DPR-O,TROOPD-NAE01/FC-2.VAVE-07.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE07.SAFLOW-SP,td-VAVE07,SAFLOW-SP,TROOPD-NAE01/FC-2.VAVE-07.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE07.OCC-SCHEDULE,td-VAVE07,OCC-SCHEDULE,TROOPD-NAE01/FC-2.VAVE-07.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE07.OCC-CLG-SP,td-VAVE07,OCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-07.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE07.OCC-HTG-SP,td-VAVE07,OCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-07.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE07.UNOCC-CLG-SP,td-VAVE07,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.VAVE-07.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE07.UNOCC-HTG-SP,td-VAVE07,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.VAVE-07.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE07.HTG-E,td-VAVE07,HTG-E,TROOPD-NAE01/FC-2.VAVE-07.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE07.HTG-O,td-VAVE07,HTG-O,TROOPD-NAE01/FC-2.VAVE-07.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE08.ZN-T,td-VAVE08,ZN-T,TROOPD-NAE01/FC-3.VAVE-08.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE08.ZN-SP,td-VAVE08,ZN-SP,TROOPD-NAE01/FC-3.VAVE-08.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE08.DA-T,td-VAVE08,DA-T,TROOPD-NAE01/FC-3.VAVE-08.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE08.SA-F,td-VAVE08,SA-F,TROOPD-NAE01/FC-3.VAVE-08.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE08.DPR-O,td-VAVE08,DPR-O,TROOPD-NAE01/FC-3.VAVE-08.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE08.SAFLOW-SP,td-VAVE08,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-08.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE08.OCC-SCHEDULE,td-VAVE08,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-08.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE08.OCC-CLG-SP,td-VAVE08,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-08.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE08.OCC-HTG-SP,td-VAVE08,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-08.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE08.UNOCC-CLG-SP,td-VAVE08,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-08.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE08.UNOCC-HTG-SP,td-VAVE08,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-08.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE08.HTG-E,td-VAVE08,HTG-E,TROOPD-NAE01/FC-3.VAVE-08.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE08.HTG-O,td-VAVE08,HTG-O,TROOPD-NAE01/FC-3.VAVE-08.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE09.ZN-T,td-VAVE09,ZN-T,TROOPD-NAE01/FC-3.VAVE-09.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE09.ZN-SP,td-VAVE09,ZN-SP,TROOPD-NAE01/FC-3.VAVE-09.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE09.DA-T,td-VAVE09,DA-T,TROOPD-NAE01/FC-3.VAVE-09.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE09.SA-F,td-VAVE09,SA-F,TROOPD-NAE01/FC-3.VAVE-09.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE09.DPR-O,td-VAVE09,DPR-O,TROOPD-NAE01/FC-3.VAVE-09.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE09.SAFLOW-SP,td-VAVE09,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-09.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE09.OCC-SCHEDULE,td-VAVE09,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-09.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE09.OCC-CLG-SP,td-VAVE09,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-09.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE09.OCC-HTG-SP,td-VAVE09,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-09.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE09.UNOCC-CLG-SP,td-VAVE09,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-09.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE09.UNOCC-HTG-SP,td-VAVE09,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-09.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE09.HTG-E,td-VAVE09,HTG-E,TROOPD-NAE01/FC-3.VAVE-09.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE09.HTG-O,td-VAVE09,HTG-O,TROOPD-NAE01/FC-3.VAVE-09.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE10.ZN-T,td-VAVE10,ZN-T,TROOPD-NAE01/FC-3.VAVE-10.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE10.ZN-SP,td-VAVE10,ZN-SP,TROOPD-NAE01/FC-3.VAVE-10.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE10.DA-T,td-VAVE10,DA-T,TROOPD-NAE01/FC-3.VAVE-10.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE10.SA-F,td-VAVE10,SA-F,TROOPD-NAE01/FC-3.VAVE-10.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE10.DPR-O,td-VAVE10,DPR-O,TROOPD-NAE01/FC-3.VAVE-10.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE10.SAFLOW-SP,td-VAVE10,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-10.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE10.OCC-SCHEDULE,td-VAVE10,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-10.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE10.OCC-CLG-SP,td-VAVE10,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-10.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE10.OCC-HTG-SP,td-VAVE10,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-10.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE10.UNOCC-CLG-SP,td-VAVE10,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-10.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE10.UNOCC-HTG-SP,td-VAVE10,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-10.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE10.HTG-E,td-VAVE10,HTG-E,TROOPD-NAE01/FC-3.VAVE-10.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE10.HTG-O,td-VAVE10,HTG-O,TROOPD-NAE01/FC-3.VAVE-10.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE11.ZN-T,td-VAVE11,ZN-T,TROOPD-NAE01/FC-3.VAVE-11.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE11.ZN-SP,td-VAVE11,ZN-SP,TROOPD-NAE01/FC-3.VAVE-11.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE11.DA-T,td-VAVE11,DA-T,TROOPD-NAE01/FC-3.VAVE-11.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE11.SA-F,td-VAVE11,SA-F,TROOPD-NAE01/FC-3.VAVE-11.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE11.DPR-O,td-VAVE11,DPR-O,TROOPD-NAE01/FC-3.VAVE-11.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE11.SAFLOW-SP,td-VAVE11,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-11.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE11.OCC-SCHEDULE,td-VAVE11,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-11.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE11.OCC-CLG-SP,td-VAVE11,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-11.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE11.OCC-HTG-SP,td-VAVE11,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-11.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE11.UNOCC-CLG-SP,td-VAVE11,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-11.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE11.UNOCC-HTG-SP,td-VAVE11,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-11.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE11.HTG-E,td-VAVE11,HTG-E,TROOPD-NAE01/FC-3.VAVE-11.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE11.HTG-O,td-VAVE11,HTG-O,TROOPD-NAE01/FC-3.VAVE-11.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE12.ZN-T,td-VAVE12,ZN-T,TROOPD-NAE01/FC-3.VAVE-12.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE12.ZN-SP,td-VAVE12,ZN-SP,TROOPD-NAE01/FC-3.VAVE-12.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE12.DA-T,td-VAVE12,DA-T,TROOPD-NAE01/FC-3.VAVE-12.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE12.SA-F,td-VAVE12,SA-F,TROOPD-NAE01/FC-3.VAVE-12.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE12.DPR-O,td-VAVE12,DPR-O,TROOPD-NAE01/FC-3.VAVE-12.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE12.SAFLOW-SP,td-VAVE12,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-12.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE12.OCC-SCHEDULE,td-VAVE12,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-12.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE12.OCC-CLG-SP,td-VAVE12,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-12.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE12.OCC-HTG-SP,td-VAVE12,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-12.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE12.UNOCC-CLG-SP,td-VAVE12,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-12.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE12.UNOCC-HTG-SP,td-VAVE12,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-12.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE12.HTG-E,td-VAVE12,HTG-E,TROOPD-NAE01/FC-3.VAVE-12.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE12.HTG-O,td-VAVE12,HTG-O,TROOPD-NAE01/FC-3.VAVE-12.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE13.ZN-T,td-VAVE13,ZN-T,TROOPD-NAE01/FC-3.VAVE-13.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE13.ZN-SP,td-VAVE13,ZN-SP,TROOPD-NAE01/FC-3.VAVE-13.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE13.DA-T,td-VAVE13,DA-T,TROOPD-NAE01/FC-3.VAVE-13.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE13.SA-F,td-VAVE13,SA-F,TROOPD-NAE01/FC-3.VAVE-13.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE13.DPR-O,td-VAVE13,DPR-O,TROOPD-NAE01/FC-3.VAVE-13.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE13.SAFLOW-SP,td-VAVE13,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-13.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE13.OCC-SCHEDULE,td-VAVE13,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-13.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE13.OCC-CLG-SP,td-VAVE13,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-13.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE13.OCC-HTG-SP,td-VAVE13,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-13.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE13.UNOCC-CLG-SP,td-VAVE13,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-13.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE13.UNOCC-HTG-SP,td-VAVE13,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-13.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE13.HTG-E,td-VAVE13,HTG-E,TROOPD-NAE01/FC-3.VAVE-13.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE13.HTG-O,td-VAVE13,HTG-O,TROOPD-NAE01/FC-3.VAVE-13.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE14.ZN-T,td-VAVE14,ZN-T,TROOPD-NAE01/FC-3.VAVE-14.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE14.ZN-SP,td-VAVE14,ZN-SP,TROOPD-NAE01/FC-3.VAVE-14.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE14.DA-T,td-VAVE14,DA-T,TROOPD-NAE01/FC-3.VAVE-14.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE14.SA-F,td-VAVE14,SA-F,TROOPD-NAE01/FC-3.VAVE-14.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE14.DPR-O,td-VAVE14,DPR-O,TROOPD-NAE01/FC-3.VAVE-14.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE14.SAFLOW-SP,td-VAVE14,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-14.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE14.OCC-SCHEDULE,td-VAVE14,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-14.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE14.OCC-CLG-SP,td-VAVE14,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-14.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE14.OCC-HTG-SP,td-VAVE14,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-14.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE14.UNOCC-CLG-SP,td-VAVE14,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-14.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE14.UNOCC-HTG-SP,td-VAVE14,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-14.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE14.HTG-E,td-VAVE14,HTG-E,TROOPD-NAE01/FC-3.VAVE-14.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE14.HTG-O,td-VAVE14,HTG-O,TROOPD-NAE01/FC-3.VAVE-14.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE15.ZN-T,td-VAVE15,ZN-T,TROOPD-NAE01/FC-4.VAVE-15.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE15.ZN-SP,td-VAVE15,ZN-SP,TROOPD-NAE01/FC-4.VAVE-15.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE15.DA-T,td-VAVE15,DA-T,TROOPD-NAE01/FC-4.VAVE-15.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE15.SA-F,td-VAVE15,SA-F,TROOPD-NAE01/FC-4.VAVE-15.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE15.DPR-O,td-VAVE15,DPR-O,TROOPD-NAE01/FC-4.VAVE-15.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE15.SAFLOW-SP,td-VAVE15,SAFLOW-SP,TROOPD-NAE01/FC-4.VAVE-15.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE15.OCC-SCHEDULE,td-VAVE15,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAVE-15.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE15.OCC-CLG-SP,td-VAVE15,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-15.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE15.OCC-HTG-SP,td-VAVE15,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-15.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE15.UNOCC-CLG-SP,td-VAVE15,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-15.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE15.UNOCC-HTG-SP,td-VAVE15,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-15.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE15.HTG-E,td-VAVE15,HTG-E,TROOPD-NAE01/FC-4.VAVE-15.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE15.HTG-O,td-VAVE15,HTG-O,TROOPD-NAE01/FC-4.VAVE-15.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE16.ZN-T,td-VAVE16,ZN-T,TROOPD-NAE01/FC-4.VAVE-16.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE16.ZN-SP,td-VAVE16,ZN-SP,TROOPD-NAE01/FC-4.VAVE-16.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE16.DA-T,td-VAVE16,DA-T,TROOPD-NAE01/FC-4.VAVE-16.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE16.SA-F,td-VAVE16,SA-F,TROOPD-NAE01/FC-4.VAVE-16.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE16.DPR-O,td-VAVE16,DPR-O,TROOPD-NAE01/FC-4.VAVE-16.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE16.SAFLOW-SP,td-VAVE16,SAFLOW-SP,TROOPD-NAE01/FC-4.VAVE-16.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE16.OCC-SCHEDULE,td-VAVE16,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAVE-16.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE16.OCC-CLG-SP,td-VAVE16,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-16.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE16.OCC-HTG-SP,td-VAVE16,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-16.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE16.UNOCC-CLG-SP,td-VAVE16,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-16.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE16.UNOCC-HTG-SP,td-VAVE16,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-16.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE16.HTG-E,td-VAVE16,HTG-E,TROOPD-NAE01/FC-4.VAVE-16.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE16.HTG-O,td-VAVE16,HTG-O,TROOPD-NAE01/FC-4.VAVE-16.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE17.ZN-T,td-VAVE17,ZN-T,TROOPD-NAE01/FC-4.VAVE-17.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE17.ZN-SP,td-VAVE17,ZN-SP,TROOPD-NAE01/FC-4.VAVE-17.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE17.DA-T,td-VAVE17,DA-T,TROOPD-NAE01/FC-4.VAVE-17.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE17.SA-F,td-VAVE17,SA-F,TROOPD-NAE01/FC-4.VAVE-17.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE17.DPR-O,td-VAVE17,DPR-O,TROOPD-NAE01/FC-4.VAVE-17.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE17.SAFLOW-SP,td-VAVE17,SAFLOW-SP,TROOPD-NAE01/FC-4.VAVE-17.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE17.OCC-SCHEDULE,td-VAVE17,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAVE-17.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE17.OCC-CLG-SP,td-VAVE17,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-17.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE17.OCC-HTG-SP,td-VAVE17,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-17.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE17.UNOCC-CLG-SP,td-VAVE17,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-17.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE17.UNOCC-HTG-SP,td-VAVE17,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-17.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE17.HTG-E,td-VAVE17,HTG-E,TROOPD-NAE01/FC-4.VAVE-17.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE17.HTG-O,td-VAVE17,HTG-O,TROOPD-NAE01/FC-4.VAVE-17.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE18.ZN-T,td-VAVE18,ZN-T,TROOPD-NAE01/FC-4.VAVE-18.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE18.ZN-SP,td-VAVE18,ZN-SP,TROOPD-NAE01/FC-4.VAVE-18.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE18.DA-T,td-VAVE18,DA-T,TROOPD-NAE01/FC-4.VAVE-18.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE18.SA-F,td-VAVE18,SA-F,TROOPD-NAE01/FC-4.VAVE-18.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE18.DPR-O,td-VAVE18,DPR-O,TROOPD-NAE01/FC-4.VAVE-18.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE18.SAFLOW-SP,td-VAVE18,SAFLOW-SP,TROOPD-NAE01/FC-4.VAVE-18.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE18.OCC-SCHEDULE,td-VAVE18,OCC-SCHEDULE,TROOPD-NAE01/FC-4.VAVE-18.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE18.OCC-CLG-SP,td-VAVE18,OCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-18.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE18.OCC-HTG-SP,td-VAVE18,OCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-18.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE18.UNOCC-CLG-SP,td-VAVE18,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.VAVE-18.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE18.UNOCC-HTG-SP,td-VAVE18,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.VAVE-18.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE18.HTG-E,td-VAVE18,HTG-E,TROOPD-NAE01/FC-4.VAVE-18.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE18.HTG-O,td-VAVE18,HTG-O,TROOPD-NAE01/FC-4.VAVE-18.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-VAVE19.ZN-T,td-VAVE19,ZN-T,TROOPD-NAE01/FC-3.VAVE-19.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-VAVE19.ZN-SP,td-VAVE19,ZN-SP,TROOPD-NAE01/FC-3.VAVE-19.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-VAVE19.DA-T,td-VAVE19,DA-T,TROOPD-NAE01/FC-3.VAVE-19.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-VAVE19.SA-F,td-VAVE19,SA-F,TROOPD-NAE01/FC-3.VAVE-19.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-VAVE19.DPR-O,td-VAVE19,DPR-O,TROOPD-NAE01/FC-3.VAVE-19.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-VAVE19.SAFLOW-SP,td-VAVE19,SAFLOW-SP,TROOPD-NAE01/FC-3.VAVE-19.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-VAVE19.OCC-SCHEDULE,td-VAVE19,OCC-SCHEDULE,TROOPD-NAE01/FC-3.VAVE-19.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-VAVE19.OCC-CLG-SP,td-VAVE19,OCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-19.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-VAVE19.OCC-HTG-SP,td-VAVE19,OCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-19.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-VAVE19.UNOCC-CLG-SP,td-VAVE19,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.VAVE-19.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-VAVE19.UNOCC-HTG-SP,td-VAVE19,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.VAVE-19.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-VAVE19.HTG-E,td-VAVE19,HTG-E,TROOPD-NAE01/FC-3.VAVE-19.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-VAVE19.HTG-O,td-VAVE19,HTG-O,TROOPD-NAE01/FC-3.VAVE-19.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV01.ZN-T,td-FVAV01,ZN-T,TROOPD-NAE01/FC-2.FVAV-01.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV01.ZN-SP,td-FVAV01,ZN-SP,TROOPD-NAE01/FC-2.FVAV-01.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV01.DA-T,td-FVAV01,DA-T,TROOPD-NAE01/FC-2.FVAV-01.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV01.SA-F,td-FVAV01,SA-F,TROOPD-NAE01/FC-2.FVAV-01.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV01.DPR-O,td-FVAV01,DPR-O,TROOPD-NAE01/FC-2.FVAV-01.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV01.SAFLOW-SP,td-FVAV01,SAFLOW-SP,TROOPD-NAE01/FC-2.FVAV-01.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV01.OCC-SCHEDULE,td-FVAV01,OCC-SCHEDULE,TROOPD-NAE01/FC-2.FVAV-01.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV01.OCC-CLG-SP,td-FVAV01,OCC-CLG-SP,TROOPD-NAE01/FC-2.FVAV-01.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV01.OCC-HTG-SP,td-FVAV01,OCC-HTG-SP,TROOPD-NAE01/FC-2.FVAV-01.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV01.UNOCC-CLG-SP,td-FVAV01,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.FVAV-01.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV01.UNOCC-HTG-SP,td-FVAV01,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.FVAV-01.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV01.HTG-E,td-FVAV01,HTG-E,TROOPD-NAE01/FC-2.FVAV-01.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV01.HTG-O,td-FVAV01,HTG-O,TROOPD-NAE01/FC-2.FVAV-01.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV01.FAN-C,td-FVAV01,FAN-C,TROOPD-NAE01/FC-2.FVAV-01.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV01.FAN-S,td-FVAV01,FAN-S,TROOPD-NAE01/FC-2.FVAV-01.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV02.ZN-T,td-FVAV02,ZN-T,TROOPD-NAE01/FC-2.FVAV-02.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV02.ZN-SP,td-FVAV02,ZN-SP,TROOPD-NAE01/FC-2.FVAV-02.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV02.DA-T,td-FVAV02,DA-T,TROOPD-NAE01/FC-2.FVAV-02.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV02.SA-F,td-FVAV02,SA-F,TROOPD-NAE01/FC-2.FVAV-02.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV02.DPR-O,td-FVAV02,DPR-O,TROOPD-NAE01/FC-2.FVAV-02.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV02.SAFLOW-SP,td-FVAV02,SAFLOW-SP,TROOPD-NAE01/FC-2.FVAV-02.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV02.OCC-SCHEDULE,td-FVAV02,OCC-SCHEDULE,TROOPD-NAE01/FC-2.FVAV-02.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV02.OCC-CLG-SP,td-FVAV02,OCC-CLG-SP,TROOPD-NAE01/FC-2.FVAV-02.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV02.OCC-HTG-SP,td-FVAV02,OCC-HTG-SP,TROOPD-NAE01/FC-2.FVAV-02.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV02.UNOCC-CLG-SP,td-FVAV02,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.FVAV-02.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV02.UNOCC-HTG-SP,td-FVAV02,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.FVAV-02.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV02.HTG-E,td-FVAV02,HTG-E,TROOPD-NAE01/FC-2.FVAV-02.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV02.HTG-O,td-FVAV02,HTG-O,TROOPD-NAE01/FC-2.FVAV-02.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV02.FAN-C,td-FVAV02,FAN-C,TROOPD-NAE01/FC-2.FVAV-02.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV02.FAN-S,td-FVAV02,FAN-S,TROOPD-NAE01/FC-2.FVAV-02.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV03.ZN-T,td-FVAV03,ZN-T,TROOPD-NAE01/FC-2.FVAV-03.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV03.ZN-SP,td-FVAV03,ZN-SP,TROOPD-NAE01/FC-2.FVAV-03.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV03.DA-T,td-FVAV03,DA-T,TROOPD-NAE01/FC-2.FVAV-03.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV03.SA-F,td-FVAV03,SA-F,TROOPD-NAE01/FC-2.FVAV-03.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV03.DPR-O,td-FVAV03,DPR-O,TROOPD-NAE01/FC-2.FVAV-03.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV03.SAFLOW-SP,td-FVAV03,SAFLOW-SP,TROOPD-NAE01/FC-2.FVAV-03.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV03.OCC-SCHEDULE,td-FVAV03,OCC-SCHEDULE,TROOPD-NAE01/FC-2.FVAV-03.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV03.OCC-CLG-SP,td-FVAV03,OCC-CLG-SP,TROOPD-NAE01/FC-2.FVAV-03.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV03.OCC-HTG-SP,td-FVAV03,OCC-HTG-SP,TROOPD-NAE01/FC-2.FVAV-03.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV03.UNOCC-CLG-SP,td-FVAV03,UNOCC-CLG-SP,TROOPD-NAE01/FC-2.FVAV-03.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV03.UNOCC-HTG-SP,td-FVAV03,UNOCC-HTG-SP,TROOPD-NAE01/FC-2.FVAV-03.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV03.HTG-E,td-FVAV03,HTG-E,TROOPD-NAE01/FC-2.FVAV-03.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV03.HTG-O,td-FVAV03,HTG-O,TROOPD-NAE01/FC-2.FVAV-03.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV03.FAN-C,td-FVAV03,FAN-C,TROOPD-NAE01/FC-2.FVAV-03.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV03.FAN-S,td-FVAV03,FAN-S,TROOPD-NAE01/FC-2.FVAV-03.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV04.ZN-T,td-FVAV04,ZN-T,TROOPD-NAE01/FC-3.FVAV-04.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV04.ZN-SP,td-FVAV04,ZN-SP,TROOPD-NAE01/FC-3.FVAV-04.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV04.DA-T,td-FVAV04,DA-T,TROOPD-NAE01/FC-3.FVAV-04.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV04.SA-F,td-FVAV04,SA-F,TROOPD-NAE01/FC-3.FVAV-04.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV04.DPR-O,td-FVAV04,DPR-O,TROOPD-NAE01/FC-3.FVAV-04.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV04.SAFLOW-SP,td-FVAV04,SAFLOW-SP,TROOPD-NAE01/FC-3.FVAV-04.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV04.OCC-SCHEDULE,td-FVAV04,OCC-SCHEDULE,TROOPD-NAE01/FC-3.FVAV-04.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV04.OCC-CLG-SP,td-FVAV04,OCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-04.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV04.OCC-HTG-SP,td-FVAV04,OCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-04.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV04.UNOCC-CLG-SP,td-FVAV04,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-04.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV04.UNOCC-HTG-SP,td-FVAV04,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-04.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV04.HTG-E,td-FVAV04,HTG-E,TROOPD-NAE01/FC-3.FVAV-04.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV04.HTG-O,td-FVAV04,HTG-O,TROOPD-NAE01/FC-3.FVAV-04.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV04.FAN-C,td-FVAV04,FAN-C,TROOPD-NAE01/FC-3.FVAV-04.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV04.FAN-S,td-FVAV04,FAN-S,TROOPD-NAE01/FC-3.FVAV-04.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV05.ZN-T,td-FVAV05,ZN-T,TROOPD-NAE01/FC-3.FVAV-05.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV05.ZN-SP,td-FVAV05,ZN-SP,TROOPD-NAE01/FC-3.FVAV-05.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV05.DA-T,td-FVAV05,DA-T,TROOPD-NAE01/FC-3.FVAV-05.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV05.SA-F,td-FVAV05,SA-F,TROOPD-NAE01/FC-3.FVAV-05.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV05.DPR-O,td-FVAV05,DPR-O,TROOPD-NAE01/FC-3.FVAV-05.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV05.SAFLOW-SP,td-FVAV05,SAFLOW-SP,TROOPD-NAE01/FC-3.FVAV-05.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV05.OCC-SCHEDULE,td-FVAV05,OCC-SCHEDULE,TROOPD-NAE01/FC-3.FVAV-05.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV05.OCC-CLG-SP,td-FVAV05,OCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-05.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV05.OCC-HTG-SP,td-FVAV05,OCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-05.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV05.UNOCC-CLG-SP,td-FVAV05,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-05.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV05.UNOCC-HTG-SP,td-FVAV05,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-05.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV05.HTG-E,td-FVAV05,HTG-E,TROOPD-NAE01/FC-3.FVAV-05.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV05.HTG-O,td-FVAV05,HTG-O,TROOPD-NAE01/FC-3.FVAV-05.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV05.FAN-C,td-FVAV05,FAN-C,TROOPD-NAE01/FC-3.FVAV-05.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV05.FAN-S,td-FVAV05,FAN-S,TROOPD-NAE01/FC-3.FVAV-05.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV06.ZN-T,td-FVAV06,ZN-T,TROOPD-NAE01/FC-4.FVAV-06.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV06.ZN-SP,td-FVAV06,ZN-SP,TROOPD-NAE01/FC-4.FVAV-06.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV06.DA-T,td-FVAV06,DA-T,TROOPD-NAE01/FC-4.FVAV-06.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV06.SA-F,td-FVAV06,SA-F,TROOPD-NAE01/FC-4.FVAV-06.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV06.DPR-O,td-FVAV06,DPR-O,TROOPD-NAE01/FC-4.FVAV-06.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV06.SAFLOW-SP,td-FVAV06,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-06.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV06.OCC-SCHEDULE,td-FVAV06,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-06.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV06.OCC-CLG-SP,td-FVAV06,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-06.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV06.OCC-HTG-SP,td-FVAV06,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-06.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV06.UNOCC-CLG-SP,td-FVAV06,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-06.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV06.UNOCC-HTG-SP,td-FVAV06,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-06.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV06.HTG-E,td-FVAV06,HTG-E,TROOPD-NAE01/FC-4.FVAV-06.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV06.HTG-O,td-FVAV06,HTG-O,TROOPD-NAE01/FC-4.FVAV-06.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV06.FAN-C,td-FVAV06,FAN-C,TROOPD-NAE01/FC-4.FVAV-06.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV06.FAN-S,td-FVAV06,FAN-S,TROOPD-NAE01/FC-4.FVAV-06.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV07.ZN-T,td-FVAV07,ZN-T,TROOPD-NAE01/FC-3.FVAV-07.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV07.ZN-SP,td-FVAV07,ZN-SP,TROOPD-NAE01/FC-3.FVAV-07.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV07.DA-T,td-FVAV07,DA-T,TROOPD-NAE01/FC-3.FVAV-07.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV07.SA-F,td-FVAV07,SA-F,TROOPD-NAE01/FC-3.FVAV-07.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV07.DPR-O,td-FVAV07,DPR-O,TROOPD-NAE01/FC-3.FVAV-07.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV07.SAFLOW-SP,td-FVAV07,SAFLOW-SP,TROOPD-NAE01/FC-3.FVAV-07.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV07.OCC-SCHEDULE,td-FVAV07,OCC-SCHEDULE,TROOPD-NAE01/FC-3.FVAV-07.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV07.OCC-CLG-SP,td-FVAV07,OCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-07.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV07.OCC-HTG-SP,td-FVAV07,OCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-07.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV07.UNOCC-CLG-SP,td-FVAV07,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-07.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV07.UNOCC-HTG-SP,td-FVAV07,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-07.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV07.HTG-E,td-FVAV07,HTG-E,TROOPD-NAE01/FC-3.FVAV-07.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV07.HTG-O,td-FVAV07,HTG-O,TROOPD-NAE01/FC-3.FVAV-07.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV07.FAN-C,td-FVAV07,FAN-C,TROOPD-NAE01/FC-3.FVAV-07.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV07.FAN-S,td-FVAV07,FAN-S,TROOPD-NAE01/FC-3.FVAV-07.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV08.ZN-T,td-FVAV08,ZN-T,TROOPD-NAE01/FC-3.FVAV-08.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV08.ZN-SP,td-FVAV08,ZN-SP,TROOPD-NAE01/FC-3.FVAV-08.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV08.DA-T,td-FVAV08,DA-T,TROOPD-NAE01/FC-3.FVAV-08.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV08.SA-F,td-FVAV08,SA-F,TROOPD-NAE01/FC-3.FVAV-08.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV08.DPR-O,td-FVAV08,DPR-O,TROOPD-NAE01/FC-3.FVAV-08.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV08.SAFLOW-SP,td-FVAV08,SAFLOW-SP,TROOPD-NAE01/FC-3.FVAV-08.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV08.OCC-SCHEDULE,td-FVAV08,OCC-SCHEDULE,TROOPD-NAE01/FC-3.FVAV-08.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV08.OCC-CLG-SP,td-FVAV08,OCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-08.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV08.OCC-HTG-SP,td-FVAV08,OCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-08.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV08.UNOCC-CLG-SP,td-FVAV08,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-08.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV08.UNOCC-HTG-SP,td-FVAV08,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-08.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV08.HTG-E,td-FVAV08,HTG-E,TROOPD-NAE01/FC-3.FVAV-08.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV08.HTG-O,td-FVAV08,HTG-O,TROOPD-NAE01/FC-3.FVAV-08.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV08.FAN-C,td-FVAV08,FAN-C,TROOPD-NAE01/FC-3.FVAV-08.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV08.FAN-S,td-FVAV08,FAN-S,TROOPD-NAE01/FC-3.FVAV-08.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV09.ZN-T,td-FVAV09,ZN-T,TROOPD-NAE01/FC-3.FVAV-09.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV09.ZN-SP,td-FVAV09,ZN-SP,TROOPD-NAE01/FC-3.FVAV-09.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV09.DA-T,td-FVAV09,DA-T,TROOPD-NAE01/FC-3.FVAV-09.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV09.SA-F,td-FVAV09,SA-F,TROOPD-NAE01/FC-3.FVAV-09.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV09.DPR-O,td-FVAV09,DPR-O,TROOPD-NAE01/FC-3.FVAV-09.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV09.SAFLOW-SP,td-FVAV09,SAFLOW-SP,TROOPD-NAE01/FC-3.FVAV-09.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV09.OCC-SCHEDULE,td-FVAV09,OCC-SCHEDULE,TROOPD-NAE01/FC-3.FVAV-09.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV09.OCC-CLG-SP,td-FVAV09,OCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-09.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV09.OCC-HTG-SP,td-FVAV09,OCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-09.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV09.UNOCC-CLG-SP,td-FVAV09,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-09.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV09.UNOCC-HTG-SP,td-FVAV09,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-09.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV09.HTG-E,td-FVAV09,HTG-E,TROOPD-NAE01/FC-3.FVAV-09.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV09.HTG-O,td-FVAV09,HTG-O,TROOPD-NAE01/FC-3.FVAV-09.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV09.FAN-C,td-FVAV09,FAN-C,TROOPD-NAE01/FC-3.FVAV-09.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV09.FAN-S,td-FVAV09,FAN-S,TROOPD-NAE01/FC-3.FVAV-09.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV10.ZN-T,td-FVAV10,ZN-T,TROOPD-NAE01/FC-3.FVAV-10.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV10.ZN-SP,td-FVAV10,ZN-SP,TROOPD-NAE01/FC-3.FVAV-10.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV10.DA-T,td-FVAV10,DA-T,TROOPD-NAE01/FC-3.FVAV-10.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV10.SA-F,td-FVAV10,SA-F,TROOPD-NAE01/FC-3.FVAV-10.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV10.DPR-O,td-FVAV10,DPR-O,TROOPD-NAE01/FC-3.FVAV-10.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV10.SAFLOW-SP,td-FVAV10,SAFLOW-SP,TROOPD-NAE01/FC-3.FVAV-10.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV10.OCC-SCHEDULE,td-FVAV10,OCC-SCHEDULE,TROOPD-NAE01/FC-3.FVAV-10.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV10.OCC-CLG-SP,td-FVAV10,OCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-10.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV10.OCC-HTG-SP,td-FVAV10,OCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-10.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV10.UNOCC-CLG-SP,td-FVAV10,UNOCC-CLG-SP,TROOPD-NAE01/FC-3.FVAV-10.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV10.UNOCC-HTG-SP,td-FVAV10,UNOCC-HTG-SP,TROOPD-NAE01/FC-3.FVAV-10.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV10.HTG-E,td-FVAV10,HTG-E,TROOPD-NAE01/FC-3.FVAV-10.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV10.HTG-O,td-FVAV10,HTG-O,TROOPD-NAE01/FC-3.FVAV-10.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV10.FAN-C,td-FVAV10,FAN-C,TROOPD-NAE01/FC-3.FVAV-10.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV10.FAN-S,td-FVAV10,FAN-S,TROOPD-NAE01/FC-3.FVAV-10.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV11.ZN-T,td-FVAV11,ZN-T,TROOPD-NAE01/FC-4.FVAV-11.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV11.ZN-SP,td-FVAV11,ZN-SP,TROOPD-NAE01/FC-4.FVAV-11.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV11.DA-T,td-FVAV11,DA-T,TROOPD-NAE01/FC-4.FVAV-11.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV11.SA-F,td-FVAV11,SA-F,TROOPD-NAE01/FC-4.FVAV-11.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV11.DPR-O,td-FVAV11,DPR-O,TROOPD-NAE01/FC-4.FVAV-11.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV11.SAFLOW-SP,td-FVAV11,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-11.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV11.OCC-SCHEDULE,td-FVAV11,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-11.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV11.OCC-CLG-SP,td-FVAV11,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-11.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV11.OCC-HTG-SP,td-FVAV11,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-11.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV11.UNOCC-CLG-SP,td-FVAV11,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-11.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV11.UNOCC-HTG-SP,td-FVAV11,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-11.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV11.HTG-E,td-FVAV11,HTG-E,TROOPD-NAE01/FC-4.FVAV-11.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV11.HTG-O,td-FVAV11,HTG-O,TROOPD-NAE01/FC-4.FVAV-11.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV11.FAN-C,td-FVAV11,FAN-C,TROOPD-NAE01/FC-4.FVAV-11.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV11.FAN-S,td-FVAV11,FAN-S,TROOPD-NAE01/FC-4.FVAV-11.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV12.ZN-T,td-FVAV12,ZN-T,TROOPD-NAE01/FC-4.FVAV-12.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV12.ZN-SP,td-FVAV12,ZN-SP,TROOPD-NAE01/FC-4.FVAV-12.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV12.DA-T,td-FVAV12,DA-T,TROOPD-NAE01/FC-4.FVAV-12.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV12.SA-F,td-FVAV12,SA-F,TROOPD-NAE01/FC-4.FVAV-12.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV12.DPR-O,td-FVAV12,DPR-O,TROOPD-NAE01/FC-4.FVAV-12.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV12.SAFLOW-SP,td-FVAV12,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-12.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV12.OCC-SCHEDULE,td-FVAV12,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-12.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV12.OCC-CLG-SP,td-FVAV12,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-12.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV12.OCC-HTG-SP,td-FVAV12,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-12.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV12.UNOCC-CLG-SP,td-FVAV12,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-12.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV12.UNOCC-HTG-SP,td-FVAV12,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-12.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV12.HTG-E,td-FVAV12,HTG-E,TROOPD-NAE01/FC-4.FVAV-12.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV12.HTG-O,td-FVAV12,HTG-O,TROOPD-NAE01/FC-4.FVAV-12.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV12.FAN-C,td-FVAV12,FAN-C,TROOPD-NAE01/FC-4.FVAV-12.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV12.FAN-S,td-FVAV12,FAN-S,TROOPD-NAE01/FC-4.FVAV-12.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV13.ZN-T,td-FVAV13,ZN-T,TROOPD-NAE01/FC-4.FVAV-13.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV13.ZN-SP,td-FVAV13,ZN-SP,TROOPD-NAE01/FC-4.FVAV-13.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV13.DA-T,td-FVAV13,DA-T,TROOPD-NAE01/FC-4.FVAV-13.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV13.SA-F,td-FVAV13,SA-F,TROOPD-NAE01/FC-4.FVAV-13.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV13.DPR-O,td-FVAV13,DPR-O,TROOPD-NAE01/FC-4.FVAV-13.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV13.SAFLOW-SP,td-FVAV13,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-13.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV13.OCC-SCHEDULE,td-FVAV13,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-13.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV13.OCC-CLG-SP,td-FVAV13,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-13.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV13.OCC-HTG-SP,td-FVAV13,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-13.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV13.UNOCC-CLG-SP,td-FVAV13,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-13.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV13.UNOCC-HTG-SP,td-FVAV13,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-13.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV13.HTG-E,td-FVAV13,HTG-E,TROOPD-NAE01/FC-4.FVAV-13.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV13.HTG-O,td-FVAV13,HTG-O,TROOPD-NAE01/FC-4.FVAV-13.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV13.FAN-C,td-FVAV13,FAN-C,TROOPD-NAE01/FC-4.FVAV-13.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV13.FAN-S,td-FVAV13,FAN-S,TROOPD-NAE01/FC-4.FVAV-13.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV14.ZN-T,td-FVAV14,ZN-T,TROOPD-NAE01/FC-4.FVAV-14.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV14.ZN-SP,td-FVAV14,ZN-SP,TROOPD-NAE01/FC-4.FVAV-14.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV14.DA-T,td-FVAV14,DA-T,TROOPD-NAE01/FC-4.FVAV-14.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV14.SA-F,td-FVAV14,SA-F,TROOPD-NAE01/FC-4.FVAV-14.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV14.DPR-O,td-FVAV14,DPR-O,TROOPD-NAE01/FC-4.FVAV-14.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV14.SAFLOW-SP,td-FVAV14,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-14.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV14.OCC-SCHEDULE,td-FVAV14,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-14.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV14.OCC-CLG-SP,td-FVAV14,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-14.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV14.OCC-HTG-SP,td-FVAV14,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-14.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV14.UNOCC-CLG-SP,td-FVAV14,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-14.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV14.UNOCC-HTG-SP,td-FVAV14,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-14.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV14.HTG-E,td-FVAV14,HTG-E,TROOPD-NAE01/FC-4.FVAV-14.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV14.HTG-O,td-FVAV14,HTG-O,TROOPD-NAE01/FC-4.FVAV-14.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV14.FAN-C,td-FVAV14,FAN-C,TROOPD-NAE01/FC-4.FVAV-14.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV14.FAN-S,td-FVAV14,FAN-S,TROOPD-NAE01/FC-4.FVAV-14.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV15.ZN-T,td-FVAV15,ZN-T,TROOPD-NAE01/FC-4.FVAV-15.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV15.ZN-SP,td-FVAV15,ZN-SP,TROOPD-NAE01/FC-4.FVAV-15.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV15.DA-T,td-FVAV15,DA-T,TROOPD-NAE01/FC-4.FVAV-15.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV15.SA-F,td-FVAV15,SA-F,TROOPD-NAE01/FC-4.FVAV-15.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV15.DPR-O,td-FVAV15,DPR-O,TROOPD-NAE01/FC-4.FVAV-15.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV15.SAFLOW-SP,td-FVAV15,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-15.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV15.OCC-SCHEDULE,td-FVAV15,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-15.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV15.OCC-CLG-SP,td-FVAV15,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-15.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV15.OCC-HTG-SP,td-FVAV15,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-15.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV15.UNOCC-CLG-SP,td-FVAV15,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-15.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV15.UNOCC-HTG-SP,td-FVAV15,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-15.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV15.HTG-E,td-FVAV15,HTG-E,TROOPD-NAE01/FC-4.FVAV-15.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV15.HTG-O,td-FVAV15,HTG-O,TROOPD-NAE01/FC-4.FVAV-15.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV15.FAN-C,td-FVAV15,FAN-C,TROOPD-NAE01/FC-4.FVAV-15.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV15.FAN-S,td-FVAV15,FAN-S,TROOPD-NAE01/FC-4.FVAV-15.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV16.ZN-T,td-FVAV16,ZN-T,TROOPD-NAE01/FC-4.FVAV-16.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV16.ZN-SP,td-FVAV16,ZN-SP,TROOPD-NAE01/FC-4.FVAV-16.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV16.DA-T,td-FVAV16,DA-T,TROOPD-NAE01/FC-4.FVAV-16.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV16.SA-F,td-FVAV16,SA-F,TROOPD-NAE01/FC-4.FVAV-16.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV16.DPR-O,td-FVAV16,DPR-O,TROOPD-NAE01/FC-4.FVAV-16.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV16.SAFLOW-SP,td-FVAV16,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-16.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV16.OCC-SCHEDULE,td-FVAV16,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-16.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV16.OCC-CLG-SP,td-FVAV16,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-16.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV16.OCC-HTG-SP,td-FVAV16,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-16.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV16.UNOCC-CLG-SP,td-FVAV16,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-16.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV16.UNOCC-HTG-SP,td-FVAV16,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-16.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV16.HTG-E,td-FVAV16,HTG-E,TROOPD-NAE01/FC-4.FVAV-16.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV16.HTG-O,td-FVAV16,HTG-O,TROOPD-NAE01/FC-4.FVAV-16.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV16.FAN-C,td-FVAV16,FAN-C,TROOPD-NAE01/FC-4.FVAV-16.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV16.FAN-S,td-FVAV16,FAN-S,TROOPD-NAE01/FC-4.FVAV-16.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV17.ZN-T,td-FVAV17,ZN-T,TROOPD-NAE01/FC-4.FVAV-17.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV17.ZN-SP,td-FVAV17,ZN-SP,TROOPD-NAE01/FC-4.FVAV-17.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV17.DA-T,td-FVAV17,DA-T,TROOPD-NAE01/FC-4.FVAV-17.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV17.SA-F,td-FVAV17,SA-F,TROOPD-NAE01/FC-4.FVAV-17.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV17.DPR-O,td-FVAV17,DPR-O,TROOPD-NAE01/FC-4.FVAV-17.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV17.SAFLOW-SP,td-FVAV17,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-17.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV17.OCC-SCHEDULE,td-FVAV17,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-17.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV17.OCC-CLG-SP,td-FVAV17,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-17.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV17.OCC-HTG-SP,td-FVAV17,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-17.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV17.UNOCC-CLG-SP,td-FVAV17,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-17.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV17.UNOCC-HTG-SP,td-FVAV17,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-17.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV17.HTG-E,td-FVAV17,HTG-E,TROOPD-NAE01/FC-4.FVAV-17.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV17.HTG-O,td-FVAV17,HTG-O,TROOPD-NAE01/FC-4.FVAV-17.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV17.FAN-C,td-FVAV17,FAN-C,TROOPD-NAE01/FC-4.FVAV-17.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV17.FAN-S,td-FVAV17,FAN-S,TROOPD-NAE01/FC-4.FVAV-17.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-FVAV18.ZN-T,td-FVAV18,ZN-T,TROOPD-NAE01/FC-4.FVAV-18.ZN-T,Zone Temperature,AI,analog-input,1,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-FVAV18.ZN-SP,td-FVAV18,ZN-SP,TROOPD-NAE01/FC-4.FVAV-18.ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),AI,analog-input,2,°F,Temperature_Adjust_Sensor,setpoint_adjust
+td-FVAV18.DA-T,td-FVAV18,DA-T,TROOPD-NAE01/FC-4.FVAV-18.DA-T,Discharge Air Temperature,AI,analog-input,3,°F,Discharge_Air_Temperature_Sensor,discharge_temp
+td-FVAV18.SA-F,td-FVAV18,SA-F,TROOPD-NAE01/FC-4.FVAV-18.SA-F,Supply Airflow,AI,analog-input,4,cfm,Discharge_Air_Flow_Sensor,airflow
+td-FVAV18.DPR-O,td-FVAV18,DPR-O,TROOPD-NAE01/FC-4.FVAV-18.DPR-O,Damper Output,AO,analog-output,1,%,Damper_Position_Command,damper
+td-FVAV18.SAFLOW-SP,td-FVAV18,SAFLOW-SP,TROOPD-NAE01/FC-4.FVAV-18.SAFLOW-SP,Airflow Setpoint,AV,analog-value,1,cfm,Discharge_Air_Flow_Setpoint,airflow_sp
+td-FVAV18.OCC-SCHEDULE,td-FVAV18,OCC-SCHEDULE,TROOPD-NAE01/FC-4.FVAV-18.OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),BV,binary-value,1,,Occupancy_Command,occupancy
+td-FVAV18.OCC-CLG-SP,td-FVAV18,OCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-18.OCC-CLG-SP,Occupied Cooling Setpoint,AV,analog-value,2,°F,Occupied_Cooling_Zone_Air_Temperature_Setpoint,occ_cooling_sp
+td-FVAV18.OCC-HTG-SP,td-FVAV18,OCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-18.OCC-HTG-SP,Occupied Heating Setpoint,AV,analog-value,3,°F,Occupied_Heating_Zone_Air_Temperature_Setpoint,occ_heating_sp
+td-FVAV18.UNOCC-CLG-SP,td-FVAV18,UNOCC-CLG-SP,TROOPD-NAE01/FC-4.FVAV-18.UNOCC-CLG-SP,Unoccupied Cooling Setpoint,AV,analog-value,4,°F,Unoccupied_Cooling_Zone_Air_Temperature_Setpoint,unocc_cooling_sp
+td-FVAV18.UNOCC-HTG-SP,td-FVAV18,UNOCC-HTG-SP,TROOPD-NAE01/FC-4.FVAV-18.UNOCC-HTG-SP,Unoccupied Heating Setpoint,AV,analog-value,5,°F,Unoccupied_Heating_Zone_Air_Temperature_Setpoint,unocc_heating_sp
+td-FVAV18.HTG-E,td-FVAV18,HTG-E,TROOPD-NAE01/FC-4.FVAV-18.HTG-E,Electric Heat Enable,BO,binary-output,1,,Heating_Enable_Command,reheat_enable
+td-FVAV18.HTG-O,td-FVAV18,HTG-O,TROOPD-NAE01/FC-4.FVAV-18.HTG-O,Electric Heat Output (SCR),AO,analog-output,2,%,Heating_Command,reheat
+td-FVAV18.FAN-C,td-FVAV18,FAN-C,TROOPD-NAE01/FC-4.FVAV-18.FAN-C,Parallel Fan Command,BO,binary-output,2,,Fan_Command,fan_cmd
+td-FVAV18.FAN-S,td-FVAV18,FAN-S,TROOPD-NAE01/FC-4.FVAV-18.FAN-S,Parallel Fan Status,BI,binary-input,1,,Fan_Status,fan_status
+td-EF-LAB1.C,td-EF-LAB1,C,TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-C,Exhaust Fan Enable,BO,binary-output,1,,Start_Stop_Command,cmd
+td-EF-LAB1.S,td-EF-LAB1,S,TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-S,Exhaust Fan Status,BI,binary-input,1,,Fan_Status,status
+td-EF-LAB1.SPD,td-EF-LAB1,SPD,TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD,Exhaust Fan Speed,BO,binary-output,2,,Fan_Speed_Command,speed
+td-EF-LAB1.P,td-EF-LAB1,P,TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-P,Exhaust Duct Static Pressure,AI,analog-input,1,in.wc,Exhaust_Air_Static_Pressure_Sensor,static_pressure
+td-EF-LAB1.F,td-EF-LAB1,F,TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-F,Exhaust Airflow,AI,analog-input,2,cfm,Exhaust_Air_Flow_Sensor,airflow
+td-EF-LAB1.BYP-O,td-EF-LAB1,BYP-O,TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-BYP-O,Bypass Damper,AO,analog-output,1,%,Damper_Position_Command,bypass_damper
+td-EF-LAB2.C,td-EF-LAB2,C,TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-C,Exhaust Fan Enable,BO,binary-output,1,,Start_Stop_Command,cmd
+td-EF-LAB2.S,td-EF-LAB2,S,TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-S,Exhaust Fan Status,BI,binary-input,1,,Fan_Status,status
+td-EF-LAB2.SPD,td-EF-LAB2,SPD,TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-SPD,Exhaust Fan Speed,BO,binary-output,2,,Fan_Speed_Command,speed
+td-EF-LAB2.P,td-EF-LAB2,P,TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-P,Exhaust Duct Static Pressure,AI,analog-input,1,in.wc,Exhaust_Air_Static_Pressure_Sensor,static_pressure
+td-EF-LAB2.F,td-EF-LAB2,F,TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-F,Exhaust Airflow,AI,analog-input,2,cfm,Exhaust_Air_Flow_Sensor,airflow
+td-EF-LAB2.BYP-O,td-EF-LAB2,BYP-O,TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-BYP-O,Bypass Damper,AO,analog-output,1,%,Damper_Position_Command,bypass_damper
+td-EF-RR.C,td-EF-RR,C,TROOPD-NAE01/FC-1.EF-RR.EF-RR-C,Exhaust Fan Start/Stop,BO,binary-output,1,,Start_Stop_Command,cmd
+td-EF-RR.S,td-EF-RR,S,TROOPD-NAE01/FC-1.EF-RR.EF-RR-S,Exhaust Fan Status,BI,binary-input,1,,Fan_Status,status
+td-EF-CONT.C,td-EF-CONT,C,TROOPD-NAE01/FC-1.EF-CONT.EF-CONT-C,Exhaust Fan Start/Stop,BO,binary-output,1,,Start_Stop_Command,cmd
+td-EF-CONT.S,td-EF-CONT,S,TROOPD-NAE01/FC-1.EF-CONT.EF-CONT-S,Exhaust Fan Status,BI,binary-input,1,,Fan_Status,status
+td-MS01.RUN-S,td-MS01,RUN-S,TROOPD-NAE01/FC-1.MS-1.RUN-S,Unit Run Status,BN,analog-value,1,,Run_Status,status
+td-MS01.ZN-T,td-MS01,ZN-T,TROOPD-NAE01/FC-1.MS-1.ZN-T,Room Temperature,BN,analog-value,2,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-MS01.MODE,td-MS01,MODE,TROOPD-NAE01/FC-1.MS-1.MODE,Operating Mode,BN,analog-value,3,,Mode_Status,mode
+td-MS01.FLT-A,td-MS01,FLT-A,TROOPD-NAE01/FC-1.MS-1.FLT-A,Unit Fault,BN,analog-value,4,,Fault_Status,fault
+td-MS02.RUN-S,td-MS02,RUN-S,TROOPD-NAE01/FC-1.MS-2.RUN-S,Unit Run Status,BN,analog-value,1,,Run_Status,status
+td-MS02.ZN-T,td-MS02,ZN-T,TROOPD-NAE01/FC-1.MS-2.ZN-T,Room Temperature,BN,analog-value,2,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-MS02.MODE,td-MS02,MODE,TROOPD-NAE01/FC-1.MS-2.MODE,Operating Mode,BN,analog-value,3,,Mode_Status,mode
+td-MS02.FLT-A,td-MS02,FLT-A,TROOPD-NAE01/FC-1.MS-2.FLT-A,Unit Fault,BN,analog-value,4,,Fault_Status,fault
+td-MS03.RUN-S,td-MS03,RUN-S,TROOPD-NAE01/FC-1.MS-3.RUN-S,Unit Run Status,BN,analog-value,1,,Run_Status,status
+td-MS03.ZN-T,td-MS03,ZN-T,TROOPD-NAE01/FC-1.MS-3.ZN-T,Room Temperature,BN,analog-value,2,°F,Zone_Air_Temperature_Sensor,zone_temp
+td-MS03.MODE,td-MS03,MODE,TROOPD-NAE01/FC-1.MS-3.MODE,Operating Mode,BN,analog-value,3,,Mode_Status,mode
+td-MS03.FLT-A,td-MS03,FLT-A,TROOPD-NAE01/FC-1.MS-3.FLT-A,Unit Fault,BN,analog-value,4,,Fault_Status,fault

@@ -1,0 +1,22 @@
+{
+  "site": "MSHP Troop D Crime Lab",
+  "generated_by": "src/projectmodel/troop_d.py",
+  "equipment": 83,
+  "equipment_on_bas": 69,
+  "points": 847,
+  "spaces": 87,
+  "by_kind": {
+    "ahu": 1,
+    "chiller": 2,
+    "ef": 5,
+    "fvav": 18,
+    "part": 8,
+    "pump": 2,
+    "split": 3,
+    "system": 1,
+    "uh": 5,
+    "vav": 19,
+    "vave": 19
+  },
+  "locations_medium_confidence": 12
+}

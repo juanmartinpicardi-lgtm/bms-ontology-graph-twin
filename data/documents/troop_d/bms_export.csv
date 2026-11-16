@@ -1,0 +1,848 @@
+Item Reference,Name,Description,Object Type,Instance,Units,Device,Device Instance,Trunk,Address
+TROOPD-NAE01/FC-1.AHU-1.SF-C,SF-C,Supply Fan Wall Start/Stop,binary-output,1,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF-O,SF-O,Supply Fan Wall Speed (VFD),analog-output,1,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF1-S,SF1-S,Supply Fan 1 Status,binary-input,1,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF2-S,SF2-S,Supply Fan 2 Status,binary-input,2,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF3-S,SF3-S,Supply Fan 3 Status,binary-input,3,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF4-S,SF4-S,Supply Fan 4 Status,binary-input,4,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF5-S,SF5-S,Supply Fan 5 Status,binary-input,5,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF6-S,SF6-S,Supply Fan 6 Status,binary-input,6,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF7-S,SF7-S,Supply Fan 7 Status,binary-input,7,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF8-S,SF8-S,Supply Fan 8 Status,binary-input,8,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SF9-S,SF9-S,Supply Fan 9 Status,binary-input,9,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EF1-C,EF1-C,Exhaust Fan Wall 1 Start/Stop,binary-output,2,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EF2-C,EF2-C,Exhaust Fan Wall 2 Start/Stop,binary-output,3,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EF1-O,EF1-O,Exhaust Fan Wall 1 Speed (VFD),analog-output,2,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EF2-O,EF2-O,Exhaust Fan Wall 2 Speed (VFD),analog-output,3,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EF1-S,EF1-S,Exhaust Fan Wall 1 Status,binary-input,10,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EF2-S,EF2-S,Exhaust Fan Wall 2 Status,binary-input,11,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.DA-T,DA-T,Supply Air Temperature,analog-input,1,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.CCLA-T,CCLA-T,Cooling Coil Leaving Air Temperature,analog-input,2,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.MA-T,MA-T,Mixed Air Temperature,analog-input,3,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.RA-T,RA-T,Return Air Temperature,analog-input,4,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.RA-H,RA-H,Return Air Humidity,analog-input,5,%RH,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.OA-T,OA-T,Outdoor Air Temperature,analog-input,6,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.OA-H,OA-H,Outdoor Air Humidity,analog-input,7,%RH,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.OA-F,OA-F,Minimum Outdoor Airflow (flow station),analog-input,8,cfm,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SA-F,SA-F,Supply Airflow (flow station),analog-input,9,cfm,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.DA-P,DA-P,Supply Duct Static Pressure,analog-input,10,in.wc,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.BLDG-P,BLDG-P,Building Static Pressure,analog-input,11,in.wc,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.FLT-DP,FLT-DP,Filter Differential Pressure,analog-input,12,in.wc,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.HUM-H,HUM-H,Steam Generator Leaving Air Humidity,analog-input,13,%RH,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.CHWS-T,CHWS-T,Coil Chilled Water Supply Temperature,analog-input,14,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.CHWR-T,CHWR-T,Coil Chilled Water Return Temperature,analog-input,15,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.LT-A,LT-A,Low Temperature Detector (Freezestat),binary-input,12,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.HSP-A,HSP-A,High Static Pressure Switch,binary-input,13,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.LSP-A,LSP-A,Low Static Pressure Switch,binary-input,14,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SMK-A,SMK-A,Duct Smoke Detector,binary-input,15,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.LEAK-A,LEAK-A,Drain Pan Water Sensor,binary-input,16,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.CHWV-O,CHWV-O,Chilled Water 3-Way Valve,analog-output,4,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.PH-E,PH-E,Electric Preheat Enable,binary-output,4,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.PH-O,PH-O,Electric Preheat Output,analog-output,5,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.HUM-E,HUM-E,Steam Humidifier Enable,binary-output,5,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.HUM-O,HUM-O,Steam Humidifier Output,analog-output,6,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.ECON-O,ECON-O,Economizer Damper,analog-output,7,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.MOA-O,MOA-O,Minimum Outdoor Air Damper,analog-output,8,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.RAD-O,RAD-O,Return Air Damper,analog-output,9,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EAD1-O,EAD1-O,Exhaust Air Damper 1,analog-output,10,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.EAD2-O,EAD2-O,Exhaust Air Damper 2,analog-output,11,%,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Schedule,binary-value,1,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.DA-SP,DA-SP,Supply Air Temperature Setpoint (53 °F),analog-value,1,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.DAP-SP,DAP-SP,Duct Static Pressure Setpoint (set by TAB),analog-value,2,in.wc,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP,BLDGP-SP,Building Pressure Setpoint (+0.02 in.wc),analog-value,3,in.wc,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.MA-SP,MA-SP,Mixed Air Temperature Setpoint (55 °F),analog-value,4,°F,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.HUM-SP,HUM-SP,Supply Humidity Setpoint (45 %RH),analog-value,5,%RH,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.AHU-1.SYS-RESET,SYS-RESET,"Safety Reset (freezestat, static switches)",binary-value,2,,AHU-1 (FAC4911 + IOM4711),3104,FC-1,4
+TROOPD-NAE01/FC-1.CHW-PLANT.CWS-T,CWS-T,Chilled Water Supply Temperature,analog-input,1,°F,CHW-PLANT (FAC2611),3105,FC-1,5
+TROOPD-NAE01/FC-1.CHW-PLANT.CWR-T,CWR-T,Chilled Water Return Temperature,analog-input,2,°F,CHW-PLANT (FAC2611),3105,FC-1,5
+TROOPD-NAE01/FC-1.CHW-PLANT.CW-F,CW-F,Chilled Water Flow,analog-input,3,gpm,CHW-PLANT (FAC2611),3105,FC-1,5
+TROOPD-NAE01/FC-1.CHW-PLANT.CH-LEAD,CH-LEAD,Lead Chiller Select (rotates weekly),multi-state-value,1,,CHW-PLANT (FAC2611),3105,FC-1,5
+TROOPD-NAE01/FC-1.CHW-PLANT.CWP-LEAD,CWP-LEAD,Duty Pump Select (rotates weekly),multi-state-value,2,,CHW-PLANT (FAC2611),3105,FC-1,5
+TROOPD-NAE01/FC-1.CHW-PLANT.LAG-ON-SP,LAG-ON-SP,Lag Chiller Enable Flow (140 gpm),analog-value,1,gpm,CHW-PLANT (FAC2611),3105,FC-1,5
+TROOPD-NAE01/FC-1.CHW-PLANT.LAG-OFF-SP,LAG-OFF-SP,Lag Chiller Disable Flow (130 gpm),analog-value,2,gpm,CHW-PLANT (FAC2611),3105,FC-1,5
+TROOPD-NAE01/FC-1.CH-1A.CH-E,CH-E,Chiller Enable,binary-output,1,,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.ISOV-C,ISOV-C,Chiller Isolation Valve Open/Close,binary-output,2,,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.COMM,COMM,BACnet Communication Status,analog-value,1,,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.MODE,MODE,Operation Mode,analog-value,2,,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.EEWT,EEWT,Entering Evaporator Water Temperature,analog-value,3,°F,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.LEWT,LEWT,Leaving Evaporator Water Temperature,analog-value,4,°F,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.AMB-T,AMB-T,Ambient Temperature,analog-value,5,°F,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.EVAP-FS,EVAP-FS,Evaporator Flow Switch,analog-value,6,,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.SUCT-T,SUCT-T,Suction Temperature,analog-value,7,°F,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.COND-P,COND-P,Condensing Pressure,analog-value,8,psig,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.EVAP-P,EVAP-P,Evaporating Pressure,analog-value,9,psig,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1A.LCHWT-SP,LCHWT-SP,Leaving Chilled Water Setpoint (42 °F),analog-value,10,°F,CH-1A (York chiller BACnet card),3106,FC-1,6
+TROOPD-NAE01/FC-1.CH-1B.CH-E,CH-E,Chiller Enable,binary-output,1,,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.ISOV-C,ISOV-C,Chiller Isolation Valve Open/Close,binary-output,2,,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.COMM,COMM,BACnet Communication Status,analog-value,1,,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.MODE,MODE,Operation Mode,analog-value,2,,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.EEWT,EEWT,Entering Evaporator Water Temperature,analog-value,3,°F,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.LEWT,LEWT,Leaving Evaporator Water Temperature,analog-value,4,°F,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.AMB-T,AMB-T,Ambient Temperature,analog-value,5,°F,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.EVAP-FS,EVAP-FS,Evaporator Flow Switch,analog-value,6,,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.SUCT-T,SUCT-T,Suction Temperature,analog-value,7,°F,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.COND-P,COND-P,Condensing Pressure,analog-value,8,psig,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.EVAP-P,EVAP-P,Evaporating Pressure,analog-value,9,psig,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CH-1B.LCHWT-SP,LCHWT-SP,Leaving Chilled Water Setpoint (42 °F),analog-value,10,°F,CH-1B (York chiller BACnet card),3107,FC-1,7
+TROOPD-NAE01/FC-1.CWP-1.CWP-1-C,CWP-1-C,Pump Start/Stop,binary-output,1,,CWP-1 (IOM2721),3108,FC-1,8
+TROOPD-NAE01/FC-1.CWP-1.CWP-1-S,CWP-1-S,Pump Status,binary-input,1,,CWP-1 (IOM2721),3108,FC-1,8
+TROOPD-NAE01/FC-1.CWP-1.CWP-1-O,CWP-1-O,Pump Speed (VFD),analog-output,1,%,CWP-1 (IOM2721),3108,FC-1,8
+TROOPD-NAE01/FC-1.CWP-1.CWP-1-A,CWP-1-A,VFD Fault,binary-input,2,,CWP-1 (IOM2721),3108,FC-1,8
+TROOPD-NAE01/FC-1.CWP-2.CWP-2-C,CWP-2-C,Pump Start/Stop,binary-output,1,,CWP-2 (IOM2721),3109,FC-1,9
+TROOPD-NAE01/FC-1.CWP-2.CWP-2-S,CWP-2-S,Pump Status,binary-input,1,,CWP-2 (IOM2721),3109,FC-1,9
+TROOPD-NAE01/FC-1.CWP-2.CWP-2-O,CWP-2-O,Pump Speed (VFD),analog-output,1,%,CWP-2 (IOM2721),3109,FC-1,9
+TROOPD-NAE01/FC-1.CWP-2.CWP-2-A,CWP-2-A,VFD Fault,binary-input,2,,CWP-2 (IOM2721),3109,FC-1,9
+TROOPD-NAE01/FC-2.VAV-01.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-01.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-01 (VMA1930),3204,FC-2,4
+TROOPD-NAE01/FC-2.VAV-02.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-02.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-02 (VMA1930),3205,FC-2,5
+TROOPD-NAE01/FC-2.VAV-03.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-03.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-03 (VMA1930),3206,FC-2,6
+TROOPD-NAE01/FC-2.VAV-04.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-04.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-04 (VMA1930),3207,FC-2,7
+TROOPD-NAE01/FC-2.VAV-05.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-05.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-05 (VMA1930),3208,FC-2,8
+TROOPD-NAE01/FC-2.VAV-06.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-06.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-06 (VMA1930),3209,FC-2,9
+TROOPD-NAE01/FC-2.VAV-07.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-07.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-07 (VMA1930),3210,FC-2,10
+TROOPD-NAE01/FC-2.VAV-08.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-2.VAV-08.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-08 (VMA1930),3211,FC-2,11
+TROOPD-NAE01/FC-3.VAV-09.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-09.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-09 (VMA1930),3304,FC-3,4
+TROOPD-NAE01/FC-3.VAV-10.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-10.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-10 (VMA1930),3305,FC-3,5
+TROOPD-NAE01/FC-3.VAV-11.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-11.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-11 (VMA1930),3306,FC-3,6
+TROOPD-NAE01/FC-3.VAV-12.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-12.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-12 (VMA1930),3307,FC-3,7
+TROOPD-NAE01/FC-3.VAV-13.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-3.VAV-13.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-13 (VMA1930),3308,FC-3,8
+TROOPD-NAE01/FC-4.VAV-14.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-14.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-14 (VMA1930),3404,FC-4,4
+TROOPD-NAE01/FC-4.VAV-15.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-15.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-15 (VMA1930),3405,FC-4,5
+TROOPD-NAE01/FC-4.VAV-16.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-16.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-16 (VMA1930),3406,FC-4,6
+TROOPD-NAE01/FC-4.VAV-17.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-17.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-17 (VMA1930),3407,FC-4,7
+TROOPD-NAE01/FC-4.VAV-18.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-18.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-18 (VMA1930),3408,FC-4,8
+TROOPD-NAE01/FC-4.VAV-19.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-4.VAV-19.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAV-19 (VMA1930),3409,FC-4,9
+TROOPD-NAE01/FC-2.VAVE-01.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-01.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-01 (VMA1930),3212,FC-2,12
+TROOPD-NAE01/FC-2.VAVE-02.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-02.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-02 (VMA1930),3213,FC-2,13
+TROOPD-NAE01/FC-2.VAVE-03.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-03.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-03 (VMA1930),3214,FC-2,14
+TROOPD-NAE01/FC-2.VAVE-04.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-04.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-04 (VMA1930),3215,FC-2,15
+TROOPD-NAE01/FC-2.VAVE-05.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-05.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-05 (VMA1930),3216,FC-2,16
+TROOPD-NAE01/FC-2.VAVE-06.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-06.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-06 (VMA1930),3217,FC-2,17
+TROOPD-NAE01/FC-2.VAVE-07.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-2.VAVE-07.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-07 (VMA1930),3218,FC-2,18
+TROOPD-NAE01/FC-3.VAVE-08.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-08.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-08 (VMA1930),3309,FC-3,9
+TROOPD-NAE01/FC-3.VAVE-09.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-09.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-09 (VMA1930),3310,FC-3,10
+TROOPD-NAE01/FC-3.VAVE-10.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-10.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-10 (VMA1930),3311,FC-3,11
+TROOPD-NAE01/FC-3.VAVE-11.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-11.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-11 (VMA1930),3312,FC-3,12
+TROOPD-NAE01/FC-3.VAVE-12.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-12.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-12 (VMA1930),3313,FC-3,13
+TROOPD-NAE01/FC-3.VAVE-13.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-13.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-13 (VMA1930),3314,FC-3,14
+TROOPD-NAE01/FC-3.VAVE-14.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-3.VAVE-14.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-14 (VMA1930),3315,FC-3,15
+TROOPD-NAE01/FC-4.VAVE-15.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-15.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-15 (VMA1930),3410,FC-4,10
+TROOPD-NAE01/FC-4.VAVE-16.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-16.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-16 (VMA1930),3411,FC-4,11
+TROOPD-NAE01/FC-4.VAVE-17.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-17.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-17 (VMA1930),3412,FC-4,12
+TROOPD-NAE01/FC-4.VAVE-18.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-4.VAVE-18.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-18 (VMA1930),3413,FC-4,13
+TROOPD-NAE01/FC-3.VAVE-19.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.DPR-O,DPR-O,Damper Output,analog-output,1,%,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-3.VAVE-19.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,VAVE-19 (VMA1930),3316,FC-3,16
+TROOPD-NAE01/FC-2.FVAV-01.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-01.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-01 (VMA1930),3219,FC-2,19
+TROOPD-NAE01/FC-2.FVAV-02.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-02.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-02 (VMA1930),3220,FC-2,20
+TROOPD-NAE01/FC-2.FVAV-03.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-2.FVAV-03.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-03 (VMA1930),3221,FC-2,21
+TROOPD-NAE01/FC-3.FVAV-04.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-04.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-04 (VMA1930),3317,FC-3,17
+TROOPD-NAE01/FC-3.FVAV-05.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-3.FVAV-05.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-05 (VMA1930),3318,FC-3,18
+TROOPD-NAE01/FC-4.FVAV-06.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-4.FVAV-06.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-06 (VMA1930),3414,FC-4,14
+TROOPD-NAE01/FC-3.FVAV-07.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-07.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-07 (VMA1930),3319,FC-3,19
+TROOPD-NAE01/FC-3.FVAV-08.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-08.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-08 (VMA1930),3320,FC-3,20
+TROOPD-NAE01/FC-3.FVAV-09.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-09.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-09 (VMA1930),3321,FC-3,21
+TROOPD-NAE01/FC-3.FVAV-10.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-3.FVAV-10.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-10 (VMA1930),3322,FC-3,22
+TROOPD-NAE01/FC-4.FVAV-11.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-11.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-11 (VMA1930),3415,FC-4,15
+TROOPD-NAE01/FC-4.FVAV-12.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-12.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-12 (VMA1930),3416,FC-4,16
+TROOPD-NAE01/FC-4.FVAV-13.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-13.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-13 (VMA1930),3417,FC-4,17
+TROOPD-NAE01/FC-4.FVAV-14.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-14.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-14 (VMA1930),3418,FC-4,18
+TROOPD-NAE01/FC-4.FVAV-15.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-15.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-15 (VMA1930),3419,FC-4,19
+TROOPD-NAE01/FC-4.FVAV-16.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-16.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-16 (VMA1930),3420,FC-4,20
+TROOPD-NAE01/FC-4.FVAV-17.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-17.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-17 (VMA1930),3421,FC-4,21
+TROOPD-NAE01/FC-4.FVAV-18.ZN-T,ZN-T,Zone Temperature,analog-input,1,°F,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.ZN-SP,ZN-SP,Zone Setpoint Adjust (NSB8 warmer/cooler),analog-input,2,°F,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.DA-T,DA-T,Discharge Air Temperature,analog-input,3,°F,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.SA-F,SA-F,Supply Airflow,analog-input,4,cfm,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.DPR-O,DPR-O,Damper Output,analog-output,1,%,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.SAFLOW-SP,SAFLOW-SP,Airflow Setpoint,analog-value,1,cfm,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.OCC-SCHEDULE,OCC-SCHEDULE,Occupancy Command (from AHU01 schedule),binary-value,1,,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.OCC-CLG-SP,OCC-CLG-SP,Occupied Cooling Setpoint,analog-value,2,°F,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.OCC-HTG-SP,OCC-HTG-SP,Occupied Heating Setpoint,analog-value,3,°F,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.UNOCC-CLG-SP,UNOCC-CLG-SP,Unoccupied Cooling Setpoint,analog-value,4,°F,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.UNOCC-HTG-SP,UNOCC-HTG-SP,Unoccupied Heating Setpoint,analog-value,5,°F,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.HTG-E,HTG-E,Electric Heat Enable,binary-output,1,,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.HTG-O,HTG-O,Electric Heat Output (SCR),analog-output,2,%,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.FAN-C,FAN-C,Parallel Fan Command,binary-output,2,,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-4.FVAV-18.FAN-S,FAN-S,Parallel Fan Status,binary-input,1,,FVAV-18 (VMA1930),3422,FC-4,22
+TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-C,EF-LAB-1-C,Exhaust Fan Enable,binary-output,1,,EF-LAB-1 (IOM2721),3110,FC-1,10
+TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-S,EF-LAB-1-S,Exhaust Fan Status,binary-input,1,,EF-LAB-1 (IOM2721),3110,FC-1,10
+TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD,EF-LAB-1-SPD,Exhaust Fan Speed,binary-output,2,,EF-LAB-1 (IOM2721),3110,FC-1,10
+TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-P,EF-LAB-1-P,Exhaust Duct Static Pressure,analog-input,1,in.wc,EF-LAB-1 (IOM2721),3110,FC-1,10
+TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-F,EF-LAB-1-F,Exhaust Airflow,analog-input,2,cfm,EF-LAB-1 (IOM2721),3110,FC-1,10
+TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-BYP-O,EF-LAB-1-BYP-O,Bypass Damper,analog-output,1,%,EF-LAB-1 (IOM2721),3110,FC-1,10
+TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-C,EF-LAB-2-C,Exhaust Fan Enable,binary-output,1,,EF-LAB-2 (IOM2721),3111,FC-1,11
+TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-S,EF-LAB-2-S,Exhaust Fan Status,binary-input,1,,EF-LAB-2 (IOM2721),3111,FC-1,11
+TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-SPD,EF-LAB-2-SPD,Exhaust Fan Speed,binary-output,2,,EF-LAB-2 (IOM2721),3111,FC-1,11
+TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-P,EF-LAB-2-P,Exhaust Duct Static Pressure,analog-input,1,in.wc,EF-LAB-2 (IOM2721),3111,FC-1,11
+TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-F,EF-LAB-2-F,Exhaust Airflow,analog-input,2,cfm,EF-LAB-2 (IOM2721),3111,FC-1,11
+TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-BYP-O,EF-LAB-2-BYP-O,Bypass Damper,analog-output,1,%,EF-LAB-2 (IOM2721),3111,FC-1,11
+TROOPD-NAE01/FC-1.EF-RR.EF-RR-C,EF-RR-C,Exhaust Fan Start/Stop,binary-output,1,,EF-RR (IOM2721),3112,FC-1,12
+TROOPD-NAE01/FC-1.EF-RR.EF-RR-S,EF-RR-S,Exhaust Fan Status,binary-input,1,,EF-RR (IOM2721),3112,FC-1,12
+TROOPD-NAE01/FC-1.EF-CONT.EF-CONT-C,EF-CONT-C,Exhaust Fan Start/Stop,binary-output,1,,EF-CONT (IOM2721),3113,FC-1,13
+TROOPD-NAE01/FC-1.EF-CONT.EF-CONT-S,EF-CONT-S,Exhaust Fan Status,binary-input,1,,EF-CONT (IOM2721),3113,FC-1,13
+TROOPD-NAE01/FC-1.MS-1.RUN-S,RUN-S,Unit Run Status,analog-value,1,,MS-1 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-1.ZN-T,ZN-T,Room Temperature,analog-value,2,°F,MS-1 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-1.MODE,MODE,Operating Mode,analog-value,3,,MS-1 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-1.FLT-A,FLT-A,Unit Fault,analog-value,4,,MS-1 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-2.RUN-S,RUN-S,Unit Run Status,analog-value,1,,MS-2 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-2.ZN-T,ZN-T,Room Temperature,analog-value,2,°F,MS-2 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-2.MODE,MODE,Operating Mode,analog-value,3,,MS-2 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-2.FLT-A,FLT-A,Unit Fault,analog-value,4,,MS-2 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-3.RUN-S,RUN-S,Unit Run Status,analog-value,1,,MS-3 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-3.ZN-T,ZN-T,Room Temperature,analog-value,2,°F,MS-3 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-3.MODE,MODE,Operating Mode,analog-value,3,,MS-3 (LG PI485 BACnet gateway),3114,FC-1,14
+TROOPD-NAE01/FC-1.MS-3.FLT-A,FLT-A,Unit Fault,analog-value,4,,MS-3 (LG PI485 BACnet gateway),3114,FC-1,14

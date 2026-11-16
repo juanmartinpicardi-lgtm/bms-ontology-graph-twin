@@ -1,0 +1,18 @@
+id,kind,text
+DI-1,design,"M-304 'VAV terminal units' heating paragraph describes an electric reheat coil, but the 19 VAV boxes on M-401 have no heater. The heating paragraph only applies to VAVE boxes."
+DI-2,design,M-304 sequence lettering skips D (AHU) and E (VAV/FVAV).
+DI-3,design,"No exhaust fan schedule: EF-LAB, EF-RR, EF-CONT, EF-LOCAL appear only on M-104 and M-304."
+DI-4,design,FVAV15 heating cfm (360) is below its minimum primary cfm (840); every other FVAV has heating cfm about half of cooling.
+SY-1,naming,"BMS names differ from drawing tags on purpose (VAVE07 -> VAVE-07, CH01a -> CH-1A, AHU01 -> AHU-1): the merge step must link them."
+LOC-VAV03,location,VAV03 in room 116: thermostat on the corridor 112 side of the wall; ducts feed record storage
+LOC-VAV14,location,VAV14 in room 321: box by the level 3 restrooms; thermostat not labelled on M-103
+LOC-VAV16,location,VAV16 in room 304: box at the balance room / chem storage corner; thermostat in 304
+LOC-VAV18,location,"VAV18 in room 300: west stair tower: box on level 3, thermostat on level 2 (stair 200)"
+LOC-VAV19,location,"VAV19 in room 309: east stair tower: box on level 3, thermostat on level 2 (stair 215)"
+LOC-VAVE01,location,VAVE01 in room 105: thermostat in corridor 108 above the room
+LOC-VAVE02,location,VAVE02 in room 110: thermostat in the corridor; label next to Director's Office
+LOC-VAVE19,location,VAVE19 in room 204: thermostat at the air-lock 205 door; box supplies the DNA clean room (constant volume: min = max)
+LOC-FVAV02,location,"FVAV02 in room 101: box in the lobby, thermostat on the check-in counter 102 wall"
+LOC-FVAV05,location,FVAV05 in room 202: thermostat on the photo lab 203 side; ducts feed latent prints
+LOC-FVAV11,location,"FVAV11 in room 335: box at the toxicology lab, thermostat by the lounge; taken as the open work area"
+LOC-FVAV17,location,FVAV17 in room 307: thermostat near work room 306; box in the drug chemistry lab

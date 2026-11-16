@@ -9,3 +9,5 @@ __pycache__/
 reports/graph3d/
 reports/equipment3d/
 .streamlit/secrets.toml
+# large public bid PDFs: re-download, see data/raw/SOURCES.md
+data/raw/troop_d/*.pdf
