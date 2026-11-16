@@ -162,3 +162,16 @@ def test_scanned_plan_falls_back_to_a_picture(tmp_path):
     img.save(scan, "PDF", resolution=100)
     geo = vectors.plan(scan, 0, [0, 0, 864, 576])
     assert geo["n"] == 0 and geo["words"] == [] and geo["image"].startswith("data:image/png;base64,")
+
+
+def test_test_buildings_cleared_on_restart(tmp_path):
+    from projectmodel.intake.state import clear_test_intakes
+    real = Intake.create("Real building", root=tmp_path)
+    Intake.create("Troop D Crime Lab", root=tmp_path, test=True)
+    Intake.create("Troop D Crime Lab", root=tmp_path, test=True)
+    (tmp_path / "old").mkdir()
+    (tmp_path / "old/state.json").write_text('{"name": "made before the marker"}')  # no marker: kept
+    gone = clear_test_intakes(tmp_path)
+    assert sorted(gone) == ["troop-d-crime-lab", "troop-d-crime-lab-2"]
+    left = {p.parent.name for p in tmp_path.glob("*/state.json")}
+    assert left == {real.slug, "old"}

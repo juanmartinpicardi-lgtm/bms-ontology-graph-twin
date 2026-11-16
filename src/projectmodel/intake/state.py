@@ -18,6 +18,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shutil
 import time
 from pathlib import Path
 
@@ -39,6 +40,21 @@ def list_intakes() -> list[dict]:
     return sorted(out, key=lambda s: -s["updated"])
 
 
+def clear_test_intakes(root: Path = INTAKE_DIR) -> list[str]:
+    """Remove the buildings started from the test package (marked test=True at creation). Run when the server
+    starts, so the list of buildings in progress keeps only real ones. Returns the slugs removed."""
+    gone = []
+    for f in sorted(root.glob("*/state.json")):
+        try:
+            test = json.loads(f.read_text()).get("test", False)
+        except (OSError, ValueError):
+            continue
+        if test:
+            shutil.rmtree(f.parent, ignore_errors=True)
+            gone.append(f.parent.name)
+    return gone
+
+
 class Intake:
     def __init__(self, slug: str, root: Path = INTAKE_DIR):
         self.slug = slug
@@ -47,13 +63,14 @@ class Intake:
         self.s = json.loads(path.read_text()) if path.exists() else None
 
     @classmethod
-    def create(cls, name: str, address: str = "", root: Path = INTAKE_DIR) -> "Intake":
+    def create(cls, name: str, address: str = "", root: Path = INTAKE_DIR, test: bool = False) -> "Intake":
+        """A new, empty building. `test`: started from the test package; cleared when the server restarts."""
         slug, n = slugify(name), 2
         while (root / slug).exists():
             slug = f"{slugify(name)}-{n}"
             n += 1
         it = cls(slug, root)
-        it.s = {"name": name, "address": address, "created": time.time(), "updated": time.time(),
+        it.s = {"name": name, "address": address, "test": test, "created": time.time(), "updated": time.time(),
                 "files": {}, "facts": {}, "decisions": {}, "log": {}}
         it.save()
         return it

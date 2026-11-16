@@ -78,9 +78,10 @@ def start_form(key: str, compact: bool = False) -> None:
 TEST_NAME, TEST_PLACE = "Troop D Crime Lab", "Missouri State Highway Patrol Troop D, Springfield, Missouri"
 
 
-def begin(name: str, address: str = "") -> None:
-    """A new, empty building: nothing read, nothing built. The graph, the twin and the review grow from here."""
-    it = Intake.create(name, address)
+def begin(name: str, address: str = "", test: bool = False) -> None:
+    """A new, empty building: nothing read, nothing built. The graph, the twin and the review grow from here.
+    A test building is removed when the server restarts."""
+    it = Intake.create(name, address, test=test)
     st.session_state.update(ab_started=True, ab_slug=it.slug, ab_step="locate", ab_sel=None, ab_work=None,
                             ab_view="twin", ab_out="side", ab_loc_query=address or name, ab_loc_results=None)
 
@@ -113,7 +114,8 @@ if not st.session_state.get("ab_started") or st.session_state.get("ab_slug") not
                  "that step's document, and you watch it being read.")
         st.caption(f"Files: `{TEST_PACKAGE.relative_to(ROOT)}/`")
         st.button("Start with the test building", type="primary", icon=":material/play_arrow:", on_click=begin,
-                  args=(TEST_NAME, TEST_PLACE))
+                  args=(TEST_NAME, TEST_PLACE, True))
+        st.caption("Test buildings are cleared when the app restarts.")
     with right, box("own", "Your own building", "add_business", height="stretch"):
         start_form("ab_new")
     if existing:
@@ -161,7 +163,7 @@ with box("head"):
                      width=260, on_change=lambda: st.session_state.update(ab_sel=None, ab_step=None))
         with st.popover("New building", icon=":material/add:"):
             st.button(f"Start {TEST_NAME} again (test files)", icon=":material/science:", on_click=begin,
-                      args=(TEST_NAME, TEST_PLACE), type="tertiary")
+                      args=(TEST_NAME, TEST_PLACE, True), type="tertiary")
             start_form("ab_new_pop", compact=True)
         st.progress(prog["share"], text=f"**{round(prog['share'] * 100)}% built** · "
                                         f"{sum(1 for s in prog['steps'].values() if s['read'])} of 5 documents read · "
