@@ -24,7 +24,8 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.bridge import frame  # noqa: E402
-from projectmodel.app.shell import box, knowledge_model, secret, site_map  # noqa: E402
+from projectmodel.app.shell import box, get_store, knowledge_model, secret, set_project, site_map  # noqa: E402
+from projectmodel.intake.publish import delete_project, project_id, publish  # noqa: E402
 from projectmodel.locate import LocateError, get_geocoder, location_dict  # noqa: E402
 from projectmodel import notes as project_notes  # noqa: E402
 from projectmodel.intake import graph, knowledge, pdfdoc, score, steps, twin, vectors  # noqa: E402
@@ -43,16 +44,11 @@ st.html("""<style>
 .st-key-ab_steps button { border-radius: 12px; }
 .st-key-ab_steps button p { font-size: .86rem; }
 [class*="st-key-q_"] { border-left: 3px solid #F0A030 !important; border-radius: 12px !important; }
-/* The document (left) and the outputs (right) sit side by side, the same height, sized to fit the screen under the
-   header and the step: no page scroll. Each scrolls inside itself when its content is taller. */
-:root { --panelh: max(480px, calc(100vh - 436px)); }
-[data-testid="stColumn"] .st-key-box_out, .st-key-box_work,
-[data-testid="stColumn"] [data-testid="stLayoutWrapper"]:has(> .st-key-box_out),
-[data-testid="stLayoutWrapper"]:has(> .st-key-box_work) {
-  height: var(--panelh) !important; max-height: var(--panelh); flex: 0 0 auto !important; box-sizing: border-box; }
-[data-testid="stColumn"] .st-key-box_out, .st-key-box_work { overflow-y: auto; }
+/* The document (left) and the outputs (right) are fit boxes (shell.FIT_JS): side by side, the same height, down
+   to the bottom of the screen wherever the header above ends. The PDF page scales to its box. */
+[class*="st-key-box_fit_work"] [data-testid="stImage"] img { max-height: calc(var(--fit, 760px) - 150px);
+  object-fit: contain; }
 .block-container { padding-bottom: 1rem !important; }
-.st-key-box_work [data-testid="stImage"] img { max-height: calc(var(--panelh) - 150px); object-fit: contain; }
 .st-key-box_step { padding: 12px 18px !important; }
 .st-key-box_step h3 { padding: 0; margin: 0; font-size: 1.35rem; }
 .st-key-ab_reopen button { height: 168px; writing-mode: vertical-rl; border-radius: 14px; padding: 12px 6px; }
@@ -161,6 +157,22 @@ def out_mode(mode: str) -> None:
     st.session_state["ab_out"] = mode
 
 
+def start_over() -> None:
+    delete_project(get_store(), project_id(it))
+    it.reset()
+    st.session_state.update(ab_step="locate" if not it.location else "plans", ab_sel=None, ab_work=None,
+                            ab_view="twin", ab_nonce=st.session_state.get("ab_nonce", 0) + 1)
+    st.toast(f"{it.name}: started over", icon=":material/restart_alt:")
+
+
+def remove_building() -> None:
+    delete_project(get_store(), project_id(it))
+    name = it.name
+    it.delete()
+    st.session_state.update(ab_started=False, ab_slug=None, ab_step=None, ab_sel=None)
+    st.toast(f"{name} deleted", icon=":material/delete:")
+
+
 # ---------------------------------------------------------------- header: building, progress, steps
 
 prog = progress(it)
@@ -176,6 +188,16 @@ with box("head"):
             st.button(f"Start {TEST_NAME} again (test files)", icon=":material/science:", on_click=begin,
                       args=(TEST_NAME, TEST_PLACE, True), type="tertiary")
             start_form("ab_new_pop", compact=True)
+        with st.popover("Manage", icon=":material/settings:"):
+            st.markdown(f"**{it.name}**")
+            st.caption("Start over keeps the name and the location, and removes every document, answer and piece "
+                       "of knowledge. Delete removes the building" + (" and its project." if it.s.get("published")
+                                                                       else "."))
+            sure = st.checkbox("I understand this cannot be undone", key=f"ab_sure_{it.slug}")
+            st.button("Start over", icon=":material/restart_alt:", disabled=not sure, on_click=start_over,
+                      key="ab_reset")
+            st.button("Delete this building", icon=":material/delete:", disabled=not sure, on_click=remove_building,
+                      key="ab_delete")
         st.progress(prog["share"], text=f"**{round(prog['share'] * 100)}% built** · "
                                         f"{sum(1 for s in prog['steps'].values() if s['read'])} of 5 documents read · "
                                         f"{sum(s['open'] for s in prog['steps'].values())} questions open")
@@ -632,14 +654,14 @@ def viewer(step_files: list[str]) -> None:
 
 # ---------------------------------------------------------------- the outputs: graph and twin, on the right
 
-FIT = "calc(var(--panelh) - 118px)"  # a viewer's height inside the side panel or the document box
+FIT = 620  # a viewer's first height inside a fit box; the page then sizes it to the screen
 
 
 def outputs_panel() -> None:
     """The two outputs the whole setup builds: the building (twin) and its knowledge graph. On the right of every
     step; it can be hidden, or opened full screen."""
     full = st.session_state["ab_out"] == "full"
-    with box("out"):
+    with box("out", fit=not full):
         with st.container(horizontal=True, vertical_alignment="center", gap="small"):
             st.caption(":material/hub: **Built so far**", width="content")
             outs = {"twin": "Building (twin)", "graph": "Knowledge graph", "review": f"Review ({len(it.open_questions())})"}
@@ -841,6 +863,38 @@ def knowledge_step() -> None:
                           on_click=ask_prompt, args=(target, topic, q))
     with box("know", "Add to the graph", "add_circle"):
         knowledge_view()
+    finish_box()
+
+
+def finish() -> None:
+    project = publish(it, get_store())
+    set_project(project)
+    st.session_state["ab_finished"] = project
+
+
+def finish_box() -> None:
+    """The end of the setup: the building becomes a project like every other, with all its pages."""
+    done = it.s.get("published")
+    read = sum(1 for s_ in STEPS[:-1] if it.done(s_.id))
+    with box("finish", "Finish", "task_alt"):
+        if done:
+            st.success(f"**{it.name} is a project.** Its tree, graph, equipment, sequences, tables, notes, tribal "
+                       "knowledge and digital twin are under Projects, and in the building list of every project "
+                       "page. Finish again after a change to update it.", icon=":material/task_alt:")
+        else:
+            st.markdown(f"**Ready when you are.** {read} of 5 documents read, {len(it.open_questions())} questions "
+                        "open. Finishing turns the building into a project with all its pages; you can come back, "
+                        "answer more and finish again.")
+        with st.container(horizontal=True, gap="small"):
+            st.button("Finish and update the project" if done else "Finish: create the project", type="primary",
+                      icon=":material/rocket_launch:", on_click=finish, disabled=not read,
+                      help=None if read else "Read at least one document first.")
+            if done:
+                st.page_link("tree_app.py", label="Open the project", icon=":material/arrow_forward:")
+    if st.session_state.pop("ab_finished", None):
+        st.session_state["flash"] = (f"{it.name} is ready: every part of the project is in the chips above (location, "
+                                     "tree, graph, equipment, sequences, tables, notes, tribal knowledge, digital twin).")
+        st.switch_page("tree_app.py")
 
 
 # ---------------------------------------------------------------- the document steps
@@ -884,7 +938,7 @@ def review_step() -> None:
         nav(short=True)
     main = layout()
     with main:
-        with box("work"):
+        with box("work", fit=True):
             nq = len(it.open_questions())
             if work_tabs({"ask": f"Open questions ({nq})", "doc": "Document"}, "ask") == "doc":
                 viewer([f["name"] for fs in it.s["files"].values() for f in fs])
@@ -963,7 +1017,7 @@ def document_step() -> None:
 
     names_here = [f["name"] for f in files]
     main = layout()
-    with main, box("work"):
+    with main, box("work", fit=True):
         nq = len(it.open_questions(step_id))
         tabs = {"doc": "Document", "ask": f"Needs you ({nq})", "built": "What was read", "log": "Reading log"}
         work = work_tabs(tabs, "ask" if nq else "doc")

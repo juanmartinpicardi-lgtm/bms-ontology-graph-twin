@@ -85,7 +85,9 @@ export function buildSite() {
       leaves.setColorAt(i * 2 + k, col.setHSL(rnd(.2, .29), rnd(.3, .48), rnd(.18, .28)));
     }
   });
-  trunk.castShadow = leaves.castShadow = true; leaves.receiveShadow = true; site.add(trunk, leaves);
+  // Everything that is not the building or its ground sits in `extras`, so it can be switched off.
+  const extras = new THREE.Group(); site.add(extras);
+  trunk.castShadow = leaves.castShadow = true; leaves.receiveShadow = true; extras.add(trunk, leaves);
 
   // parked cars
   const cars = [];
@@ -98,7 +100,7 @@ export function buildSite() {
   const palette = [0xe8e8e8, 0x1c1c1c, 0x8a8f96, 0x2e4a6b, 0x8c2a24, 0xd0d3d6, 0x3b3f44];
   cars.forEach(([x, z, ry], i) => { o.position.set(x, 0, z); o.scale.set(1, 1, 1); o.rotation.set(0, ry, 0); o.updateMatrix();
     body.setMatrixAt(i, o.matrix); cab.setMatrixAt(i, o.matrix); body.setColorAt(i, col.setHex(palette[i % palette.length])); });
-  body.castShadow = cab.castShadow = true; site.add(body, cab);
+  body.castShadow = cab.castShadow = true; extras.add(body, cab);
 
   // street and plaza lights (their heads glow at night)
   const lamps = [];
@@ -109,7 +111,7 @@ export function buildSite() {
   const headMat = new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0xffd9a0, emissiveIntensity: 0 });
   const head = new THREE.InstancedMesh(new THREE.BoxGeometry(.8, .15, .35).translate(.3, 6, 0), headMat, lamps.length);
   lamps.forEach(([x, z], i) => { o.position.set(x, 0, z); o.scale.set(1, 1, 1); o.rotation.set(0, 0, 0); o.updateMatrix(); pole.setMatrixAt(i, o.matrix); head.setMatrixAt(i, o.matrix); });
-  pole.castShadow = true; site.add(pole, head);
+  pole.castShadow = true; extras.add(pole, head);
 
   // neighbouring blocks (context), simple massing with glass and stone
   const ctx = new THREE.Group();
@@ -124,6 +126,6 @@ export function buildSite() {
     const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, h / 2, z); b.castShadow = b.receiveShadow = true; ctx.add(b);
     const cap = new THREE.Mesh(new THREE.BoxGeometry(w + .6, .8, d + .6), stone); cap.position.set(x, h + .4, z); ctx.add(cap);
   }
-  site.add(ctx);
-  return { site, lampHeads: headMat };
+  extras.add(ctx);
+  return { site, lampHeads: headMat, extras };
 }

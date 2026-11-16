@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import notes  # noqa: E402
-from projectmodel.app.shell import active_project  # noqa: E402
+from projectmodel.app.shell import active_project, box  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.equipment_view import load_anchors  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
@@ -45,9 +45,10 @@ if not projects:
     st.stop()
 project = active_project(projects)
 
-st.caption("Every equipment and point with the mapper's best guess · select a row for where each fact came from")
 site = project.split("/")[0]
-with st.container(horizontal=True, gap="small"):
+with box("tree_head"), st.container(horizontal=True, gap="small", vertical_alignment="center"):
+    st.caption("Every equipment and point with the mapper's best guess · select a row for where each fact came "
+               "from", width=300)
     if (GT_DIR / site).exists():
         s = score_project(store, project, ground_truth(site), km, DEFAULT_ACCEPT)
         for name, value, tip in [
@@ -182,13 +183,13 @@ def tree_tab():
     st.caption(f"{eq_count} equipment, {len(tree.by_id) - eq_count - (UNPLACED in tree.by_id)} points. "
                f"Showing {len(rows)} equipment. Points column: own / including parts. Select a row for its provenance.")
 
-    left, right = st.columns([1, 1.5])
-    with left:
+    left, right = st.columns([1, 1.5], gap="medium")
+    with left, box("tree_list", "Equipment", "account_tree", fit=True):
         df = pd.DataFrame(rows, columns=["id", "equipment", "class", "points", "method", "status"])
         ev = st.dataframe(df, hide_index=True, width="stretch", height=640, on_select="rerun",
                           selection_mode="single-row", key=f"tree_{project}", column_config={"id": None})
     sel = ev.selection.rows
-    with right:
+    with right, box("tree_detail", "Provenance", "fact_check", fit=True):
         if not sel or sel[0] >= len(df):
             st.info("Select equipment on the left.")
             return

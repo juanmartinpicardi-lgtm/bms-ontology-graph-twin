@@ -32,9 +32,14 @@ def natural(label: str) -> list:
     return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", label)]
 
 
+TEMPLATE_TYPES = {"ahu": "AHU", "chiller": "Chiller", "boiler": "Boiler", "pump": "Pump"}
+
+
 def kind_of(cls: str | None, template: str | None, name: str) -> str:
     if template == "vav":
         return "VAV (dual duct)" if name.startswith("DD ") else "VAV"
+    if template in TEMPLATE_TYPES:
+        return TEMPLATE_TYPES[template]
     cls = cls or ""
     return TYPES.get(cls) or ("Meter" if cls.endswith("_Meter") else "System")
 
@@ -72,7 +77,8 @@ def twin_payload(store: Store, project: str, site: str) -> dict:
         equip.append({"id": i, "name": name, "cls": n["class"] or "Unclassified", "status": n["status"],
                       "method": n["method"], "conf": round(n["confidence"], 2), "parent": parent.get(i),
                       "sys": system_of(kind, n["class"]), "type": kind, "file": Path(n["source_file"]).name,
-                      "row": n["source_ref"], "points": points.get(i, [])})
+                      "row": n["source_ref"], "points": points.get(i, []),
+                      **({"floor_hint": attrs["floor"]} if attrs.get("floor") else {})})
     equip.sort(key=lambda e: natural(e["name"]))
     feeds = [{"s": e["src"], "r": "feeds", "d": e["dst"], "via": json.loads(e["attrs"]).get("medium") or e["method"]}
              for e in live if e["rel"] == "feeds"]
@@ -89,8 +95,12 @@ def floors(equip: list[dict], feeds: list[dict]) -> dict[str, str]:
     ahus = sorted((e for e in equip if e["type"] == "AHU"), key=lambda e: natural(e["name"]))
     floor_of_ahu = {a["id"]: ZONE_FLOORS[min(k, len(ZONE_FLOORS) - 1)] for k, a in enumerate(ahus)}
     served = {f["d"]: f["s"] for f in feeds if f["s"] in floor_of_ahu}
+    known = set(ZONE_FLOORS) | {"B1", "RF"}
     for e in equip:
-        if e["type"].startswith("VAV"):
+        hint = e.pop("floor_hint", None)  # read from the floor plans (guided setup): the real floor wins
+        if hint:
+            e["floor"] = hint if hint in known else (f"L{min(4, int(hint[1:]))}" if hint[1:].isdigit() else "B1")
+        elif e["type"].startswith("VAV"):
             ahu = served.get(e["id"]) or (e["parent"] if e["parent"] in floor_of_ahu else None)
             e["floor"] = floor_of_ahu.get(ahu, ZONE_FLOORS[0])
         elif e["type"] in ROOF or "Penthouse" in e["name"]:

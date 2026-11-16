@@ -44,8 +44,14 @@ def clear_test_buildings_once() -> None:
     if getattr(sys, "_projectmodel_tests_cleared", False):
         return
     sys._projectmodel_tests_cleared = True
+    from projectmodel.db.store import Store
+    from projectmodel.intake.publish import INPUT, delete_project
     from projectmodel.intake.state import clear_test_intakes
-    clear_test_intakes()
+    gone = clear_test_intakes()
+    if gone and (APP.parents[2] / "data/kg.sqlite").exists():
+        store = Store(APP.parents[2] / "data/kg.sqlite")
+        for slug in gone:  # a test building finished in the setup is a project too: remove it with the building
+            delete_project(store, f"{slug}/{INPUT}")
 
 
 clear_test_buildings_once()
@@ -57,7 +63,8 @@ from projectmodel.projects import list_projects  # noqa: E402
 st.set_page_config(page_title="Project Model", page_icon=":material/hub:", layout="wide")
 
 overview = [
-    st.Page(APP / "views/why.py", title="Why it matters", icon=":material/bolt:", default=True),
+    st.Page(APP / "views/pitch.py", title="The idea", icon=":material/auto_awesome:", default=True),
+    st.Page(APP / "views/why.py", title="Why it matters", icon=":material/bolt:", url_path="why-it-matters"),
     st.Page(APP / "views/how.py", title="How it works", icon=":material/schema:", url_path="how-it-works"),
     st.Page(APP / "views/complete_graph.py", title="Complete graph", icon=":material/task_alt:",
             url_path="complete-graph"),
@@ -77,6 +84,8 @@ this_project = [
     st.Page(APP / "views/sequences.py", title="Sequences", icon=":material/sync_alt:", url_path="sequences"),
     st.Page(APP / "views/data_tables.py", title="Data tables", icon=":material/table:", url_path="data"),
     st.Page(APP / "views/notes.py", title="Notes", icon=":material/sticky_note_2:", url_path="Notes"),
+    st.Page(APP / "views/project_tribal.py", title="Tribal knowledge", icon=":material/groups:",
+            url_path="project-tribal-knowledge"),
 ]
 twin = [st.Page(APP / "views/digital_twin.py", title="Digital twin", icon=":material/domain:", url_path="digital-twin")]
 shared = [

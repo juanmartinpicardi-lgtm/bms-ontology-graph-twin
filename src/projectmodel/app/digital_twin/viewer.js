@@ -81,7 +81,7 @@ export function createViewer(host, cb) {
     const div = document.createElement("div"); div.className = "flabel"; div.onclick = () => cb.onFloor?.(V.floor === fl.id ? null : fl.id);
     fl.labelEl = div; const lab = new CSS2DObject(div); lab.position.set(-W / 2 - 4, 1, DEP / 2); fl.group.add(lab); fl.label = lab;
   }
-  const { site, lampHeads } = buildSite(); scene.add(site);
+  const { site, lampHeads, extras } = buildSite(); scene.add(site);
 
   // beacons over anything not normal; rebuilt when statuses change
   const beacons = new Map();
@@ -358,6 +358,7 @@ export function createViewer(host, cb) {
       if ("cut" in opts) { V.cut = opts.cut == null ? null : cutPlane; cutPlane.constant = opts.cut ?? 0; }
       if ("mode" in opts || "hours" in opts || "hq" in opts) applyEnvironment();
       if ("cut" in opts) applyCut();
+      if ("surroundings" in opts) extras.visible = !!opts.surroundings;  // trees, cars, lights, neighbours
       if (["mode", "floor", "sel", "exploded", "systems", "labels"].some(k => k in opts && opts[k] !== prev[k])) layout();
       paint();
     },

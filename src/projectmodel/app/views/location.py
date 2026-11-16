@@ -14,7 +14,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store, secret, site_map  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store, secret, site_map  # noqa: E402
 from projectmodel.locate import LocateError, get_geocoder, get_location, save_location  # noqa: E402
 from projectmodel.projects import list_projects, site_of  # noqa: E402
 
@@ -31,8 +31,8 @@ geocoder = get_geocoder(server_key)
 provider = "Google Maps" if server_key else "OpenStreetMap"
 saved = get_location(store, site_id)
 
-left, right = st.columns([2, 3], gap="large")
-with left:
+left, right = st.columns([2, 3], gap="medium")
+with left, box("loc_info", "Where it is", "location_on", fit=True):
     if saved:
         st.subheader(saved["address"])
         st.caption(f"{saved['lat']:.6f}, {saved['lng']:.6f} · confirmed by {saved['confirmed_by']} on "
@@ -74,7 +74,7 @@ with left:
             del st.session_state["loc_results"]
             st.rerun()
 
-with right:
+with right, box("loc_map", "Map", "map", fit=True):
     picked = st.session_state.get("loc_results") or []
     shown = picked[st.session_state.get("loc_pick", 0)] if picked else None
     lat, lng = (shown.lat, shown.lng) if shown else (saved["lat"], saved["lng"]) if saved else (None, None)

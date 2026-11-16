@@ -21,7 +21,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools, viewer_options  # noqa: E402
+from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools, box  # noqa: E402
 from projectmodel.equipment_view import equipment_payload, load_anchors, render_html  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
 
@@ -158,17 +158,16 @@ with page_tools():
     scenario = st.selectbox("Scenario", list(SCENARIOS), key="sim_scenario", format_func=SCENARIOS.get,
                             on_change=start_scenario, label_visibility="collapsed", width=240,
                             help="Simulated values. The scenario keeps running as you move between equipment.")
-    height = viewer_options("equipment", 780)
 browser, main = st.columns([1, 3.4], gap="medium")
 
 # --- browser: type, search, list ---------------------------------------------------------------
-with browser:
+with browser, box("eq_list", "Equipment", "view_in_ar", fit=True):
     st.pills("Type", [ALL] + [t for t in TYPES if counts[t]], key="eq_type", label_visibility="collapsed",
              format_func=lambda t: f"All {len(models)}" if t == ALL else f"{TYPES[t]} {counts[t]}")
     st.text_input("Find equipment", key="eq_q", placeholder="Find by name or AHU…", icon=":material/search:",
                   label_visibility="collapsed")
     lst = shown_list()
-    with st.container(height=max(300, height - 110), border=True):
+    with st.container(height=520, border=False):
         if not lst:
             st.caption("No equipment matches.")
         else:
@@ -188,7 +187,7 @@ with browser:
                "template match).")
 
 # --- viewer, with previous / next and related equipment ---------------------------------------
-with main:
+with main, box("eq_view", fit=True):
     lst = shown_list()
     with st.container(horizontal=True, vertical_alignment="center", gap="small"):
         st.button("", icon=":material/chevron_left:", on_click=step, args=(-1,), help="Previous in the list",
@@ -221,4 +220,4 @@ with main:
     # The start time, not the elapsed time: the page stays identical between reruns, so the viewer doesn't reload.
     payload["sim"] = {"scenario": scenario, "started": st.session_state.setdefault("sim_started", time.time())}
     payload["link_target"] = "top"
-    st.iframe(render_html(payload, st.context.theme.type), height=height)
+    st.iframe(render_html(payload, st.context.theme.type), height=760)

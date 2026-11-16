@@ -15,7 +15,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, get_store, page_tools, viewer_options  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store  # noqa: E402
 from projectmodel.projects import list_projects, site_of  # noqa: E402
 from projectmodel.twin_view import render_html, twin_payload  # noqa: E402
 
@@ -26,9 +26,6 @@ if not projects:
     st.stop()
 project = active_project(projects)
 
-with page_tools():
-    height = viewer_options("twin", 900)
-
 payload = twin_payload(store, project, site_of(project).name)
 if not any(e["type"].startswith("VAV") for e in payload["equip"]):
     st.info("This input has no zones grouped under their equipment yet, so there is little to place on floors. "
@@ -37,4 +34,5 @@ if not any(e["type"].startswith("VAV") for e in payload["equip"]):
 payload["links"] = {e["id"]: "/Equipment_3D?" + urlencode({"project": project, "equip": e["id"]})
                     for e in payload["equip"] if e["type"] in ("AHU", "VAV", "VAV (dual duct)", "Chiller", "Boiler",
                                                                "Pump")}
-st.iframe(render_html(payload, st.context.theme.type), height=height)
+with box("twin", fit=True):  # down to the bottom of the screen; the viewer fills it
+    st.iframe(render_html(payload, st.context.theme.type), height=800)
