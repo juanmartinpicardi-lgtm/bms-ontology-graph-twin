@@ -42,7 +42,7 @@ export default function (component) {
     parentElement.appendChild(f);
   }
   f._emit = (v) => setTriggerValue("event", { ...v, at: Date.now() });
-  f.style.height = data.height + "px";
+  f.style.height = typeof data.height === "number" ? data.height + "px" : data.height;  // or a CSS length
   if (f._stamp !== data.stamp) {
     f._stamp = data.stamp;
     f._msg = data.msg;
@@ -54,7 +54,7 @@ export default function (component) {
 _frame = st.components.v2.component("projectmodel.frame", js=JS)
 
 
-def frame(html: str, msg, height: int, key: str, page_key: str = "", title: str = "") -> dict | None:
+def frame(html: str, msg, height: int | str, key: str, page_key: str = "", title: str = "") -> dict | None:
     """Show `html` in a frame and post `msg` to it. Returns the event the page sent, on the rerun it caused."""
     stamp = hashlib.md5(json.dumps(msg, sort_keys=True, default=str).encode()).hexdigest()
     page_key = page_key or hashlib.md5(html.encode()).hexdigest()
