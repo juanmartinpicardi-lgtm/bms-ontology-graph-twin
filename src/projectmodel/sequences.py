@@ -89,7 +89,8 @@ class Resolver:
     def payload(self, eid: str) -> dict | None:
         n = self.tree.by_id.get(eid)
         if eid not in self.payloads and n is not None and (n.attrs.get("template") or "") in self.anchors:
-            self.payloads[eid] = equipment_payload(self.store, self.project, eid, self.km, self.anchors) | {"embed": True}
+            self.payloads[eid] = equipment_payload(self.store, self.project, eid, self.km, self.anchors) | {
+                "embed": True, "tools": True}  # embedded, but the view buttons stay
         return self.payloads.get(eid)
 
     def points_of(self, eid: str) -> dict[str, dict]:

@@ -139,6 +139,10 @@
   /* Embedded in the agent tour: the tour drives the camera and selection, so the viewer's own tools step aside. */
   body.embed #tools, body.embed #help, body.embed #dock, body.embed #vcHelp { display: none !important; }
   body.embed #header { top: 10px; left: 10px; }
+  /* Embedded in the Sequences page: the reader may still turn the model, so the view buttons stay, bottom left
+     (the header fills the top of a narrow frame, the zoom buttons sit bottom right). */
+  body.embed.tools #tools { display: flex !important; top: auto; right: auto; bottom: 10px; left: 10px;
+    justify-content: flex-start; }
   @media (max-width: 760px) {
     #tools { top: auto; bottom: 12px; }
     #help, #dock { display: none; }
@@ -284,6 +288,7 @@ viewer.onFrame((t, dt) => {
 tick();
 window.__sim = { sim, state: () => simState, seconds: () => simSeconds };
 if (DATA.embed) document.body.classList.add("embed");
+if (DATA.tools) document.body.classList.add("tools");
 // What the agent tour drives from outside: show a point (label, camera; the details panel only when asked), a view.
 window.__eq3dApi = {
   point(id, { panel = false, dist = 9 } = {}) {
