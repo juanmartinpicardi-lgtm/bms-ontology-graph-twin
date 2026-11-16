@@ -37,6 +37,19 @@ def reload_changed_package() -> None:
 
 reload_changed_package()
 
+
+def clear_test_buildings_once() -> None:
+    """Once per server process: drop the buildings started from the test package. Not a cached resource, since a code
+    change clears those and would remove test buildings in the middle of a session."""
+    if getattr(sys, "_projectmodel_tests_cleared", False):
+        return
+    sys._projectmodel_tests_cleared = True
+    from projectmodel.intake.state import clear_test_intakes
+    clear_test_intakes()
+
+
+clear_test_buildings_once()
+
 from projectmodel.app.shell import (active_project, area_header, ensure_database, get_store,  # noqa: E402
                                    project_header, rail)
 from projectmodel.projects import list_projects  # noqa: E402
