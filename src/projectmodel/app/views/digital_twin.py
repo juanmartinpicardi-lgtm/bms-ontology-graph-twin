@@ -37,4 +37,4 @@ if not any(e["type"].startswith("VAV") for e in payload["equip"]):
 payload["links"] = {e["id"]: "/Equipment_3D?" + urlencode({"project": project, "equip": e["id"]})
                     for e in payload["equip"] if e["type"] in ("AHU", "VAV", "VAV (dual duct)", "Chiller", "Boiler",
                                                                "Pump")}
-st.iframe(render_html(payload), height=height)
+st.iframe(render_html(payload, st.context.theme.type), height=height)

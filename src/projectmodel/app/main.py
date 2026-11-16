@@ -5,7 +5,7 @@ Run: .venv/bin/streamlit run src/projectmodel/app/main.py
 An icon rail on the left picks the area; chips at the top pick the page inside it.
 
 Overview          why the knowledge graph matters, how it works, what a complete graph is
-Projects          every building, and adding a new one; then one project's pages, with the building and input
+Projects          every building, and adding one (guided setup); then one project's pages, with the building and input
                   switched in the project header
 Digital twin      the active project as a building: floors, zones and equipment in 3D, with a floor plan
 Shared knowledge  what sits above all projects: knowledge model, tribal knowledge
@@ -52,9 +52,8 @@ overview = [
 ]
 projects = [
     st.Page(APP / "views/projects.py", title="All projects", icon=":material/apartment:", url_path="projects"),
-    st.Page(APP / "views/add_building.py", title="Add a building", icon=":material/upload_file:",
+    st.Page(APP / "views/add_building.py", title="Add a building", icon=":material/add_business:",
             url_path="add-building"),
-    st.Page(APP / "views/new_project.py", title="New project", icon=":material/add_business:", url_path="new-project"),
 ]
 this_project = [
     st.Page(APP / "views/location.py", title="Location", icon=":material/location_on:", url_path="location"),

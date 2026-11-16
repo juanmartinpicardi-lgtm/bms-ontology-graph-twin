@@ -103,9 +103,10 @@ def floors(equip: list[dict], feeds: list[dict]) -> dict[str, str]:
     return out
 
 
-def render_html(payload: dict) -> str:
+def render_html(payload: dict, theme: str | None = None) -> str:
     """The twin page with the payload and its JS modules inlined, so it runs in Streamlit's iframe (three.js comes
-    from the CDN). The modules travel as text and become blob-URL modules in the page, each keeping its own scope."""
+    from the CDN). The modules travel as text and become blob-URL modules in the page, each keeping its own scope.
+    `theme` ("light" / "dark") pins the colours to the host app's theme; without it the page follows the system."""
     modules = {m: (APP / "digital_twin" / m).read_text() for m in MODULES}
     safe = lambda obj: json.dumps(obj, separators=(",", ":")).replace("</", "<\\/")  # noqa: E731
     boot = f"""<script>window.TWIN = {safe(payload)};</script>
@@ -118,4 +119,7 @@ for (const name of {json.dumps(list(MODULES))}) {{
 }}
 import(urls["main.js"]).catch(err => {{ document.getElementById("loading").textContent = "The twin failed to start: " + err.message; }});
 </script>"""
-    return (APP / "digital_twin.html").read_text().replace("<!--__TWIN__-->", boot)
+    html = (APP / "digital_twin.html").read_text().replace("<!--__TWIN__-->", boot)
+    if theme in ("light", "dark"):
+        html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
+    return html
