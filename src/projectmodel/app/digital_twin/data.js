@@ -93,8 +93,11 @@ export function tempColor(t) {
   }
   return "#E5534B";
 }
+// Impact view (agent tours): the equipment taken out, and everything that loses service because of it.
+export const IMPACT = { src: null, ids: new Set() };
 export function colorOf(e, mode) {
   const s = sim.get(e.id);
+  if (mode === "impact") return e.id === IMPACT.src ? C.warning : IMPACT.ids.has(e.id) ? C.alarm : "#5A6068";
   if (mode === "temp") return isZone(e) ? tempColor(s.temp) : "#5A6068";
   if (mode === "system") return C[e.sys];
   if (mode === "mapping") return C[e.status];
