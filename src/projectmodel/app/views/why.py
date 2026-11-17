@@ -1,8 +1,6 @@
 """Why it matters: the case for a building knowledge graph as the foundation for agentic, autonomous buildings.
-Numbers come from the latest score report, so the page never claims more than was measured. The page is a
-scroll-synced story (app/story.py): one card per argument, each with one visual."""
+The page is a scroll-synced story (app/story.py): one card per argument, each with one visual."""
 
-import json
 import sys
 from pathlib import Path
 
@@ -12,15 +10,6 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.story import Go, Section, features, hero, p, pills, steps, story, tiles  # noqa: E402
-
-REPORT = ROOT / "reports/score_v1.json"
-
-
-def scores() -> dict:
-    try:
-        return {r["project"]: r for r in json.loads(REPORT.read_text())}
-    except (OSError, ValueError, KeyError):
-        return {}
 
 
 # One real fact from Alpha's graph: a point, its class, its equipment, and what that equipment is fed by and feeds.
@@ -94,24 +83,11 @@ USES = tiles([
     ("domain", "Portfolio rollout", "The same apps on every building, no per-site engineering."),
 ])
 
-s = scores()
-alpha = s.get("alpha/names_paths")
-
 hero("Buildings can't run themselves until software understands them",
      "Every building automation system holds thousands of points with names like <code>AHU1_SAT-sp</code> or "
      "<code>Clg_Valve_Cmd</code>. People decode them by hand, building by building. AI agents can't. The "
      "<b>knowledge graph</b> turns that tangle into a typed, connected, traceable map of the building: the "
      "foundation agents need to monitor, diagnose and act.")
-
-if alpha:
-    secs = alpha["points"] * alpha["seconds_per_1000_points"] / 1000
-    c = st.columns(4)
-    c[0].metric(f"Points mapped in {secs:.1f} s", f"{alpha['points']:,}", border=True)
-    c[1].metric("On the right equipment", f"{alpha['H1_grouped_right_pct']:.0f}%", border=True)
-    c[2].metric("Exactly the right class", f"{alpha['H2_exact_pct']:.0f}%", border=True)
-    c[3].metric("Facts with source + confidence", "100%", border=True)
-    st.caption("Measured against ground truth on Project Haystack example site Alpha, from names and folders "
-               f"only, with {alpha['llm_calls']} LLM calls.")
 
 story([
     Section("The problem", "password", "Thousands of points. No meaning.",

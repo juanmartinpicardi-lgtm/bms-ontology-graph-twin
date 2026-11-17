@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent tours</title>
+<style>
+  /* Same look as agent_tour.html: the graph on the left with the agent's trace, the equipment side on the right. */
+  :root {
+    color-scheme: light;
+    --bg: #f6f6f4; --panel: #ffffff; --glass: rgba(255, 255, 255, 0.88); --line: #e3e1dc; --text: #25231f;
+    --muted: #77726b; --chip: #f1f0ed; --node: #cfccc5; --edge: #b3aea5; --grid: rgba(0, 0, 0, 0.07);
+    --agent: #6d5dfc; --agent2: #1aa6bf; --ok: #1f9d55; --warn: #c98a12; --fault: #d6453b; --note: #d6336c;
+    --shadow: 0 10px 40px rgba(30, 25, 15, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #171614; --panel: #1d1c1a; --glass: rgba(29, 28, 26, 0.88); --line: #34322e; --text: #edebe8;
+      --muted: #a29e98; --chip: #2a2925; --node: #4d4a44; --edge: #5c5852; --grid: rgba(255, 255, 255, 0.05);
+      --agent: #8f83ff; --agent2: #5ee0f0; --ok: #3fd17a; --warn: #f2b134; --fault: #ff5a4e; --note: #f778ba;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #171614; --panel: #1d1c1a; --glass: rgba(29, 28, 26, 0.88); --line: #34322e; --text: #edebe8;
+    --muted: #a29e98; --chip: #2a2925; --node: #4d4a44; --edge: #5c5852; --grid: rgba(255, 255, 255, 0.05);
+    --agent: #8f83ff; --agent2: #5ee0f0; --ok: #3fd17a; --warn: #f2b134; --fault: #ff5a4e; --note: #f778ba;
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .mono, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
+    padding: 5px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  button:hover { border-color: var(--agent); }
+  button.primary { background: var(--agent); border-color: var(--agent); color: #fff; font-weight: 600; }
+  button.ghost { background: none; border-color: transparent; color: var(--muted); }
+  button.ghost:hover { color: var(--text); border-color: var(--line); }
+  svg.i { width: 15px; height: 15px; fill: currentColor; flex: none; }
+  #app { position: fixed; inset: 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 10px; padding: 4px 2px 2px; }
+
+  /* top */
+  #top { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .ask { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700;
+    font-size: 12px; color: #fff; }
+  .bubble { background: var(--panel); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; padding: 6px 13px;
+    min-width: 0; box-shadow: var(--shadow); }
+  .bubble .who { display: block; font-size: 10.5px; color: var(--muted); }
+  .bubble .q { font-size: 15.5px; font-weight: 600; letter-spacing: -.01em; }
+  .bubble .q em { font-style: normal; color: var(--agent); }
+  #controls { display: flex; gap: 6px; align-items: center; }
+
+  /* steps */
+  #rail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
+  .stp { position: relative; padding: 7px 8px 6px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 11.5px;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border: 1px solid transparent; }
+  .stp:hover { border-color: var(--line); color: var(--text); }
+  .stp b { margin-right: 5px; opacity: .7; }
+  .stp::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: var(--line); }
+  .stp .fill { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; border-radius: 3px; z-index: 1;
+    background: linear-gradient(90deg, var(--agent), var(--agent2)); transition: width .4s ease; }
+  .stp.done { color: var(--text); } .stp.done .fill { width: 100%; }
+  .stp.cur { color: var(--text); font-weight: 600; background: color-mix(in srgb, var(--agent) 9%, transparent); }
+  .stp.cur .fill { width: 50%; }
+
+  /* panels */
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 12px; min-height: 0; }
+  .panel { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-height: 0; }
+  .ptitle { position: absolute; top: 10px; left: 12px; z-index: 4; display: flex; align-items: center; gap: 8px; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; pointer-events: none; }
+  .ptitle .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--agent); }
+  #g { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  #glabels { position: absolute; inset: 0; pointer-events: none; z-index: 2; overflow: hidden; }
+  #agent { position: absolute; top: 34px; left: 12px; z-index: 4; display: flex; align-items: center; gap: 8px; padding: 4px 10px 4px 6px;
+    border-radius: 999px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(8px); font-size: 12px; }
+  #agent .orb { width: 18px; height: 18px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff 0 8%, var(--agent2) 30%, var(--agent) 75%); box-shadow: 0 0 12px var(--agent); }
+  #agent.busy .orb { animation: orb 1.2s ease-in-out infinite; }
+  @keyframes orb { 50% { transform: scale(1.18); box-shadow: 0 0 22px var(--agent2); } }
+  #agent .st { color: var(--muted); } #agent .st b { color: var(--text); font-weight: 600; }
+  #hud { position: absolute; top: 10px; right: 12px; z-index: 4; display: flex; gap: 12px; font-size: 11px; color: var(--muted);
+    padding: 5px 10px; border-radius: 10px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(8px); }
+  #hud b { color: var(--text); font-size: 13px; font-variant-numeric: tabular-nums; }
+  #hud .f b { color: var(--fault); } #hud .n b { color: var(--note); } #hud .o b { color: var(--ok); }
+
+  .e { stroke: var(--edge); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .35; transition: opacity .6s, stroke .6s; }
+  .e.pe, .e.model, .e.tri, .e.space, .e.loop { opacity: 0; }
+  .e.pe.on { opacity: .45; } .e.model.on { opacity: .7; stroke: var(--agent2); stroke-dasharray: 4 4; }
+  .e.space.on { opacity: .18; stroke: var(--fault); }
+  .e.tri.on { opacity: .95; stroke: var(--note); stroke-width: 2; }
+  .e.tri.prop { stroke-dasharray: 5 4; }
+  .e.lit { opacity: .9; stroke: var(--agent); }
+  .e.hit { opacity: .8; stroke: var(--fault); }
+  .e.doc { stroke-dasharray: 2 4; }
+  .loop { fill: none; stroke: var(--agent2); stroke-width: calc(1.8px * var(--k)); stroke-dasharray: calc(5px * var(--k)) calc(4px * var(--k));
+    opacity: .9; animation: flow 1s linear infinite; }
+  .loop.bad { stroke: var(--warn); }
+  @keyframes flow { to { stroke-dashoffset: calc(-18px * var(--k)); } }
+  .n .core { r: calc(var(--r) * var(--ks)); fill: var(--node); stroke: var(--panel); stroke-width: calc(1.2px * var(--k)); transition: fill .5s, opacity .6s; }
+  .n .halo { r: calc(var(--r) * var(--ks)); fill: none; stroke: var(--agent); stroke-width: calc(1.6px * var(--k)); opacity: 0;
+    transform-box: fill-box; transform-origin: center; }
+  .n { transition: opacity .6s; }
+  .n.eq .core { fill: var(--panel); stroke: var(--edge); stroke-width: calc(1.6px * var(--k)); }
+  .n.big .core { stroke-width: calc(2.2px * var(--k)); }
+  .n.km .core { fill: color-mix(in srgb, var(--agent2) 22%, var(--panel)); stroke: var(--agent2); stroke-width: calc(1.8px * var(--k)); }
+  .n.doc .core { fill: var(--chip); stroke: var(--muted); stroke-width: calc(1.4px * var(--k)); }
+  .n.space .core { fill: color-mix(in srgb, var(--fault) 14%, var(--panel)); stroke: var(--fault); stroke-width: calc(2px * var(--k)); }
+  .n.tri .core { fill: var(--note); stroke: var(--panel); }
+  .n.tri.prop .core { fill: color-mix(in srgb, var(--note) 25%, var(--panel)); stroke: var(--note); stroke-dasharray: 3 2; stroke-width: calc(2px * var(--k)); }
+  .n.visited .core { stroke: var(--agent); stroke-width: calc(2.4px * var(--k)); }
+  .n.active .halo { animation: halo 1.6s ease-out infinite; }
+  .n.ok .core { fill: var(--ok); } .n.warn .core { fill: var(--warn); } .n.fault .core { fill: var(--fault); }
+  .n.eq.ok .core, .n.eq.warn .core, .n.eq.fault .core { stroke: var(--panel); }
+  .n.info .core { fill: var(--agent2); }
+  .n.pt .core, .n.hid .core { transform: scale(0); transform-box: fill-box; transform-origin: center;
+    transition: transform .5s cubic-bezier(.3, 1.6, .5, 1), fill .5s; }
+  .n.pt.on .core, .n.hid.on .core { transform: scale(1); }
+  .n.gone .core { fill: var(--chip); stroke: var(--muted); stroke-dasharray: 2 2; }
+  .n.ping .core { animation: ping .9s ease-out both; }
+  .n.tri.on .halo { stroke: var(--note); animation: halo 1.6s ease-out infinite; }
+  @keyframes halo { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(3.2); opacity: 0; } }
+  @keyframes ping { 0%, 100% { fill: var(--node); } 30% { fill: var(--agent2); } }
+  .walk { fill: none; stroke: var(--agent); stroke-width: calc(2.6px * var(--k)); stroke-linecap: round; filter: url(#glow); }
+  .walk.side { stroke-width: calc(1.4px * var(--k)); opacity: .7; }
+  .walk.red { stroke: var(--fault); }
+  .walk.pink { stroke: var(--note); }
+  .comet { r: calc(6px * var(--k)); fill: #fff; stroke: var(--agent2); stroke-width: calc(3px * var(--k)); filter: url(#glow2); }
+  .ripple { fill: none; stroke: var(--agent2); stroke-width: calc(2px * var(--k)); transform-box: fill-box; transform-origin: center;
+    animation: ripple 1.1s ease-out forwards; }
+  .ripple.red { stroke: var(--fault); } .ripple.pink { stroke: var(--note); }
+  @keyframes ripple { from { transform: scale(1); opacity: .9; } to { transform: scale(7); opacity: 0; } }
+  .xmark { stroke: var(--fault); stroke-width: calc(2.4px * var(--k)); stroke-linecap: round; }
+
+  .gl { position: absolute; transform: translate(-50%, 0); font-size: 11px; white-space: nowrap; color: var(--muted);
+    text-shadow: 0 0 4px var(--panel), 0 0 2px var(--panel); transition: opacity .5s, color .4s; }
+  .gl.eq { color: var(--text); font-weight: 600; font-size: 12px; }
+  .gl.eq small { display: block; text-align: center; font-weight: 400; font-size: 10px; color: var(--muted); }
+  .gl.minor { font-size: 10px; }
+  .gl.hide { opacity: 0; }
+  .gl.lit { color: var(--text); }
+  .gl.fault { color: var(--fault); } .gl.tri { color: var(--note); }
+  .gl.gone { text-decoration: line-through; opacity: .6; }
+  .tag { position: absolute; display: flex; align-items: center; gap: 6px; padding: 2px 4px 2px 8px; border-radius: 999px;
+    background: var(--glass); border: 1px solid var(--line); font-size: 11px; white-space: nowrap; backdrop-filter: blur(4px);
+    animation: tagIn .4s cubic-bezier(.3, 1.4, .5, 1); box-shadow: 0 2px 10px rgba(0, 0, 0, .12); z-index: 3; }
+  .tag.l { transform: translate(-100%, -50%); } .tag.r { transform: translate(0, -50%); }
+  .tag .v { padding: 1px 7px; border-radius: 999px; background: var(--chip); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .tag.fault { border-color: var(--fault); } .tag.fault .v { background: var(--fault); color: #fff; }
+  .tag.warn { border-color: var(--warn); } .tag.warn .v { background: var(--warn); color: #1d1c1a; }
+  .tag.ok .v { color: var(--ok); } .tag.info .v { color: var(--agent2); }
+  .tag.tri { border-color: var(--note); } .tag.tri .v { background: var(--note); color: #fff; }
+  @keyframes tagIn { from { opacity: 0; filter: blur(4px); } }
+
+  #trace { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 3; padding: 26px 14px 10px;
+    background: linear-gradient(to bottom, transparent, var(--panel) 22px); overflow: hidden; }
+  #trace .hd { position: absolute; top: 6px; left: 14px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; }
+  #trace .scroll { height: 100%; overflow-y: auto; scrollbar-width: none;
+    mask-image: linear-gradient(to bottom, transparent, #000 26px); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 26px); }
+  #trace .scroll::-webkit-scrollbar { display: none; }
+  .ln { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 4px; padding: 2px 0; animation: lnIn .3s ease-out; }
+  .ln .ic { color: var(--muted); text-align: center; font-weight: 700; }
+  .ln.think .ic { color: var(--agent); } .ln.think .tx { font-size: 13px; }
+  .ln.call { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--agent); }
+  .ln.call .ok { color: var(--ok); margin-left: 6px; }
+  .ln.res { font-size: 12px; color: var(--muted); }
+  .ln.res b { color: var(--text); font-weight: 600; }
+  .cls { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; padding: 0 5px; border-radius: 4px; background: var(--chip); color: var(--muted); }
+  .good { color: var(--ok); font-weight: 600; } .bad { color: var(--fault); font-weight: 600; } .meh { color: var(--warn); font-weight: 600; }
+  .pink { color: var(--note); font-weight: 600; }
+  .caret { display: inline-block; width: 7px; height: 14px; margin-left: 2px; vertical-align: -2px; background: var(--agent); animation: blink 1s steps(1) infinite; }
+  .spin { display: inline-block; width: 10px; height: 10px; margin-left: 8px; border: 2px solid var(--agent); border-right-color: transparent;
+    border-radius: 50%; animation: spin .6s linear infinite; vertical-align: -1px; }
+  @keyframes blink { 50% { opacity: 0; } } @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes lnIn { from { opacity: 0; transform: translateY(4px); } }
+
+  /* right */
+  #right { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); }
+  #crumbs { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-bottom: 1px solid var(--line); min-height: 46px; overflow-x: auto; scrollbar-width: none; }
+  #crumbs .ptitle { position: static; margin-right: 6px; }
+  .crumb { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--chip); font-size: 12px; white-space: nowrap; animation: lnIn .4s; }
+  .crumb.cur { border-color: var(--agent); font-weight: 600; }
+  .crumb .sd { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .crumb.fault .sd { background: var(--fault); } .crumb.warn .sd { background: var(--warn); } .crumb.tri .sd { background: var(--note); }
+  #stage { position: relative; overflow: hidden; background: var(--bg); }
+  #stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; pointer-events: none;
+    transition: opacity .7s ease; }
+  #stage iframe.on { opacity: 1; pointer-events: auto; }
+  #empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted); transition: opacity .6s; }
+  #empty.gone { opacity: 0; pointer-events: none; }
+  #titlecard { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 5; opacity: 0; }
+  #titlecard.on { animation: card 1.9s ease forwards; }
+  #titlecard .tc { text-align: center; padding: 18px 30px; border-radius: 18px; background: var(--glass); backdrop-filter: blur(10px);
+    border: 1px solid var(--line); box-shadow: var(--shadow); }
+  #titlecard .k { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--agent); font-weight: 700; }
+  #titlecard .t { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  #titlecard .s { color: var(--muted); font-size: 12.5px; }
+  @keyframes card { 0% { opacity: 0; transform: scale(.94); } 18%, 70% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+  #strip { border-top: 1px solid var(--line); padding: 8px 10px 10px; min-height: 120px; max-height: 42%; overflow-y: auto; }
+  #strip .hd { display: flex; justify-content: space-between; font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+  table.rows { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.rows td { padding: 5px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+  table.rows th { text-align: left; font-weight: 500; color: var(--muted); font-size: 10.5px; padding: 0 6px 3px; }
+  table.rows tr { animation: lnIn .4s; } table.rows td:first-child { font-weight: 600; white-space: nowrap; }
+  .res { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: var(--chip); color: var(--muted); white-space: nowrap; }
+  .res.pass { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+  .res.check { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+  .res.na { background: var(--chip); color: var(--muted); }
+  .res.run { color: var(--agent); }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .stat { padding: 8px 10px; border-radius: 10px; background: var(--chip); }
+  .stat b { display: block; font-size: 20px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 11px; color: var(--muted); }
+  .stat.f b { color: var(--fault); } .stat.o b { color: var(--ok); } .stat.w b { color: var(--warn); } .stat.n b { color: var(--note); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(14px, 1fr)); gap: 3px; margin-top: 8px; }
+  .tile { aspect-ratio: 1; border-radius: 3px; background: var(--chip); transition: background .5s; }
+  .tile.on { background: var(--fault); }
+
+  /* the field capture app (tribal knowledge) */
+  #capture { position: absolute; inset: 0; display: none; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 10px; padding: 14px; overflow-y: auto; }
+  #capture.on { display: grid; }
+  .cap-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .cap-head b { font-size: 14px; } .cap-head span { color: var(--muted); font-size: 11.5px; }
+  .modes { display: flex; gap: 6px; }
+  .modes button { border-radius: 999px; font-size: 12px; }
+  .modes button.on { border-color: var(--note); color: var(--note); font-weight: 600; background: color-mix(in srgb, var(--note) 10%, var(--chip)); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; box-shadow: var(--shadow); animation: lnIn .5s; }
+  .card .k { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .rec { display: inline-flex; align-items: center; gap: 6px; color: var(--fault); }
+  .rec i { width: 8px; height: 8px; border-radius: 50%; background: var(--fault); animation: blink 1s steps(1) infinite; }
+  #wave { width: 100%; height: 46px; display: block; }
+  #transcript { font-size: 13.5px; line-height: 1.5; min-height: 40px; }
+  #photo svg { width: 100%; max-height: 150px; display: block; border-radius: 10px; }
+  .note-card { border-color: var(--note); }
+  .note-card .k { color: var(--note); }
+  .note-card dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 6px 0 8px; font-size: 12px; }
+  .note-card dt { color: var(--muted); } .note-card dd { margin: 0; }
+  .note-card .body { font-size: 13px; margin: 4px 0 8px; }
+  .note-card .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .note-card button.primary { background: var(--note); border-color: var(--note); }
+  .note-card button.pressed { transform: scale(.94); }
+  .badge { display: inline-flex; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .badge.prop { color: var(--warn); background: color-mix(in srgb, var(--warn) 15%, transparent); }
+  .badge.conf { color: var(--ok); background: color-mix(in srgb, var(--ok) 15%, transparent); }
+
+  /* splash and finale */
+  .veil { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; padding: 18px;
+    background: color-mix(in srgb, var(--bg) 55%, transparent); backdrop-filter: blur(7px); transition: opacity .6s; }
+  .veil.hidden { opacity: 0; pointer-events: none; }
+  #splash .box { text-align: center; max-width: 640px; }
+  .kicker { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--agent); font-weight: 700; }
+  #splash h1 { font-size: 36px; line-height: 1.12; letter-spacing: -.03em; margin: 14px 0 12px; }
+  #splash p { color: var(--muted); font-size: 15px; margin: 0 auto 22px; max-width: 540px; }
+  #splash .go { font-size: 15px; padding: 11px 22px; border-radius: 12px; }
+  #splash .fine { margin-top: 18px; font-size: 11.5px; color: var(--muted); }
+  #finale .fcard { width: min(920px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow); padding: 20px 22px 16px; animation: lnIn .6s; }
+  .fcard .kicker { color: var(--agent); }
+  .fcard h2 { font-size: 23px; letter-spacing: -.02em; margin: 8px 0 6px; line-height: 1.25; }
+  .fcard .lead { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  .fcard .lead b { color: var(--text); }
+  .fcard ol { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; }
+  .fcard ol b { color: var(--text); }
+  .ffoot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .ffoot .fine { font-size: 11px; color: var(--muted); }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; } .stats { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <div class="ask"><div class="avatar" id="avatar"></div>
+      <div class="bubble"><span class="who" id="who"></span><span class="q" id="q"></span></div></div>
+    <div id="controls">
+      <button class="ghost" id="restart" title="Start over"><svg class="i" viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+      <button class="primary" id="play"><svg class="i" viewBox="0 0 24 24"><path id="playIcon" d="M8 5v14l11-7z"/></svg><span id="playTx">Play</span></button>
+      <button class="ghost" id="next" title="Next step"><svg class="i" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    </div>
+  </header>
+  <nav id="rail"></nav>
+  <main>
+    <section class="panel" id="left">
+      <div class="ptitle"><span class="dot"></span>Knowledge graph · Alpha</div>
+      <div id="agent"><span class="orb"></span><span class="st" id="agentSt"><b>Agent</b> · ready</span></div>
+      <div id="hud"></div>
+      <svg id="g" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="var(--grid)"/></pattern>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow2" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect x="-6000" y="-6000" width="12000" height="12000" fill="url(#dots)"/>
+        <g id="lEdges"></g><g id="lWalks"></g><g id="lNodes"></g><g id="lFx"></g>
+      </svg>
+      <div id="glabels"></div>
+      <div id="trace"><div class="hd">Agent trace</div><div class="scroll" id="traceIn"></div></div>
+    </section>
+    <section class="panel" id="right">
+      <div id="crumbs"></div>
+      <div id="stage">
+        <div id="empty"><div id="emptyTx"></div></div>
+        <div id="capture"></div>
+        <div id="titlecard"><div class="tc"><div class="k" id="tcK"></div><div class="t" id="tcT"></div><div class="s" id="tcS"></div></div></div>
+      </div>
+      <div id="strip"></div>
+    </section>
+  </main>
+  <div class="veil" id="splash"><div class="box">
+    <div class="kicker" id="spK"></div><h1 id="spH"></h1><p id="spP"></p>
+    <button class="primary go" id="go"><svg class="i" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Watch the agent</button>
+    <div class="fine" id="spFine"></div></div></div>
+  <div class="veil hidden" id="finale"></div>
+</div>
+<script>
+const DATA = /*__DATA__*/null;
+/*__SIM__*/
+(() => {
+  const D = DATA;
+  const $ = (q, e = document) => e.querySelector(q);
+  const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const el = (tag, cls = "", html = "") => { const e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; return e; };
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const sv = (tag, a = {}) => { const e = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(a)) e.setAttribute(k, v); return e; };
+  const rad = a => a * Math.PI / 180, polar = (c, r, a) => ({ x: c.x + r * Math.cos(rad(a)), y: c.y + r * Math.sin(rad(a)) });
+  const AHU = D.ahu, T = D.test, VAV = T.vav;
+  const byRole = (pts, role) => pts.filter(p => p.role === role).sort((a, b) => (b.conf || 0) - (a.conf || 0))[0];
+  const ahuPt = role => byRole(AHU.points, role);
+  const vavPt = role => byRole(VAV.points, role);
+
+  // --- player ---------------------------------------------------------------------------------------------
+  class Abort extends Error {}
+  const S = { token: 0, paused: true, instant: false, step: -1, running: false };
+  const ease = t => t < .5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
+  function anim(ms, fn, e = ease) {
+    if (S.instant) { fn(1); return Promise.resolve(); }
+    const tok = S.token;
+    return new Promise((res, rej) => {
+      let t = 0, last = performance.now();
+      const loop = n => {
+        if (tok !== S.token) return rej(new Abort());
+        if (!S.paused) t += n - last;
+        last = n;
+        const p = Math.min(1, t / ms); fn(e(p));
+        if (p >= 1) res(); else requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    });
+  }
+  const wait = ms => anim(ms, () => {});
+
+  // --- graph ----------------------------------------------------------------------------------------------
+  const svg = $("#g"), lE = $("#lEdges"), lW = $("#lWalks"), lN = $("#lNodes"), lF = $("#lFx"), labels = $("#glabels");
+  const POS = new Map(), NODE = new Map(), LAB = new Map(), EDGE = new Map(), TAG = new Map(), CENTER = new Map();
+  function clearGraph() {
+    for (const g of [lE, lW, lN, lF]) g.replaceChildren();
+    labels.replaceChildren();
+    for (const m of [POS, NODE, LAB, EDGE, TAG, CENTER]) m.clear();
+  }
+  function node(id, p, kind, r, html, lcls = "") {
+    POS.set(id, p);
+    const g = sv("g", { class: `n ${kind}`, transform: `translate(${p.x} ${p.y})` });
+    g.style.setProperty("--r", `${r}px`); g.dataset.id = id;
+    g.append(sv("circle", { class: "halo" }), sv("circle", { class: "core" }));
+    lN.append(g); NODE.set(id, g);
+    if (html != null) { const e = el("div", `gl ${lcls}`, html); labels.append(e); LAB.set(id, e); }
+    return g;
+  }
+  function line(a, b, cls = "") {
+    const p = POS.get(a), q = POS.get(b), l = sv("line", { x1: p.x, y1: p.y, x2: q.x, y2: q.y, class: `e ${cls}` });
+    lE.append(l); EDGE.set(`${a}>${b}`, l); return l;
+  }
+  const edge = (a, b) => EDGE.get(`${a}>${b}`) || EDGE.get(`${b}>${a}`);
+  const cls = (id, ...c) => NODE.get(id)?.classList.add(...c);
+  const uncls = (id, ...c) => NODE.get(id)?.classList.remove(...c);
+  const lab = (id, ...c) => LAB.get(id)?.classList.add(...c);
+  const unlab = (id, ...c) => LAB.get(id)?.classList.remove(...c);
+  function mark(id, st) { const n = NODE.get(id); if (!n) return; n.classList.remove("ok", "warn", "fault", "info"); if (st) n.classList.add(st); }
+  function ripple(id, tone = "") {
+    if (S.instant) return;
+    const p = POS.get(id), c = sv("circle", { cx: p.x, cy: p.y, r: 6 * Math.pow(k(), .72), class: `ripple ${tone}` });
+    lF.append(c); setTimeout(() => c.remove(), 1200);
+  }
+  function visit(id) {
+    for (const n of lN.querySelectorAll(".active")) n.classList.remove("active");
+    cls(id, "visited", "active", "on"); unlab(id, "hide"); lab(id, "lit"); ripple(id);
+  }
+  function show(ids, delay = 18) {
+    ids.forEach((id, i) => {
+      const n = NODE.get(id); if (!n) return;
+      n.querySelector(".core").style.transitionDelay = S.instant ? "0s" : `${i * delay}ms`;
+      n.classList.add("on"); unlab(id, "hide");
+      for (const [key, e] of EDGE) if (key.endsWith(`>${id}`) && (e.classList.contains("pe") || e.classList.contains("tri"))) e.classList.add("on");
+    });
+  }
+  async function travel(a, b, { side = false, tone = "", ms = 1000 } = {}) {
+    const p = POS.get(a), q = POS.get(b), dx = q.x - p.x, dy = q.y - p.y;
+    const c = { x: (p.x + q.x) / 2 - dy * .14, y: (p.y + q.y) / 2 + dx * .14 };
+    const path = sv("path", { d: `M${p.x} ${p.y} Q${c.x} ${c.y} ${q.x} ${q.y}`, class: `walk${side ? " side" : ""} ${tone}` });
+    lW.append(path);
+    edge(a, b)?.classList.add(tone === "red" ? "hit" : "lit");
+    const len = path.getTotalLength();
+    if (S.instant) return;
+    path.style.strokeDasharray = `${len}`; path.style.strokeDashoffset = `${len}`;
+    const head = sv("circle", { class: "comet" }); lF.append(head);
+    try { await anim(ms, e => { const at = len * e, pt = path.getPointAtLength(at); path.style.strokeDashoffset = `${len - at}`; head.setAttribute("cx", pt.x); head.setAttribute("cy", pt.y); }); }
+    finally { head.remove(); }
+    path.style.strokeDasharray = ""; path.style.strokeDashoffset = "";
+    ripple(b, tone);
+  }
+  function cross(id) {
+    cls(id, "gone"); lab(id, "gone");
+    if (S.instant) return;
+    const p = POS.get(id), s = 10, g = sv("g");
+    g.append(sv("line", { x1: p.x - s, y1: p.y - s, x2: p.x + s, y2: p.y + s, class: "xmark" }), sv("line", { x1: p.x - s, y1: p.y + s, x2: p.x + s, y2: p.y - s, class: "xmark" }));
+    lF.append(g); setTimeout(() => g.remove(), 1800);
+  }
+  function tag(id, name, value, tone = "", center = null) {
+    TAG.get(id)?.remove();
+    if (center) CENTER.set(id, center);
+    const t = el("div", `tag ${tone}`, `${name ? `<span>${esc(name)}</span>` : ""}<span class="v">${esc(value)}</span>`);
+    labels.append(t); TAG.set(id, t); placeLabels(); return t;
+  }
+  function untag(id) { TAG.get(id)?.remove(); TAG.delete(id); }
+  function loopPath(a, b, bad = false) {
+    const p = POS.get(a), q = POS.get(b), dx = q.x - p.x, dy = q.y - p.y;
+    const c = { x: (p.x + q.x) / 2 + dy * .35, y: (p.y + q.y) / 2 - dx * .35 };
+    lW.append(sv("path", { d: `M${p.x} ${p.y} Q${c.x} ${c.y} ${q.x} ${q.y}`, class: `loop${bad ? " bad" : ""}` }));
+  }
+  async function scan(ids) {  // a wave over many nodes
+    ids.forEach((id, i) => { const n = NODE.get(id); if (!n) return; n.querySelector(".core").style.animationDelay = S.instant ? "0s" : `${i * 12}ms`; n.classList.add("ping"); });
+    await wait(ids.length * 12 + 600);
+    ids.forEach(id => NODE.get(id)?.classList.remove("ping"));
+  }
+
+  // camera
+  const cam = { x: 0, y: 0, w: 1200 };
+  let camAnim = 0;
+  const VW = () => svg.clientWidth || 600, VH = () => svg.clientHeight || 600;
+  const vis = () => Math.max(120, VH() - $("#trace").offsetHeight - 50);
+  const k = () => cam.w / VW();
+  function applyCam() {
+    const kk = k(), x0 = cam.x - cam.w / 2, y0 = cam.y - (50 + vis() / 2) * kk;
+    svg.setAttribute("viewBox", `${x0} ${y0} ${cam.w} ${VH() * kk}`);
+    svg.style.setProperty("--k", kk); svg.style.setProperty("--ks", Math.pow(kk, .72));
+    cam.x0 = x0; cam.y0 = y0; placeLabels();
+  }
+  const scr = p => ({ x: (p.x - cam.x0) / k(), y: (p.y - cam.y0) / k() });
+  const view = (x, y, w, h) => ({ x, y, w: Math.max(w, h * VW() / vis()) });
+  function camTo(to, ms = 1300) {
+    const from = { ...cam }, id = ++camAnim;
+    if (S.instant || !ms) { Object.assign(cam, to); applyCam(); return; }
+    const t0 = performance.now();
+    const loop = n => {
+      if (id !== camAnim) return;
+      const e = ease(Math.min(1, (n - t0) / ms));
+      cam.x = from.x + (to.x - from.x) * e; cam.y = from.y + (to.y - from.y) * e; cam.w = from.w + (to.w - from.w) * e;
+      applyCam(); if (e < 1) requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+  let drag = null;
+  svg.addEventListener("pointerdown", e => { drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y }; svg.setPointerCapture(e.pointerId); camAnim++; });
+  svg.addEventListener("pointermove", e => { if (!drag) return; cam.x = drag.cx - (e.clientX - drag.x) * k(); cam.y = drag.cy - (e.clientY - drag.y) * k(); applyCam(); });
+  svg.addEventListener("pointerup", () => { drag = null; });
+  svg.addEventListener("wheel", e => {
+    e.preventDefault(); camAnim++;
+    const r = svg.getBoundingClientRect(), mx = cam.x0 + (e.clientX - r.left) * k(), my = cam.y0 + (e.clientY - r.top) * k();
+    const w = Math.min(5000, Math.max(120, cam.w * Math.exp(e.deltaY * .0015))), s = w / cam.w;
+    cam.x = mx + (cam.x - mx) * s; cam.y = my + (cam.y - my) * s; cam.w = w; applyCam();
+  }, { passive: false });
+  addEventListener("resize", applyCam);
+  function placeLabels() {
+    const kk = k(), ks = Math.pow(kk, .72);
+    for (const [id, e] of LAB) {
+      const p = scr(POS.get(id)), r = parseFloat(NODE.get(id).style.getPropertyValue("--r")) * ks / kk;
+      e.style.left = `${p.x}px`; e.style.top = `${p.y + r + 3}px`;
+    }
+    for (const [id, e] of TAG) {
+      const p = scr(POS.get(id)), c = CENTER.get(id) ? scr(CENTER.get(id)) : { x: p.x - 1, y: p.y };
+      const dx = p.x - c.x, dy = p.y - c.y, d = Math.hypot(dx, dy) || 1;
+      e.classList.remove("l", "r"); e.classList.add(dx < -2 ? "l" : "r");
+      e.style.left = `${p.x + dx / d * 10}px`; e.style.top = `${p.y + dy / d * 10}px`;
+    }
+  }
+
+  // --- trace and hud ----------------------------------------------------------------------------------------
+  const traceIn = $("#traceIn"), agentSt = $("#agentSt"), agentEl = $("#agent");
+  const scrollTrace = () => { traceIn.scrollTop = traceIn.scrollHeight; };
+  function status(word, busy = true) { agentSt.innerHTML = `<b>Agent</b> · ${esc(word)}`; agentEl.classList.toggle("busy", busy); }
+  async function think(text) {
+    status("thinking");
+    const ln = el("div", "ln think", `<span class="ic">◆</span><span class="tx"></span>`), tx = ln.querySelector(".tx");
+    traceIn.append(ln); scrollTrace();
+    if (S.instant) { tx.textContent = text; return; }
+    const caret = el("span", "caret");
+    await anim(Math.max(700, text.length * 24), e => { tx.textContent = text.slice(0, Math.round(text.length * e)); tx.append(caret); scrollTrace(); }, t => t);
+    caret.remove(); await wait(700);
+  }
+  async function call(fn, args) {
+    status("querying the graph");
+    const ln = el("div", "ln call", `<span class="ic">→</span><span>${esc(fn)}(${args})<span class="spin"></span></span>`);
+    traceIn.append(ln); scrollTrace();
+    await wait(850);
+    ln.querySelector(".spin")?.replaceWith(el("span", "ok", "✓"));
+  }
+  async function result(html, pause = 300) {
+    traceIn.append(el("div", "ln res", `<span class="ic">←</span><span>${html}</span>`)); scrollTrace();
+    await wait(pause);
+  }
+  const HUDV = {};
+  function hud(defs) { $("#hud").innerHTML = defs.map(([key, txt, c]) => `<span class="${c || ""}"><b data-h="${key}">0</b> ${txt}</span>`).join(""); for (const [key] of defs) HUDV[key] = 0; }
+  function hudSet(key, v) { HUDV[key] = v; const b = $(`[data-h="${key}"]`); if (b) b.textContent = v.toLocaleString(); }
+  async function hudCount(key, to, ms = 900) { const from = HUDV[key] || 0; await anim(ms, e => hudSet(key, Math.round(from + (to - from) * e))); }
+
+  // --- right side ------------------------------------------------------------------------------------------
+  const stage = $("#stage"), strip = $("#strip"), crumbs = $("#crumbs");
+  function crumbsSet(items) {
+    crumbs.innerHTML = `<span class="ptitle"><span class="dot" style="background:var(--agent2)"></span>${esc(CASE.panel)}</span>`
+      + items.map(([t, c]) => `<span class="crumb ${c || ""}"><span class="sd"></span>${t}</span>`).join("");
+  }
+  function titlecard(k, t, s) {
+    if (S.instant) return;
+    $("#tcK").textContent = k; $("#tcT").textContent = t; $("#tcS").textContent = s;
+    const c = $("#titlecard"); c.classList.remove("on"); void c.offsetWidth; c.classList.add("on");
+  }
+  const frames = {};
+  function frame(key, srcdoc) {
+    if (!frames[key]) { const f = document.createElement("iframe"); f.title = key; f.srcdoc = srcdoc; stage.prepend(f); frames[key] = f; }
+    return frames[key];
+  }
+  function showFrame(key) { for (const [kk, f] of Object.entries(frames)) f.classList.toggle("on", kk === key); $("#empty").classList.toggle("gone", !!key); }
+  const win = key => { try { return frames[key]?.contentWindow || null; } catch (e) { return null; } };
+  async function until(fn, ms = 8000) { const t0 = performance.now(); while (performance.now() - t0 < ms) { const v = fn(); if (v) return v; await new Promise(r => setTimeout(r, 120)); } return null; }
+
+  // ============================================================================================================
+  // Use case 1: functional test
+  // ============================================================================================================
+  const ROLE_NAME = r => r.replace(/_/g, " ").replace("sp", "setpoint").replace("occ ", "occupied ").replace("unocc ", "unoccupied ");
+  const TEST = {
+    avatar: ["CX", "linear-gradient(135deg,#2bb5a8,#1a7f9c)"], who: "Commissioning engineer · before handover",
+    q: `Run the functional test on <em>${esc(VAV.label)}</em> and show me it works.`,
+    panel: "Equipment · simulation",
+    kicker: "Day 1 · commissioning", title: `"Test ${esc(VAV.label)} before handover."`,
+    lead: "Watch an agent write a functional test from the box's template and its sequence of operation, then run it against the equipment simulator: no spreadsheet, no hunting through drawings.",
+    steps: ["Find the box", "Read its template", "Read its sequence", "Write the test", "Run it in simulation", "Report"],
+    layout() {
+      const A = { x: 0, y: -340 };
+      node(AHU.id, A, "eq big", 12, `${esc(AHU.label)}<small>${esc(AHU.cls)} · feeds ${D.vavs.length} boxes</small>`, "eq");
+      let ids = D.vavs.map(v => v.id); const m = Math.floor(ids.length / 2), kk = ids.indexOf(VAV.id);
+      ids = ids.map((_, i) => ids[(i + kk - m + ids.length) % ids.length]);
+      ids.forEach((id, i) => { const p = polar(A, 260, 32 + 116 * i / (ids.length - 1)); node(id, p, id === VAV.id ? "eq big" : "vav", id === VAV.id ? 10 : 2.6, id === VAV.id ? `${esc(VAV.label)}<small>${esc(VAV.cls)} · ${VAV.points.length} points</small>` : null, "eq"); line(AHU.id, id, "fan"); });
+      this.sibs = ids.filter(i => i !== VAV.id);
+      const Z = POS.get(VAV.id);
+      VAV.points.forEach((p, i) => { const q = polar(Z, 130, 18 + 144 * i / Math.max(1, VAV.points.length - 1)); CENTER.set(p.id, Z); node(p.id, q, "pt", 3.2, esc(p.label), "minor hide"); line(VAV.id, p.id, "pe"); });
+      node("tpl", { x: -390, y: -110 }, "km hid", 10, `VAV template<small>knowledge model</small>`, "eq hide"); line("tpl", VAV.id, "model");
+      node("seq", { x: 390, y: -110 }, "doc hid", 10, `${esc(T.sequence.title)}<small>Sequences of operation</small>`, "eq hide"); line("seq", VAV.id, "model");
+      lE.append(edge(AHU.id, VAV.id));
+    },
+    views: {
+      all: () => view(0, -170, 1000, 560), box: () => view(0, -20, 560, 330),
+      tpl: () => view(-180, -40, 760, 380), seq: () => view(180, -40, 760, 380),
+    },
+    hudDefs: [["read", "points read"], ["tests", "tests written"], ["pass", "passed", "o"], ["find", "findings", "f"]],
+    reset() {
+      showFrame(null); $("#emptyTx").textContent = "The box opens here, running in the equipment simulator.";
+      crumbsSet([[esc(VAV.label)], ["Hot afternoon (simulated)", "warn"]]);
+      strip.innerHTML = `<div class="hd"><span>Functional test script</span><span id="tsum"></span></div><table class="rows" id="tests"></table>`;
+      frame("vav", D.viewer.replace(D.slot, () => JSON.stringify(T.equipment).replace(/<\//g, "<\\/")));
+      this.sim = Sim.create(T.equipment, { scenario: T.equipment.sim.scenario, offset: T.equipment.sim.offset });
+    },
+    value(role) {
+      const p = vavPt(role); if (!p) return null;
+      let s = NaN; try { s = win("vav")?.__sim?.seconds(); } catch (e) { /* not loaded */ }
+      if (!Number.isFinite(s)) s = 20;
+      const v = this.sim.sample(this.sim.hourAt(s)).values[p.id];
+      return v ? { ...v, label: p.label, id: p.id } : null;
+    },
+    focus(role) { const p = vavPt(role); try { if (p) win("vav")?.__eq3dApi?.point(p.id, { dist: 7 }); } catch (e) { /* not loaded */ } },
+    rows: [],
+    row(id, name, check, res = "", resCls = "") {
+      const tb = $("#tests"); if (!tb.children.length) tb.innerHTML = `<tr><th>Test</th><th>Pass condition (from the graph)</th><th>Result</th></tr>`;
+      let tr = tb.querySelector(`[data-t="${id}"]`);
+      if (!tr) { tr = el("tr"); tr.dataset.t = id; tb.append(tr); }
+      tr.innerHTML = `<td>${name}</td><td>${check}</td><td><span class="res ${resCls}">${res || "waiting"}</span></td>`;
+    },
+    async run(i) {
+      const P = role => vavPt(role), L = role => P(role) ? `<b>${esc(P(role).label)}</b>` : "<span class='bad'>missing</span>";
+      const heat = T.sequence.loops.find(l => l.outputs.includes("reheat_valve")), hasReheat = !!P("reheat_valve");
+      if (i === 0) {
+        camTo(this.views.all(), 0);
+        await think(`Commissioning ${VAV.label}. First: what is it, and what serves it?`);
+        await call("graph.equipment", `"${esc(VAV.label)}"`);
+        visit(VAV.id); camTo(this.views.box());
+        await travel(AHU.id, VAV.id, { side: true });
+        await result(`<b>${esc(VAV.label)}</b> <span class="cls">${esc(VAV.cls)}</span> · fed by <b>${esc(AHU.label)}</b> · ${VAV.points.length} points · reheat: <b>${VAV.variant.reheat ? "yes" : "none"}</b>`);
+        show(VAV.points.map(p => p.id)); await hudCount("read", VAV.points.length, 600);
+        titlecard("Opening", VAV.label, "in the equipment simulator · hot afternoon");
+        showFrame("vav"); await wait(1200);
+      }
+      if (i === 1) {
+        camTo(this.views.tpl());
+        await think("What must every VAV box have? The knowledge model says, and the graph says what this one has.");
+        await call("km.template", `"vav"`);
+        visit("tpl"); edge("tpl", VAV.id).classList.add("on");
+        for (const r of T.template.required) {
+          const p = P(r); if (p) { mark(p.id, "ok"); tag(p.id, "", "required ✓", "ok"); }
+          await result(`${esc(ROLE_NAME(r))} → ${L(r)} ${p ? `<span class="cls">${esc(p.cls)}</span> <span class="good">✓</span>` : ""}`, 220);
+        }
+        const opt = T.template.roles.filter(r => !T.template.required.includes(r) && P(r)).length;
+        await result(`${opt} optional slots filled · <b>reheat valve: none</b> → a cooling-only box`);
+        tag(VAV.id, "", "cooling only", "info", { x: POS.get(VAV.id).x, y: POS.get(VAV.id).y - 40 });
+        await wait(600);
+        for (const r of T.template.required) { const p = P(r); if (p) { untag(p.id); mark(p.id, null); } }
+      }
+      if (i === 2) {
+        camTo(this.views.seq());
+        await think("Now the sequence of operation: which loops should this box run?");
+        await call("docs.sequence", `"${esc(T.sequence.title)}"`);
+        visit("seq"); edge("seq", VAV.id).classList.add("on");
+        for (const lp of T.sequence.loops) {
+          const ok = [lp.setpoint, lp.measured, ...lp.outputs].every(r => P(r));
+          if (P(lp.setpoint) && P(lp.measured)) loopPath(P(lp.setpoint).id, P(lp.measured).id, !ok);
+          for (const o of lp.outputs) if (P(lp.measured) && P(o)) loopPath(P(lp.measured).id, P(o).id, !ok);
+          await result(`<b>${esc(lp.name)}</b>: ${L(lp.setpoint)} → ${L(lp.measured)} → ${lp.outputs.map(L).join(", ")} ${ok ? '<span class="good">✓</span>' : '<span class="bad">✗</span>'}`, 400);
+        }
+        if (heat && !hasReheat) {
+          await result(`<span class="bad">Finding:</span> the sequence's <b>${esc(heat.name)}</b> loop drives a reheat valve this box doesn't have.`);
+          hudSet("find", 1);
+          tag("seq", "", "1 finding", "fault", { x: POS.get("seq").x + 40, y: POS.get("seq").y });
+        }
+      }
+      if (i === 3) {
+        camTo(this.views.box());
+        await think("Turn each loop into a test with a pass condition, using this box's own point names.");
+        await call("cx.write_tests", `"${esc(VAV.label)}", template="vav", sequence="${esc(T.sequence.title)}"`);
+        const tests = [
+          ["T1", "Occupancy follows the schedule", `${L("occupancy")} reads occupied while ${esc(AHU.label)} is occupied`],
+          ["T2", "Cooling response", `${L("zone_temp")} held within 1.5 °F of ${L("occ_cooling_sp")}, with ${L("airflow_sp")} raised to carry the load`],
+          ["T3", "Airflow tracks setpoint", `${L("airflow")} within 10 % of ${L("airflow_sp")}, ${L("damper")} modulating`],
+          ["T4", "Unoccupied setback", `${L("unocc_cooling_sp")} above ${L("occ_cooling_sp")}, ${L("unocc_heating_sp")} below ${L("occ_heating_sp")}`],
+          ["T5", "Heating", hasReheat ? `${L("reheat_valve")} opens below ${L("occ_heating_sp")}` : "Needs a reheat valve: not on this box"],
+        ];
+        for (const [id, n, c] of tests) { this.row(id, n, c, id === "T5" && !hasReheat ? "n/a" : "", id === "T5" && !hasReheat ? "na" : ""); hudSet("tests", +id.slice(1)); await wait(380); }
+        await result(`<b>5 tests</b> written · 4 to run · 1 not applicable`);
+      }
+      if (i === 4) {
+        await think("Run it on the simulator: a hot afternoon, so the box has to work.");
+        await call("sim.run", `"${esc(VAV.label)}", scenario="hot afternoon"`);
+        status("testing");
+        const f1 = x => Number.isFinite(x) ? x.toFixed(1) : "–";
+        const runOne = async (id, roles, judge, name, check) => {
+          this.row(id, name, check, "running…", "run");
+          for (const r of roles) { this.focus(r); const v = this.value(r); if (v) { const p = P(r); tag(p.id, "", v.text, "info"); mark(p.id, "info"); } await wait(650); }
+          const [ok, txt] = judge();
+          this.row(id, name, check, `${ok ? "PASS" : "CHECK"} · ${txt}`, ok ? "pass" : "check");
+          for (const r of roles) { const p = P(r); if (p) { mark(p.id, ok ? "ok" : "warn"); TAG.get(p.id)?.classList.replace("info", ok ? "ok" : "warn"); } }
+          if (ok) hudSet("pass", HUDV.pass + 1);
+          await result(`${id} ${esc(name)}: <span class="${ok ? "good" : "meh"}">${ok ? "pass" : "check"}</span> · ${esc(txt)}`, 200);
+        };
+        const val = r => this.value(r)?.value;
+        const rows = $("#tests").querySelectorAll("tr[data-t] td:nth-child(2)"), chk = n => rows[n].innerHTML;
+        await runOne("T1", ["occupancy"], () => { const v = this.value("occupancy"); return [true, v ? v.text : "occupied"]; }, "Occupancy follows the schedule", chk(0));
+        await runOne("T2", ["zone_temp", "occ_cooling_sp", "airflow_sp"], () => {
+          const z = val("zone_temp"), sp = val("occ_cooling_sp"), af = val("airflow_sp");
+          return [Math.abs(z - sp) <= 1.5 && af > 0, `zone ${f1(z)} °F (setpoint ${f1(sp)} °F), airflow setpoint ${Math.round(af)}`];
+        }, "Cooling response", chk(1));
+        await runOne("T3", ["airflow", "airflow_sp", "damper"], () => {
+          const a = val("airflow"), s = val("airflow_sp"), d = val("damper"), r = Math.abs(a - s) / Math.max(1, s);
+          return [r <= .1, `${Math.round(r * 100)} % off setpoint, damper ${f1(d)} %`];
+        }, "Airflow tracks setpoint", chk(2));
+        await runOne("T4", ["unocc_cooling_sp", "unocc_heating_sp"], () => {
+          const uc = val("unocc_cooling_sp"), oc = val("occ_cooling_sp"), uh = val("unocc_heating_sp"), oh = val("occ_heating_sp");
+          return [uc > oc && uh < oh, `${f1(uc)}/${f1(uh)} °F vs ${f1(oc)}/${f1(oh)} °F`];
+        }, "Unoccupied setback", chk(3));
+        try { win("vav")?.__eq3dApi?.clear(); } catch (e) { /* not loaded */ }
+      }
+      if (i === 5) {
+        camTo(this.views.all());
+        await think(`The same script fits every box on ${AHU.label}: same template, same sequence, their own point names.`);
+        await call("cx.write_tests", `boxes=graph.downstream("${esc(AHU.label)}", class="VAV")`);
+        await scan(this.sibs);
+        await result(`<b>${this.sibs.length + 1} test scripts</b> ready, one per box, each with its own point names`);
+        $("#tsum").textContent = `${HUDV.pass} passed · 1 not applicable · ${HUDV.find} finding`;
+        finale(`Day 1 · commissioning`, `${esc(VAV.label)}: ${HUDV.pass} of 4 tests passed in simulation, and the sequence has a gap.`,
+          `The agent wrote the test from the <b>VAV template</b> and the <b>sequence of operation</b>, using this box's own points, and ran it against the simulator.`,
+          [`<b>${HUDV.pass} passed</b>: occupancy, cooling response, airflow tracking, setback, checked on live simulated values.`,
+           `<b>Finding</b>: the sequence's heating loop drives a reheat valve; this box is cooling only. Flagged for the controls contractor before site testing.`,
+           `<b>Scaled</b>: the same script is ready for the other ${this.sibs.length} boxes on ${esc(AHU.label)}, with their point names filled in.`,
+           `<b>Recorded</b>: results go on the box's commissioning record (method: simulated test), ready to repeat on site with live values.`],
+          "Points, template slots and the sequence come from Alpha's graph and project documents. Values come from the equipment simulator.");
+      }
+    },
+  };
+
+  // ============================================================================================================
+  // Use case 2: impact before maintenance
+  // ============================================================================================================
+  const IMP = {
+    avatar: ["FM", "linear-gradient(135deg,#f2994a,#eb5757)"], who: "Facility manager · planning maintenance",
+    q: `I need <em>${esc(AHU.label)}</em> off tomorrow 10:00 to 12:00 to replace the fan belt. Who's affected?`,
+    panel: "Digital twin",
+    kicker: "Day 2 · maintenance", title: `"Who's affected if ${esc(AHU.label)} goes off?"`,
+    lead: "Watch an agent walk downstream from the unit to every zone it serves, show them on the digital twin, check what is upstream and alongside, and pick a better window from the schedule.",
+    steps: ["Find the unit", "Walk downstream", "Map to spaces", "Check upstream and peers", "Pick the window", "Plan"],
+    layout() {
+      const A = { x: 0, y: -330 };
+      node(AHU.id, A, "eq big", 13, `${esc(AHU.label)}<small>${esc(AHU.cls)} · ${AHU.points.length} points</small>`, "eq");
+      D.upstream.forEach((u, i) => { node(u.id, { x: (i ? 1 : -1) * 300, y: -600 }, "eq big", 12, `${esc(u.label)}<small>${esc(u.cls)}</small>`, "eq"); line(u.id, AHU.id, "feeds"); });
+      const xs = [-620, 620, -860, 860, -400, 400];
+      D.peers.forEach((a, i) => { node(a.id, { x: xs[i % xs.length], y: -360 }, "eq", 9, `${esc(a.label)}<small>${a.vavs} boxes</small>`, "eq"); line(D.chw, a.id, "feeds"); });
+      D.vavs.forEach((v, i, arr) => { const p = polar(A, 300, 18 + 144 * i / (arr.length - 1)); node(v.id, p, "vav", 3, i % 12 === 0 ? esc(v.label) : null, "minor"); line(AHU.id, v.id, "fan"); });
+      const fl = D.zone_floors[0] || "L1";
+      node("floor", { x: 0, y: 130 }, "space hid", 15, `Level ${esc(fl.replace(/^L/, ""))}<small>${D.vavs.length} zones</small>`, "eq hide");
+      D.vavs.forEach(v => line(v.id, "floor", "space"));
+      const lock = ["supply_fan_speed", "cooling_valve", "heating_valve", "occupancy"].map(ahuPt).filter(Boolean);
+      this.lock = lock;
+      lock.forEach((p, i) => { const q = polar(A, 120, 200 + 140 * i / Math.max(1, lock.length - 1)); CENTER.set(p.id, A); node(p.id, q, "pt", 3.4, esc(p.label), "minor hide"); line(AHU.id, p.id, "pe"); });
+    },
+    views: {
+      all: () => view(0, -260, 1900, 900), ahu: () => view(0, -380, 760, 420),
+      fan: () => view(0, -150, 900, 620), up: () => view(0, -440, 1900, 560),
+    },
+    hudDefs: [["zones", "zones lose air", "f"], ["floors", "floor"], ["peers", "units unaffected", "o"], ["hops", "hops"]],
+    reset() {
+      showFrame(null); $("#emptyTx").textContent = "The building opens here, in the digital twin.";
+      crumbsSet([["Alpha"], [esc(AHU.label), "warn"]]);
+      strip.innerHTML = `<div class="hd"><span>Impact</span><span id="isum"></span></div><div class="stats" id="istats"></div><div class="tiles" id="itiles"></div>`;
+      $("#istats").innerHTML = [["f", "zones", "zones lose cooling and air"], ["", "floor", "floors"], ["o", "peers", "other units unaffected"], ["w", "window", "suggested window"]]
+        .map(([c, id, t]) => `<div class="stat ${c}"><b id="st_${id}">–</b><span>${t}</span></div>`).join("");
+      $("#itiles").innerHTML = D.vavs.map(v => `<div class="tile" title="${esc(v.label)}" data-v="${esc(v.id)}"></div>`).join("");
+      frame("twin", D.twin);
+      const t = win("twin")?.__twin; if (t) { t.impact(null); t.select(null); t.selectFloor(null); }
+      this.embed();
+    },
+    // Inside a tour the twin shows the building only: its own header, filters, floor list and detail panel go.
+    async embed() {
+      const w = await until(() => win("twin")?.__twin && win("twin"), 15000);
+      if (!w || w.document.getElementById("tourEmbed")) return;
+      const st = w.document.createElement("style"); st.id = "tourEmbed";
+      st.textContent = `#app > :first-child, #filters, #floorNav, #detail { display: none !important; }
+        #app { grid-template-rows: 1fr !important; } main { grid-template-columns: 1fr !important; }`;
+      w.document.head.append(st);
+      w.dispatchEvent(new Event("resize"));
+    },
+    twin() { return win("twin")?.__twin || null; },
+    async run(i) {
+      if (i === 0) {
+        camTo(this.views.all(), 0);
+        await think(`Taking ${AHU.label} off for a fan belt. Start from the unit itself.`);
+        await call("graph.equipment", `"${esc(AHU.label)}"`);
+        visit(AHU.id); mark(AHU.id, "warn"); camTo(this.views.ahu());
+        await result(`<b>${esc(AHU.label)}</b> <span class="cls">${esc(AHU.cls)}</span> · ${AHU.points.length} points · on the ${AHU.floor === "RF" ? "roof" : esc(AHU.floor)} · fed by ${D.upstream.map(u => `<b>${esc(u.label)}</b>`).join(" and ")}`);
+        titlecard("Opening", "Digital twin", "Alpha · every floor, every zone");
+        showFrame("twin");
+        const t = S.instant ? this.twin() : await until(() => this.twin());
+        t?.select(AHU.id);
+        await wait(1200);
+      }
+      if (i === 1) {
+        camTo(this.views.fan());
+        await think("Everything it feeds loses air. Follow the feeds links downstream.");
+        await call("graph.downstream", `"${esc(AHU.label)}", rel="feeds"`);
+        const ids = D.vavs.map(v => v.id);
+        status("walking downstream");
+        const picks = [0, Math.floor(ids.length / 2), ids.length - 1];
+        for (const p of picks) await travel(AHU.id, ids[p], { tone: "red", ms: 600 });
+        ids.forEach((id, n) => { NODE.get(id).querySelector(".core").style.transitionDelay = S.instant ? "0s" : `${n * 14}ms`; mark(id, "fault"); edge(AHU.id, id)?.classList.add("hit"); });
+        hudSet("hops", 1);
+        this.twin()?.impact(AHU.id, ids);
+        document.querySelectorAll("#itiles .tile").forEach((t, n) => { t.style.transitionDelay = S.instant ? "0s" : `${n * 14}ms`; t.classList.add("on"); });
+        await hudCount("zones", ids.length, 1300);
+        $("#st_zones").textContent = ids.length;
+        await result(`<b>${ids.length} VAV boxes</b> · each one a zone that loses cooling and ventilation`);
+      }
+      if (i === 2) {
+        await think("Which spaces are those? The twin places every zone on its floor.");
+        await call("twin.locate", `graph.downstream("${esc(AHU.label)}")`);
+        show(["floor"]); visit("floor"); D.vavs.forEach(v => edge(v.id, "floor")?.classList.add("on"));
+        hudSet("hops", 2); hudSet("floors", D.zone_floors.length);
+        const fl = D.zone_floors[0] || "L1";
+        this.twin()?.selectFloor(fl);
+        $("#st_floor").textContent = D.zone_floors.join(", ");
+        await result(`All ${D.vavs.length} zones are on <b>Level ${esc(fl.replace(/^L/, ""))}</b>: the whole floor loses air`);
+        await wait(1400);
+      }
+      if (i === 3) {
+        camTo(this.views.up());
+        await think("Does anything upstream or alongside depend on it, or could pick up the load?");
+        await call("graph.upstream", `"${esc(AHU.label)}"`);
+        for (const u of D.upstream) { await travel(AHU.id, u.id, { side: true, ms: 700 }); mark(u.id, "info"); tag(u.id, "", "keeps running", "info"); }
+        await result(`${D.upstream.map(u => `<b>${esc(u.label)}</b>`).join(", ")}: lose one load, keep running`);
+        await call("graph.siblings", `"${esc(AHU.label)}", via="${esc(D.upstream[0]?.label || "plant")}"`);
+        for (const a of D.peers) { mark(a.id, "ok"); lab(a.id, "lit"); }
+        await hudCount("peers", D.peers.length, 500);
+        $("#st_peers").textContent = D.peers.length;
+        await result(`${D.peers.map(a => `<b>${esc(a.label)}</b>`).join(", ")} serve other floors: <span class="good">not affected</span>`);
+        await result(`No other unit feeds Level ${esc((D.zone_floors[0] || "L1").replace(/^L/, ""))}'s boxes: <span class="bad">no backup air path</span>`);
+      }
+      if (i === 4) {
+        camTo(this.views.ahu());
+        await think("When is the floor empty? The unit's schedule is a point on the graph.");
+        const occ = ahuPt("occupancy");
+        await call("point.read", `"${esc(occ?.label || "occupancy")}"`);
+        show(this.lock.map(p => p.id));
+        if (occ) { mark(occ.id, "info"); tag(occ.id, "", "occupied 07:00–19:00", "info"); }
+        await result(`Occupied <b>07:00–19:00</b> (simulated schedule) · 10:00–12:00 falls in occupied hours <span class="bad">✗</span>`);
+        await result(`Suggest <b>05:00–07:00</b>, before occupancy, or Saturday morning <span class="good">✓</span>`);
+        $("#st_window").textContent = "05:00–07:00";
+      }
+      if (i === 5) {
+        await think("Turn it into a plan: lockout points, who to tell, and how to check it came back.");
+        await call("cmms.draft_work_order", `"${esc(AHU.label)}", window="05:00–07:00"`);
+        for (const p of this.lock.filter(p => p.role !== "occupancy")) { mark(p.id, "warn"); tag(p.id, "", "lock out", "warn"); }
+        await result(`Lock out ${this.lock.filter(p => p.role !== "occupancy").map(p => `<b>${esc(p.label)}</b>`).join(", ")}`);
+        $("#isum").textContent = `${D.vavs.length} zones · 1 floor · ${D.peers.length} units unaffected`;
+        const lockNames = this.lock.filter(p => p.role !== "occupancy").map(p => `<b>${esc(p.label)}</b>`).join(", ");
+        const sat = ahuPt("supply_temp"), satsp = ahuPt("supply_temp_sp");
+        finale("Day 2 · maintenance", `${esc(AHU.label)} off takes out ${D.vavs.length} zones on Level ${esc((D.zone_floors[0] || "L1").replace(/^L/, ""))}. Do it at 05:00, not 10:00.`,
+          `The agent walked <b>downstream</b> through the feeds links, located every zone in the twin, checked <b>upstream</b> and <b>alongside</b>, and read the schedule.`,
+          [`<b>Impact</b>: ${D.vavs.length} zones, the whole of Level ${esc((D.zone_floors[0] || "L1").replace(/^L/, ""))}. ${D.peers.length} other units and both plants are unaffected. No backup air path.`,
+           `<b>Window</b>: 10:00–12:00 is occupied. 05:00–07:00 finishes before the floor fills.`,
+           `<b>Work order</b>: lock out ${lockNames}. Notify Level ${esc((D.zone_floors[0] || "L1").replace(/^L/, ""))} occupants the day before.`,
+           `<b>Back in service</b>: ${sat ? `<b>${esc(sat.label)}</b>` : "supply air"} back to ${satsp ? `<b>${esc(satsp.label)}</b>` : "setpoint"}, and every zone within 2 °F of setpoint by 08:00.`],
+          "Units, links, zones and floors come from Alpha's graph. The schedule is the simulator's (07:00–19:00); floors are inferred.");
+      }
+    },
+  };
+
+  // ============================================================================================================
+  // Use case 3: tribal knowledge in commissioning
+  // ============================================================================================================
+  const VALVE = ahuPt("cooling_valve");
+  const SAY = `Note for ${AHU.label}. The cooling valve actuator is reverse acting: zero percent signal means the valve is fully open. ` +
+    `We inverted the output in the controller, so ${VALVE?.label || "the valve command"} reads right in the BMS. If anyone swaps the actuator, ` +
+    `set the new one to reverse acting, or the coil runs wide open while the BMS shows it closed.`;
+  const PHOTO = `<svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="bgp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b4048"/><stop offset="1" stop-color="#1f2328"/></linearGradient>
+    <linearGradient id="pipe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d8a96"/><stop offset=".5" stop-color="#c4ccd3"/><stop offset="1" stop-color="#5e6a75"/></linearGradient></defs>
+    <rect width="360" height="200" fill="url(#bgp)"/>
+    <rect x="0" y="128" width="360" height="34" fill="url(#pipe)"/><rect x="0" y="128" width="360" height="34" fill="#2f8fe0" opacity=".18"/>
+    <text x="16" y="150" font-size="11" fill="#e8eef3" font-family="monospace" opacity=".8">CHWS →</text>
+    <rect x="150" y="112" width="60" height="66" rx="6" fill="#8b949e"/><rect x="172" y="92" width="16" height="22" fill="#6e7781"/>
+    <rect x="136" y="34" width="88" height="60" rx="8" fill="#e9ecef"/><rect x="146" y="44" width="68" height="14" rx="3" fill="#ced4da"/>
+    <circle cx="200" cy="74" r="9" fill="#adb5bd"/><path d="M200 74 l6 -5" stroke="#495057" stroke-width="2"/>
+    <g transform="rotate(-6 282 70)"><rect x="236" y="40" width="102" height="62" rx="4" fill="#fff3bf"/>
+      <line x1="232" y1="70" x2="224" y2="66" stroke="#868e96" stroke-width="1.5"/>
+      <text x="246" y="62" font-size="13" font-weight="700" fill="#c92a2a" font-family="'Comic Sans MS','Segoe Print',cursive">REVERSE</text>
+      <text x="246" y="78" font-size="13" font-weight="700" fill="#c92a2a" font-family="'Comic Sans MS','Segoe Print',cursive">ACTING</text>
+      <text x="246" y="94" font-size="10.5" fill="#495057" font-family="'Comic Sans MS','Segoe Print',cursive">0% = OPEN!</text></g>
+    <text x="12" y="22" font-size="10" fill="#cfd6dc" font-family="monospace">IMG_2041 · ${esc(AHU.label)} mech room</text></svg>`;
+  const TRI = {
+    avatar: ["TK", "linear-gradient(135deg,#d6336c,#9c36b5)"], who: `Controls technician · on site at ${AHU.label}, commissioning`,
+    q: `Adding a note on <em>${esc(AHU.label)}</em>'s cooling valve, with a photo.`,
+    panel: "Field capture",
+    kicker: "Day 1 · commissioning knowledge", title: `"Nobody wrote this down."`,
+    lead: "Watch a technician's voice note and photo become knowledge on the graph: linked to the right equipment and point, checked against every document, confirmed by the person who knows, and in front of whoever touches that valve next.",
+    steps: ["Record on site", "Add a photo", "Link it to the graph", "Is it already known?", "Confirm it", "Where it shows up"],
+    layout() {
+      const A = { x: 0, y: 0 };
+      node(AHU.id, A, "eq big", 14, `${esc(AHU.label)}<small>${esc(AHU.cls)} · ${AHU.points.length} points</small>`, "eq");
+      node(D.chw, { x: 0, y: -330 }, "eq", 10, esc(D.upstream.find(u => u.id === D.chw)?.label || "Chilled water plant"), "eq"); line(D.chw, AHU.id, "feeds");
+      AHU.points.forEach((p, i) => { const q = polar(A, 175, -80 + 340 * i / AHU.points.length); CENTER.set(p.id, A); node(p.id, q, "pt on", p.id === VALVE?.id ? 4.5 : 2.6, i % 2 === 0 || p.id === VALVE?.id ? esc(p.label) : null, "minor"); line(AHU.id, p.id, "pe on"); });
+      this.docs = [["doc:seq", "Sequences of operation", -150], ["doc:pts", "BMS points list", 0], ["doc:notes", `Notes on ${AHU.label}`, 150]];
+      this.docs.forEach(([id, t, y]) => { node(id, { x: -520, y }, "doc", 9, `${esc(t)}`, "eq"); line(id, AHU.id, "doc"); });
+      node("note", { x: 470, y: -40 }, "tri prop hid", 13, `Tribal knowledge<small>reverse-acting valve</small>`, "eq tri hide");
+      node("voice", { x: 680, y: -150 }, "tri hid", 7, "Voice note · 0:21", "minor tri hide");
+      node("photo", { x: 680, y: 80 }, "tri hid", 7, "Photo · IMG_2041", "minor tri hide");
+      line("note", AHU.id, "tri prop"); if (VALVE) line("note", VALVE.id, "tri prop"); line("voice", "note", "tri"); line("photo", "note", "tri");
+      node("wo", { x: 260, y: 330 }, "doc hid", 8, "Work orders", "minor hide"); node("e3d", { x: 470, y: 260 }, "doc hid", 8, "Equipment 3D", "minor hide");
+      node("rca", { x: 650, y: 330 }, "doc hid", 8, "Root-cause agent", "minor hide");
+      for (const t of ["wo", "e3d", "rca"]) line("note", t, "tri");
+    },
+    views: {
+      all: () => view(80, -20, 1500, 820), ahu: () => view(0, 0, 640, 480),
+      docs: () => view(-260, 0, 760, 520), note: () => view(300, -10, 980, 600), out: () => view(330, 120, 980, 640),
+    },
+    hudDefs: [["matched", "matched in graph"], ["docs", "documents checked"], ["new", "new facts", "n"], ["links", "links added", "n"]],
+    reset() {
+      showFrame(null); $("#empty").classList.add("gone");
+      crumbsSet([[esc(AHU.label) + " mech room"], ["Commissioning", "tri"]]);
+      const cap = $("#capture"); cap.classList.add("on");
+      cap.innerHTML = `<div class="cap-head"><div><b>Field capture</b><br><span>${esc(AHU.label)} · mechanical room · technician TK</span></div>
+        <div class="modes"><button data-m="voice">● Voice</button><button data-m="photo">▣ Photo</button><button data-m="video">▶ Video</button></div></div>
+        <div class="card" id="vcard" style="display:none"><div class="k"><span>Voice note</span><span class="rec" id="rec"><i></i>recording</span></div>
+          <canvas id="wave"></canvas><div id="transcript"></div></div>
+        <div class="card" id="photo" style="display:none"><div class="k"><span>Photo</span><span>attached</span></div>${PHOTO}</div>
+        <div id="ncard"></div>`;
+      strip.innerHTML = `<div class="hd"><span>Graph changes</span><span id="gsum"></span></div><table class="rows" id="changes"></table>`;
+      this.waveOn = false;
+    },
+    mode(m) { $("#capture").querySelectorAll(".modes button").forEach(b => b.classList.toggle("on", b.dataset.m === m)); },
+    wave() {
+      const c = $("#wave"); if (!c) return;
+      const ctx = c.getContext("2d"), dpr = devicePixelRatio || 1;
+      c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr; ctx.scale(dpr, dpr);
+      const col = getComputedStyle(document.documentElement).getPropertyValue("--note").trim();
+      const draw = n => {
+        if (!this.waveOn || !document.body.contains(c)) return;
+        const w = c.clientWidth, h = c.clientHeight; ctx.clearRect(0, 0, w, h); ctx.fillStyle = col;
+        for (let x = 0; x < w; x += 5) { const a = (Math.sin(x * .07 + n / 140) * .5 + .5) * (Math.sin(x * .013 - n / 420) * .5 + .5) * (.35 + .65 * Math.abs(Math.sin(n / 230 + x))); const bh = Math.max(2, a * h * .9); ctx.fillRect(x, (h - bh) / 2, 3, bh); }
+        requestAnimationFrame(draw);
+      };
+      requestAnimationFrame(draw);
+    },
+    change(what, detail, tone = "pink") {
+      const tb = $("#changes"); if (!tb.children.length) tb.innerHTML = `<tr><th>Change</th><th>Detail</th></tr>`;
+      tb.append(el("tr", "", `<td class="${tone}">${what}</td><td>${detail}</td>`));
+    },
+    noteCard(confirmed) {
+      $("#ncard").innerHTML = `<div class="card note-card"><div class="k"><span>Proposed knowledge</span>
+        <span class="badge ${confirmed ? "conf" : "prop"}">${confirmed ? "confirmed by TK" : "proposed · 0.92"}</span></div>
+        <div class="body">${esc(AHU.label)}'s cooling valve actuator is <b>reverse acting</b> (0 % signal = fully open). The controller output is inverted so ${esc(VALVE?.label || "the valve command")} reads correctly. A replacement actuator must be set to reverse acting.</div>
+        <dl><dt>About</dt><dd>${esc(AHU.label)} · ${esc(VALVE?.label || "cooling valve")}</dd><dt>Topic</dt><dd>Maintenance · commissioning</dd>
+          <dt>Evidence</dt><dd>Voice note 0:21 · photo IMG_2041</dd><dt>Method</dt><dd>${confirmed ? "human (confirmed)" : "llm (extracted), waiting for the technician"}</dd></dl>
+        <div class="row"><span style="color:var(--muted);font-size:11.5px">${confirmed ? "On the graph, travelling with the equipment." : "Nothing reaches the graph until a person confirms it."}</span>
+          ${confirmed ? "" : `<button class="primary" id="confirmBtn">Confirm</button>`}</div></div>`;
+      const cap = $("#capture"); cap.scrollTo({ top: cap.scrollHeight, behavior: S.instant ? "auto" : "smooth" });
+    },
+    async run(i) {
+      if (i === 0) {
+        camTo(this.views.all(), 0);
+        this.mode("voice"); $("#vcard").style.display = "";
+        this.waveOn = !S.instant; this.wave();
+        status("listening");
+        await think(`A technician is recording at ${AHU.label}. Listen and transcribe.`);
+        const tx = $("#transcript");
+        if (S.instant) tx.textContent = SAY;
+        else await anim(SAY.length * 32, e => { tx.textContent = SAY.slice(0, Math.round(SAY.length * e)); }, t => t);
+        this.waveOn = false; $("#rec").innerHTML = "0:21 · transcribed";
+        await result(`Transcribed <b>0:21</b> of speech · speaker: technician TK`);
+      }
+      if (i === 1) {
+        this.mode("photo"); $("#photo").style.display = "";
+        await think("A photo came with it. Read what is in it.");
+        await call("vision.read", `"IMG_2041"`);
+        await result(`Handwritten tag on the valve actuator: <b>"REVERSE ACTING · 0% = OPEN"</b> · chilled water supply line`);
+        await result(`Voice and photo agree <span class="good">✓</span>`);
+      }
+      if (i === 2) {
+        camTo(this.views.ahu());
+        await think(`Which things in the graph is this about? "${AHU.label}" and "the cooling valve".`);
+        await call("graph.match", `"${esc(AHU.label)}", "cooling valve"`);
+        visit(AHU.id); hudSet("matched", 1);
+        await result(`<b>${esc(AHU.label)}</b> <span class="cls">${esc(AHU.cls)}</span> · exact name match · 1.00`);
+        if (VALVE) {
+          await travel(AHU.id, VALVE.id, { ms: 700 }); visit(VALVE.id); hudSet("matched", 2);
+          tag(VALVE.id, "", "this one", "info");
+          await result(`<b>${esc(VALVE.label)}</b> <span class="cls">${esc(VALVE.cls)}</span> · the AHU template's cooling-valve slot · ${(VALVE.conf || 0).toFixed(2)}`);
+        }
+      }
+      if (i === 3) {
+        camTo(this.views.docs());
+        await think("Is this written down anywhere already?");
+        await call("docs.search", `"reverse acting", about=["${esc(AHU.label)}", "${esc(VALVE?.label || "")}"]`);
+        for (const [id, t] of this.docs) {
+          await travel(AHU.id, id, { side: true, ms: 550 }); cross(id);
+          hudSet("docs", HUDV.docs + 1);
+          await result(`${esc(t)}: <span class="bad">not mentioned</span>`, 200);
+        }
+        await result(`Not recorded anywhere: <span class="pink">new knowledge</span>. It lives in one person's head and on a paper tag.`);
+      }
+      if (i === 4) {
+        camTo(this.views.note());
+        await think("Propose it as a note on the equipment and the point, and ask the technician to confirm.");
+        await call("notes.propose", `about=["${esc(AHU.label)}", "${esc(VALVE?.label || "")}"], topic="maintenance"`);
+        show(["note"]); visit("note"); lab("note", "tri");
+        edge("note", AHU.id)?.classList.add("on"); if (VALVE) edge("note", VALVE.id)?.classList.add("on");
+        hudSet("new", 1); hudSet("links", 2);
+        this.noteCard(false);
+        await result(`Proposed note · <span class="meh">waiting for TK</span>`);
+        status("waiting for the technician", false);
+        await wait(1600);
+        const b = $("#confirmBtn"); if (b && !S.instant) { b.classList.add("pressed"); await wait(250); }
+        this.noteCard(true);
+        uncls("note", "prop"); edge("note", AHU.id)?.classList.remove("prop"); if (VALVE) edge("note", VALVE.id)?.classList.remove("prop");
+        show(["voice", "photo"]); hudSet("links", 4);
+        ripple("note", "pink");
+        this.change("+ note", `on <b>${esc(AHU.label)}</b> and <b>${esc(VALVE?.label || "")}</b> · method human · confirmed by TK`);
+        this.change("+ evidence", "voice note 0:21 · photo IMG_2041, kept as sources");
+        await result(`Confirmed by TK · <span class="pink">added to the graph</span> with its evidence`);
+      }
+      if (i === 5) {
+        camTo(this.views.out());
+        await think("From now on it travels with the equipment: whoever touches that valve sees it.");
+        show(["wo", "e3d", "rca"]);
+        for (const t of ["wo", "e3d", "rca"]) { await travel("note", t, { tone: "pink", ms: 600 }); }
+        this.change("→ work orders", `any job on ${esc(VALVE?.label || "the cooling valve")} carries the warning`, "good");
+        this.change("→ Equipment 3D", `pinned on the valve in ${esc(AHU.label)}'s 3D view`, "good");
+        this.change("→ root-cause agent", "a valve that reads open while the coil stays warm: it checks this first", "good");
+        $("#gsum").textContent = "1 note · 2 links · 2 sources";
+        await result(`Visible in work orders, the 3D view and every agent walk through ${esc(AHU.label)}`);
+        finale("Day 1 · commissioning knowledge", `A 21-second voice note became a fact on the graph that outlives the person who knew it.`,
+          `The agent transcribed the note, read the photo, matched <b>${esc(AHU.label)}</b> and <b>${esc(VALVE?.label || "its cooling valve")}</b> in the graph, found it in no document, and added it once the technician confirmed.`,
+          [`<b>Captured where the work happens</b>: voice, photo or video, in the plant room, no form to fill.`,
+           `<b>Linked, not filed</b>: attached to the equipment and the exact point, shown in pink on the graph.`,
+           `<b>Checked and confirmed</b>: searched against the sequences, the points list and the notes; nothing reaches the graph until a person confirms it.`,
+           `<b>Used</b>: in work orders, the 3D view and the agents' walks, so the next actuator swap doesn't leave a coil wide open.`],
+          "The equipment and the point come from Alpha's graph. The technician, the note and the photo are an example.");
+      }
+    },
+  };
+
+  // --- run ---------------------------------------------------------------------------------------------------
+  const CASE = { test: TEST, impact: IMP, tribal: TRI }[D.case] || TEST;
+  $("#avatar").textContent = CASE.avatar[0]; $("#avatar").style.background = CASE.avatar[1];
+  $("#who").textContent = CASE.who; $("#q").innerHTML = CASE.q;
+  $("#spK").textContent = CASE.kicker; $("#spH").innerHTML = CASE.title; $("#spP").textContent = CASE.lead;
+  $("#spFine").textContent = `Scripted agent over the real knowledge graph of Project Haystack site Alpha (${D.counts.points.toLocaleString()} points, ${D.counts.equipment} equipment). Values are simulated.`;
+  const rail = $("#rail");
+  rail.innerHTML = CASE.steps.map((s, i) => `<div class="stp" data-i="${i}"><b>${i + 1}</b>${esc(s)}<span class="fill"></span></div>`).join("");
+  rail.querySelectorAll(".stp").forEach(s => s.onclick = () => jump(+s.dataset.i));
+  function railAt(i) { rail.querySelectorAll(".stp").forEach((s, n) => { s.classList.toggle("done", n < i); s.classList.toggle("cur", n === i); }); }
+  function finale(kicker, h, lead, items, fine) {
+    const f = $("#finale");
+    f.innerHTML = `<div class="fcard"><div class="kicker">${kicker}</div><h2>${h}</h2><p class="lead">${lead}</p><ol>${items.map(x => `<li>${x}</li>`).join("")}</ol>
+      <div class="ffoot"><span class="fine">${esc(fine)}</span><span><button class="ghost" id="fClose">Back to the graph</button> <button class="primary" id="fAgain">Watch again</button></span></div></div>`;
+    f.classList.remove("hidden");
+    $("#fClose").onclick = () => f.classList.add("hidden");
+    $("#fAgain").onclick = () => { f.classList.add("hidden"); jump(0); };
+  }
+  function reset() {
+    S.token++; camAnim++;
+    clearGraph(); traceIn.replaceChildren(); $("#finale").classList.add("hidden");
+    $("#capture").classList.remove("on"); $("#capture").replaceChildren();
+    hud(CASE.hudDefs); status("ready", false);
+    CASE.layout(); CASE.reset();
+    camTo(CASE.views.all(), 0);
+  }
+  async function play(from) {
+    const tok = S.token;
+    try {
+      for (let i = from; i < CASE.steps.length; i++) {
+        S.step = i; railAt(i);
+        await CASE.run(i);
+        if (tok !== S.token) return;
+        await wait(900);
+      }
+      railAt(CASE.steps.length); status("done", false); setPaused(true);
+    } catch (e) { if (!(e instanceof Abort)) throw e; }
+  }
+  async function jump(i) {
+    reset();
+    const tok = S.token;
+    S.instant = true;
+    try { for (let n = 0; n < i; n++) await CASE.run(n); } catch (e) { if (!(e instanceof Abort)) throw e; }
+    S.instant = false;
+    if (tok !== S.token) return;
+    S.started = true; $("#splash").classList.add("hidden");
+    setPaused(false); play(i);
+  }
+  function setPaused(p) {
+    S.paused = p;
+    $("#playTx").textContent = p ? "Play" : "Pause";
+    $("#playIcon").setAttribute("d", p ? "M8 5v14l11-7z" : "M6 5h4v14H6zm8 0h4v14h-4z");
+  }
+  $("#play").onclick = () => { if (!S.started) { start(); return; } if (S.step >= CASE.steps.length - 1 && S.paused && rail.querySelector(".stp.done:last-child")) { jump(0); return; } setPaused(!S.paused); };
+  $("#restart").onclick = () => jump(0);
+  $("#next").onclick = () => jump(Math.min(CASE.steps.length - 1, S.step + 1));
+  function start() { S.started = true; $("#splash").classList.add("hidden"); setPaused(false); play(0); }
+  $("#go").onclick = start;
+  document.addEventListener("keydown", e => { if (e.key === " ") { e.preventDefault(); $("#play").click(); } if (e.key === "ArrowRight") $("#next").click(); });
+  reset();
+  applyCam();
+})();
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 // The twin page: filters, floor nav, detail panel, and the wiring between the 3D viewer and the plan.
-import { D, FLOORS, FLOOR_IDX, equip, byId, up, down, parts, sim, isZone, servedBy, chainUp, colorOf, C, pointValue, drift, floorById } from "./data.js";
+import { D, FLOORS, FLOOR_IDX, equip, byId, up, down, parts, sim, isZone, servedBy, chainUp, colorOf, C, pointValue, drift, floorById, IMPACT } from "./data.js";
 import { createViewer } from "./viewer.js";
 import { createPlan } from "./plan.js";
 
@@ -84,6 +84,8 @@ function renderFloorNav() {
   $("#allFloors").onclick = () => { S.sel = null; selectFloor(null); };
 }
 function legendHTML() {
+  if (S.color === "impact") return `<span>Impact</span><span><i class="dot" style="background:${C.warning}"></i> shut down</span>`
+    + `<span><i class="dot" style="background:${C.alarm}"></i> loses service</span><span><i class="dot" style="background:#5A6068"></i> not affected</span>`;
   if (S.color === "temp") return `<span>Zone temp vs setpoint</span><span>−4°F</span><span class="grad"></span><span>+4°F</span>`;
   const keys = { status: ["normal", "warning", "alarm", "offline"], system: ALL.sys, mapping: ["confirmed", "proposed"] }[S.color];
   const name = { status: "Status (simulated)", system: "System", mapping: "Review status" }[S.color];
@@ -126,7 +128,7 @@ function renderDetail() {
         <div>Class method</div><div>${e.method} · confidence ${e.conf}</div><div>Review</div><div>${pill(e.status)}</div>
         <div>Floor</div><div><span class="badge inf">inferred</span> ${isZone(e) && servedBy(e) ? `served by ${esc(servedBy(e))} → ${e.floor}` : `from type → ${e.floor}`}</div>
         <div>Geometry</div><div><span class="badge inf">generated</span> ${isZone(e) ? "room" : e.type.toLowerCase() + " model"}</div></div></div>
-      <div class="sec"><div class="actions">${D.links[e.id] ? `<a class="btn" href="${esc(D.links[e.id])}" target="_top" style="text-decoration:none">Open in Equipment 3D ↗</a>` : ""}<button class="btn" id="clearSel">Close</button></div></div>`;
+      <div class="sec"><div class="actions">${D.links?.[e.id] ? `<a class="btn" href="${esc(D.links[e.id])}" target="_top" style="text-decoration:none">Open in Equipment 3D ↗</a>` : ""}<button class="btn" id="clearSel">Close</button></div></div>`;
     const drawPts = q => { $("#ptsTable", el).innerHTML = e.points.filter(p => !q || (p.n + " " + p.c).toLowerCase().includes(q)).map(p =>
       `<tr><td>${esc(p.n)}<div class="cls">${esc(p.c || "unmapped")} · ${p.m} ${p.conf}${p.s !== "proposed" ? ` · <span style="color:${C[p.s] || "#999"}">${p.s}</span>` : ""}</div></td><td class="v">${pointValue(e, p)}</td></tr>`).join(""); };
     drawPts(""); $("#ptq", el).oninput = ev => drawPts(ev.target.value.toLowerCase());
@@ -184,4 +186,8 @@ document.addEventListener("keydown", ev => {
 setInterval(() => { drift(); viewer.repaint(); renderFloorNav();
   if (S.sel && isZone(byId.get(S.sel))) { const k = $("#detail .kpi .v"); if (k) k.innerHTML = sim.get(S.sel).temp.toFixed(1) + " <small>°F</small>"; } }, 3000);
 update();
-window.__twin = { S, viewer, select, selectFloor, update };
+// impact(src, ids): colour the twin by what a shutdown of `src` takes out (agent tours); impact(null) clears it.
+function impact(src, ids = []) {
+  IMPACT.src = src; IMPACT.ids = new Set(ids); S.color = src ? "impact" : "status"; update();
+}
+window.__twin = { S, viewer, select, selectFloor, update, impact };
