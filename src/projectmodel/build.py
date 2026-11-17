@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .adapters.haystack import read_blind_export
+from .adapters.haystack import VARIANTS, read_blind_export
 from .conventions import scopes_for
 from .db.store import Store
 from .knowledge_model import load_knowledge_model
@@ -33,7 +33,9 @@ def map_project(site: str, variant: str, db: Path | str, llm: str = "none", blin
 
 
 def build_all(db: Path | str) -> None:
-    """Every site with every input, as the app lists them."""
+    """Every site with every input that has a blind export. Other inputs (e.g. "documents") come from the
+    guided setup, not from a CSV, so there is nothing to map for them here."""
     for site in SITES:
         for variant in INPUTS:
-            map_project(site, variant, db)
+            if variant in VARIANTS:
+                map_project(site, variant, db)
