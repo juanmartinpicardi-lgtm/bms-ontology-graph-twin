@@ -245,6 +245,36 @@ export default function () {
 _fit = st.components.v2.component("projectmodel.fit", js=FIT_JS)
 
 
+# Everything themed on the server (the chrome CSS above, every embedded viewer) reads st.context.theme.type, which
+# Streamlit does not update when the user switches light/dark in its settings menu: that switch repaints Streamlit's
+# own widgets but does not rerun the script, so our colours stay on the old theme. This watches the theme Streamlit
+# is actually showing (the page background it sets on <body>) and reruns once when it differs from the rendered one.
+THEME_WATCH_JS = """
+let sent = "";
+export default function (component) {
+  const { data, setTriggerValue } = component;
+  const live = () => {
+    const m = getComputedStyle(document.body).backgroundColor.match(/\\d+(\\.\\d+)?/g);
+    if (!m) return null;
+    const [r, g, b] = m.map(Number);
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 128 ? "light" : "dark";
+  };
+  const check = () => {
+    const now = live();
+    if (!now || now === data.theme) return;
+    const pair = data.theme + ">" + now;   // one rerun per mismatch, never a loop
+    if (pair === sent) return;
+    sent = pair;
+    setTriggerValue("changed", { theme: now, at: Date.now() });
+  };
+  clearInterval(globalThis.__pmThemeWatch);
+  globalThis.__pmThemeWatch = setInterval(check, 300);
+  check();
+}
+"""
+_theme_watch = st.components.v2.component("projectmodel.theme_watch", js=THEME_WATCH_JS)
+
+
 RAIL_LOGO = """<div class="rail-logo" title="Project Model"><span aria-hidden="true"
 style="font-family: 'Material Symbols Rounded'; font-size: 24px; color: #EE3124">hub</span></div>"""
 
@@ -255,6 +285,7 @@ def rail(areas: list[tuple[str, str, list]], current) -> None:
     with st.container(key="rail"):
         st.html(RAIL_LOGO)
         _fit(key="fit")
+        _theme_watch(data={"theme": theme()}, key="theme_watch", on_changed_change=lambda: None)
         for name, icon, pages in areas:
             on = any(p.url_path == current.url_path for p in pages)
             with st.container(key="rail_on" if on else f"rail_{name}", width="content"):
