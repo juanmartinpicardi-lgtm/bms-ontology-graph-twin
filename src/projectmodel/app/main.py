@@ -111,8 +111,6 @@ elif among(projects):
     area_header("Projects", projects, page)
 elif among(shared):
     area_header("Shared knowledge", shared, page)
-else:
-    # Overview pages read like a document: one centred column, not the full width of a large screen.
-    st.html("<style>.block-container { max-width: calc(1440px + 64px + 4rem); margin: 0 auto; }</style>")
+else:  # the header and tabs sit left, next to the rail, as on every other page; the page content centres itself
     area_header("Overview", overview, page)
 page.run()

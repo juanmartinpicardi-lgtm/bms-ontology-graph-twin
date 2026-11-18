@@ -65,6 +65,26 @@ def list_projects(store: Store) -> list[str]:
                                            if p.split("/", 1)[-1] in order else len(order)))
 
 
+def main_projects(projects: list[str]) -> list[str]:
+    """One project per building: its richest input (names + folders before names only). The app shows only these;
+    the other inputs stay in the store for the scoring script."""
+    seen: dict[str, str] = {}
+    for p in projects:  # list_projects puts the richest input first
+        seen.setdefault(p.split("/")[0], p)
+    return list(seen.values())
+
+
+def delete_site(store: Store, site: str) -> list[str]:
+    """Remove every project (all inputs) of one building from the store: nodes, edges, runs and notes. The raw
+    sources are untouched, so a Haystack site comes back with scripts/run_mapper.py. Returns the projects removed."""
+    gone = [p for p in list_projects(store) if p.split("/")[0] == site]
+    with store.conn:
+        for p in gone:
+            for table in ("nodes", "edges", "runs", "notes"):
+                store.conn.execute(f"DELETE FROM {table} WHERE project = ?", (p,))
+    return gone
+
+
 def summaries(store: Store) -> dict[str, dict]:
     """Per project: node counts by kind, link counts by relation, last mapper run, human decisions."""
     out: dict[str, dict] = {}
