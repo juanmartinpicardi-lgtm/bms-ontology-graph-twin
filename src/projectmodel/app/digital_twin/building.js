@@ -2,7 +2,7 @@
 // slab, core, rooms, furniture, equipment, ducts/pipes and facade. Every object is tagged with a layer so the
 // viewer can switch between Analysis (schematic, data-coloured) and Realistic (facade, furniture, daylight).
 import * as THREE from "three";
-import { W, DEP, FH, BH, CORE, SHAFT, FLOORS, equip, byId, rooms, pos, corridors, isZone, rng } from "./data.js";
+import { W, DEP, FH, BH, CORE, SHAFT, FLOORS, equip, byId, rooms, pos, corridors, isZone, rng, REAL, heightOf, isBasement, GROUND_ID } from "./data.js";
 import { boxGeo, buildEquipment, vavBox } from "./models.js";
 import { matsFor } from "./materials.js";
 
@@ -79,15 +79,20 @@ function furnish(I, M, room, y0) {
   for (let x = x0 + 1.2; x < x0 + room.w - .6; x += 2.4) for (let z = z0 + 1.2; z < z0 + room.d - .6; z += 2.4)
     I.add("light", UNIT, M.light, x, y0 + 2.86, z, 1.2, .03, .6);
 }
-function walls(I, M, room, h, plant, lastCol) {
+function walls(I, M, room, h, plant, lastCol, block = false) {
   const x0 = px(room.x), z0 = pz(room.z), t = .1;
-  const solid = plant ? "block" : "wall", glass = plant ? "block" : "glass";
+  const solid = plant || block ? "block" : "wall", glass = plant ? "block" : block ? "blockDoor" : "glass";
   const wallZ = (z, kind) => {
     if (kind === "glass" || plant) { const door = x0 + room.w * .72;
       I.add(kind === "glass" ? "glass" : "block", UNIT, kind === "glass" ? M.glassPartition : M.partition, (x0 + door - .55) / 2, 0, z, door - .55 - x0, h, t);
       I.add(kind === "glass" ? "glass" : "block", UNIT, kind === "glass" ? M.glassPartition : M.partition, (door + .55 + x0 + room.w) / 2, 0, z, x0 + room.w - door - .55, h, t);
       I.add("frame", UNIT, M.darkMetal, door, h - .15, z, 1.2, .15, t * 1.4);
-      I.add("doorLeaf", UNIT, plant ? M.steel : M.deskWood, door - .5 + .45 * .5, 0, z + .45 * .5, .05, h - .2, .9 * .5 + .02, -1.0);
+      I.add("doorLeaf", UNIT, plant || block ? M.steel : M.deskWood, door - .5 + .45 * .5, 0, z + .45 * .5, .05, h - .2, .9 * .5 + .02, -1.0);
+    } else if (kind === "blockDoor") { // a plant room's corridor wall: block with a steel door
+      const door = x0 + room.w * .72;
+      I.add("block", UNIT, M.partition, (x0 + door - .55) / 2, 0, z, door - .55 - x0, h, t);
+      I.add("block", UNIT, M.partition, (door + .55 + x0 + room.w) / 2, 0, z, x0 + room.w - door - .55, h, t);
+      I.add("doorLeaf", UNIT, M.steel, door, 0, z, 1.1, h - .2, .06);
     } else I.add(kind, UNIT, M.partition, x0 + room.w / 2, 0, z, room.w, h, t);
   };
   const corrS = plant ? room.z < DEP / 2 : room.corrSide === "s";
@@ -137,19 +142,82 @@ function facade(group, M, I, h, ground) {
   }
 }
 
+// A piece of equipment at (x, y, z) on its floor, with an invisible hitbox for picking.
+function addEquip(group, M, fl, out, fid, e, x, y, z, s = 1, opts = {}) {
+  const m = buildEquipment(M, e, opts.indoor);
+  m.scale.setScalar(s); m.rotation.y = opts.ry || 0; m.position.set(x, 0, z);
+  if (opts.hang != null) { const bb0 = new THREE.Box3().setFromObject(m); y = opts.hang - bb0.max.y; } // under the slab above
+  m.position.y = y;
+  m.traverse(o => { o.userData.layer = o.userData.layer || "equip"; if (o.material && !fl.mats.includes(o.material) && !fl.extraMats.includes(o.material)) fl.extraMats.push(o.material); });
+  group.add(m);
+  const bb = new THREE.Box3().setFromObject(m), size = bb.getSize(new THREE.Vector3()), ctr = bb.getCenter(new THREE.Vector3());
+  const hit = new THREE.Mesh(new THREE.BoxGeometry(size.x + .2, size.y + .2, size.z + .2), new THREE.MeshBasicMaterial({ visible: false }));
+  hit.position.copy(ctr); hit.userData = { id: e.id, hitbox: true }; group.add(hit); out.hits.push(hit);
+  const tintMats = m.userData.tint.map(t => t.material);
+  tintMats.forEach(tm => { tm.userData.orig = tm.color.getHex(); });
+  out.equip.set(e.id, { floor: fid, group: m, tint: tintMats, spin: m.userData.spin, hit, top: bb.max.y });
+  return m;
+}
+
+// ---------------------------------------------------------------- a real building's floor: its own rooms
+// Every room from the plans is built: walls, floor finish, furniture by what the room is for. A room a terminal
+// serves is that terminal's zone (coloured by data); plant rooms get block walls, epoxy and pads; each unit is
+// mounted where its kind goes (data.js MOUNT).
+function realRooms(group, M, I, FI, fl, out, f, h) {
+  const list = rooms.get(f.id), maxX = Math.max(...list.map(r => r.x + r.w));
+  for (const room of list) {
+    const items = room.assets.map(id => byId.get(id)), zones = items.filter(isZone), prim = zones[0];
+    const plant = room.use === "plant", cx = px(room.x + room.w / 2), cz = pz(room.z + room.d / 2);
+    walls(I, M, room, plant ? h - .3 : 2.85, false, room.x + room.w >= maxX - .01, plant);
+    if (room.use === "office" || room.use === "open") furnish(FI, M, room, 0);
+    else for (let x = px(room.x) + 1.2; x < px(room.x) + room.w - .6; x += 2.4) FI.add("light", UNIT, M.light, x, 2.86, cz, 1.2, .03, .6);
+    const zm = (plant ? M.epoxy : M.carpet).clone(); zm.userData.zone = !!prim; fl.extraMats.push(zm);
+    const zf = mesh(new THREE.BoxGeometry(room.w - .12, .05, room.d - .12), zm, cx, .035, cz, "zone", false);
+    zf.userData = { ...zf.userData, floor: f.id, roomName: room.name, ...(prim ? { id: prim.id } : {}) };
+    group.add(zf); out.hits.push(zf);
+    let vol = null, vm = null;
+    if (prim) {
+      vm = M.volume.clone(); fl.extraMats.push(vm);
+      vol = mesh(new THREE.BoxGeometry(room.w - .4, 2.6, room.d - .4), vm, cx, 1.36, cz, "analysis", false);
+      vol.userData = { ...vol.userData, id: prim.id }; vol.renderOrder = 2; group.add(vol); out.hits.push(vol);
+    } else out.plain.push({ floor: f.id, mat: zm, plant });
+    for (const e of items) {
+      const p = pos.get(e.id);
+      if (isZone(e)) { // terminal in the ceiling on the corridor side, with its branch duct to the corridor main
+        const cc = corridors.get(f.id).reduce((a, c) => Math.abs(c.z - p.z) < Math.abs(a - p.z) ? c.z : a, 1e9);
+        const v = vavBox(M, e.type === "VAV (dual duct)", e.type); v.position.set(px(p.x), h - .62, pz(p.z));
+        v.rotation.y = room.corrSide === "s" ? Math.PI / 2 : -Math.PI / 2;
+        v.traverse(o => { o.userData.layer = "systems"; if (o.isMesh) o.userData.id = e.id; if (o.material && !fl.mats.includes(o.material)) fl.extraMats.push(o.material); });
+        group.add(v); out.hits.push(v.children[0]);
+        group.add(mesh(new THREE.BoxGeometry(.35, .3, Math.abs(cc - p.z) || .1), M.duct, px(p.x), h - .55, pz((cc + p.z) / 2), "systems"));
+        out.zones.set(e.id, { floor: f.id, floorMat: zm, volMat: vm, floorMesh: zf, vol, vav: v, room, shared: e !== prim });
+      } else if (p.mount === "floor") {
+        group.add(mesh(boxGeo(p.w + .4, .12, p.d + .4, 2), M.concrete, px(p.x), .06, pz(p.z), "realistic"));
+        addEquip(group, M, fl, out, f.id, e, px(p.x), .12, pz(p.z), p.s || 1);
+      } else if (p.mount === "wall") addEquip(group, M, fl, out, f.id, e, px(p.x), 2.2, pz(p.z), 1, { ry: p.face });
+      else addEquip(group, M, fl, out, f.id, e, px(p.x), 0, pz(p.z), p.s || 1, { hang: h - .3, indoor: true });
+    }
+  }
+  for (const c of corridors.get(f.id)) // supply main along each corridor, from the shaft
+    group.add(mesh(boxGeo(SHAFT.x - c.x0 - 1, .5, 1.0, 2), M.duct, px((c.x0 + 1 + SHAFT.x) / 2), h - .55, pz(c.z), "systems"));
+  if (isBasement(f.id)) for (const [x, z, w, d] of [[0, -DEP / 2 - .2, W + .8, .4], [0, DEP / 2 + .2, W + .8, .4], [-W / 2 - .2, 0, .4, DEP], [W / 2 + .2, 0, .4, DEP]])
+    group.add(mesh(boxGeo(w, h, d, 3), M.concrete, x, h / 2 - .4, z, "realistic"));
+}
+
 // ---------------------------------------------------------------- the whole building
 export function buildBuilding(base) {
-  const out = { floors: new Map(), zones: new Map(), equip: new Map(), hits: [] };
+  const out = { floors: new Map(), zones: new Map(), equip: new Map(), hits: [], plain: [] };
   for (const f of FLOORS) {
     const M = matsFor(base), group = new THREE.Group(), I = new Inst(), FI = new Inst();
-    const h = f.id === "B1" ? BH : f.id === "RF" ? 0 : FH, fl = { id: f.id, group, mats: Object.values(M), extraMats: [], label: null };
+    const h = heightOf(f.id), fl = { id: f.id, group, mats: Object.values(M), extraMats: [], label: null };
     group.userData.floor = f.id;
     // slab
     const slab = mesh(boxGeo(W, .4, DEP, 4), f.kind === "roof" ? M.roof : M.slab, 0, -.2, 0, "slab");
     slab.userData.floor = f.id; group.add(slab); out.hits.push(slab);
     if (f.kind !== "roof") group.add(mesh(boxGeo(W, .02, DEP, 4), f.kind === "plant" ? M.plantFloor : M.carpet, 0, .01, 0, "realistic"));
 
-    if (f.kind === "zones") {
+    if (f.kind === "zones" && REAL) realRooms(group, M, I, FI, fl, out, f, h);
+    if (f.kind === "zones" && !REAL) {
       const list = rooms.get(f.id), maxX = Math.max(...list.map(r => r.x + r.w));
       for (const room of list) {
         const id = room.assets[0], e = byId.get(id);
@@ -187,16 +255,8 @@ export function buildBuilding(base) {
             group.add(mesh(boxGeo(w, sh, d, 2), M.louver, px(x), sh / 2, pz(z), "realistic"));
         }
         for (const id of room.assets) {
-          const e = byId.get(id), p = pos.get(id), m = buildEquipment(M, e);
-          m.scale.setScalar(p.s || 1); m.position.set(px(p.x), f.kind === "plant" ? .12 : .28, pz(p.z));
-          m.traverse(o => { o.userData.layer = o.userData.layer || "equip"; if (o.material && !fl.mats.includes(o.material) && !fl.extraMats.includes(o.material)) fl.extraMats.push(o.material); });
-          group.add(m);
-          const bb = new THREE.Box3().setFromObject(m), size = bb.getSize(new THREE.Vector3()), ctr = bb.getCenter(new THREE.Vector3());
-          const hit = new THREE.Mesh(new THREE.BoxGeometry(size.x + .2, size.y + .2, size.z + .2), new THREE.MeshBasicMaterial({ visible: false }));
-          hit.position.copy(ctr); hit.userData = { id, hitbox: true }; group.add(hit); out.hits.push(hit);
-          const tintMats = m.userData.tint.map(t => t.material);
-          tintMats.forEach(tm => { tm.userData.orig = tm.color.getHex(); });
-          out.equip.set(id, { floor: f.id, group: m, tint: tintMats, spin: m.userData.spin, hit, top: bb.max.y });
+          const p = pos.get(id);
+          addEquip(group, M, fl, out, f.id, byId.get(id), px(p.x), f.kind === "plant" ? .12 : .28, pz(p.z), p.s || 1);
         }
       }
       if (f.kind === "plant") { // headers along the corridor, branches to every piece of plant
@@ -224,7 +284,7 @@ export function buildBuilding(base) {
       }
     }
     if (f.kind !== "roof") { core(group, M, h, f.id); risers(group, M, h, f.kind === "zones"); }
-    if (f.kind === "zones") facade(group, M, I, h, f.id === "L1");
+    if (f.kind === "zones" && !(REAL && isBasement(f.id))) facade(group, M, I, h, f.id === GROUND_ID);
 
     const built = { ...I.build(), ...FI.build() };
     for (const [k, im] of Object.entries(built)) {

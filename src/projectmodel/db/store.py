@@ -17,12 +17,13 @@ from pathlib import Path
 METHODS = ("parsed", "rule", "template", "llm", "human", "document")
 KEPT = ("human", "document")  # a mapper run never deletes these: people decided them, or a document states them
 STATUSES = ("proposed", "confirmed", "rejected")
+KINDS = ("point", "equipment", "location")  # location: a floor or room of a building added from its documents
 
 SCHEMA = f"""
 CREATE TABLE IF NOT EXISTS nodes (
     project     TEXT NOT NULL,
     id          TEXT NOT NULL,
-    kind        TEXT NOT NULL CHECK (kind IN ('point', 'equipment')),
+    kind        TEXT NOT NULL CHECK (kind IN {KINDS}),
     label       TEXT NOT NULL,
     class       TEXT,
     source_file TEXT NOT NULL,
@@ -123,10 +124,11 @@ class Store:
         self.conn.executescript(SCHEMA)
 
     def _migrate_methods(self) -> None:
-        """Older databases check method against a shorter list; rebuild those tables with the current check."""
+        """Older databases check method (or a node's kind) against a shorter list; rebuild those tables with the
+        current checks."""
         for table in ("nodes", "edges"):
             row = self.conn.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()
-            if not row or all(f"'{m}'" in row[0] for m in METHODS):
+            if not row or all(f"'{m}'" in row[0] for m in METHODS + (KINDS if table == "nodes" else ())):
                 continue
             with self.conn:
                 self.conn.execute(f"ALTER TABLE {table} RENAME TO {table}_old")

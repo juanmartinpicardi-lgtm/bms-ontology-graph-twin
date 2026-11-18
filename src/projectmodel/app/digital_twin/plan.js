@@ -1,11 +1,11 @@
 // 2D floor plan, docked next to the 3D view. Pan by dragging, zoom with the wheel. Generated layout, not drawings.
-import { W, DEP, CORE, FLOORS, equip, byId, rooms, pos, sim, isZone, colorOf, C, servedBy } from "./data.js";
+import { W, DEP, CORE, FLOORS, REAL, GROUND_ID, equip, byId, rooms, pos, sim, isZone, colorOf, C, servedBy } from "./data.js";
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 export function createPlan(host, cb) {
   const P = { vb: null, floor: null, dragged: false };
   function render(S) {
-    const fid = S.floor || (S.sel && byId.get(S.sel).floor) || "L1", f = FLOORS.find(x => x.id === fid);
+    const fid = S.floor || (S.sel && byId.get(S.sel).floor) || GROUND_ID, f = FLOORS.find(x => x.id === fid);
     const list = equip.filter(e => e.floor === fid), zones = list.filter(isZone), served = [...new Set(zones.map(servedBy).filter(Boolean))];
     if (!P.vb || P.floor !== fid) P.vb = [-2, -4, W + 4, DEP + 6];
     P.floor = fid;
@@ -17,7 +17,24 @@ export function createPlan(host, cb) {
       <rect x="0" y="0" width="${W}" height="${DEP}" fill="#15171a" stroke="#4a5059" stroke-width=".35"/>
       <rect x="${CORE.x0}" y="${CORE.z0}" width="${CORE.x1 - CORE.x0}" height="${CORE.z1 - CORE.z0}" fill="url(#hatch)" stroke="#4a5059" stroke-width=".2"/>
       <text x="${(CORE.x0 + CORE.x1) / 2}" y="${(CORE.z0 + CORE.z1) / 2}" font-size="1.1" fill="#7A8087" text-anchor="middle">core · risers</text>`);
+    const unit = (id, sel) => { const p = pos.get(id), e = byId.get(id), on = S.match(e), st = sim.get(id).status;
+      const w = Math.max(p.w, 1), d = Math.max(p.d, .7);
+      return `<g class="room" data-id="${id}" opacity="${on ? 1 : .25}"><rect class="bg" x="${p.x - w / 2}" y="${p.z - d / 2}" width="${w}" height="${d}" rx=".2"
+        fill="${on ? colorOf(e, S.color) : "#2a2d31"}" stroke="${sel ? "#fff" : "#15171a"}" stroke-width="${sel ? .35 : .12}" ${p.mount === "ceiling" || p.mount === "wall" ? `stroke-dasharray=".35 .2"` : ""}/>
+        <text x="${p.x}" y="${p.z + d / 2 + .75}" font-size=".6" text-anchor="middle">${esc(e.name)}</text>
+        ${st !== "normal" ? `<circle cx="${p.x + w / 2}" cy="${p.z - d / 2}" r=".4" fill="${C[st]}" stroke="#1E1E1E" stroke-width=".15"/>` : ""}</g>`; };
     for (const r of rooms.get(fid)) {
+      if (r.kind === "room") { // a room from the plans: zone-coloured when a terminal serves it, its units drawn inside
+        const items = r.assets.map(id => byId.get(id)), prim = items.find(isZone), fs = Math.max(.55, Math.min(1.05, r.w / 7, r.d / 4));
+        const on = prim ? S.match(prim) : true, sel = prim && prim.id === S.sel, plant = r.use === "plant";
+        o.push(`<g ${prim ? `class="room" data-id="${prim.id}"` : ""} opacity="${on ? 1 : .3}"><rect class="bg" x="${r.x + .1}" y="${r.z + .1}" width="${r.w - .2}" height="${r.d - .2}" rx=".25"
+          fill="${prim && on ? colorOf(prim, S.color) : plant ? "#1b1e22" : "#202328"}" stroke="${sel ? "#fff" : "#454b53"}" stroke-width="${sel ? .45 : .15}" ${r.made ? `stroke-dasharray=".6 .4"` : ""}/>
+          <text x="${r.x + .5}" y="${r.z + fs + .25}" font-size="${fs}" ${prim ? "" : `fill="#9AA0A6"`}>${esc(r.num || r.name)}</text>
+          ${r.num && zoom > 1.3 ? `<text x="${r.x + .5}" y="${r.z + fs * 1.9 + .3}" font-size="${fs * .62}" ${prim ? "" : `fill="#7A8087"`}>${esc(r.name.replace(r.num, "").trim())}</text>` : ""}
+          ${prim && zoom > 1.6 ? `<text x="${r.x + r.w - .5}" y="${r.z + r.d - .5}" font-size="${fs * .8}" text-anchor="end">${sim.get(prim.id).temp.toFixed(1)}°</text>` : ""}</g>`);
+        for (const e of items) if (e !== prim) o.push(unit(e.id, e.id === S.sel));
+        continue;
+      }
       if (r.kind !== "zone") {
         o.push(`<rect x="${r.x + .15}" y="${r.z + .15}" width="${r.w - .3}" height="${r.d - .3}" rx=".3" fill="#1b1e22" stroke="#454b53" stroke-width=".18" ${r.kind === "area" ? `stroke-dasharray=".6 .4"` : ""}/>
           <text x="${r.x + .7}" y="${r.z + 1.5}" font-size="1" fill="#9AA0A6">${esc(r.name)}</text>`);
@@ -37,7 +54,7 @@ export function createPlan(host, cb) {
           ${s.status !== "normal" ? `<circle cx="${r.x + r.w - .8}" cy="${r.z + .8}" r=".42" fill="${C[s.status]}" stroke="#1E1E1E" stroke-width=".15"/>` : ""}</g>`);
       }
     }
-    o.push(`<text x="0" y="-1.2" font-size="1.1" fill="#6B7177">N ↑ · generated layout, not to scale</text></svg>`);
+    o.push(`<text x="0" y="-1.2" font-size="1.1" fill="#6B7177">N ↑ · ${REAL ? "rooms from the plans, in their order · sizes generated" : "generated layout, not to scale"}</text></svg>`);
     host.innerHTML = o.join("");
     host.querySelectorAll("[data-f]").forEach(b => b.onclick = () => cb.onFloor(b.dataset.f));
     const svg = host.querySelector("svg");

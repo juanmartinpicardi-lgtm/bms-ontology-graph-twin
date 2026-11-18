@@ -14,7 +14,7 @@ import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { W, DEP, FH, FLOORS, FLOOR_IDX, elevation, floorById, equip, byId, sim, isZone, colorOf, chainUp, C, pos } from "./data.js";
+import { W, DEP, FH, FLOORS, FLOOR_IDX, elevation, floorById, equip, byId, sim, isZone, colorOf, chainUp, C, pos, TOP_ID, BOTTOM_ID } from "./data.js";
 import { baseMaterials, flowTex } from "./materials.js";
 import { buildBuilding } from "./building.js";
 import { buildSite } from "./site.js";
@@ -100,7 +100,7 @@ export function createViewer(host, cb) {
     }
   }
   function anchorLocal(id) {
-    const z = B.zones.get(id); if (z) return new THREE.Vector3(z.floorMesh.position.x, 2.6, z.floorMesh.position.z);
+    const z = B.zones.get(id); if (z) { const o = z.shared ? z.vav : z.floorMesh; return new THREE.Vector3(o.position.x, 2.6, o.position.z); }
     const q = B.equip.get(id); return new THREE.Vector3(q.group.position.x, q.top, q.group.position.z);
   }
   const anchorWorld = id => { const fl = B.floors.get(byId.get(id).floor); return anchorLocal(id).add(new THREE.Vector3(0, fl.group.position.y, 0)); };
@@ -144,6 +144,7 @@ export function createViewer(host, cb) {
       if (o.userData.hitbox && !visibleDeep(o.parent)) continue;
       if (V.cut && h.point.x > V.cut.constant) continue;
       if (o.userData.facade) return { floor: o.userData.floor };
+      if (o.userData.roomName && !o.userData.id) return { floor: fid, room: o.userData.roomName };
       if (o.userData.id) { if (o === B.zones.get(o.userData.id)?.vol && V.mode !== "analysis") continue; return { id: o.userData.id }; }
       return { floor: o.userData.floor };
     }
@@ -164,7 +165,7 @@ export function createViewer(host, cb) {
     const h = pick(ev); el.style.cursor = h ? "pointer" : "";
     const key = h ? (h.id || "f:" + h.floor) : null;
     if (key !== V.hover) { V.hover = key; hoverPass.selectedObjects = h ? hoverObjects(h) : []; }
-    cb.onHover?.(h?.id || (h?.floor ? "floor:" + h.floor : null), { left: ev.clientX, top: ev.clientY });
+    cb.onHover?.(h?.id || (h?.room ? "room:" + h.floor + ":" + h.room : h?.floor ? "floor:" + h.floor : null), { left: ev.clientX, top: ev.clientY });
   }); });
   el.addEventListener("pointerleave", () => { V.hover = null; hoverPass.selectedObjects = []; cb.onHover?.(null); });
   function hoverObjects(h) {
@@ -252,10 +253,11 @@ export function createViewer(host, cb) {
     else if (V.floor) flyTo(new THREE.Vector3(0, floorBaseY(V.floor), 0), real ? 92 : 100, 1.0);
     else flyTo(null);
   }
+  const SIZE_K = Math.max(1, W / 72, DEP / 40), TALL_K = Math.max(1, FLOORS.length / 6);  // Alpha is 72 x 40 m, 6 levels
   function flyTo(t, dist, steep = .62) {
-    const aspectK = 1 / Math.min(1, camera.aspect / 1.55);
+    const aspectK = 1 / Math.min(1, camera.aspect / 1.55) * SIZE_K;
     if (!t) { const real = V.mode === "realistic";
-      const ty = real ? 6 : (floorBaseY("RF") + floorBaseY("B1")) / 2, d = (real ? 112 : (V.exploded ? 140 : 108)) * aspectK;
+      const ty = real ? 6 : (floorBaseY(TOP_ID) + floorBaseY(BOTTOM_ID)) / 2, d = (real ? 112 : (V.exploded ? 140 : 108)) * aspectK * TALL_K;
       V.camGoal = { t: new THREE.Vector3(0, ty, 0), p: new THREE.Vector3(d * .62, ty + d * (real ? .2 : .5), d * .78) }; return; }
     const d = dist * aspectK;
     const dir = camera.position.clone().sub(controls.target); dir.y = 0; if (dir.lengthSq() < 1) dir.set(.6, 0, .8); dir.normalize();
@@ -263,8 +265,14 @@ export function createViewer(host, cb) {
   }
   function paint() {
     const real = V.mode === "realistic";
+    for (const p of B.plain) {
+      const wantMap = real ? B.floors.get(p.floor).M[p.plant ? "epoxy" : "carpet"].map : null;
+      if (p.mat.map !== wantMap) { p.mat.map = wantMap; p.mat.needsUpdate = true; }
+      p.mat.color.set(real ? 0xffffff : LIGHT ? 0xe3e6ea : 0x24272b); p.mat.emissive.copy(real ? WARM : new THREE.Color(0)).multiplyScalar(real ? V.glow * .12 : 0);
+    }
     for (const [id, z] of B.zones) {
       const e = byId.get(id), on = V.match(e), col = new THREE.Color(colorOf(e, V.color)), s = sim.get(id);
+      if (z.shared) { const vb = z.vav.children[0]; if (vb) vb.material.color.set(!real && on ? col : 0xc7ccd0); continue; }
       const wantMap = real ? B.floors.get(z.floor).M.carpet.map : null;
       if (z.floorMat.map !== wantMap) { z.floorMat.map = wantMap; z.floorMat.needsUpdate = true; }
       if (!real) {

@@ -234,18 +234,62 @@ function systemModel(M, e) {
   return cabinets(M, e, 2);
 }
 
+// ---------------------------------------------------------------- Unit heater (hung from the structure)
+function unitHeater(M, e) {
+  const g = new THREE.Group(), body = own(M.casing), tint = [];
+  tint.push(rbox(g, .9, .6, .7, .04, body, 0, .3, 0));
+  for (let i = 0; i < 6; i++) box(g, .8, .02, .06, M.darkMetal, 0, .1 + i * .08, .36);   // discharge louvres
+  const fan = blades(5, .22, .08, M.darkMetal, "z"); fan.position.set(0, .3, -.37); g.add(fan);
+  for (const x of [-.3, .3]) cyl(g, .012, .5, M.steel, "y", x, .85, 0, 6);                // hanger rods
+  pipe(g, [-.35, .45, -.2], [-.35, 1.1, -.2], .03, M.pipeHW); pipe(g, [.35, .45, -.2], [.35, 1.1, -.2], .03, M.pipeHW);
+  g.userData.spin = [[fan, "z", 9]]; g.userData.tint = tint; return g;
+}
+// ---------------------------------------------------------------- Mini-split indoor head (on a wall)
+function miniSplit(M, e) {
+  const g = new THREE.Group(), body = own(M.partition), tint = [];
+  tint.push(rbox(g, 1.1, .3, .25, .08, body, 0, .15, 0));
+  box(g, .9, .03, .02, M.darkMetal, 0, .04, .13); box(g, .08, .03, .01, M.led, .45, .22, .13);
+  pipe(g, [-.5, .1, -.1], [-.5, -.6, -.1], .025, M.steel);
+  g.userData.tint = tint; return g;
+}
+// ---------------------------------------------------------------- Hydronic specialty (expansion tank, air separator)
+function specialty(M, e) {
+  const g = new THREE.Group(), body = own(M.casingBlue), tint = [];
+  box(g, 1.0, .1, 1.0, M.concrete, 0, .05, 0);
+  for (const a of [0, 2.1, 4.2]) cyl(g, .03, .3, M.steel, "y", Math.cos(a) * .3, .25, Math.sin(a) * .3, 6);
+  tint.push(cyl(g, .4, 1.1, body, "y", 0, .95, 0, 28));
+  const top = mesh(new THREE.SphereGeometry(.4, 28, 10, 0, Math.PI * 2, 0, Math.PI / 2), body, 0, 1.5, 0); top.scale.y = .45; g.add(top); tint.push(top);
+  pipe(g, [0, 1.65, 0], [0, 3.8, 0], .06, M.pipeCHW, M.steel); box(g, .16, .16, .04, M.yellow, .3, 1.1, .39);
+  g.userData.tint = tint; return g;
+}
+// ---------------------------------------------------------------- Inline exhaust fan (in a ceiling, indoors)
+function inlineFan(M, e) {
+  const g = new THREE.Group(), body = own(M.casing), tint = [];
+  tint.push(box(g, .9, .5, .7, body, 0, .25, 0));
+  cyl(g, .18, .5, M.duct, "x", -.7, .25, 0, 16); cyl(g, .18, .5, M.duct, "x", .7, .25, 0, 16);
+  for (const x of [-.3, .3]) cyl(g, .012, .5, M.steel, "y", x, .75, 0, 6);
+  g.userData.tint = tint; return g;
+}
+
 const BUILD = { AHU: ahu, Chiller: chiller, Boiler: boiler, Pump: pump, "Heat exchanger": hx, "Cooling tower": tower,
-  "Exhaust fan": exfan, System: systemModel, "Fan VFD": vfd, Meter: meter };
-export function buildEquipment(M, e) {
-  const g = (BUILD[e.type] || cabinets)(M, e);
+  "Exhaust fan": exfan, System: systemModel, "Fan VFD": vfd, Meter: meter, "Unit heater": unitHeater, "Mini-split": miniSplit,
+  "Hydronic specialty": specialty };
+export function buildEquipment(M, e, indoor = false) {
+  const g = (indoor && e.type === "Exhaust fan" ? inlineFan : BUILD[e.type] || cabinets)(M, e);
   g.userData.spin = g.userData.spin || []; g.userData.tint = g.userData.tint || [];
   return g;
 }
 
 // ---------------------------------------------------------------- VAV box (ceiling), as seen when the ceiling is open
-export function vavBox(M, dual) {
+export function vavBox(M, dual, kind = "") {
   const g = new THREE.Group(), body = own(M.duct);
-  const b = box(g, 1.0, .38, .55, body, 0, 0, 0);
+  if (kind === "Fan coil") { // fan coil: a wider cabinet with its filter rack and condensate pan
+    const b = box(g, 1.3, .4, .7, body, 0, 0, 0); box(g, .05, .36, .62, M.darkMetal, -.67, 0, 0);
+    box(g, 1.2, .05, .66, M.steel, 0, -.22, 0); pipe(g, [.5, 0, .35], [.5, .5, .35], .03, M.pipeCHW);
+    g.userData.tint = [b]; return g;
+  }
+  const b = box(g, 1.0, .38, .55, body, 0, 0, 0);    // first child: the body the viewer colours
+  if (kind === "VAV (fan powered)") box(g, .55, .45, .55, M.casing, .15, .05, -.55);   // the box's own fan section
   cyl(g, .14, .5, M.duct, "x", -.75, 0, dual ? -.14 : 0, 16); if (dual) cyl(g, .14, .5, M.duct, "x", -.75, 0, .14, 16);
   box(g, .22, .16, .1, M.black, -.2, .2, .3);           // damper actuator
   if (!dual) { box(g, .1, .32, .5, M.pipeHW, .45, 0, 0); } // reheat coil

@@ -1,5 +1,5 @@
 // The twin page: filters, floor nav, detail panel, and the wiring between the 3D viewer and the plan.
-import { D, FLOORS, FLOOR_IDX, equip, byId, up, down, parts, sim, isZone, servedBy, chainUp, colorOf, C, pointValue, drift, floorById, IMPACT } from "./data.js";
+import { D, REAL, FLOORS, FLOOR_IDX, equip, byId, up, down, parts, sim, isZone, servedBy, chainUp, colorOf, C, pointValue, drift, floorById, IMPACT, mountOf } from "./data.js";
 import { createViewer } from "./viewer.js";
 import { createPlan } from "./plan.js";
 
@@ -22,10 +22,12 @@ const pill = st => `<span class="badge" style="border-color:${C[st]};color:${C[s
 const tip = $("#tip");
 function showTip(id, at) {
   if (!id) { tip.style.display = "none"; return; }
-  if (id.startsWith("floor:")) { const f = floorById(id.slice(6)), list = equip.filter(e => e.floor === f.id);
+  if (id.startsWith("room:")) { const [, fid, ...name] = id.split(":");
+    tip.innerHTML = `<b>${esc(name.join(":"))}</b><span style="color:var(--muted)">${esc(floorById(fid).long)} · no terminal serves this room</span>`; }
+  else if (id.startsWith("floor:")) { const f = floorById(id.slice(6)), list = equip.filter(e => e.floor === f.id);
     tip.innerHTML = `<b>${f.id} · ${f.long}</b><span style="color:var(--muted)">${list.length} assets · click to open this floor</span>`; }
   else { const e = byId.get(id), s = sim.get(id);
-    tip.innerHTML = `<b>${esc(e.label)}</b><span style="color:var(--muted)">${e.type} · ${e.floor}${isZone(e) ? ` · ${s.temp.toFixed(1)} °F` : ""}</span>
+    tip.innerHTML = `<b>${esc(e.label)}</b><span style="color:var(--muted)">${e.type} · ${e.floor}${e.room_name ? ` · ${esc(e.room_name)}` : ""}${isZone(e) ? ` · ${s.temp.toFixed(1)} °F` : ""}</span>
       ${s.note ? `<div style="color:${C[s.status]};margin-top:3px">${esc(s.note)}</div>` : ""}`; }
   Object.assign(tip.style, { display: "block", left: (at.left + 14) + "px", top: (at.top + 12) + "px" });
 }
@@ -56,6 +58,22 @@ function renderFilters() {
   $("#typeSel").onchange = ev => { S.f.type = new Set(ev.target.value ? [ev.target.value] : []); update(); };
   $("#colorSeg").querySelectorAll("button").forEach(b => b.onclick = () => { S.color = b.dataset.c; update(); });
   if ($("#clearF")) $("#clearF").onclick = clearFilters;
+}
+function levelsSummary() {
+  const n = k => FLOORS.filter(f => k(f)).length, basements = n(f => /^B\d*$/.test(f.id) || f.kind === "plant");
+  const levels = n(f => f.kind === "zones" && !/^B\d*$/.test(f.id)), roof = n(f => f.kind === "roof");
+  const rooms = REAL ? Object.values(D.rooms).reduce((a, r) => a + r.length, 0) : 0;
+  return [`${levels} floor${levels === 1 ? "" : "s"}`, basements && (basements === 1 ? "basement" : basements + " basements"), roof && "roof"]
+    .filter(Boolean).join(" + ") + (rooms ? ` · ${rooms} rooms` : "");
+}
+// What the page says about where the building comes from: the graph's own floors and rooms, or inferred.
+if (REAL) {
+  const b = document.querySelector("header .badge.inf");
+  b.textContent = "◆ Floors & rooms from the plans · layout generated";
+  b.title = "Levels, rooms and the room of every unit come from this project's knowledge graph (read from its floor plans and submittal). Room sizes, walls and geometry are generated; rooms keep the plan's arrangement.";
+  document.querySelector("#notes li:nth-child(2)").innerHTML = "<b>From the documents</b>: the levels, every room with its number and name, which floor each unit is on and which room it serves or stands in, as published from the guided setup.";
+  document.querySelector("#notes li:nth-child(3)").innerHTML = "<b>Generated</b>: room sizes and walls (rooms keep the plan's north–south, west–east order), furniture, facade, site, equipment models. Units are mounted by kind: boxes and heaters in the ceiling, mini-splits on a wall, plant on pads, air handlers and fans on the roof.";
+  document.querySelector("#notes li:nth-child(4)").innerHTML = "<b>Simulated</b>: temperatures, alarms, fan speeds, point values. Units are inferred from each point's class.";
 }
 function clearFilters() { S.q = ""; Object.values(S.f).forEach(s => s.clear()); update(); }
 function renderCrumbs() {
@@ -99,7 +117,7 @@ function renderDetail() {
     const order = ["alarm", "offline", "warning"], flagged = list.filter(x => sim.get(x.id).status !== "normal").sort((a, b) => order.indexOf(sim.get(a.id).status) - order.indexOf(sim.get(b.id).status));
     const types = {}; list.forEach(x => types[x.type] = (types[x.type] || 0) + 1);
     el.innerHTML = `<div class="dh"><div class="lbl">${f ? "Floor" : "Building"}</div><h2>${f ? f.id + " · " + f.long : esc(D.site.name)}</h2>
-      <div class="tags"><span class="badge">${list.length} assets</span><span class="badge">${list.reduce((a, x) => a + x.points.length, 0)} points</span>${f ? "" : `<span class="badge">4 floors + basement + roof</span>`}</div></div>
+      <div class="tags"><span class="badge">${list.length} assets</span><span class="badge">${list.reduce((a, x) => a + x.points.length, 0)} points</span>${f ? "" : `<span class="badge">${levelsSummary()}</span>`}</div></div>
       <div class="sec"><h4>Needs attention <span>${flagged.length}</span></h4><div class="chain">${flagged.slice(0, 14).map(x =>
         `<div class="node" data-id="${x.id}"><i class="dot" style="background:${C[sim.get(x.id).status]}"></i><span>${esc(x.label)}</span><span class="fl">${x.floor}</span></div>
          <div class="via" style="padding:0 0 4px 24px">${esc(sim.get(x.id).note)}</div>`).join("") || `<div style="color:var(--muted)">All normal</div>`}</div></div>
@@ -126,8 +144,10 @@ function renderDetail() {
       <div class="sec"><h4>Provenance</h4><div class="prov">
         <div>Source</div><div>${esc(e.file)} · ${esc(e.row)}</div><div>Equipment id</div><div>${esc(e.id)}</div>
         <div>Class method</div><div>${e.method} · confidence ${e.conf}</div><div>Review</div><div>${pill(e.status)}</div>
-        <div>Floor</div><div><span class="badge inf">inferred</span> ${isZone(e) && servedBy(e) ? `served by ${esc(servedBy(e))} → ${e.floor}` : `from type → ${e.floor}`}</div>
-        <div>Geometry</div><div><span class="badge inf">generated</span> ${isZone(e) ? "room" : e.type.toLowerCase() + " model"}</div></div></div>
+        ${e.floor_src === "plans" ? `<div>Floor</div><div><span class="badge">from the plans</span> ${esc(floorById(e.floor).name)}${floorById(e.floor).sheet ? ` · ${esc(floorById(e.floor).sheet)}` : ""}</div>`
+          : `<div>Floor</div><div><span class="badge inf">inferred</span> ${isZone(e) && servedBy(e) ? `served by ${esc(servedBy(e))} → ${e.floor}` : `from type → ${e.floor}`}</div>`}
+        ${e.room_name ? `<div>Room</div><div><span class="badge">from the documents</span> ${e.room_rel === "serves" ? "serves" : "in"} ${esc(e.room_name)}</div>` : ""}
+        <div>Geometry</div><div><span class="badge inf">generated</span> ${isZone(e) ? (e.room_name ? "room layout, " : "room, ") + "box in the ceiling" : e.type.toLowerCase() + " model, " + ({ ceiling: "hung from the ceiling", wall: "on the wall", floor: "on a pad on the floor", roof: "on the roof" })[mountOf(e)]}</div></div></div>
       <div class="sec"><div class="actions">${D.links?.[e.id] ? `<a class="btn" href="${esc(D.links[e.id])}" target="_top" style="text-decoration:none">Open in Equipment 3D ↗</a>` : ""}<button class="btn" id="clearSel">Close</button></div></div>`;
     const drawPts = q => { $("#ptsTable", el).innerHTML = e.points.filter(p => !q || (p.n + " " + p.c).toLowerCase().includes(q)).map(p =>
       `<tr><td>${esc(p.n)}<div class="cls">${esc(p.c || "unmapped")} · ${p.m} ${p.conf}${p.s !== "proposed" ? ` · <span style="color:${C[p.s] || "#999"}">${p.s}</span>` : ""}</div></td><td class="v">${pointValue(e, p)}</td></tr>`).join(""); };
@@ -179,7 +199,7 @@ document.addEventListener("keydown", ev => {
   if (ev.key === "/") { ev.preventDefault(); $("#q").focus(); }
   if (ev.key === "Escape") S.sel ? select(null) : S.floor ? selectFloor(null) : clearFilters();
   if (ev.key === "[" || ev.key === "]") {
-    const i = S.floor ? FLOOR_IDX[S.floor] : ev.key === "]" ? -1 : 6, n = Math.max(0, Math.min(5, i + (ev.key === "]" ? 1 : -1)));
+    const top = FLOORS.length - 1, i = S.floor ? FLOOR_IDX[S.floor] : ev.key === "]" ? -1 : top + 1, n = Math.max(0, Math.min(top, i + (ev.key === "]" ? 1 : -1)));
     selectFloor(Object.keys(FLOOR_IDX).find(k => FLOOR_IDX[k] === n));
   }
 });
