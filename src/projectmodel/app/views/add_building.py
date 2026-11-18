@@ -34,16 +34,17 @@ from projectmodel.intake.model import building, missing, progress  # noqa: E402
 from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
 from projectmodel.intake.steps import STEPS, TEST_PACKAGE  # noqa: E402
 
-STATUS_COLOR = {"confirmed": "#3CB371", "proposed": "#4DA3E8", "ask": "#F0A030", "rejected": "#D9534F"}
+# Semantic colours, mid-tones that read on both the white page image and the dark app
+STATUS_COLOR = {"confirmed": "#4CBF45", "proposed": "#1792E5", "ask": "#F2B134", "rejected": "#FF644C"}
 KIND_NAME = {"floor": "Floors", "room": "Rooms", "placement": "Where units are", "equipment": "Equipment",
              "relation": "Connections", "sequence": "Sequences", "issue": "Checks", "controller": "Controllers",
              "point": "Points", "room_check": "Room schedule check", "alias": "BMS devices", "bms_object": "BMS objects"}
 PER_PAGE = 6
 
 st.html("""<style>
-.st-key-ab_steps button { border-radius: 12px; }
+.st-key-ab_steps button { border-radius: 4px; }
 .st-key-ab_steps button p { font-size: .86rem; }
-[class*="st-key-q_"] { border-left: 3px solid #F0A030 !important; border-radius: 12px !important; }
+[class*="st-key-q_"] { border-left: 3px solid #F2B134 !important; border-radius: 10px !important; }
 /* The document (left) and the outputs (right) are fit boxes (shell.FIT_JS): side by side, the same height, down
    to the bottom of the screen wherever the header above ends. The PDF page scales to its box. */
 [class*="st-key-box_fit_work"] [data-testid="stImage"] img { max-height: calc(var(--fit, 760px) - 150px);
@@ -51,7 +52,7 @@ st.html("""<style>
 .block-container { padding-bottom: 1rem !important; }
 .st-key-box_step { padding: 12px 18px !important; }
 .st-key-box_step h3 { padding: 0; margin: 0; font-size: 1.35rem; }
-.st-key-ab_reopen button { height: 168px; writing-mode: vertical-rl; border-radius: 14px; padding: 12px 6px; }
+.st-key-ab_reopen button { height: 168px; writing-mode: vertical-rl; border-radius: 4px; padding: 12px 6px; }
 </style>""")
 
 # The flow: locate, the five documents, review, then what people know. Locate and knowledge are steps of this page;

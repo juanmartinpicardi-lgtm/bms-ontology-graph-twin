@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-FAMILY_COLOR = {"ahu": "#E8833A", "vav": "#4DA3E8", "fvav": "#8E7CF0", "fcu": "#4DA3E8", "chiller": "#2BB3A3",
+FAMILY_COLOR = {"ahu": "#E8833A", "vav": "#64C3FF", "fvav": "#8E7CF0", "fcu": "#64C3FF", "chiller": "#2BB3A3",
                 "pump": "#3C8DBC", "ef": "#A0A6AD", "split": "#D96BA6", "uh": "#E0B33A", "specialty": "#8A8F96",
                 "boiler": "#D9534F", "other": "#8A8F96"}
 FAMILY_NAME = {"ahu": "Air handler", "vav": "VAV box", "fvav": "Fan-powered box", "chiller": "Chiller", "pump": "Pump",

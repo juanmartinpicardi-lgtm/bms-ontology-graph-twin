@@ -173,14 +173,16 @@ def osm_embed_url(lat: float, lng: float, span: float = 0.004) -> str:
         {"bbox": box, "layer": "mapnik", "marker": f"{lat},{lng}"})
 
 
-GOOGLE_MAP = """<!doctype html><html><head><meta charset="utf-8"><style>
-html, body { height: 100%; margin: 0; font: 14px system-ui, sans-serif; }
+GOOGLE_MAP = """<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@500;700&display=swap"><style>
+html, body { height: 100%; margin: 0; font: 500 14px "Geist", system-ui, sans-serif; }
 #map2d, #map3d { position: absolute; inset: 0; } #map3d { display: none; }
 #bar { position: absolute; z-index: 5; top: 10px; left: 10px; display: flex; gap: 6px; }
-#bar button { border: 0; border-radius: 6px; padding: 7px 12px; background: #fff; color: #222; cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0,0,0,.35); } #bar button.on { background: #1F7FCC; color: #fff; }
-#msg { position: absolute; z-index: 5; bottom: 10px; left: 10px; right: 10px; padding: 8px 10px; border-radius: 6px;
-  background: #fff; color: #222; display: none; }
+#bar button { border: 0; border-radius: 4px; padding: 7px 14px; background: #303030; color: #F0F0F0; cursor: pointer;
+  font: inherit; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,.25); }
+#bar button.on { background: #64C3FF; color: #303030; }
+#msg { position: absolute; z-index: 5; bottom: 10px; left: 10px; right: 10px; padding: 8px 10px; border-radius: 4px;
+  background: #303030; color: #F0F0F0; display: none; }
 </style></head><body>
 <div id="bar"><button id="b2" class="on">Map</button><button id="b3">3D</button></div>
 <div id="map2d"></div><div id="map3d"></div><div id="msg"></div>

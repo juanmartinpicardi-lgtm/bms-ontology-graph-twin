@@ -191,25 +191,25 @@ CSS = """
 .feat b { color: var(--fg); font-weight: 600; }
 .gos { margin-top: auto; padding-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
 .story .go { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px 0 14px;
-  border-radius: 999px; border: 1px solid var(--line); font-size: .86rem; font-weight: 500;
+  border-radius: 4px; border: 1px solid var(--line); font-size: .86rem; font-weight: 500;
   transition: border-color .2s, background .2s; }
 .story .go:hover { border-color: var(--acc); background: var(--tint); }
 .go .ms { font-size: 17px; transition: transform .3s var(--ease); }
 .go:hover .ms { transform: translateX(3px); }
 
 /* The visual: one tinted panel per card, its content centred. */
-.vis { border-radius: 14px; min-height: 340px; padding: 26px; display: flex; align-items: center;
+.vis { border-radius: 10px; min-height: 340px; padding: 26px; display: flex; align-items: center;
   justify-content: center; overflow: hidden;
   background: radial-gradient(120% 90% at 50% 100%, var(--soft), var(--tint) 62%); }
 .vis > * { width: 100%; max-width: 430px; }
 .rise { opacity: 0; transform: translateY(10px); }
 .card.seen .rise { opacity: 1; transform: none;
   transition: opacity .5s calc(var(--i, 0) * 70ms + 80ms), transform .7s var(--ease) calc(var(--i, 0) * 70ms + 80ms); }
-.box { background: var(--bg); border: 1px solid var(--line); border-radius: 12px;
+.box { background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 22px -14px rgba(0, 0, 0, .25); }
 
 .pills { display: grid; gap: 12px; max-width: 300px !important; }
-.pill { display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 20px; border-radius: 999px;
+.pill { display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 20px; border-radius: 10px;
   background: var(--bg); border: 1px solid var(--line); box-shadow: 0 8px 22px -14px rgba(0, 0, 0, .25); }
 .pill code { font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dot { width: 22px; height: 22px; border-radius: 50%; border: 1.5px dashed var(--muted); display: grid;
@@ -217,7 +217,7 @@ CSS = """
 .dot .ms { font-size: 13px; color: var(--muted); }
 
 .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.story .tile { display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 12px;
+.story .tile { display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 10px;
   background: var(--bg); border: 1px solid var(--line); min-width: 0; }
 .tile .ms { color: var(--acc); font-size: 22px; margin-bottom: 4px; }
 .tile b { font-size: .88rem; font-weight: 600; line-height: 1.25; }
@@ -228,7 +228,7 @@ CSS = """
 .walk { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; position: relative; }
 .walk::before { content: ""; position: absolute; left: 31px; top: 30px; bottom: 30px; width: 2px;
   background: repeating-linear-gradient(var(--acc) 0 4px, transparent 4px 9px); opacity: .55; }
-.walk li { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px; margin: 0;
+.walk li { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px; margin: 0;
   background: var(--bg); border: 1px solid var(--line); position: relative; }
 .walk .bub { width: 38px; height: 38px; border-radius: 50%; background: var(--tint); color: var(--acc);
   display: grid; place-items: center; flex: none; }
@@ -237,12 +237,12 @@ CSS = """
 .walk div span { font-size: .78rem; line-height: 1.4; color: var(--muted); }
 .walk li.end { border-color: var(--acc); }
 .walk li.end .bub { background: var(--acc); color: var(--bg); }
-.story .mini { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; flex: none;
+.story .mini { width: 32px; height: 32px; border-radius: 4px; display: grid; place-items: center; flex: none;
   color: var(--muted); transition: background .2s, color .2s; }
 .story .mini:hover { background: var(--tint); color: var(--acc); }
 
 .bars { display: grid; gap: 14px; }
-.bar { padding: 12px 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.bar { padding: 12px 14px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
 .bar-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: .86rem; }
 .bar-h b { font-weight: 600; }
 .bar-h span { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .8rem; white-space: nowrap; }
@@ -255,21 +255,21 @@ CSS = """
 
 .stack { display: grid; gap: 12px; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.stat { padding: 14px 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line);
+.stat { padding: 14px 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line);
   display: flex; flex-direction: column; gap: 2px; }
 .stat b { font-size: 1.4rem; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .stat span { font-size: .75rem; color: var(--muted); }
 .chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.chip { font-size: .78rem; padding: 5px 11px; border-radius: 999px; background: var(--bg);
+.chip { font-size: .78rem; padding: 5px 11px; border-radius: 4px; background: var(--bg);
   border: 1px solid var(--line); white-space: nowrap; }
 .chip b { font-weight: 600; font-variant-numeric: tabular-nums; }
 .cap { font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 
-.rec { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+.rec { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
   box-shadow: 0 10px 28px -18px rgba(0, 0, 0, .3); }
 .rec header { padding: 14px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center;
   gap: 10px; flex-wrap: wrap; font-size: .9rem; }
-.rec header .tag { margin-left: auto; font-size: .74rem; padding: 3px 9px; border-radius: 999px;
+.rec header .tag { margin-left: auto; font-size: .74rem; padding: 3px 9px; border-radius: 4px;
   background: var(--tint); color: var(--acc); font-weight: 600; }
 .rec > div { display: flex; justify-content: space-between; gap: 16px; padding: 9px 16px; font-size: .82rem;
   border-bottom: 1px solid color-mix(in srgb, var(--fg) 6%, transparent); }
@@ -283,7 +283,7 @@ CSS = """
 .flow .srcs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .src { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 10px; font-size: .8rem;
   background: var(--bg); border: 1px solid var(--line); font-weight: 500; }
-.src small { font-size: .68rem; padding: 1px 7px; border-radius: 999px; background: var(--tint); color: var(--acc);
+.src small { font-size: .68rem; padding: 1px 7px; border-radius: 4px; background: var(--tint); color: var(--acc);
   font-weight: 600; }
 .src.later { border-style: dashed; color: var(--muted); }
 .src.later small { background: color-mix(in srgb, var(--fg) 8%, transparent); color: var(--muted); }
@@ -294,7 +294,7 @@ CSS = """
 .flow .rec { width: 100%; }
 
 .layers { display: grid; gap: 0; }
-.layer { padding: 16px; border-radius: 14px; background: var(--bg); border: 1px solid var(--line);
+.layer { padding: 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line);
   display: grid; gap: 10px; }
 .layer.top { border-color: var(--acc); }
 .layer h4 { margin: 0; padding: 0; font-size: .9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
@@ -304,7 +304,7 @@ CSS = """
 .between .ms { font-size: 16px; color: var(--acc); }
 
 .gloss { margin: 0; display: grid; gap: 8px; max-width: 470px !important; }
-.gloss > div { padding: 11px 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.gloss > div { padding: 11px 14px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
 .gloss dt { font-size: .86rem; font-weight: 600; }
 .gloss dd { margin: 2px 0 0; font-size: .78rem; line-height: 1.45; color: var(--muted); }
 
