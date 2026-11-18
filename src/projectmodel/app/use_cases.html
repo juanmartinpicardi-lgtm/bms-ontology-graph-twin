@@ -4,39 +4,44 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent tours</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&display=swap">
 <style>
-  /* Same look as agent_tour.html: the graph on the left with the agent's trace, the equipment side on the right. */
+  /* Same look as agent_tour.html (the app's design language): the graph on the left with the agent's trace, the equipment
+     side on the right. --agent is the app accent. */
   :root {
     color-scheme: light;
-    --bg: #f6f6f4; --panel: #ffffff; --glass: rgba(255, 255, 255, 0.88); --line: #e3e1dc; --text: #25231f;
-    --muted: #77726b; --chip: #f1f0ed; --node: #cfccc5; --edge: #b3aea5; --grid: rgba(0, 0, 0, 0.07);
-    --agent: #6d5dfc; --agent2: #1aa6bf; --ok: #1f9d55; --warn: #c98a12; --fault: #d6453b; --note: #d6336c;
-    --shadow: 0 10px 40px rgba(30, 25, 15, 0.12);
+    --bg: #f0f0f0; --panel: #ffffff; --glass: rgba(255, 255, 255, 0.9); --line: #d0d0d0; --text: #303030;
+    --muted: #606060; --chip: #f7f7f7; --node: #c8c8c8; --edge: #a8a8a8; --grid: rgba(0, 0, 0, 0.06);
+    --agent: #1792e5; --agent2: #1a9e95; --ok: #007000; --warn: #c98a12; --fault: #ee3124; --note: #d6336c;
+    --on-agent: #ffffff; --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --bg: #171614; --panel: #1d1c1a; --glass: rgba(29, 28, 26, 0.88); --line: #34322e; --text: #edebe8;
-      --muted: #a29e98; --chip: #2a2925; --node: #4d4a44; --edge: #5c5852; --grid: rgba(255, 255, 255, 0.05);
-      --agent: #8f83ff; --agent2: #5ee0f0; --ok: #3fd17a; --warn: #f2b134; --fault: #ff5a4e; --note: #f778ba;
-      --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      --bg: #1e1e1e; --panel: #303030; --glass: rgba(48, 48, 48, 0.9); --line: #505050; --text: #f0f0f0;
+      --muted: #b0b0b0; --chip: #272727; --node: #505050; --edge: #606060; --grid: rgba(255, 255, 255, 0.04);
+      --agent: #64c3ff; --agent2: #39c5bb; --ok: #68d560; --warn: #f2b134; --fault: #ff644c; --note: #f778ba;
+      --on-agent: #303030; --shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #171614; --panel: #1d1c1a; --glass: rgba(29, 28, 26, 0.88); --line: #34322e; --text: #edebe8;
-    --muted: #a29e98; --chip: #2a2925; --node: #4d4a44; --edge: #5c5852; --grid: rgba(255, 255, 255, 0.05);
-    --agent: #8f83ff; --agent2: #5ee0f0; --ok: #3fd17a; --warn: #f2b134; --fault: #ff5a4e; --note: #f778ba;
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    --bg: #1e1e1e; --panel: #303030; --glass: rgba(48, 48, 48, 0.9); --line: #505050; --text: #f0f0f0;
+    --muted: #b0b0b0; --chip: #272727; --node: #505050; --edge: #606060; --grid: rgba(255, 255, 255, 0.04);
+    --agent: #64c3ff; --agent2: #39c5bb; --ok: #68d560; --warn: #f2b134; --fault: #ff644c; --note: #f778ba;
+    --on-agent: #303030; --shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
-    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    font: 500 13px/1.45 "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
   .mono, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
-  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
-    padding: 5px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-  button:hover { border-color: var(--agent); }
-  button.primary { background: var(--agent); border-color: var(--agent); color: #fff; font-weight: 600; }
+  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid #808080; border-radius: 4px;
+    padding: 5px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    font-weight: 700; }
+  button:hover { border-color: var(--agent); color: var(--agent); }
+  button.primary { background: var(--agent); border-color: var(--agent); color: var(--on-agent); font-weight: 800;
+    letter-spacing: .5px; }
+  button.primary:hover { color: var(--on-agent); }
   button.ghost { background: none; border-color: transparent; color: var(--muted); }
   button.ghost:hover { color: var(--text); border-color: var(--line); }
   svg.i { width: 15px; height: 15px; fill: currentColor; flex: none; }
@@ -56,7 +61,7 @@
 
   /* steps */
   #rail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
-  .stp { position: relative; padding: 7px 8px 6px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 11.5px;
+  .stp { position: relative; padding: 7px 8px 6px; border-radius: 4px; cursor: pointer; color: var(--muted); font-size: 11.5px;
     overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border: 1px solid transparent; }
   .stp:hover { border-color: var(--line); color: var(--text); }
   .stp b { margin-right: 5px; opacity: .7; }
@@ -69,7 +74,7 @@
 
   /* panels */
   main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 12px; min-height: 0; }
-  .panel { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-height: 0; }
+  .panel { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; min-height: 0; }
   .ptitle { position: absolute; top: 10px; left: 12px; z-index: 4; display: flex; align-items: center; gap: 8px; font-size: 11px;
     text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; pointer-events: none; }
   .ptitle .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--agent); }
@@ -229,7 +234,7 @@
   .modes { display: flex; gap: 6px; }
   .modes button { border-radius: 999px; font-size: 12px; }
   .modes button.on { border-color: var(--note); color: var(--note); font-weight: 600; background: color-mix(in srgb, var(--note) 10%, var(--chip)); }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; box-shadow: var(--shadow); animation: lnIn .5s; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: var(--shadow); animation: lnIn .5s; }
   .card .k { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
   .rec { display: inline-flex; align-items: center; gap: 6px; color: var(--fault); }
   .rec i { width: 8px; height: 8px; border-radius: 50%; background: var(--fault); animation: blink 1s steps(1) infinite; }
@@ -256,7 +261,7 @@
   .kicker { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--agent); font-weight: 700; }
   #splash h1 { font-size: 36px; line-height: 1.12; letter-spacing: -.03em; margin: 14px 0 12px; }
   #splash p { color: var(--muted); font-size: 15px; margin: 0 auto 22px; max-width: 540px; }
-  #splash .go { font-size: 15px; padding: 11px 22px; border-radius: 12px; }
+  #splash .go { font-size: 15px; padding: 11px 22px; border-radius: 4px; }
   #splash .fine { margin-top: 18px; font-size: 11.5px; color: var(--muted); }
   #finale .fcard { width: min(920px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
     box-shadow: var(--shadow); padding: 20px 22px 16px; animation: lnIn .6s; }

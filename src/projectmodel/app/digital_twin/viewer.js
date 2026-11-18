@@ -199,7 +199,7 @@ export function createViewer(host, cb) {
       grid.visible = false; site.visible = true;
     } else {
       if (sky.parent) scene.remove(sky);
-      scene.environment = roomEnv; scene.environmentIntensity = .55; const bgc = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b0c0d"); scene.background = bgc; scene.fog = new THREE.Fog(bgc, 300, 700);
+      scene.environment = roomEnv; scene.environmentIntensity = .55; const bgc = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#1e1e1e"); scene.background = bgc; scene.fog = new THREE.Fog(bgc, 300, 700);
       sun.position.set(80, 160, 60); sun.intensity = 1.5; sun.color.set(0xffffff); hemi.intensity = .7; hemi.color.set(0xdfeaff);
       renderer.toneMappingExposure = .9; bloom.strength = .18; bloom.threshold = .97;
       for (const fl of B.floors.values()) fl.M.light.emissiveIntensity = 0;

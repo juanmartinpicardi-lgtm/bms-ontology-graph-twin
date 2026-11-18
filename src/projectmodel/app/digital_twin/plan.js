@@ -26,7 +26,7 @@ export function createPlan(host, cb) {
           o.push(`<g class="room" data-id="${id}" opacity="${on ? 1 : .25}"><rect class="bg" x="${p.x - p.w / 2}" y="${p.z - p.d / 2}" width="${p.w}" height="${p.d}" rx=".25"
             fill="${on ? colorOf(e, S.color) : "#2a2d31"}" ${sel ? `stroke="#fff" stroke-width=".4"` : ""}/>
             <text x="${p.x}" y="${p.z + .3}" font-size="${Math.max(.45, Math.min(.9, p.w / 5))}" text-anchor="middle">${esc(e.name)}</text>
-            ${st !== "normal" ? `<circle cx="${p.x + p.w / 2}" cy="${p.z - p.d / 2}" r=".45" fill="${C[st]}" stroke="#0B0C0D" stroke-width=".15"/>` : ""}</g>`);
+            ${st !== "normal" ? `<circle cx="${p.x + p.w / 2}" cy="${p.z - p.d / 2}" r=".45" fill="${C[st]}" stroke="#1E1E1E" stroke-width=".15"/>` : ""}</g>`);
         }
       } else {
         const id = r.assets[0], e = byId.get(id), on = S.match(e), sel = id === S.sel, s = sim.get(id), fs = Math.min(r.w, r.d) * .2;
@@ -34,7 +34,7 @@ export function createPlan(host, cb) {
           fill="${on ? colorOf(e, S.color) : "#2a2d31"}" ${sel ? `stroke="#fff" stroke-width=".45"` : ""}/>
           <text x="${r.x + r.w / 2}" y="${r.z + r.d / 2 + (zoom > 1.6 ? -fs * .2 : fs * .35)}" font-size="${fs}" text-anchor="middle">${esc(e.name.split(" ")[1].split("-").pop())}</text>
           ${zoom > 1.6 ? `<text x="${r.x + r.w / 2}" y="${r.z + r.d / 2 + fs}" font-size="${fs * .7}" text-anchor="middle">${s.temp.toFixed(1)}°</text>` : ""}
-          ${s.status !== "normal" ? `<circle cx="${r.x + r.w - .8}" cy="${r.z + .8}" r=".42" fill="${C[s.status]}" stroke="#0B0C0D" stroke-width=".15"/>` : ""}</g>`);
+          ${s.status !== "normal" ? `<circle cx="${r.x + r.w - .8}" cy="${r.z + .8}" r=".42" fill="${C[s.status]}" stroke="#1E1E1E" stroke-width=".15"/>` : ""}</g>`);
       }
     }
     o.push(`<text x="0" y="-1.2" font-size="1.1" fill="#6B7177">N ↑ · generated layout, not to scale</text></svg>`);

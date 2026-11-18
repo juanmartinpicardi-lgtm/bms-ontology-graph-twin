@@ -9,30 +9,32 @@ from projectmodel.app.shell import box
 
 PAGE = """<!doctype html><html data-theme="__THEME__"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&display=swap">
 <style>
-:root { --bg:#FBFCFD; --fg:#14171C; --mute:#5F6670; --acc:#1F7FCC; --card:#FFFFFF; --cardline:rgba(16,24,40,.12);
-  --ink:16,24,40; --blue:31,127,204; --red:#D14343; --amber:#C98A12; --green:#2E9E6A; }
-[data-theme=dark] { --bg:#0E1013; --fg:#ECEEF1; --mute:#9AA0A6; --acc:#4DA3E8; --card:#171A1F;
-  --cardline:rgba(255,255,255,.12); --ink:255,255,255; --blue:77,163,232; --red:#F06A6A; --amber:#E8B04A;
-  --green:#4CC38A; }
+/* Design language as in the app: #1E1E1E page, #303030 cards, cyan accent (blue in light), Geist. */
+:root { --bg:#F0F0F0; --fg:#303030; --mute:#606060; --acc:#1792E5; --card:#FFFFFF; --cardline:rgba(0,0,0,.08);
+  --ink:48,48,48; --blue:23,146,229; --red:#EE3124; --amber:#C98A12; --green:#007000; }
+[data-theme=dark] { --bg:#1E1E1E; --fg:#F0F0F0; --mute:#B0B0B0; --acc:#64C3FF; --card:#303030;
+  --cardline:rgba(255,255,255,.06); --ink:255,255,255; --blue:100,195,255; --red:#FF644C; --amber:#F2B134;
+  --green:#68D560; }
 * { box-sizing:border-box; margin:0; }
 html, body { height:100%; background:var(--bg); color:var(--fg); overflow:hidden;
-  font-family:"Source Sans 3","Source Sans Pro",-apple-system,"Segoe UI",sans-serif; }
+  font-family:"Geist",-apple-system,"Segoe UI",sans-serif; font-weight:500; }
 canvas { position:fixed; inset:0; width:100%; height:100%; }
 header { position:absolute; left:0; right:0; top:9%; text-align:center; padding:0 24px; z-index:2; }
-h1 { font-size:clamp(34px, 6vw, 78px); line-height:1.04; letter-spacing:-.03em; font-weight:700;
+h1 { font-size:clamp(34px, 6vw, 78px); line-height:1.04; letter-spacing:-.03em; font-weight:800;
   opacity:0; transform:translateY(10px); animation:in 1s .2s cubic-bezier(.2,.7,.2,1) forwards; }
 h1 em { font-style:normal; color:var(--acc); }
 p.sub { max-width:760px; margin:18px auto 0; font-size:clamp(15px, 1.6vw, 20px); line-height:1.45; color:var(--mute);
   opacity:0; animation:in 1s .9s ease forwards; }
 @keyframes in { to { opacity:1; transform:none; } }
-.card { position:absolute; z-index:1; width:200px; padding:9px 12px; border-radius:12px; background:var(--card);
-  border:1px solid var(--cardline); box-shadow:0 4px 18px rgba(0,0,0,.06); font-size:13px; line-height:1.35;
+.card { position:absolute; z-index:1; width:200px; padding:9px 12px; border-radius:10px; background:var(--card);
+  border:1px solid var(--cardline); box-shadow:0 4px 10px rgba(0,0,0,.25); font-size:13px; line-height:1.35;
   opacity:0; transform:translate(-50%, 6px); transition:opacity .6s ease, transform .6s ease; pointer-events:none; }
 .card.on { opacity:1; transform:translate(-50%, 0); }
 .card b { display:block; font-size:14px; } .card span { color:var(--mute); }
 .pill { display:inline-block; margin-top:5px; padding:1px 8px; border-radius:20px; font-size:11px; font-weight:600;
-  letter-spacing:.03em; color:#fff; }
+  letter-spacing:.03em; color:#fff; border-radius:4px; }
 .ask { position:absolute; z-index:1; padding:7px 14px; border-radius:20px; font-size:14px; color:var(--fg);
   background:var(--card); border:1px solid var(--cardline); transform:translate(-50%, -100%);
   opacity:0; transition:opacity .6s ease; white-space:nowrap; }
@@ -163,7 +165,7 @@ function draw(now) {
     cx.beginPath(); cx.arc(q.x, q.y, n.r * Math.min(2, q.k), 0, 6.283); cx.fill();
     if (n.name) {
       const active = n.of === reached && !wide;
-      cx.font = `${Math.round(Math.max(10, Math.min(14, 9 * q.k)))}px Source Sans 3, -apple-system, sans-serif`;
+      cx.font = `${Math.round(Math.max(10, Math.min(14, 9 * q.k)))}px Geist, -apple-system, sans-serif`;
       cx.fillStyle = `rgba(${INK},${(active ? .8 : .4) * depth * fade})`;
       cx.fillText(n.name, q.x + 7, q.y + 4);
     }
@@ -176,7 +178,7 @@ function draw(now) {
     cx.strokeStyle = done ? `rgba(${BLUE},${.85 * fade})` : `rgba(${INK},.25)`;
     cx.lineWidth = done ? 2.5 : 1.4; cx.setLineDash(done ? [] : [4, 5]);
     cx.beginPath(); cx.moveTo(A.x, A.y); cx.lineTo(B.x, B.y); cx.stroke(); cx.setLineDash([]);
-    cx.font = "600 12px Source Sans 3, -apple-system, sans-serif";
+    cx.font = "600 12px Geist, -apple-system, sans-serif";
     cx.fillStyle = `rgba(${INK},${done ? .8 * fade : .45})`;
     cx.fillText(TRACE[i].rel, (A.x + B.x) / 2, (A.y + B.y) / 2 - 9);
   }
@@ -205,7 +207,7 @@ function draw(now) {
     const card = cards[i], below = i % 2 === 0, show = lit && fade > .5 && (wide || i === reached || i === 0
       || i === reached - 1) && q.x > 90 && q.x < W - 90;
     if (!show) {   // no card: the node's name next to it
-      cx.font = "600 13px Source Sans 3, -apple-system, sans-serif"; cx.textAlign = "center";
+      cx.font = "600 13px Geist, -apple-system, sans-serif"; cx.textAlign = "center";
       cx.fillStyle = `rgba(${INK},${.7 * fade})`; cx.fillText(n.title, q.x, q.y + (below ? r + 18 : -r - 9));
     }
     card.style.left = q.x + "px"; card.style.top = (below ? q.y + r + 10 : q.y - r - 10 - card.offsetHeight) + "px";

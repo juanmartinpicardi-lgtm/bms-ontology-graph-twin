@@ -1,9 +1,45 @@
-# The app's one accent (active chips, rail item, selected controls), set per theme: a light and a dark
-# section keep Streamlit's light/dark switch in the menu, where a single [theme] would remove it.
-[theme.light]
-primaryColor = "#1F7FCC"
-baseRadius = "0.75rem"  # soft rounded edges on every box, button and input
+# The app's design language: dark-first, grey containers on a near-black page, one cyan accent, 4px controls and
+# 10px cards. A light and a dark section keep Streamlit's light/dark switch in the menu, where a single [theme] would
+# remove it.
+#
+# Font: Geist, a squarish sans with a tall x-height. To use another font, put its .woff2 files in
+# src/projectmodel/app/static/fonts/, set [server] enableStaticServing = true and declare them under
+# [[theme.fontFaces]] (see Streamlit docs).
+
+[theme]
+font = "Geist:https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap"
+headingFont = "Geist:https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap"
+baseFontSize = 14          # body: 14/20
+baseFontWeight = 500       # body text is Medium
+headingFontWeights = [800, 700, 700, 700, 700, 700]
+headingFontSizes = ["24px", "20px", "16px", "14px", "14px", "12px"]  # heading-5, subtitle-1, subtitle-2, body
+baseRadius = "10px"        # cards
+buttonRadius = "4px"       # buttons and inputs
+showWidgetBorder = true
 
 [theme.dark]
-primaryColor = "#4DA3E8"
-baseRadius = "0.75rem"
+primaryColor = "#64C3FF"              # component/primary-default
+backgroundColor = "#1E1E1E"           # page, under the dot vector
+secondaryBackgroundColor = "#303030"  # gray-1000: cards, toolsets, inputs
+textColor = "#F0F0F0"                 # text/text-primary
+linkColor = "#64C3FF"
+borderColor = "#505050"               # component/divider-fullbleed
+dataframeBorderColor = "#505050"
+dataframeHeaderBackgroundColor = "#272727"
+codeBackgroundColor = "#272727"
+redColor = "#FF644C"                  # graphic/graphic-bad
+greenColor = "#68D560"                # semantic/good
+blueColor = "#64C3FF"
+
+[theme.light]
+primaryColor = "#1792E5"              # base/blue-600
+backgroundColor = "#F0F0F0"
+secondaryBackgroundColor = "#FFFFFF"  # color-component-container-background-1-light
+textColor = "#303030"                 # color-font-base-default-light
+linkColor = "#005EAC"                 # color-font-blue-light
+borderColor = "#D0D0D0"
+dataframeBorderColor = "#D0D0D0"
+dataframeHeaderBackgroundColor = "#F7F7F7"
+redColor = "#EE3124"
+greenColor = "#007000"
+blueColor = "#1792E5"

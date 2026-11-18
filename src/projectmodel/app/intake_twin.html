@@ -9,24 +9,25 @@
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 } }
 </script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&display=swap">
 <style>
-  /* Same page tokens as graph3d.html; the scene reads them too. */
+  /* Same page tokens as graph3d.html (the app's design language); the scene reads them too. */
   :root {
     color-scheme: light;
-    --bg: #ffffff; --panel: rgba(255, 255, 255, 0.94); --line: #dcdad6; --text: #2f2d2b; --muted: #74706b;
-    --accent: #0969da; --chip: #f8f8f7;
-    --plate: #f2f4f7; --edge: #9fb3c8; --ink: #1c2733; --room: #0b5cad; --room-bg: rgba(226, 238, 250, .92);
-    --s-confirmed: #2da44e; --s-proposed: #2f6fdb; --s-ask: #d9820a; --sel: #e0245e;
+    --bg: #ffffff; --panel: rgba(255, 255, 255, 0.95); --line: #d0d0d0; --text: #303030; --muted: #606060;
+    --accent: #1792e5; --chip: #f7f7f7; --on-accent: #ffffff;
+    --plate: #f0f0f0; --edge: #9fb3c8; --ink: #303030; --room: #005eac; --room-bg: rgba(221, 239, 252, .92);
+    --s-confirmed: #007000; --s-proposed: #1792e5; --s-ask: #c98a12; --sel: #e0245e;
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #171614; --panel: rgba(32, 30, 28, 0.94); --line: #3a3835; --text: #e8e6e3; --muted: #a09c96;
-    --accent: #58a6ff; --chip: #262422;
-    --plate: #1b232d; --edge: #4a6a8c; --ink: #d5e3f2; --room: #9cc7ee; --room-bg: rgba(18, 50, 78, .9);
-    --s-confirmed: #3fb950; --s-proposed: #58a6ff; --s-ask: #f0a030; --sel: #ff5c8a;
+    --bg: #1e1e1e; --panel: rgba(48, 48, 48, 0.95); --line: #505050; --text: #f0f0f0; --muted: #b0b0b0;
+    --accent: #64c3ff; --chip: #272727; --on-accent: #303030;
+    --plate: #272727; --edge: #4a6a8c; --ink: #d5e3f2; --room: #9fd6ff; --room-bg: rgba(23, 60, 90, .9);
+    --s-confirmed: #68d560; --s-proposed: #64c3ff; --s-ask: #f2b134; --sel: #ff5c8a;
   }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
-    font: 12px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    font: 500 12px/1.35 "Geist", -apple-system, "Segoe UI", sans-serif; }
   #stage { position: absolute; inset: 0; }
   #stage canvas { display: block; outline: none; }
   #labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
@@ -39,7 +40,7 @@
   .room small { color: var(--muted); margin-left: 4px; font-size: 9px; }
   .tag { font-size: 10px; font-weight: 600; color: var(--text); text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 3px var(--bg); }
   .word { color: var(--ink); opacity: .78; font-family: Arial, Helvetica, sans-serif; line-height: 1; }
-  .floor { pointer-events: auto; cursor: pointer; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+  .floor { pointer-events: auto; cursor: pointer; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
     background: var(--panel); border: 1px solid var(--line); }
   .floor small { font-weight: 400; color: var(--muted); margin-left: 6px; }
   .floor:hover { border-color: var(--accent); }
@@ -53,7 +54,7 @@
     cursor: pointer; }
   .seg button + button { border-left: 1px solid var(--line); }
   .seg button:hover, .chipbtn:hover { color: var(--accent); }
-  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 700; }
   .chipbtn { border-radius: 10px; }
   .chipbtn[aria-pressed="true"] { color: var(--s-ask); font-weight: 600; }
   #ask { display: flex; align-items: center; }
@@ -71,13 +72,13 @@
   #qcard .q { margin: 6px 0 4px; }
   #qcard .m { color: var(--muted); font-size: 11px; }
   #qcard .opts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
-  #qcard button { font: inherit; padding: 4px 9px; border-radius: 7px; border: 1px solid var(--line); background: var(--chip);
+  #qcard button { font: inherit; padding: 4px 9px; border-radius: 4px; border: 1px solid var(--line); background: var(--chip);
     color: var(--text); cursor: pointer; }
   #qcard button:hover { border-color: var(--accent); color: var(--accent); }
   #qcard button.yes { background: var(--s-confirmed); border-color: var(--s-confirmed); color: #fff; }
   #qcard button.sug { border-color: var(--s-ask); }
   #qcard button.link { border: none; background: none; padding: 4px 2px; color: var(--accent); }
-  #qcard input { font: inherit; padding: 4px 7px; border-radius: 7px; border: 1px solid var(--line); background: var(--bg);
+  #qcard input { font: inherit; padding: 4px 7px; border-radius: 4px; border: 1px solid var(--line); background: var(--bg);
     color: var(--text); width: 150px; }
   #qcard .qs + .qs { border-top: 1px solid var(--line); margin-top: 9px; padding-top: 7px; }
   #qcard .note { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }

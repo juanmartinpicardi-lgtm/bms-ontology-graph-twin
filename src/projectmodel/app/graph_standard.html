@@ -4,46 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Complete graph</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&display=swap">
 <style>
-  /* Tokens follow the other viewers (agent_tour.html, graph3d.html), with --bg set to Streamlit's page colour since this
-     page reads as part of the app: the app sets data-theme, standalone follows the system. --done / --part / --miss are the three states of a fact today. */
+  /* Tokens follow the other viewers (agent_tour.html, graph3d.html) and the app's design language. The page
+     background is transparent: it reads as part of the app page, so the app's own background shows through. The app
+     sets data-theme, standalone follows the system. --done / --part / --miss are the three states of a fact today. */
   :root {
     color-scheme: light;
-    --bg: #ffffff; --panel: #ffffff; --line: #e3e1dc; --text: #25231f; --muted: #77726b; --chip: #f1f0ed;
-    --accent: #1F7FCC; --accent-soft: rgba(31, 127, 204, 0.12);
-    --done: #1f9d55; --part: #c98a12; --miss: #b9b4ab; --miss-text: #8a857d;
-    --l-spaces: #7a5af5; --l-systems: #1aa6bf; --l-equipment: #1F7FCC; --l-points: #e0752d; --l-behaviour: #c2369b; --l-trust: #1f9d55;
-    --shadow: 0 6px 24px rgba(30, 25, 15, 0.08);
+    --bg: #f0f0f0; --panel: #ffffff; --line: #d0d0d0; --text: #303030; --muted: #606060; --chip: #f7f7f7;
+    --accent: #1792e5; --accent-soft: rgba(23, 146, 229, 0.12); --on-accent: #ffffff;
+    --done: #007000; --part: #c98a12; --miss: #b0b0b0; --miss-text: #808080;
+    --l-spaces: #7a5af5; --l-systems: #1a9e95; --l-equipment: #1792e5; --l-points: #e0752d; --l-behaviour: #c2369b; --l-trust: #007000;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --bg: #0e1117; --panel: #171a21; --line: #34322e; --text: #edebe8; --muted: #a29e98; --chip: #2a2925;
-      --accent: #4DA3E8; --accent-soft: rgba(77, 163, 232, 0.16);
-      --done: #3fd17a; --part: #f2b134; --miss: #57534d; --miss-text: #8f8a83;
-      --l-spaces: #9d86ff; --l-systems: #4fd2e6; --l-equipment: #4DA3E8; --l-points: #ff9a55; --l-behaviour: #ef6fc8; --l-trust: #3fd17a;
-      --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      --bg: #1e1e1e; --panel: #303030; --line: #505050; --text: #f0f0f0; --muted: #b0b0b0; --chip: #272727;
+      --accent: #64c3ff; --accent-soft: rgba(100, 195, 255, 0.16); --on-accent: #303030;
+      --done: #68d560; --part: #f2b134; --miss: #606060; --miss-text: #909090;
+      --l-spaces: #9d86ff; --l-systems: #39c5bb; --l-equipment: #64c3ff; --l-points: #ff9a55; --l-behaviour: #ef6fc8; --l-trust: #68d560;
+      --shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #0e1117; --panel: #171a21; --line: #34322e; --text: #edebe8; --muted: #a29e98; --chip: #2a2925;
-    --accent: #4DA3E8; --accent-soft: rgba(77, 163, 232, 0.16);
-    --done: #3fd17a; --part: #f2b134; --miss: #57534d; --miss-text: #8f8a83;
-    --l-spaces: #9d86ff; --l-systems: #4fd2e6; --l-equipment: #4DA3E8; --l-points: #ff9a55; --l-behaviour: #ef6fc8; --l-trust: #3fd17a;
-    --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    --bg: #1e1e1e; --panel: #303030; --line: #505050; --text: #f0f0f0; --muted: #b0b0b0; --chip: #272727;
+    --accent: #64c3ff; --accent-soft: rgba(100, 195, 255, 0.16); --on-accent: #303030;
+    --done: #68d560; --part: #f2b134; --miss: #606060; --miss-text: #909090;
+    --l-spaces: #9d86ff; --l-systems: #39c5bb; --l-equipment: #64c3ff; --l-points: #ff9a55; --l-behaviour: #ef6fc8; --l-trust: #68d560;
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--text);
-    font: 14px/1.5 "Source Sans Pro", "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  html, body { margin: 0; background: transparent; color: var(--text);
+    font: 500 14px/1.5 "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; }
   body { padding: 4px 2px 24px; }
-  h2 { font-size: 20px; margin: 30px 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 20px; line-height: 30px; font-weight: 700; margin: 30px 0 4px; }
   .lead { color: var(--muted); margin: 0 0 14px; max-width: 760px; }
-  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
-    padding: 4px 11px; cursor: pointer; }
-  button:hover { border-color: var(--accent); }
-  button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid #808080; border-radius: 4px;
+    padding: 4px 12px; cursor: pointer; font-weight: 700; }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .card { background: var(--panel); border: 1px solid var(--panel); border-radius: 10px; box-shadow: var(--shadow); }
   .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 1px 8px;
     border-radius: 99px; white-space: nowrap; }
   .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
@@ -91,7 +93,7 @@
   .bar i { display: block; height: 100%; border-radius: 9px; }
   .srcs { display: flex; flex-wrap: wrap; gap: 5px; }
   .src { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 1px 8px 1px 6px;
-    border-radius: 7px; background: var(--chip); border: 1px solid var(--line); }
+    border-radius: 4px; background: var(--chip); border: 1px solid var(--line); }
   .src.later, .src.next { opacity: .8; }
 
   /* --- matrix ---------------------------------------------------------------------------------------------------- */

@@ -8,6 +8,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from projectmodel.app.backdrop import graph_backdrop
 from projectmodel.db.store import Store
 from projectmodel.knowledge_model import load_knowledge_model
 from projectmodel.locate import google_map_html, osm_embed_url
@@ -82,11 +83,19 @@ def set_project(project: str) -> None:
 
 # No sidebar anywhere: a fixed icon rail picks the area (Overview, Projects, Shared knowledge), chips pick the page
 # inside it, and the project header switches building and input. Page controls live on the page.
-ACCENT = "#4DA3E8"
-RAIL = {"dark": {"bg": "#0E0F10", "line": "#24262A", "fg": "#9AA0A6", "hover": "#1E2023", "hover_fg": "#E8E9EA",
-                 "on": "#23324A", "on_fg": "#8CC5F2", "box": "rgba(255,255,255,.025)", "box_line": "rgba(255,255,255,.10)"},
-        "light": {"bg": "#F4F5F7", "line": "#DDE0E4", "fg": "#5F6670", "hover": "#E6E9ED", "hover_fg": "#16181D",
-                  "on": "#DCEBFA", "on_fg": "#1F6FB5", "box": "rgba(16,24,40,.018)", "box_line": "rgba(16,24,40,.12)"}}
+# Design language: the rail is the local navigation, near-black in both themes; the selected item is a grey tile
+# with a blue bar on its left. Pages open with a page header (24px
+# extra-bold title), the area's pages are underlined tabs, and every section is a grey card with a soft shadow.
+THEME = {
+    "dark": {"accent": "#64C3FF", "text": "#F0F0F0", "text2": "#D0D0D0", "line": "#505050", "card": "#303030",
+             "card2": "#272727", "input": "#272727", "input_line": "#909090", "on_accent": "#303030",
+             "shadow": "0 4px 10px rgba(0,0,0,.25)", "bg": "#1E1E1E", "graph": "#9FD6FF"},
+    "light": {"accent": "#1792E5", "text": "#303030", "text2": "#606060", "line": "#D0D0D0", "card": "#FFFFFF",
+              "card2": "#F7F7F7", "input": "#FFFFFF", "input_line": "#909090", "on_accent": "#FFFFFF",
+              "shadow": "0 2px 8px rgba(0,0,0,.08)", "bg": "#F0F0F0", "graph": "#005EAC"},
+}
+NAV = {"bg": "#090909", "fg": "#F0F0F0", "hover": "#262626", "on": "#404040", "bar": "#1792E5"}
+ACCENT = THEME["dark"]["accent"]
 
 
 def theme() -> str:
@@ -94,37 +103,78 @@ def theme() -> str:
 
 
 def chrome_css() -> str:
-    """The app's chrome for the current light/dark theme: the rail, the chips, and the boxes every section sits in
-    (a container keyed box_<name> is a soft rounded panel). Content uses the full width of the screen."""
-    c = RAIL[theme()]
+    """The app's chrome for the current light/dark theme: the rail, the tabs, the page header and the cards every
+    section sits in (a container keyed box_<name> is a card). Content uses the full width of the screen."""
+    t = theme()
+    c = THEME[t]
     return f"""<style>
 [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {{
   display: none !important; }}
-.block-container {{ padding-top: 1.4rem; padding-left: calc(64px + 2rem); padding-right: 2rem; max-width: none; }}
+[data-testid="stApp"] {{ background: {c["bg"]}; }}
+/* A faint knowledge graph far behind the page, strongest top right and fading out towards the content */
+[data-testid="stApp"]::before {{ content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: {graph_backdrop(c["graph"])} center / cover no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 75% 85% at 85% 10%, #000 0%, rgba(0,0,0,.35) 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 75% 85% at 85% 10%, #000 0%, rgba(0,0,0,.35) 55%, transparent 100%); }}
+[data-testid="stAppViewContainer"] {{ position: relative; z-index: 1; background: transparent; }}
+[data-testid="stMain"], [data-testid="stBottomBlockContainer"] {{ background: transparent; }}
+.block-container {{ padding-top: 1rem; padding-left: calc(64px + 26px); padding-right: 24px; max-width: none; }}
 [data-testid="stHeader"], [data-testid="stHeader"] * {{ background: transparent; pointer-events: none; }}
 [data-testid="stHeader"] button, [data-testid="stHeader"] button * {{ pointer-events: auto; }}
 [data-testid="stAppDeployButton"] {{ display: none; }}
-.st-key-rail {{ position: fixed; left: 0; top: 0; bottom: 0; width: 64px; z-index: 999995; background: {c["bg"]};
-  border-right: 1px solid {c["line"]}; padding: 14px 0; align-items: center; gap: 6px; }}
-.st-key-rail [data-testid="stPageLink-NavLink"] {{ width: 44px; height: 44px; justify-content: center; padding: 0;
-  border-radius: 10px; color: {c["fg"]}; }}
+
+/* Local navigation */
+.st-key-rail {{ position: fixed; left: 0; top: 0; bottom: 0; width: 64px; z-index: 999995; background: {NAV["bg"]};
+  padding: 23px 0 14px; align-items: stretch; gap: 0; }}
+.st-key-rail > div {{ width: 64px !important; }}
+.st-key-rail [data-testid="stPageLink"] {{ width: 64px; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] {{ position: relative; width: 64px; height: 48px; margin: 0;
+  justify-content: center; padding: 0; border-radius: 5px; color: {NAV["fg"]}; background: transparent; }}
 .st-key-rail [data-testid="stPageLink-NavLink"] [data-testid="stMarkdownContainer"] {{ display: none; }}
-.st-key-rail [data-testid="stPageLink-NavLink"] span {{ margin: 0; font-size: 22px; color: inherit !important; }}
-.st-key-rail [data-testid="stPageLink-NavLink"]:hover {{ background: {c["hover"]}; color: {c["hover_fg"]}; }}
-.st-key-rail_on [data-testid="stPageLink-NavLink"] {{ background: {c["on"]}; color: {c["on_fg"]}; }}
-.rail-logo {{ width: 36px; height: 36px; border-radius: 10px; background: {ACCENT}; display: flex;
-  align-items: center; justify-content: center; margin: 0 auto 14px; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ border: 1px solid rgba(128,128,128,.35);
-  border-radius: 999px; padding: 2px 14px; min-height: 34px; background: transparent; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"]:hover {{ border-color: {ACCENT}; }}
-.st-key-chip_on [data-testid="stPageLink-NavLink"] {{ background: rgba(77,163,232,.16); border-color: {ACCENT}; }}
-.st-key-chip_on [data-testid="stPageLink-NavLink"] p {{ font-weight: 600; }}
-.st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid rgba(128,128,128,.22); padding-bottom: 14px;
-  margin-bottom: 6px; }}
-.st-key-projsite [data-baseweb="select"] > div {{ font-size: 1.25rem; font-weight: 600; }}
-[class*="st-key-box_"] {{ border: 1px solid {c["box_line"]} !important; border-radius: 16px !important;
-  background: {c["box"]}; padding: 18px 20px !important; }}
-[class*="st-key-box_"] [class*="st-key-box_"] {{ padding: 14px 16px !important; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] span {{ margin: 0; font-size: 24px; color: inherit !important; }}
+.st-key-rail [data-testid="stPageLink-NavLink"]:hover {{ background: {NAV["hover"]}; }}
+.st-key-rail_on [data-testid="stPageLink-NavLink"] {{ background: {NAV["on"]}; }}
+.st-key-rail_on [data-testid="stPageLink-NavLink"]::before {{ content: ""; position: absolute; left: 0; top: 0;
+  bottom: 0; width: 4px; border-radius: 1px; background: {NAV["bar"]}; }}
+.rail-logo {{ width: 36px; height: 36px; border-radius: 9px; background: #FFFFFF; display: flex;
+  align-items: center; justify-content: center; margin: 0 auto 27px;
+  box-shadow: 0 0 0 3px rgba(238,49,36,.18); }}
+
+/* Page header and tabs */
+.st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid {c["line"]}; padding-bottom: 0; margin-bottom: 10px; }}
+.page-title {{ font-size: 24px; line-height: 32px; font-weight: 800; color: {c["text"]}; margin: 0; }}
+.page-sub {{ font-size: 14px; line-height: 20px; font-weight: 500; color: {c["text2"]}; margin: 0; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ border: 0; border-radius: 0; padding: 6px 4px 10px;
+  margin: 0 10px 0 0; min-height: 40px; background: transparent; border-bottom: 3px solid transparent; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] p {{ font-weight: 700; color: {c["text2"]}; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] span {{ color: {c["text2"]} !important; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"]:hover {{ background: transparent; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"]:hover p {{ color: {c["accent"]}; }}
+.st-key-chip_on [data-testid="stPageLink-NavLink"] {{ border-bottom-color: {c["accent"]}; }}
+.st-key-chip_on [data-testid="stPageLink-NavLink"] p {{ color: {c["text"]}; font-weight: 800; }}
+.st-key-chip_on [data-testid="stPageLink-NavLink"] span {{ color: {c["accent"]} !important; }}
+
+/* Cards */
+[class*="st-key-box_"] {{ border: 1px solid {c["card"]} !important; border-radius: 10px !important;
+  background: {c["card"]}; box-shadow: {c["shadow"]}; padding: 16px 24px !important; }}
+[class*="st-key-box_"] [class*="st-key-box_"] {{ background: {c["card2"]}; border-color: {c["card2"]} !important;
+  box-shadow: none; padding: 14px 16px !important; }}
+
+/* Buttons: primary is filled with dark text, secondary is outlined in the accent */
+[data-testid="stBaseButton-primary"] {{ color: {c["on_accent"]}; font-weight: 800; letter-spacing: .5px; }}
+[data-testid="stBaseButton-primary"] * {{ color: {c["on_accent"]} !important; font-weight: 800; }}
+[data-testid="stBaseButton-secondary"], [data-testid="stPopoverButton"] {{ background: {c["card2"]};
+  border-color: {c["accent"]}; color: {c["accent"]}; font-weight: 700; }}
+[data-testid="stBaseButton-secondary"] *, [data-testid="stPopoverButton"] * {{ color: {c["accent"]}; }}
+
+/* Inputs */
+[data-testid="stSelectbox"] [role="group"], [data-testid="stMultiSelect"] [role="group"],
+[data-testid="stTextInputRootElement"], [data-testid="stNumberInputContainer"], [data-testid="stTextArea"] textarea {{
+  background: {c["input"]}; border-color: {c["input_line"]}; }}
+/* The building picker in a project header reads as the page title */
+.st-key-projbar [data-testid="stSelectbox"]:has(input[aria-label="Building"]) [role="group"] {{
+  background: transparent; border-color: transparent; }}
+.st-key-projbar input[aria-label="Building"] {{ font-size: 24px; font-weight: 800; color: {c["text"]}; }}
 </style>"""
 
 
@@ -196,7 +246,7 @@ _fit = st.components.v2.component("projectmodel.fit", js=FIT_JS)
 
 
 RAIL_LOGO = """<div class="rail-logo" title="Project Model"><span aria-hidden="true"
-style="font-family: 'Material Symbols Rounded'; font-size: 22px; color: #0B1A28">hub</span></div>"""
+style="font-family: 'Material Symbols Rounded'; font-size: 24px; color: #EE3124">hub</span></div>"""
 
 
 def rail(areas: list[tuple[str, str, list]], current) -> None:
@@ -219,10 +269,24 @@ def chips(pages: list, current, labels: dict[str, str] | None = None) -> None:
                 st.page_link(p, label=(labels or {}).get(p.title, p.title), icon=p.icon)
 
 
+AREA_SUBTITLES = {
+    "Overview": "Why a knowledge graph of the building matters, how it is built, and what a complete one looks like.",
+    "Projects": "Every building mapped into the knowledge graph, and a guided setup to add one.",
+    "Shared knowledge": "What every project reuses: the knowledge model and the team's tribal knowledge.",
+}
+
+
+def page_title(title: str, subtitle: str = "") -> None:
+    """A page header: a 24px extra-bold title and a one-line description under it."""
+    sub = f'<p class="page-sub">{subtitle}</p>' if subtitle else ""
+    st.html(f'<div><p class="page-title">{title}</p>{sub}</div>')
+
+
 def area_header(title: str, pages: list, current) -> None:
-    """Areas without a project (Overview, Projects, Shared knowledge): the area's name, then its pages as chips."""
-    with st.container(horizontal=True, vertical_alignment="center", gap="medium", key="areabar"):
-        st.markdown(f"**{title}**", width="content")
+    """Areas without a project (Overview, Projects, Shared knowledge): a page header, then the area's pages as
+    tabs."""
+    with st.container(key="areabar", gap="small"):
+        page_title(title, AREA_SUBTITLES.get(title, ""))
         chips(pages, current)
 
 

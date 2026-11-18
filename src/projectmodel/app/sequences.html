@@ -4,50 +4,52 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sequences</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&display=swap">
 <style>
-  /* Tokens follow the other viewers (agent_tour.html, graph_standard.html): the app sets data-theme, standalone
+  /* Tokens follow the other viewers (agent_tour.html, graph_standard.html) and the app's design language: grey
+     cards on #1E1E1E (white on #F0F0F0 in light), 4px controls, 10px cards. The app sets data-theme, standalone
      follows the system. --seq is the sequence's own colour: everything the sequence adds to the graph is drawn in it.
      --gap and --conf are its findings: a point it needs that the graph lacks, a point the graph classes differently. */
   :root {
     color-scheme: light;
-    --bg: #ffffff; --panel: #ffffff; --soft: #f6f6f4; --line: #e3e1dc; --text: #25231f; --muted: #77726b;
-    --chip: #f1f0ed; --node: #cfccc5; --edge: #c9c5bd; --accent: #1F7FCC;
-    --seq: #6d5dfc; --seq-soft: rgba(109, 93, 252, 0.12); --ok: #1f9d55; --conf: #c98a12; --gap: #d6453b;
-    --shadow: 0 6px 24px rgba(30, 25, 15, 0.08);
+    --bg: #f0f0f0; --panel: #ffffff; --soft: #f7f7f7; --line: #d0d0d0; --text: #303030; --muted: #606060;
+    --chip: #f7f7f7; --node: #c8c8c8; --edge: #b0b0b0; --accent: #1792e5;
+    --seq: #6b4fc2; --seq-soft: rgba(107, 79, 194, 0.12); --ok: #007000; --conf: #c98a12; --gap: #ee3124;
+    --on-seq: #ffffff; --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --bg: #0e1117; --panel: #171a21; --soft: #14171d; --line: #2c3039; --text: #edebe8; --muted: #a29e98;
-      --chip: #22262e; --node: #4d4a44; --edge: #4a4f59; --accent: #4DA3E8;
-      --seq: #8f83ff; --seq-soft: rgba(143, 131, 255, 0.16); --ok: #3fd17a; --conf: #f2b134; --gap: #ff5a4e;
-      --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      --bg: #1e1e1e; --panel: #303030; --soft: #272727; --line: #505050; --text: #f0f0f0; --muted: #b0b0b0;
+      --chip: #272727; --node: #505050; --edge: #606060; --accent: #64c3ff;
+      --seq: #b4a2f2; --seq-soft: rgba(180, 162, 242, 0.16); --ok: #68d560; --conf: #f2b134; --gap: #ff644c;
+      --on-seq: #303030; --shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #0e1117; --panel: #171a21; --soft: #14171d; --line: #2c3039; --text: #edebe8; --muted: #a29e98;
-    --chip: #22262e; --node: #4d4a44; --edge: #4a4f59; --accent: #4DA3E8;
-    --seq: #8f83ff; --seq-soft: rgba(143, 131, 255, 0.16); --ok: #3fd17a; --conf: #f2b134; --gap: #ff5a4e;
-    --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    --bg: #1e1e1e; --panel: #303030; --soft: #272727; --line: #505050; --text: #f0f0f0; --muted: #b0b0b0;
+    --chip: #272727; --node: #505050; --edge: #606060; --accent: #64c3ff;
+    --seq: #b4a2f2; --seq-soft: rgba(180, 162, 242, 0.16); --ok: #68d560; --conf: #f2b134; --gap: #ff644c;
+    --on-seq: #303030; --shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
-    font: 14px/1.5 "Source Sans Pro", "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif; }
+    font: 500 14px/1.5 "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; }
   body { display: flex; flex-direction: column; gap: 10px; padding: 2px; }
-  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid var(--line); border-radius: 8px;
-    padding: 4px 11px; cursor: pointer; }
-  button:hover { border-color: var(--seq); }
-  button.on { background: var(--seq); border-color: var(--seq); color: #fff; }
+  button { font: inherit; color: var(--text); background: var(--chip); border: 1px solid #808080; border-radius: 4px;
+    padding: 4px 12px; cursor: pointer; font-weight: 700; }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button.on { background: var(--seq); border-color: var(--seq); color: var(--on-seq); }
   button:disabled { opacity: .45; cursor: default; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+  .card { background: var(--panel); border: 1px solid var(--panel); border-radius: 10px; box-shadow: var(--shadow); }
 
   /* --- top bar ----------------------------------------------------------------------------------------------- */
   .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .bar .sp { flex: 1; }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+  .seg { display: inline-flex; border: 1px solid #808080; border-radius: 4px; overflow: hidden; }
   .seg button { border: none; border-radius: 0; background: var(--panel); }
-  .seg button.on { background: var(--seq); color: #fff; }
+  .seg button.on { background: var(--seq); color: var(--on-seq); }
   .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
   .legend span { display: inline-flex; gap: 5px; align-items: center; }
   .sw { width: 18px; height: 0; border-top: 2px solid var(--edge); display: inline-block; }
@@ -72,9 +74,9 @@
   .adds { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
   .adds h4 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
   .fact { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; font-size: 13px; margin: 3px 0; }
-  .fact .k { font-size: 11px; font-weight: 700; color: var(--seq); background: var(--seq-soft); border-radius: 5px;
+  .fact .k { font-size: 11px; font-weight: 700; color: var(--seq); background: var(--seq-soft); border-radius: 4px;
     padding: 0 6px; }
-  .tag { cursor: pointer; background: var(--chip); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px;
+  .tag { cursor: pointer; background: var(--chip); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px;
     font-size: 12.5px; white-space: nowrap; }
   .tag:hover { border-color: var(--seq); }
   .tag.conflict { border-color: var(--conf); } .tag.gap { border-style: dashed; border-color: var(--gap); color: var(--gap); }
@@ -122,7 +124,7 @@
   .insp h4 { margin: 1px 0 4px; font-size: 17px; }
   .insp .row { display: grid; grid-template-columns: 100px 1fr; gap: 3px 10px; font-size: 13px; }
   .insp .row b { color: var(--muted); font-weight: 600; }
-  .insp .find { margin: 8px 0 2px; padding: 7px 10px; border-radius: 8px; font-size: 13px; }
+  .insp .find { margin: 8px 0 2px; padding: 7px 10px; border-radius: 4px; font-size: 13px; }
   .find.conflict { background: color-mix(in srgb, var(--conf) 14%, transparent); }
   .find.gap { background: color-mix(in srgb, var(--gap) 12%, transparent); }
   .find.ok { background: color-mix(in srgb, var(--ok) 11%, transparent); }
