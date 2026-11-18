@@ -21,6 +21,7 @@ from typing import Protocol
 import yaml
 
 from .db.store import Store
+from .fonts import with_fonts
 
 SEEDS = Path(__file__).resolve().parents[2] / "data/sites"
 GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -174,8 +175,8 @@ def osm_embed_url(lat: float, lng: float, span: float = 0.004) -> str:
 
 
 GOOGLE_MAP = """<!doctype html><html><head><meta charset="utf-8">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@500;700&display=swap"><style>
-html, body { height: 100%; margin: 0; font: 500 14px "Geist", system-ui, sans-serif; }
+<!--__FONTS__--><style>
+html, body { height: 100%; margin: 0; font: 500 14px "Roobert", system-ui, sans-serif; }
 #map2d, #map3d { position: absolute; inset: 0; } #map3d { display: none; }
 #bar { position: absolute; z-index: 5; top: 10px; left: 10px; display: flex; gap: 6px; }
 #bar button { border: 0; border-radius: 4px; padding: 7px 14px; background: #303030; color: #F0F0F0; cursor: pointer;
@@ -227,7 +228,7 @@ def google_map_html(lat: float, lng: float, label: str, browser_key: str) -> str
     """A navigable Google map (satellite with labels) and a photorealistic 3D view of the same spot. The key is
     visible to the browser, as with any Maps JavaScript page: restrict it to this app's address in the console."""
     site = json.dumps({"lat": lat, "lng": lng, "label": label}).replace("</", "<\\/")
-    return GOOGLE_MAP.replace("/*__SITE__*/null", site).replace("__KEY__", urllib.parse.quote(browser_key, safe=""))
+    return with_fonts(GOOGLE_MAP).replace("/*__SITE__*/null", site).replace("__KEY__", urllib.parse.quote(browser_key, safe=""))
 
 
 def location_dict(loc: Location) -> dict:

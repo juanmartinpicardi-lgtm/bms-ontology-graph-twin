@@ -21,6 +21,7 @@ import yaml
 
 from .agent_tour import PROJECT, ZONE, _natural
 from .db.store import Store
+from .fonts import with_fonts
 from .equipment_view import DATA_SLOT, equipment_payload, load_anchors, render_template
 from .knowledge_model import KnowledgeModel
 from .tree import build_tree
@@ -99,4 +100,4 @@ def render_html(payload: dict, case: str, theme: str | None = None) -> str:
     html = html.replace("/*__DATA__*/null", json.dumps(data, separators=(",", ":")).replace("</", "<\\/"))
     if theme in ("light", "dark"):
         html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
-    return html
+    return with_fonts(html)

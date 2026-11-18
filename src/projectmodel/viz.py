@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 
 from .db.store import Store
+from .fonts import with_fonts
 from .knowledge_model import KnowledgeModel
 from .notes import edge_id, notes_by_project
 from .tree import provenance
@@ -93,4 +94,4 @@ def render_html(payload: dict, theme: str | None = None) -> str:
     html = TEMPLATE.read_text().replace("/*__CONTROLS__*/", controls).replace("/*__DATA__*/null", data)
     if theme in ("light", "dark"):
         html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
-    return html
+    return with_fonts(html)

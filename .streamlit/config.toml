@@ -2,13 +2,15 @@
 # 10px cards. A light and a dark section keep Streamlit's light/dark switch in the menu, where a single [theme] would
 # remove it.
 #
-# Font: Geist, a squarish sans with a tall x-height. To use another font, put its .woff2 files in
-# src/projectmodel/app/static/fonts/, set [server] enableStaticServing = true and declare them under
-# [[theme.fontFaces]] (see Streamlit docs).
+# Font: Roobert (variable, weights 300-900), from Roobert.zip at the repo root. Streamlit serves it from
+# src/projectmodel/app/static/fonts/; the standalone HTML views inline the same file (src/projectmodel/fonts.py).
+
+[server]
+enableStaticServing = true
 
 [theme]
-font = "Geist:https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap"
-headingFont = "Geist:https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap"
+font = "Roobert"
+headingFont = "Roobert"
 baseFontSize = 14          # body: 14/20
 baseFontWeight = 500       # body text is Medium
 headingFontWeights = [800, 700, 700, 700, 700, 700]
@@ -16,6 +18,12 @@ headingFontSizes = ["24px", "20px", "16px", "14px", "14px", "12px"]  # heading-5
 baseRadius = "10px"        # cards
 buttonRadius = "4px"       # buttons and inputs
 showWidgetBorder = true
+
+[[theme.fontFaces]]
+family = "Roobert"
+url = "app/static/fonts/RoobertVF.woff2"
+weight = "300 900"
+style = "normal"
 
 [theme.dark]
 primaryColor = "#64C3FF"              # component/primary-default

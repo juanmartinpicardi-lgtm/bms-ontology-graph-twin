@@ -6,12 +6,13 @@ Alpha's); the page says so."""
 import streamlit as st
 
 from projectmodel.app.shell import box
+from projectmodel.fonts import with_fonts
 
 PAGE = """<!doctype html><html data-theme="__THEME__"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&display=swap">
+<!--__FONTS__-->
 <style>
-/* Design language as in the app: #1E1E1E page, #303030 cards, cyan accent (blue in light), Geist. */
+/* Design language as in the app: #1E1E1E page, #303030 cards, cyan accent (blue in light), Roobert. */
 :root { --bg:#F0F0F0; --fg:#303030; --mute:#606060; --acc:#1792E5; --card:#FFFFFF; --cardline:rgba(0,0,0,.08);
   --ink:48,48,48; --blue:23,146,229; --red:#EE3124; --amber:#C98A12; --green:#007000; }
 [data-theme=dark] { --bg:#1E1E1E; --fg:#F0F0F0; --mute:#B0B0B0; --acc:#64C3FF; --card:#303030;
@@ -19,7 +20,7 @@ PAGE = """<!doctype html><html data-theme="__THEME__"><head><meta charset="utf-8
   --green:#68D560; }
 * { box-sizing:border-box; margin:0; }
 html, body { height:100%; background:var(--bg); color:var(--fg); overflow:hidden;
-  font-family:"Geist",-apple-system,"Segoe UI",sans-serif; font-weight:500; }
+  font-family:"Roobert",-apple-system,"Segoe UI",sans-serif; font-weight:500; }
 canvas { position:fixed; inset:0; width:100%; height:100%; }
 header { position:absolute; left:0; right:0; top:9%; text-align:center; padding:0 24px; z-index:2; }
 h1 { font-size:clamp(34px, 6vw, 78px); line-height:1.04; letter-spacing:-.03em; font-weight:800;
@@ -165,7 +166,7 @@ function draw(now) {
     cx.beginPath(); cx.arc(q.x, q.y, n.r * Math.min(2, q.k), 0, 6.283); cx.fill();
     if (n.name) {
       const active = n.of === reached && !wide;
-      cx.font = `${Math.round(Math.max(10, Math.min(14, 9 * q.k)))}px Geist, -apple-system, sans-serif`;
+      cx.font = `${Math.round(Math.max(10, Math.min(14, 9 * q.k)))}px Roobert, -apple-system, sans-serif`;
       cx.fillStyle = `rgba(${INK},${(active ? .8 : .4) * depth * fade})`;
       cx.fillText(n.name, q.x + 7, q.y + 4);
     }
@@ -178,7 +179,7 @@ function draw(now) {
     cx.strokeStyle = done ? `rgba(${BLUE},${.85 * fade})` : `rgba(${INK},.25)`;
     cx.lineWidth = done ? 2.5 : 1.4; cx.setLineDash(done ? [] : [4, 5]);
     cx.beginPath(); cx.moveTo(A.x, A.y); cx.lineTo(B.x, B.y); cx.stroke(); cx.setLineDash([]);
-    cx.font = "600 12px Geist, -apple-system, sans-serif";
+    cx.font = "600 12px Roobert, -apple-system, sans-serif";
     cx.fillStyle = `rgba(${INK},${done ? .8 * fade : .45})`;
     cx.fillText(TRACE[i].rel, (A.x + B.x) / 2, (A.y + B.y) / 2 - 9);
   }
@@ -207,7 +208,7 @@ function draw(now) {
     const card = cards[i], below = i % 2 === 0, show = lit && fade > .5 && (wide || i === reached || i === 0
       || i === reached - 1) && q.x > 90 && q.x < W - 90;
     if (!show) {   // no card: the node's name next to it
-      cx.font = "600 13px Geist, -apple-system, sans-serif"; cx.textAlign = "center";
+      cx.font = "600 13px Roobert, -apple-system, sans-serif"; cx.textAlign = "center";
       cx.fillStyle = `rgba(${INK},${.7 * fade})`; cx.fillText(n.title, q.x, q.y + (below ? r + 18 : -r - 9));
     }
     card.style.left = q.x + "px"; card.style.top = (below ? q.y + r + 10 : q.y - r - 10 - card.offsetHeight) + "px";
@@ -222,7 +223,7 @@ requestAnimationFrame(frame);
 </script></body></html>"""
 
 with box("pitch", fit=True):
-    st.iframe(PAGE.replace("__THEME__", "light" if st.context.theme.type == "light" else "dark"), height=640)
+    st.iframe(with_fonts(PAGE).replace("__THEME__", "light" if st.context.theme.type == "light" else "dark"), height=640)
     c = st.columns([1, 1, 1, 3])
     c[0].page_link("views/why.py", label="Why it matters", icon=":material/bolt:")
     c[1].page_link("views/how.py", label="How it works", icon=":material/schema:")

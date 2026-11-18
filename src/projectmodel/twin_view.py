@@ -15,6 +15,7 @@ import re
 from pathlib import Path
 
 from .db.store import Store
+from .fonts import with_fonts
 from .value_model import describe
 
 APP = Path(__file__).resolve().parent / "app"
@@ -132,4 +133,4 @@ import(urls["main.js"]).catch(err => {{ document.getElementById("loading").textC
     html = (APP / "digital_twin.html").read_text().replace("<!--__TWIN__-->", boot)
     if theme in ("light", "dark"):
         html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
-    return html
+    return with_fonts(html)
