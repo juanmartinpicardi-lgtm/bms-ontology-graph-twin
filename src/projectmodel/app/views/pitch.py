@@ -224,7 +224,3 @@ requestAnimationFrame(frame);
 
 with box("pitch", fit=True):
     st.iframe(with_fonts(PAGE).replace("__THEME__", "light" if st.context.theme.type == "light" else "dark"), height=640)
-    c = st.columns([1, 1, 1, 3])
-    c[0].page_link("views/why.py", label="Why it matters", icon=":material/bolt:")
-    c[1].page_link("views/how.py", label="How it works", icon=":material/schema:")
-    c[2].page_link("views/add_building.py", label="Add a building", icon=":material/add_business:")

@@ -111,6 +111,6 @@ elif among(projects):
     area_header("Projects", projects, page)
 elif among(shared):
     area_header("Shared knowledge", shared, page)
-else:  # the header and tabs sit left, next to the rail, as on every other page; the page content centres itself
+else:  # every header has the same two rows (title, tabs), so the title and tabs sit at the same place on every page
     area_header("Overview", overview, page)
 page.run()

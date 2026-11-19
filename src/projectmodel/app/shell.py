@@ -148,7 +148,20 @@ def chrome_css() -> str:
 /* Page header and tabs */
 .st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid {c["line"]}; padding-bottom: 0; margin-bottom: 10px; }}
 .page-title {{ font-size: 24px; line-height: 32px; font-weight: 800; color: {c["text"]}; margin: 0; }}
-.page-sub {{ font-size: 14px; line-height: 20px; font-weight: 500; color: {c["text2"]}; margin: 0; }}
+/* The title row is 40px on every page (with or without the project picker), so the tabs sit at the same height
+   everywhere; its right end stays clear of the fixed toolbar (theme switch and the menu) in the top right corner */
+.st-key-titlebar {{ min-height: 40px; padding-right: 72px; }}
+.st-key-titlebar [data-testid="stCaptionContainer"] {{ margin-top: 6px; }}
+
+/* The theme switch, next to the menu: one click between light and dark */
+#pm-theme {{ display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+  margin-right: 2px; padding: 0; border: 0; border-radius: 6px; background: transparent; cursor: pointer;
+  color: {c["mute"]}; transition: color .12s ease, background .12s ease; }}
+#pm-theme:hover {{ color: {c["text"]}; background: color-mix(in srgb, {c["text"]} 8%, transparent); }}
+#pm-theme:focus-visible {{ outline: 2px solid {c["accent"]}; outline-offset: 1px; }}
+#pm-theme span {{ font-family: 'Material Symbols Rounded'; font-size: 18px; line-height: 1; }}
+/* While the switch drives Streamlit's menu, the menu is not shown */
+body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; pointer-events: none !important; }}
 [class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ border: 0; border-radius: 0; padding: 6px 4px 10px;
   margin: 0 10px 0 0; min-height: 40px; background: transparent; border-bottom: 3px solid transparent; }}
 [class*="st-key-chip"] [data-testid="stPageLink-NavLink"] p {{ font-weight: 700; color: {c["text2"]}; }}
@@ -326,9 +339,52 @@ export default function (component) {
     sent = pair;
     setTriggerValue("changed", { theme: now, at: Date.now() });
   };
+  // The theme switch next to the menu: a moon in light mode, a sun in dark mode. It picks Light or Dark in
+  // Streamlit's own menu (hidden while it does), so Streamlit keeps the choice as if the user had made it there.
+  const mount = () => {
+    const bar = document.querySelector('[data-testid="stToolbarActions"]');
+    if (!bar) return;
+    let b = document.getElementById("pm-theme");
+    if (!b || b.parentNode !== bar) {
+      b?.remove();
+      b = document.createElement("button");
+      b.id = "pm-theme"; b.type = "button";
+      b.innerHTML = '<span aria-hidden="true" translate="no"></span>';
+      b.addEventListener("click", flip);
+      bar.appendChild(b);
+    }
+    const dark = live() === "dark", icon = dark ? "light_mode" : "dark_mode";
+    const label = dark ? "Switch to light theme" : "Switch to dark theme";
+    if (b.firstChild.textContent !== icon) b.firstChild.textContent = icon;
+    if (b.title !== label) { b.title = label; b.setAttribute("aria-label", label); }
+  };
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  async function flip() {
+    const want = live() === "dark" ? "Light" : "Dark", sel = `[data-testid="stMainMenuItem-theme-${want}"]`;
+    document.body.classList.add("pm-theming");
+    try {
+      let item = document.querySelector(sel);
+      if (!item) {
+        document.querySelector('[data-testid="stMainMenuButton"]')?.click();
+        for (let i = 0; i < 40 && !(item = document.querySelector(sel)); i++) await wait(25);
+      }
+      if (!item) return;
+      item.click();
+      item.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", keyCode: 27, bubbles: true }));
+      // Streamlit keeps the theme per page path: keep every page on the same one
+      try {
+        for (const k of Object.keys(localStorage)) if (k.startsWith("stActiveTheme-")) localStorage.setItem(k, JSON.stringify(want));
+      } catch (e) {}
+    } finally {
+      await wait(150);
+      document.body.classList.remove("pm-theming");
+      mount();
+    }
+  }
   clearInterval(globalThis.__pmThemeWatch);
-  globalThis.__pmThemeWatch = setInterval(check, 300);
+  globalThis.__pmThemeWatch = setInterval(() => { check(); mount(); }, 300);
   check();
+  mount();
 }
 """
 _theme_watch = st.components.v2.component("projectmodel.theme_watch", js=THEME_WATCH_JS)
@@ -366,18 +422,30 @@ AREA_SUBTITLES = {
 }
 
 
-def page_title(title: str, subtitle: str = "") -> None:
-    """A page header: a 24px extra-bold title and a one-line description under it."""
-    sub = f'<p class="page-sub">{subtitle}</p>' if subtitle else ""
-    st.html(f'<div><p class="page-title">{title}</p>{sub}</div>')
+def page_title(title: str) -> None:
+    """A page header's title: 24px extra-bold."""
+    st.html(f'<p class="page-title">{html.escape(title)}</p>', width="content")
+
+
+def _tabs_row(pages: list, current) -> None:
+    """The second header row, the same on every page: the area's pages as tabs, the page's own tools at the right
+    end (page_tools)."""
+    with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+        chips(pages, current)
+        st.space("stretch")
+        st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
+                                                       vertical_alignment="center")
 
 
 def area_header(title: str, pages: list, current) -> None:
-    """Areas without a project (Overview, Projects, Shared knowledge): a page header, then the area's pages as
-    tabs."""
+    """Areas without a project (Overview, Projects, Shared knowledge). Same rows as a project page's header, so the
+    title and tabs sit at the same place on every page: the title with a one-line description, then the tabs."""
     with st.container(key="areabar", gap="small"):
-        page_title(title, AREA_SUBTITLES.get(title, ""))
-        chips(pages, current)
+        with st.container(key="titlebar", horizontal=True, vertical_alignment="center", gap="small"):
+            page_title(title)
+            if sub := AREA_SUBTITLES.get(title, ""):
+                st.caption(sub, width="content")
+        _tabs_row(pages, current)
 
 
 def _pick_project() -> None:
@@ -386,8 +454,8 @@ def _pick_project() -> None:
 
 
 def project_header(store: Store, sections: list, current, all_projects) -> None:
-    """The top of every project page: back to all projects, the building's name, role and size, and the project
-    picker top right; then the project's pages as tabs. The picker is re-derived from the active project on every
+    """The top of every project page, in the same rows as every other page: the building's name, role and size,
+    with a link back to all projects and the project picker at the right; then the project's pages as tabs. The picker is re-derived from the active project on every
     run, so deep links, the Projects page and this control always agree. Each building shows its richest input
     (names + folders): the names-only input is kept for scoring, not for browsing."""
     projects = list_projects(store)
@@ -402,9 +470,8 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
     st.session_state["_project_pick"] = project
     site = site_of(project)
     with st.container(key="projbar", gap="small"):
-        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-            st.page_link(all_projects, label="All projects", icon=":material/arrow_back:")
-            st.html(f'<p class="page-title">{html.escape(site.name)}</p>', width="content")
+        with st.container(key="titlebar", horizontal=True, vertical_alignment="center", gap="small"):
+            page_title(site.name)
             if site.role == "test":
                 st.badge("Test set · measure only, never tune", color="orange", icon=":material/science:")
             elif site.source.startswith("Guided setup"):
@@ -415,16 +482,12 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
             st.caption(f"{site.kind} · {n.get('point', 0):,} points · {n.get('equipment', 0)} equipment",
                        width="content")
             st.space("stretch")
+            st.page_link(all_projects, label="All projects", icon=":material/apps:")
             with st.container(key="projpick", width="content"):
                 st.selectbox("Project", shown, key="_project_pick", format_func=lambda p: site_of(p).name,
                              label_visibility="collapsed", on_change=_pick_project,
                              help="Every project page shows this building. Switch it here at any time.")
-        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-            chips(sections, current)
-            st.space("stretch")
-            # The right end of this row belongs to the page (page_tools): its scenario, view options, ...
-            st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
-                                                           vertical_alignment="center")
+        _tabs_row(sections, current)
 
 
 def page_tools():
