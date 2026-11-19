@@ -3,6 +3,7 @@ read by every project page, so switching building switches every view at once.""
 
 from __future__ import annotations
 
+import html
 import os
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from projectmodel.app.backdrop import graph_backdrop
 from projectmodel.db.store import Store
 from projectmodel.knowledge_model import load_knowledge_model
 from projectmodel.locate import google_map_html, osm_embed_url
-from projectmodel.projects import DEFAULT, INPUTS, list_projects, site_of, summaries
+from projectmodel.projects import DEFAULT, list_projects, main_projects, site_of, summaries
 
 ROOT = Path(__file__).resolve().parents[3]
 DB = ROOT / "data/kg.sqlite"
@@ -87,12 +88,16 @@ def set_project(project: str) -> None:
 # with a blue bar on its left. Pages open with a page header (24px
 # extra-bold title), the area's pages are underlined tabs, and every section is a grey card with a soft shadow.
 THEME = {
-    "dark": {"accent": "#64C3FF", "text": "#F0F0F0", "text2": "#D0D0D0", "line": "#505050", "card": "#303030",
-             "card2": "#272727", "input": "#272727", "input_line": "#909090", "on_accent": "#303030",
-             "shadow": "0 4px 10px rgba(0,0,0,.25)", "bg": "#1E1E1E", "graph": "#9FD6FF"},
-    "light": {"accent": "#1792E5", "text": "#303030", "text2": "#606060", "line": "#D0D0D0", "card": "#FFFFFF",
-              "card2": "#F7F7F7", "input": "#FFFFFF", "input_line": "#909090", "on_accent": "#FFFFFF",
-              "shadow": "0 2px 8px rgba(0,0,0,.08)", "bg": "#F0F0F0", "graph": "#005EAC"},
+    "dark": {"accent": "#64C3FF", "accent_hover": "#8FD3FF", "text": "#F0F0F0", "text2": "#C8C8C8",
+             "mute": "#A0A0A0", "line": "#505050", "card": "#303030", "card2": "#272727", "input": "#1E1E1E",
+             "input_line": "#8A8A8A", "input_hover": "#C8C8C8", "on_accent": "#1E1E1E", "tag_line": "#A0A0A0",
+             "shadow": "0 4px 10px rgba(0,0,0,.25)", "bg": "#1E1E1E", "graph": "#9FD6FF", "good": "#68D560",
+             "warn": "#F2B134", "bad": "#FF644C"},
+    "light": {"accent": "#1792E5", "accent_hover": "#005EAC", "text": "#303030", "text2": "#505050",
+              "mute": "#707070", "line": "#D0D0D0", "card": "#FFFFFF", "card2": "#F7F7F7", "input": "#FFFFFF",
+              "input_line": "#909090", "input_hover": "#505050", "on_accent": "#FFFFFF", "tag_line": "#909090",
+              "shadow": "0 2px 8px rgba(0,0,0,.08)", "bg": "#F0F0F0", "graph": "#005EAC", "good": "#007000",
+              "warn": "#C98A12", "bad": "#EE3124"},
 }
 NAV = {"bg": "#090909", "fg": "#F0F0F0", "hover": "#262626", "on": "#404040", "bar": "#1792E5"}
 ACCENT = THEME["dark"]["accent"]
@@ -143,7 +148,20 @@ def chrome_css() -> str:
 /* Page header and tabs */
 .st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid {c["line"]}; padding-bottom: 0; margin-bottom: 10px; }}
 .page-title {{ font-size: 24px; line-height: 32px; font-weight: 800; color: {c["text"]}; margin: 0; }}
-.page-sub {{ font-size: 14px; line-height: 20px; font-weight: 500; color: {c["text2"]}; margin: 0; }}
+/* The title row is 40px on every page (with or without the project picker), so the tabs sit at the same height
+   everywhere; its right end stays clear of the fixed toolbar (theme switch and the menu) in the top right corner */
+.st-key-titlebar {{ min-height: 40px; padding-right: 72px; }}
+.st-key-titlebar [data-testid="stCaptionContainer"] {{ margin-top: 6px; }}
+
+/* The theme switch, next to the menu: one click between light and dark */
+#pm-theme {{ display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+  margin-right: 2px; padding: 0; border: 0; border-radius: 6px; background: transparent; cursor: pointer;
+  color: {c["mute"]}; transition: color .12s ease, background .12s ease; }}
+#pm-theme:hover {{ color: {c["text"]}; background: color-mix(in srgb, {c["text"]} 8%, transparent); }}
+#pm-theme:focus-visible {{ outline: 2px solid {c["accent"]}; outline-offset: 1px; }}
+#pm-theme span {{ font-family: 'Material Symbols Rounded'; font-size: 18px; line-height: 1; }}
+/* While the switch drives Streamlit's menu, the menu is not shown */
+body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; pointer-events: none !important; }}
 [class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ border: 0; border-radius: 0; padding: 6px 4px 10px;
   margin: 0 10px 0 0; min-height: 40px; background: transparent; border-bottom: 3px solid transparent; }}
 [class*="st-key-chip"] [data-testid="stPageLink-NavLink"] p {{ font-weight: 700; color: {c["text2"]}; }}
@@ -160,21 +178,74 @@ def chrome_css() -> str:
 [class*="st-key-box_"] [class*="st-key-box_"] {{ background: {c["card2"]}; border-color: {c["card2"]} !important;
   box-shadow: none; padding: 14px 16px !important; }}
 
-/* Buttons: primary is filled with dark text, secondary is outlined in the accent */
-[data-testid="stBaseButton-primary"] {{ color: {c["on_accent"]}; font-weight: 800; letter-spacing: .5px; }}
-[data-testid="stBaseButton-primary"] * {{ color: {c["on_accent"]} !important; font-weight: 800; }}
-[data-testid="stBaseButton-secondary"], [data-testid="stPopoverButton"] {{ background: {c["card2"]};
-  border-color: {c["accent"]}; color: {c["accent"]}; font-weight: 700; }}
+/* Buttons: 40px tall, 4px corners, letter-spaced labels. Primary is filled in the accent with dark text; secondary
+   (and popovers) are outlined in the accent on a transparent ground; tertiary is an accent text link. */
+[data-testid^="stBaseButton-"], [data-testid="stPopoverButton"] {{ min-height: 40px; border-radius: 4px;
+  padding: 0 20px; font-size: 15px; font-weight: 600; letter-spacing: .4px; box-shadow: none;
+  transition: background .12s ease, border-color .12s ease, color .12s ease; }}
+[data-testid^="stBaseButton-"] p, [data-testid="stPopoverButton"] p {{ font-size: 15px; font-weight: 600;
+  letter-spacing: .4px; }}
+[data-testid="stBaseButton-primary"] {{ background: {c["accent"]}; border: 1px solid {c["accent"]};
+  color: {c["on_accent"]}; }}
+[data-testid="stBaseButton-primary"] * {{ color: {c["on_accent"]} !important; }}
+[data-testid="stBaseButton-primary"]:hover {{ background: {c["accent_hover"]}; border-color: {c["accent_hover"]}; }}
+[data-testid="stBaseButton-secondary"], [data-testid="stPopoverButton"] {{ background: transparent;
+  border: 1px solid {c["accent"]}; color: {c["accent"]}; }}
 [data-testid="stBaseButton-secondary"] *, [data-testid="stPopoverButton"] * {{ color: {c["accent"]}; }}
+[data-testid="stBaseButton-secondary"]:hover, [data-testid="stPopoverButton"]:hover {{
+  background: color-mix(in srgb, {c["accent"]} 12%, transparent); border-color: {c["accent_hover"]}; }}
+[data-testid="stBaseButton-tertiary"] {{ padding: 0 6px; min-height: 32px; color: {c["accent"]}; }}
+[data-testid="stBaseButton-tertiary"] * {{ color: {c["accent"]}; }}
+[data-testid="stBaseButton-tertiary"]:hover {{ text-decoration: underline; text-underline-offset: 3px; }}
+[data-testid^="stBaseButton-"]:disabled {{ opacity: .45; }}
+[data-testid^="stBaseButton-"]:focus-visible, [data-testid="stPopoverButton"]:focus-visible {{
+  outline: 2px solid {c["accent"]}; outline-offset: 2px; }}
+/* A destructive action (a button keyed del_...) is outlined in red */
+[class*="st-key-del_"] [data-testid^="stBaseButton-"] {{ border-color: {c["bad"]}; color: {c["bad"]};
+  background: transparent; }}
+[class*="st-key-del_"] [data-testid^="stBaseButton-"] * {{ color: {c["bad"]} !important; }}
+[class*="st-key-del_"] [data-testid^="stBaseButton-"]:hover {{
+  background: color-mix(in srgb, {c["bad"]} 12%, transparent); }}
 
-/* Inputs */
-[data-testid="stSelectbox"] [role="group"], [data-testid="stMultiSelect"] [role="group"],
-[data-testid="stTextInputRootElement"], [data-testid="stNumberInputContainer"], [data-testid="stTextArea"] textarea {{
-  background: {c["input"]}; border-color: {c["input_line"]}; }}
-/* The building picker in a project header reads as the page title */
-.st-key-projbar [data-testid="stSelectbox"]:has(input[aria-label="Building"]) [role="group"] {{
-  background: transparent; border-color: transparent; }}
-.st-key-projbar input[aria-label="Building"] {{ font-size: 24px; font-weight: 800; color: {c["text"]}; }}
+/* Fields: 40px, dark fill inside the grey card, 1px grey outline, 4px corners; the accent on focus */
+[data-testid="stWidgetLabel"] p {{ font-size: 14px; font-weight: 500; color: {c["text"]}; }}
+[data-testid="stSelectbox"] [data-baseweb="select"] > div, [data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+[data-testid="stTextInputRootElement"], [data-testid="stNumberInputContainer"], [data-testid="stDateInput"] > div > div,
+[data-testid="stTextArea"] [data-baseweb="textarea"] {{
+  background: {c["input"]} !important; border: 1px solid {c["input_line"]} !important; border-radius: 4px !important;
+  min-height: 40px; transition: border-color .12s ease; }}
+[data-testid="stSelectbox"] [data-baseweb="select"] > div:hover, [data-testid="stMultiSelect"] [data-baseweb="select"] > div:hover,
+[data-testid="stTextInputRootElement"]:hover, [data-testid="stNumberInputContainer"]:hover,
+[data-testid="stTextArea"] [data-baseweb="textarea"]:hover {{ border-color: {c["input_hover"]} !important; }}
+[data-testid="stSelectbox"] [data-baseweb="select"] > div:focus-within,
+[data-testid="stMultiSelect"] [data-baseweb="select"] > div:focus-within,
+[data-testid="stTextInputRootElement"]:focus-within, [data-testid="stNumberInputContainer"]:focus-within,
+[data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within {{ border-color: {c["accent"]} !important;
+  box-shadow: 0 0 0 1px {c["accent"]}; }}
+[data-testid="stTextInputRootElement"] input, [data-testid="stNumberInputContainer"] input,
+[data-testid="stTextArea"] textarea, [data-testid="stSelectbox"] [data-baseweb="select"] div,
+[data-testid="stMultiSelect"] [data-baseweb="select"] div {{ background: transparent; font-size: 15px; }}
+[data-testid="stTextInputRootElement"] input::placeholder, [data-testid="stTextArea"] textarea::placeholder {{
+  font-style: italic; color: {c["mute"]}; }}
+/* Drop zones are dashed, like a place to put something */
+[data-testid="stFileUploaderDropzone"] {{ background: transparent; border: 1px dashed {c["input_line"]};
+  border-radius: 6px; }}
+[data-testid="stFileUploaderDropzone"]:hover {{ border-color: {c["accent"]}; }}
+/* Tags (badges) are small outlined labels */
+[data-testid="stBadge"] > span, .stBadge span {{ border-radius: 4px; font-weight: 600; letter-spacing: .2px; }}
+/* Expanders and popovers share the card language */
+[data-testid="stExpander"] details {{ border-radius: 6px; border-color: {c["line"]}; }}
+[data-testid="stPopoverBody"] {{ border-radius: 8px; border: 1px solid {c["line"]}; box-shadow: {c["shadow"]}; }}
+[data-testid="stProgress"] [role="progressbar"] > div > div {{ border-radius: 4px; }}
+
+/* Section titles inside cards: small caps, letter-spaced, like a form heading */
+.box-title {{ display: flex; align-items: center; gap: 8px; margin: 0 0 2px; font-size: 13px; font-weight: 700;
+  letter-spacing: 1.6px; text-transform: uppercase; color: {c["text"]}; }}
+.box-title .ms {{ font-family: 'Material Symbols Rounded'; font-size: 18px; letter-spacing: 0; text-transform: none;
+  color: {c["accent"]}; font-weight: 400; }}
+
+/* The project picker sits top right of a project page */
+.st-key-projpick [data-testid="stSelectbox"] [data-baseweb="select"] > div {{ min-width: 220px; }}
 </style>"""
 
 
@@ -184,7 +255,8 @@ def box(name: str, title: str = "", icon: str = "", fit: bool = False, **kw):
     grows or shrinks to fill it, wherever the header above ends (FIT_JS). Boxes side by side get the same height."""
     c = st.container(key=f"box_fit_{name}" if fit else f"box_{name}", **kw)
     if title:
-        c.caption(f":material/{icon}: **{title}**" if icon else f"**{title}**")
+        ms = f'<span class="ms" aria-hidden="true">{icon}</span>' if icon else ""
+        c.html(f'<div class="box-title">{ms}<span>{html.escape(title)}</span></div>')
     return c
 
 
@@ -245,6 +317,79 @@ export default function () {
 _fit = st.components.v2.component("projectmodel.fit", js=FIT_JS)
 
 
+# Everything themed on the server (the chrome CSS above, every embedded viewer) reads st.context.theme.type, which
+# Streamlit does not update when the user switches light/dark in its settings menu: that switch repaints Streamlit's
+# own widgets but does not rerun the script, so our colours stay on the old theme. This watches the theme Streamlit
+# is actually showing (the page background it sets on <body>) and reruns once when it differs from the rendered one.
+THEME_WATCH_JS = """
+let sent = "";
+export default function (component) {
+  const { data, setTriggerValue } = component;
+  const live = () => {
+    const m = getComputedStyle(document.body).backgroundColor.match(/\\d+(\\.\\d+)?/g);
+    if (!m) return null;
+    const [r, g, b] = m.map(Number);
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 128 ? "light" : "dark";
+  };
+  const check = () => {
+    const now = live();
+    if (!now || now === data.theme) return;
+    const pair = data.theme + ">" + now;   // one rerun per mismatch, never a loop
+    if (pair === sent) return;
+    sent = pair;
+    setTriggerValue("changed", { theme: now, at: Date.now() });
+  };
+  // The theme switch next to the menu: a moon in light mode, a sun in dark mode. It picks Light or Dark in
+  // Streamlit's own menu (hidden while it does), so Streamlit keeps the choice as if the user had made it there.
+  const mount = () => {
+    const bar = document.querySelector('[data-testid="stToolbarActions"]');
+    if (!bar) return;
+    let b = document.getElementById("pm-theme");
+    if (!b || b.parentNode !== bar) {
+      b?.remove();
+      b = document.createElement("button");
+      b.id = "pm-theme"; b.type = "button";
+      b.innerHTML = '<span aria-hidden="true" translate="no"></span>';
+      b.addEventListener("click", flip);
+      bar.appendChild(b);
+    }
+    const dark = live() === "dark", icon = dark ? "light_mode" : "dark_mode";
+    const label = dark ? "Switch to light theme" : "Switch to dark theme";
+    if (b.firstChild.textContent !== icon) b.firstChild.textContent = icon;
+    if (b.title !== label) { b.title = label; b.setAttribute("aria-label", label); }
+  };
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  async function flip() {
+    const want = live() === "dark" ? "Light" : "Dark", sel = `[data-testid="stMainMenuItem-theme-${want}"]`;
+    document.body.classList.add("pm-theming");
+    try {
+      let item = document.querySelector(sel);
+      if (!item) {
+        document.querySelector('[data-testid="stMainMenuButton"]')?.click();
+        for (let i = 0; i < 40 && !(item = document.querySelector(sel)); i++) await wait(25);
+      }
+      if (!item) return;
+      item.click();
+      item.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", keyCode: 27, bubbles: true }));
+      // Streamlit keeps the theme per page path: keep every page on the same one
+      try {
+        for (const k of Object.keys(localStorage)) if (k.startsWith("stActiveTheme-")) localStorage.setItem(k, JSON.stringify(want));
+      } catch (e) {}
+    } finally {
+      await wait(150);
+      document.body.classList.remove("pm-theming");
+      mount();
+    }
+  }
+  clearInterval(globalThis.__pmThemeWatch);
+  globalThis.__pmThemeWatch = setInterval(() => { check(); mount(); }, 300);
+  check();
+  mount();
+}
+"""
+_theme_watch = st.components.v2.component("projectmodel.theme_watch", js=THEME_WATCH_JS)
+
+
 RAIL_LOGO = """<div class="rail-logo" title="Project Model"><span aria-hidden="true"
 style="font-family: 'Material Symbols Rounded'; font-size: 24px; color: #EE3124">hub</span></div>"""
 
@@ -255,6 +400,7 @@ def rail(areas: list[tuple[str, str, list]], current) -> None:
     with st.container(key="rail"):
         st.html(RAIL_LOGO)
         _fit(key="fit")
+        _theme_watch(data={"theme": theme()}, key="theme_watch", on_changed_change=lambda: None)
         for name, icon, pages in areas:
             on = any(p.url_path == current.url_path for p in pages)
             with st.container(key="rail_on" if on else f"rail_{name}", width="content"):
@@ -276,48 +422,56 @@ AREA_SUBTITLES = {
 }
 
 
-def page_title(title: str, subtitle: str = "") -> None:
-    """A page header: a 24px extra-bold title and a one-line description under it."""
-    sub = f'<p class="page-sub">{subtitle}</p>' if subtitle else ""
-    st.html(f'<div><p class="page-title">{title}</p>{sub}</div>')
+def page_title(title: str) -> None:
+    """A page header's title: 24px extra-bold."""
+    st.html(f'<p class="page-title">{html.escape(title)}</p>', width="content")
+
+
+def _tabs_row(pages: list, current) -> None:
+    """The second header row, the same on every page: the area's pages as tabs, the page's own tools at the right
+    end (page_tools)."""
+    with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+        chips(pages, current)
+        st.space("stretch")
+        st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
+                                                       vertical_alignment="center")
 
 
 def area_header(title: str, pages: list, current) -> None:
-    """Areas without a project (Overview, Projects, Shared knowledge): a page header, then the area's pages as
-    tabs."""
+    """Areas without a project (Overview, Projects, Shared knowledge). Same rows as a project page's header, so the
+    title and tabs sit at the same place on every page: the title with a one-line description, then the tabs."""
     with st.container(key="areabar", gap="small"):
-        page_title(title, AREA_SUBTITLES.get(title, ""))
-        chips(pages, current)
+        with st.container(key="titlebar", horizontal=True, vertical_alignment="center", gap="small"):
+            page_title(title)
+            if sub := AREA_SUBTITLES.get(title, ""):
+                st.caption(sub, width="content")
+        _tabs_row(pages, current)
 
 
-def _pick_project(projects: list[str]) -> None:
-    """Building or input changed: open that building with the chosen input, else its richest input."""
-    site, inp = st.session_state["_site"], st.session_state.get("_input")
-    if inp is None:  # the input toggle was cleared: keep the current project
-        return
-    wanted = f"{site}/{inp}"
-    set_project(wanted if wanted in projects else next(p for p in projects if p.startswith(site + "/")))
+def _pick_project() -> None:
+    """The project picker changed: open that building (its richest input) on every project page."""
+    set_project(st.session_state["_project_pick"])
 
 
 def project_header(store: Store, sections: list, current, all_projects) -> None:
-    """The top of every project page: back to all projects, the building (switch it here), its role and size, the
-    input it was mapped from, then the project's pages as chips. Building and input are re-derived from the active
-    project on every run, so deep links, the Projects page and these controls always agree."""
+    """The top of every project page, in the same rows as every other page: the building's name, role and size,
+    with a link back to all projects and the project picker at the right; then the project's pages as tabs. The picker is re-derived from the active project on every
+    run, so deep links, the Projects page and this control always agree. Each building shows its richest input
+    (names + folders): the names-only input is kept for scoring, not for browsing."""
     projects = list_projects(store)
     if not projects:
         st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
         return
+    shown = main_projects(projects)
     project = active_project(projects)
-    site_id = project.split("/")[0]
-    st.session_state["_site"], st.session_state["_input"] = site_id, project.split("/", 1)[1]
+    if project not in shown:  # an old link to the names-only input: show the building's main project
+        project = next(p for p in shown if p.split("/")[0] == project.split("/")[0])
+        set_project(project)
+    st.session_state["_project_pick"] = project
     site = site_of(project)
     with st.container(key="projbar", gap="small"):
-        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-            st.page_link(all_projects, label="Projects", icon=":material/arrow_back:")
-            st.selectbox("Building", list(dict.fromkeys(p.split("/")[0] for p in projects)), key="_site",
-                         format_func=lambda s: site_of(f"{s}/").name,
-                         label_visibility="collapsed", width=170, on_change=_pick_project, args=(projects,),
-                         help="Every project page shows this building. Switch it here at any time.")
+        with st.container(key="titlebar", horizontal=True, vertical_alignment="center", gap="small"):
+            page_title(site.name)
             if site.role == "test":
                 st.badge("Test set · measure only, never tune", color="orange", icon=":material/science:")
             elif site.source.startswith("Guided setup"):
@@ -328,16 +482,12 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
             st.caption(f"{site.kind} · {n.get('point', 0):,} points · {n.get('equipment', 0)} equipment",
                        width="content")
             st.space("stretch")
-            st.segmented_control("Input", [p.split("/", 1)[1] for p in projects if p.startswith(site_id + "/")],
-                                 key="_input", format_func=lambda i: INPUTS.get(i, (i,))[0],
-                                 label_visibility="collapsed", on_change=_pick_project, args=(projects,),
-                                 help="What the mapper was given: names only, or names plus equipment folders.")
-        with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-            chips(sections, current)
-            st.space("stretch")
-            # The right end of this row belongs to the page (page_tools): its scenario, view options, ...
-            st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
-                                                           vertical_alignment="center")
+            st.page_link(all_projects, label="All projects", icon=":material/apps:")
+            with st.container(key="projpick", width="content"):
+                st.selectbox("Project", shown, key="_project_pick", format_func=lambda p: site_of(p).name,
+                             label_visibility="collapsed", on_change=_pick_project,
+                             help="Every project page shows this building. Switch it here at any time.")
+        _tabs_row(sections, current)
 
 
 def page_tools():

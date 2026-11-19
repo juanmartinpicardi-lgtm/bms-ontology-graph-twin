@@ -16,6 +16,7 @@ from pathlib import Path
 import yaml
 
 from .db.store import Store
+from .fonts import with_fonts
 from .knowledge_model import KM_DIR, KnowledgeModel, Slot, Template
 from .tree import TreeNode, build_tree
 from .value_model import describe
@@ -254,7 +255,7 @@ def render_template(theme: str | None = None) -> str:
     html = (APP / "equipment3d.html").read_text().replace("/*__MODULES__*/", modules)
     if theme in ("light", "dark"):
         html = html.replace('<html lang="en">', f'<html lang="en" data-theme="{theme}">', 1)
-    return html
+    return with_fonts(html)
 
 
 def render_html(payload: dict, theme: str | None = None) -> str:

@@ -9,6 +9,7 @@ floor; a click on a unit or room is sent back to the app, which opens its place 
 from __future__ import annotations
 
 from pathlib import Path
+from ..fonts import with_fonts
 
 FAMILY_COLOR = {"ahu": "#E8833A", "vav": "#64C3FF", "fvav": "#8E7CF0", "fcu": "#64C3FF", "chiller": "#2BB3A3",
                 "pump": "#3C8DBC", "ef": "#A0A6AD", "split": "#D96BA6", "uh": "#E0B33A", "specialty": "#8A8F96",
@@ -79,4 +80,4 @@ def payload(b: dict, plans: dict[str, dict], selected: str | None, needs_you: di
 def page() -> str:
     """The viewer page. It holds no data: the app posts the payload to it (app/bridge.py)."""
     controls = (TEMPLATE.parent / "viewer_controls.js").read_text()
-    return TEMPLATE.read_text().replace("/*__CONTROLS__*/", controls)
+    return with_fonts(TEMPLATE.read_text().replace("/*__CONTROLS__*/", controls))

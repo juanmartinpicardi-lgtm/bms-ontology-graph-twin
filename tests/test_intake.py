@@ -196,6 +196,16 @@ def test_publish_makes_a_project(intake):
     assert [n["body"] for n in notes.notes_by_project(store, project)] == ["Chiller 2 replaced in 2021."]
     twin = twin_payload(store, project, intake.name)
     assert {e["floor"] for e in twin["equip"]} & {"L1", "L2", "L3"}
+    # floors and rooms are in the graph, so the twin builds the real building: its levels, its rooms, each unit in its room
+    floors, rooms = store.conn.execute("SELECT class, COUNT(*) FROM nodes WHERE project = ? AND kind = 'location' "
+                                       "GROUP BY class ORDER BY class", (project,)).fetchall()
+    assert tuple(floors) == ("Floor", 4) and tuple(rooms) == ("Room", 80)
+    assert [lv["id"] for lv in twin["levels"]] == ["L1", "L2", "L3", "RF"]
+    assert sum(len(r) for r in twin["rooms"].values()) == 80 and all(r["xy"] for rs in twin["rooms"].values() for r in rs)
+    by_tag = {e["name"]: e for e in twin["equip"]}
+    assert by_tag["CH01a"]["room_name"] == "144 Mechanical Room" and by_tag["CH01a"]["floor_src"] == "plans"
+    assert by_tag["AHU01"]["floor"] == "RF" and by_tag["UH01"]["type"] == "Unit heater"
+    assert sum(1 for e in twin["equip"] if e.get("room")) >= 70
     assert publish(intake, store) == project and len(store.nodes(project, "equipment")) == len(eq)  # replaces
 
 

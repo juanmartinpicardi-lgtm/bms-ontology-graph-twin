@@ -64,12 +64,11 @@ FLOW_IDS = [f[0] for f in FLOW]
 
 # ---------------------------------------------------------------- building picker
 
-def start_form(key: str, compact: bool = False) -> None:
+def start_form(key: str) -> None:
     with st.form(key, border=False):
-        if not compact:
-            st.markdown("#### Start a new building")
-            st.caption("Give it a name. Then locate it, and upload its documents one step at a time; each one adds to "
-                       "the knowledge graph and to the building.")
+        st.markdown("#### Start a new building")
+        st.caption("Give it a name. Then locate it, and upload its documents one step at a time; each one adds to "
+                   "the knowledge graph and to the building.")
         name = st.text_input("Building name", placeholder="e.g. Troop D Crime Lab")
         address = st.text_input("Address or place (optional)", placeholder="Street, city",
                                 help="Used to find the building on the map in the first step.")
@@ -185,10 +184,6 @@ with box("head"):
     with st.container(horizontal=True, vertical_alignment="center", gap="small"):
         st.selectbox("Building", slugs, key="ab_slug", format_func=lambda s: names[s], label_visibility="collapsed",
                      width=260, on_change=lambda: st.session_state.update(ab_sel=None, ab_step=None))
-        with st.popover("New building", icon=":material/add:"):
-            st.button(f"Start {TEST_NAME} again (test files)", icon=":material/science:", on_click=begin,
-                      args=(TEST_NAME, TEST_PLACE, True), type="tertiary")
-            start_form("ab_new_pop", compact=True)
         with st.popover("Manage", icon=":material/settings:"):
             st.markdown(f"**{it.name}**")
             st.caption("Start over keeps the name and the location, and removes every document, answer and piece "

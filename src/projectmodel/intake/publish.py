@@ -4,12 +4,13 @@ sequences, tables, notes, tribal knowledge, digital twin) reading it from the st
     unit  -> equipment node   (class, tag, floor, room, schedule attributes, controller, BMS device)
     point -> point node       (class, description, device)
     unit  -hasPoint-> point, unit -feeds-> unit
+    floor, room -> location nodes (Floor, Room), floor -hasPart-> room, unit -serves / hasLocation-> room or floor
     notes (tribal knowledge)  -> the project's notes, with who said them
     location                  -> the site's confirmed location
 
 Every row keeps the fact's provenance: the document and page or row it was read from, the method (rule or human),
-the confidence, and whether it is confirmed. Floors and rooms travel as attributes of the units on them: the store
-holds points and equipment only. Publishing again replaces the project's rows; nothing is written back to the setup.
+the confidence, and whether it is confirmed. Floors and rooms are location nodes, so the digital twin builds the
+building from the graph: its levels, its rooms where the plans put them, each unit in its room. Publishing again replaces the project's rows; nothing is written back to the setup.
 """
 from __future__ import annotations
 
@@ -77,6 +78,7 @@ def publish(it: Intake, store: Store) -> str:
         nodes.append((project, f"unit:{n}", "equipment", e["tag"], cls, src, ref, method, conf, status, revision,
                       json.dumps(attrs, default=str)))
     units = {r[1] for r in nodes}
+    _spaces(b, facts, project, revision, units, nodes, edges)
     by_device = {e["controller"]["device"]: n for n, e in b["equip"].items() if e["controller"]}
     for p in b["points"]:
         d = p["data"]
@@ -115,6 +117,51 @@ def publish(it: Intake, store: Store) -> str:
     it.s["published"] = {"project": project, "at": time.time(), "revision": revision}
     it.save()
     return project
+
+
+def _spaces(b: dict, facts: dict, project: str, revision: int, units: set[str], nodes: list, edges: list) -> None:
+    """Floors and rooms as location nodes, in the shape of the setup's own graph (intake/graph.py): floor -hasPart->
+    room, terminal -serves-> room, other units -hasLocation-> room (or floor). Each floor keeps its level order and
+    its plan's proportions, each room where its number sits on that plan (0..1 of the plan area), so the digital
+    twin can lay the building out the way the drawings do."""
+    crops = {}
+    for order, f in enumerate(b["floors"]):
+        if f.get("status") == "rejected":
+            continue
+        src, ref, method, conf, status = _prov(facts.get(f"floor:{f['id']}"))
+        crop = f.get("crop")
+        aspect = round((crop[3] - crop[1]) / (crop[2] - crop[0]), 4) if crop and crop[2] > crop[0] else None
+        crops[f["id"]] = crop
+        nodes.append((project, f"floor:{f['id']}", "location", f["name"], "Floor", src, ref, method, conf, status,
+                      revision,
+                      json.dumps({"level": f["id"], "order": order, "aspect": aspect, "sheet": f.get("sheet")})))
+    floors = {r[1] for r in nodes if r[2] == "location"}
+    rooms = set()
+    for r in b["rooms"]:
+        fact = facts.get(r["fact"])
+        if r["status"] == "rejected" or f"floor:{r['floor']}" not in floors:
+            continue
+        crop, xy = crops.get(r["floor"]), r.get("anchor")
+        at = ([round((xy[0] - crop[0]) / (crop[2] - crop[0]), 4), round((xy[1] - crop[1]) / (crop[3] - crop[1]), 4)]
+              if crop and xy else None)
+        rid = f"room:{r['number']}"
+        rooms.add(rid)
+        src, ref, method, conf, status = _prov(fact)
+        nodes.append((project, rid, "location", f"{r['number']} {r['name']}".strip(), "Room", src, ref, method, conf,
+                      status, revision, json.dumps({"floor": r["floor"], "number": r["number"], "name": r["name"],
+                                                    "xy": at})))
+        edges.append((project, f"floor:{r['floor']}", "hasPart", rid, src, ref, method, conf, status, revision, "{}"))
+    for n, e in b["equip"].items():
+        uid = f"unit:{n}"
+        if uid not in units:
+            continue
+        src, ref, method, conf, status = _prov(facts.get(e.get("room_fact") or ""))
+        if f"room:{e['room']}" in rooms:
+            edges.append((project, uid, "serves" if e["terminal"] else "hasLocation", f"room:{e['room']}", src, ref,
+                          method, conf, status, revision, "{}"))
+        elif f"floor:{e['floor']}" in floors:
+            edges.append((project, uid, "hasLocation", f"floor:{e['floor']}", src, ref, method, conf, status,
+                          revision, "{}"))
 
 
 def _notes(it: Intake, store: Store, project: str, units: set[str]) -> None:
