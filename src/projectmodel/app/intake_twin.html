@@ -154,7 +154,13 @@ function resize() {
   Object.assign(ortho, { left: -W / 2 / K, right: W / 2 / K, top: H / 2 / K, bottom: -H / 2 / K });
   ortho.updateProjectionMatrix();
 }
-addEventListener("resize", resize);
+// The app sizes this frame to the screen after it loads: keep the building framed until the person moves the camera.
+let moved = false, refitT = null;
+addEventListener("resize", () => {
+  resize();
+  if (!moved && D && floors.size) { clearTimeout(refitT); refitT = setTimeout(() => fit(false), 60); }
+});
+for (const ev of ["pointerdown", "wheel"]) renderer.domElement.addEventListener(ev, () => { moved = true; }, { passive: true });
 
 // --- floors --------------------------------------------------------------------------------------
 const floors = new Map();   // id -> { group, plate, lines, markers, data, index, depth, key }

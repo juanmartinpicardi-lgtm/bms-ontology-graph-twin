@@ -18,7 +18,7 @@
     --m-parsed: #1792e5; --m-rule: #1a9e95; --m-template: #8250df; --m-llm: #e8590c; --m-human: #007000; --m-model: #c48a00;
     --s-proposed: #bf8700; --s-confirmed: #007000; --s-rejected: #ee3124; --notes: #d6336c;
     --r-hasPart: #5b9fd6; --r-hasPoint: #d0d0d0; --r-feeds: #e8590c; --r-type: #dcc07a; --r-subClassOf: #c48a00;
-    --r-behaviour: #c2369b; --m-document: #c2369b;
+    --r-behaviour: #c2369b; --m-document: #c2369b; --k-sequence: #c2369b; --r-controls: #c2369b; --r-mentions: #e7a3d3;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -29,7 +29,7 @@
       --m-parsed: #64c3ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #68d560; --m-model: #f2b134;
       --s-proposed: #d29922; --s-confirmed: #68d560; --s-rejected: #ff644c; --notes: #f778ba;
       --r-hasPart: #6eb3e8; --r-hasPoint: #404040; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
-      --r-behaviour: #ef6fc8; --m-document: #ef6fc8;
+      --r-behaviour: #ef6fc8; --m-document: #ef6fc8; --k-sequence: #ef6fc8; --r-controls: #ef6fc8; --r-mentions: #7a3a68;
     }
   }
   :root[data-theme="dark"] {
@@ -40,7 +40,7 @@
     --m-parsed: #64c3ff; --m-rule: #39c5bb; --m-template: #a371f7; --m-llm: #f0883e; --m-human: #68d560; --m-model: #f2b134;
     --s-proposed: #d29922; --s-confirmed: #68d560; --s-rejected: #ff644c; --notes: #f778ba;
     --r-hasPart: #6eb3e8; --r-hasPoint: #404040; --r-feeds: #ff7b54; --r-type: #8a6d1f; --r-subClassOf: #f2b134;
-    --r-behaviour: #ef6fc8; --m-document: #ef6fc8;
+    --r-behaviour: #ef6fc8; --m-document: #ef6fc8; --k-sequence: #ef6fc8; --r-controls: #ef6fc8; --r-mentions: #7a3a68;
   }
   .tip { background: var(--panel); color: var(--text); border: 1px solid var(--line); padding: 4px 8px;
     border-radius: 4px; font: 500 12px/1.4 "Roobert", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -83,8 +83,17 @@
   #legend .item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
   #legend .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
   #legend .ln { width: 16px; height: 3px; flex: none; }
-  #stats { top: 12px; right: 12px; padding: 6px 10px; font-size: 12px; color: var(--muted); z-index: 2; }
-  #panel { top: 48px; right: 12px; bottom: 12px; width: 380px; padding: 14px; overflow: auto; display: none; z-index: 3; }
+  #stats { top: 12px; right: 12px; padding: 4px 6px 4px 12px; font-size: 12px; color: var(--muted); z-index: 4;
+    display: flex; align-items: center; gap: 10px; }
+  #rot { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; color: var(--text);
+    padding: 4px 6px; border-radius: 6px; font-weight: 600; }
+  #rot:hover { background: var(--chip); }
+  #rot .sw { position: relative; width: 30px; height: 18px; border-radius: 9px; background: var(--line); transition: background .15s; }
+  #rot .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%;
+    background: #fff; transition: transform .15s; }
+  #rot[aria-checked="true"] .sw { background: var(--accent); }
+  #rot[aria-checked="true"] .sw::after { transform: translateX(12px); }
+  #panel { top: 56px; right: 12px; bottom: 12px; width: 380px; padding: 14px; overflow: auto; display: none; z-index: 3; }
   #panel h2 { font-size: 20px; line-height: 30px; font-weight: 700; margin: 0 0 2px; word-break: break-word; }
   #panel h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 14px 0 6px; }
   #panel table { width: 100%; border-collapse: collapse; }
@@ -99,11 +108,14 @@
   .close { position: absolute; top: 8px; right: 10px; border: none; font-size: 18px; }
   ul.nb { list-style: none; padding: 0; margin: 0; }
   ul.nb li { padding: 3px 0; border-top: 1px solid var(--line); }
-  @media (max-width: 760px) {
-    #toolbar { width: calc(100% - 24px); }
+  /* A narrow frame (a phone, or a side panel in the app): the options open over the graph, the legend folds away,
+     the counts give way to the Rotate switch */
+  @media (max-width: 620px) {
+    #toolbar:not(.collapsed) { width: calc(100% - 24px); }
     #panel { top: auto; left: 12px; right: 12px; width: auto; height: 50%; }
-    #legend, #stats { display: none; }
+    #legend, #statsText { display: none; }
   }
+  @media (max-width: 900px) { #toolbar.collapsed { width: 200px; } }
 </style>
 </head>
 <body>
@@ -142,6 +154,7 @@
   <div class="toggles">
     <label><input type="checkbox" id="showPoints" checked> Points</label>
     <label id="lblLocations" hidden><input type="checkbox" id="showLocations" checked> Floors and rooms</label>
+    <label id="lblSequences" hidden><input type="checkbox" id="showSequences" checked> Sequences</label>
     <label><input type="checkbox" id="showModel"> Knowledge model layer</label>
     <label><input type="checkbox" id="showFlow" checked> Animate feeds</label>
     <label title="Loops, interlocks, resets, requests and modes from the sequences of operation (intent, not as built)"><input type="checkbox" id="showBehaviour"> Behaviour (sequences)</label>
@@ -153,7 +166,7 @@
   </div>
 </div>
 
-<div id="stats" class="card"></div>
+<div id="stats" class="card"><span id="statsText"></span><button id="rot" role="switch" aria-checked="false" title="Turn the graph slowly (R). Any drag stops it.">Rotate <span class="sw" aria-hidden="true"></span></button></div>
 <div id="legend" class="card"></div>
 <div id="panel" class="card"><button class="close" id="closePanel" aria-label="Close">×</button><div id="panelBody"></div></div>
 
@@ -171,6 +184,9 @@ const REL = {
   serves:     { width: 0.5, arrow: 2, label: "serves (feeds a room)" },
   type:       { width: 0.2, arrow: 0, label: "is a (class)" },
   subClassOf: { width: 1.0, arrow: 3, label: "subclass of" },
+  // From the sequences of operation read in the guided setup: which units a sequence controls, which points it uses.
+  controls:   { width: 0.6, arrow: 2, label: "controls (sequence)" },
+  mentions:   { width: 0.3, arrow: 0, label: "uses point (sequence)" },
   // Behaviour, from the sequences of operation (method document): intent, off by default.
   drives:     { width: 1.0, arrow: 3, label: "drives", behaviour: true },
   feedback:   { width: 1.0, arrow: 3, label: "feeds back to", behaviour: true },
@@ -182,7 +198,7 @@ const REL = {
 const P = {};  // page colours
 function readTheme() {
   const s = getComputedStyle(document.documentElement), v = n => s.getPropertyValue(n).trim();
-  for (const k of ["equipment", "point", "class", "location"]) KIND_COLOR[k] = v(`--k-${k}`);
+  for (const k of ["equipment", "point", "class", "location", "sequence"]) KIND_COLOR[k] = v(`--k-${k}`);
   for (const k of ["parsed", "rule", "template", "llm", "human", "document", "model"]) METHOD_COLOR[k] = v(`--m-${k}`);
   for (const k of ["proposed", "confirmed", "rejected"]) STATUS_COLOR[k] = v(`--s-${k}`);
   for (const k of Object.keys(REL)) REL[k].color = v(REL[k].behaviour ? "--r-behaviour" : `--r-${k}`);
@@ -214,7 +230,7 @@ const confColor = c => {
   return `rgb(${r}, ${g}, 73)`;
 };
 
-const state = { colorBy: "kind", hops: 0, showLocations: true, showPoints: true, showModel: false, showFlow: true, showBehaviour: false, selected: null };
+const state = { colorBy: "kind", hops: 0, showLocations: true, showSequences: true, showPoints: true, showModel: false, showFlow: true, showBehaviour: false, selected: null };
 let highlight = null;  // Set of node ids to keep bright, or null
 
 function baseColor(n) {
@@ -231,12 +247,14 @@ function baseColor(n) {
 const nodeColor = n => highlight && !highlight.has(n.id) ? P.dim : baseColor(n);
 const nodeSize = n => n.kind === "equipment" ? 1 + Math.sqrt(n.attrs?.points || 1) * 0.5
   : n.kind === "class" ? 1.2 + Math.sqrt(n.attrs?.instances || 0) * 0.3
-  : n.kind === "location" ? (n.cls === "Building" ? 8 : n.cls === "Floor" ? 3 : 0.3) : 0.35;
+  : n.kind === "location" ? (n.cls === "Building" ? 8 : n.cls === "Floor" ? 3 : 0.3)
+  : n.kind === "sequence" ? 2.2 : 0.35;
 
 // --- visibility ----------------------------------------------------------------------------------
 function layerOk(n) {
   if (n.kind === "point" && !state.showPoints) return false;
   if (n.kind === "location" && !state.showLocations) return false;
+  if (n.kind === "sequence" && !state.showSequences) return false;
   if (n.layer === "model" && !state.showModel) return false;
   return true;
 }
@@ -298,14 +316,16 @@ window.graph3d = Graph;  // handy from the browser console
 // Soft camera: orbit with inertia, zoom towards the pointer, gentle auto-rotate when asked.
 const ctl = Graph.controls();
 Object.assign(ctl, { enableDamping: true, dampingFactor: 0.09, zoomToCursor: true, rotateSpeed: 0.7,
-                     autoRotateSpeed: 0.8, screenSpacePanning: true });
+                     autoRotateSpeed: 0.55, screenSpacePanning: true });
 
 // Fit the camera to the shown nodes. (The library's zoomToFit picked a far too close distance here.)
 function fitView(ms = 800) {
   const ns = Graph.graphData().nodes.filter(n => Number.isFinite(n.x));
   if (!ns.length) return;
   const c = ["x", "y", "z"].map(k => ns.reduce((s, n) => s + n[k], 0) / ns.length);
-  const r = Math.max(10, ...ns.map(n => Math.hypot(n.x - c[0], n.y - c[1], n.z - c[2])));
+  // Frame the body of the graph, not its farthest stray node: the 95th percentile of the distances from the centre.
+  const ds = ns.map(n => Math.hypot(n.x - c[0], n.y - c[1], n.z - c[2])).sort((a, b) => a - b);
+  const r = Math.max(10, ds[Math.min(ds.length - 1, Math.floor(ds.length * 0.95))] * 1.08);
   const cam = Graph.camera(), fov = (cam.fov || 40) * Math.PI / 180;
   const half = Math.min(fov, 2 * Math.atan(Math.tan(fov / 2) * (cam.aspect || 1))) / 2;
   const d = r / Math.sin(half) * 1.05;
@@ -322,8 +342,14 @@ let fitted = false;
 const firstFit = () => { if (!fitted && Graph.graphData().nodes.length) { fitted = true; fitView(0); } };
 Graph.onEngineStop(firstFit);
 setTimeout(firstFit, 7500);  // just after the 7 s cooldown; the engine-stop event can be late in an embedded frame
-["pointerdown", "wheel"].forEach(ev => el.addEventListener(ev, () => { fitted = true; }, { once: true }));
-window.addEventListener("resize", () => Graph.width(window.innerWidth).height(window.innerHeight));
+let moved = false;  // the person turned or zoomed: from then on the camera is theirs
+["pointerdown", "wheel"].forEach(ev => el.addEventListener(ev, () => { fitted = true; moved = true; }, { once: true }));
+let refit = null;
+window.addEventListener("resize", () => {
+  Graph.width(window.innerWidth).height(window.innerHeight);
+  // The app sizes this frame to the screen after it loads: keep the whole graph centred until the person moves it.
+  if (!moved && fitted) { clearTimeout(refit); refit = setTimeout(() => fitView(0), 60); }
+});
 
 // Standalone page: follow the system theme as it changes (the app passes its theme instead).
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
@@ -349,14 +375,15 @@ function ensureVisible(n) {
   if (n.layer === "model" && !state.showModel) { state.showModel = true; document.getElementById("showModel").checked = true; changed = true; }
   return changed;
 }
-function selectNode(id, fly) {
+function selectNode(id, fly, panel = true) {
   const n = byId.get(id);
   const changed = ensureVisible(n);
   state.selected = { kind: "node", id };
   highlight = new Set([id]);
   for (const l of adj.get(id)) if (linkLayerOk(l)) { highlight.add(l.s); highlight.add(l.t); }
   refresh(changed || state.hops > 0);
-  renderNodePanel(n);
+  if (panel) renderNodePanel(n);
+  else { document.getElementById("panel").style.display = "none"; document.body.classList.remove("panel-open"); }
   if (fly) flyTo(n);
 }
 function selectLink(l) {
@@ -504,7 +531,7 @@ resultsEl.addEventListener("click", e => {
 // --- controls, stats, legend -------------------------------------------------------------------
 document.getElementById("colorBy").onchange = e => { state.colorBy = e.target.value; refresh(false); };
 document.getElementById("hops").onchange = e => { state.hops = +e.target.value; refresh(true); };
-for (const k of ["showPoints", "showLocations", "showModel", "showFlow", "showBehaviour"]) {
+for (const k of ["showPoints", "showLocations", "showSequences", "showModel", "showFlow", "showBehaviour"]) {
   document.getElementById(k).onchange = e => {
     state[k] = e.target.checked;
     if (state.selected?.kind === "node" && !layerOk(byId.get(state.selected.id))) clearSelection();
@@ -514,13 +541,15 @@ for (const k of ["showPoints", "showLocations", "showModel", "showFlow", "showBe
 document.getElementById("clear").onclick = clearSelection;
 // Shown only for graphs that have them: floors and rooms, and a source document per node (the guided setup).
 if (nodes.some(n => n.kind === "location")) document.getElementById("lblLocations").hidden = false;
+if (nodes.some(n => n.kind === "sequence")) document.getElementById("lblSequences").hidden = false;
 if (DATA.by_document) document.getElementById("optDoc").hidden = false;
 // Inside the app's guided setup the page that holds this viewer listens: a click on a node opens its source there,
 // and the app can select a node here. Harmless anywhere else.
 addEventListener("message", e => {
   if (e.data?.pm !== "data") return;
   const id = e.data.data?.select, n = id && nodes.find(n => n.fact === id || (n.facts || []).includes(id));
-  if (n && state.selected?.id !== n.id) selectNode(n.id, n.x !== undefined);
+  if (n && state.selected?.id !== n.id) selectNode(n.id, false, false);
+  else if (!n && state.selected) clearSelection();
 });
 if (parent !== window) parent.postMessage({ pm: "ready" }, "*");
 const toolbar = document.getElementById("toolbar"), collapseBtn = document.getElementById("collapse");
@@ -528,10 +557,13 @@ function setCollapsed(on) {
   toolbar.classList.toggle("collapsed", on);
   collapseBtn.textContent = on ? "+" : "−";
   collapseBtn.setAttribute("aria-expanded", !on);
-  try { localStorage.setItem("graph3d-collapsed", on ? "1" : ""); } catch (e) {}
+  try { localStorage.setItem("graph3d-collapsed", on ? "1" : "0"); } catch (e) {}
 }
 collapseBtn.onclick = () => setCollapsed(!toolbar.classList.contains("collapsed"));
-try { if (localStorage.getItem("graph3d-collapsed")) setCollapsed(true); } catch (e) {}
+try {
+  const saved = localStorage.getItem("graph3d-collapsed");
+  if (saved === "1" || (saved === null && DATA.by_document)) setCollapsed(true);
+} catch (e) { if (DATA.by_document) setCollapsed(true); }
 
 function toggleLayer(k) {
   const box = document.getElementById(k);
@@ -543,9 +575,9 @@ function zoom(f) {
   Graph.cameraPosition({ x: t.x + (p.x - t.x) * f, y: t.y + (p.y - t.y) * f, z: t.z + (p.z - t.z) * f },
                        { x: t.x, y: t.y, z: t.z }, 450);
 }
-ViewerControls.mount({
+const vc = ViewerControls.mount({
   surface: el,
-  zoom, fit: () => fitView(), rotate: on => { ctl.autoRotate = on; },
+  zoom, fit: () => { moved = false; fitView(); }, rotate: on => { ctl.autoRotate = on; },
   gestures: [["Drag", "Rotate"], ["Right-drag or Shift-drag", "Pan"], ["Scroll or pinch", "Zoom towards the pointer"],
              ["Click a node or link", "Select it and show its details"], ["Click empty space", "Clear the selection"]],
   keys: [["/", "Search", () => { setCollapsed(false); searchEl.focus(); }],
@@ -555,15 +587,28 @@ ViewerControls.mount({
          ["B", "Behaviour (sequences) on / off", () => toggleLayer("showBehaviour")]],
 });
 
+// The Rotate switch (top right) and the rotate button of the controls are one setting. Slow, and any drag or wheel
+// stops it. In the guided setup it starts on, unless the person switched it off.
+const rotBtn = document.getElementById("rot");
+vc.onRotate(on => rotBtn.setAttribute("aria-checked", on));
+// Only a deliberate switch is remembered; a drag that stops the turning is not.
+rotBtn.onclick = () => {
+  vc.setRotate(!vc.rotating());
+  try { localStorage.setItem("graph3d-rotate", vc.rotating() ? "1" : "0"); } catch (e) {}
+};
+let rotateFirst = !!DATA.by_document;  // the guided setup's graph
+try { const r = localStorage.getItem("graph3d-rotate"); if (r !== null) rotateFirst = r === "1"; } catch (e) {}
+if (rotateFirst) vc.setRotate(true);
+
 function renderStats() {
   const d = Graph.graphData();
-  document.getElementById("stats").textContent = `${d.nodes.length.toLocaleString()} nodes · ${d.links.length.toLocaleString()} links shown`;
+  document.getElementById("statsText").textContent = `${d.nodes.length.toLocaleString()} nodes · ${d.links.length.toLocaleString()} links`;
 }
 function renderLegend() {
   const sw = (c, t) => `<div class="item"><span class="sw" style="background:${c}"></span>${esc(t)}</div>`;
   const ln = (c, t) => `<div class="item"><span class="ln" style="background:${c}"></span>${esc(t)}</div>`;
   let h = "";
-  if (state.colorBy === "kind") h += Object.entries(KIND_COLOR).filter(([k]) => (k !== "class" || state.showModel) && (k !== "location" || nodes.some(n => n.kind === "location"))).map(([k, c]) => sw(c, k)).join("");
+  if (state.colorBy === "kind") h += Object.entries(KIND_COLOR).filter(([k]) => (k !== "class" || state.showModel) && (!["location", "sequence"].includes(k) || nodes.some(n => n.kind === k))).map(([k, c]) => sw(c, k)).join("");
   if (state.colorBy === "method") h += Object.entries(METHOD_COLOR).map(([k, c]) => sw(c, k)).join("");
   if (state.colorBy === "status") h += Object.entries(STATUS_COLOR).map(([k, c]) => sw(c, k)).join("");
   if (state.colorBy === "doc") h += [...new Set(nodes.filter(n => n.layer !== "model").map(n => n.prov?.source_file).filter(Boolean))].map(f => sw(clsColor(f), f)).join("");

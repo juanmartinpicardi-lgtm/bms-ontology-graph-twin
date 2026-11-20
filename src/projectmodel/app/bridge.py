@@ -42,7 +42,12 @@ export default function (component) {
     parentElement.appendChild(f);
   }
   f._emit = (v) => setTriggerValue("event", { ...v, at: Date.now() });
-  f.style.height = typeof data.height === "number" ? data.height + "px" : data.height;  // or a CSS length
+  // The height asked for, only when it changes: inside a fit box the page then sizes the frame to the screen, and a
+  // rerun must not undo that.
+  if (f._h !== data.height) {
+    f._h = data.height;
+    f.style.height = typeof data.height === "number" ? data.height + "px" : data.height;  // or a CSS length
+  }
   if (f._stamp !== data.stamp) {
     f._stamp = data.stamp;
     f._msg = data.msg;

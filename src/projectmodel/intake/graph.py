@@ -6,6 +6,8 @@ app/graph3d.html): floors and rooms, units, points, and the links between them, 
     unit    -hasLocation->  room/floor  other units stand in a room, or on a floor
     unit    -feeds->        unit        AHU -> box, pump -> chiller, chiller -> AHU
     unit    -hasPoint->     point
+    sequence -controls->    unit        a sequence of operations governs the units it applies to
+    sequence -mentions->    point       ...and relies on the points its text names
 
 Every node carries `fact`, the id of the fact it was read from, so a click in the viewer can open the document at
 that place. The graph grows with each document: the source file of every node says which one added it.
@@ -14,7 +16,7 @@ from __future__ import annotations
 
 from ..knowledge_model import KnowledgeModel
 from ..viz import add_model_layer
-from . import knowledge
+from . import knowledge, sequence_links, submittal
 from .state import Intake
 
 
@@ -103,6 +105,30 @@ def payload(it: Intake, b: dict, km: KnowledgeModel | None = None) -> dict:
                       "layer": "instance", "prov": _prov(p), "fact": p["id"],
                       "attrs": {"evidence": d["description"] + (" · also in the BMS export" if seen else "")}})
         links.append({"source": unit_ids[owner], "target": pid, "rel": "hasPoint", "prov": _prov(p)})
+
+    # The sequences of operation: one node per sequence, linked to the units it controls and, once the submittal has
+    # given those units their points, to the points its text names (sequence_links). Intent from a document: the
+    # graph says which units each sequence governs and which points it relies on.
+    present = {n["id"] for n in nodes}
+    for s in sequence_links.payload(b, submittal.classify)["sequences"]:
+        f = facts.get(s["fact"])
+        if not f:
+            continue
+        sid = f"seqnode:{s['id']}"
+        nodes.append({"id": sid, "label": s["title"], "kind": "sequence", "cls": "Sequence_Of_Operations",
+                      "layer": "instance", "prov": _prov(f), "fact": f["id"],
+                      "attrs": {"sections": len(s["sections"]), "setpoints": len(s["setpoints"]),
+                                "links found": s["found"].get("ok", 0), "not in the graph yet": s["found"].get("gap", 0)}})
+        for ref in s["applies"]:
+            uid = s["refs"][ref]["node"]
+            if uid in present:
+                links.append({"source": sid, "target": uid, "rel": "controls", "prov": _prov(f)})
+        seen = set()
+        for r in s["refs"].values():
+            for p in r.get("points", []) if r["kind"] == "point" else []:
+                if p["node"] in present and p["node"] not in seen:
+                    seen.add(p["node"])
+                    links.append({"source": sid, "target": p["node"], "rel": "mentions", "prov": _prov(f)})
 
     if km is not None:
         add_model_layer(nodes, links, km)

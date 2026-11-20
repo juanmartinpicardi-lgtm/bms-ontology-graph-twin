@@ -44,9 +44,10 @@ def secret(name: str) -> str:
 
 
 def site_map(lat: float, lng: float, label: str, height: int) -> None:
-    """The spot on a map: Google's (satellite, with a 3D view) when a key is set, else OpenStreetMap's."""
+    """The spot on a map: Google's satellite map and photorealistic 3D view, side by side, when a key is set; else
+    OpenStreetMap's."""
     key = secret("google_maps_browser_key") or secret("google_maps_api_key")
-    st.iframe(google_map_html(lat, lng, label, key) if key else osm_embed_url(lat, lng), height=height)
+    st.iframe(google_map_html(lat, lng, label, key, theme()) if key else osm_embed_url(lat, lng), height=height)
 
 
 def get_store() -> Store:
@@ -287,22 +288,31 @@ export default function () {
       }
       box.style.overflowY = "auto";
       box.style.setProperty("--fit", h + "px");
-      const fr = frames(box).sort((a, b) => b.offsetHeight - a.offsetHeight)[0];
+      const fr = frames(box).filter(f => !f.closest('[data-nofit]')).sort((a, b) => b.offsetHeight - a.offsetHeight)[0];
       const kids = [...box.children].filter(k => k.offsetHeight);
       if (!fr || !kids.length) continue;
+      // The frame's tight wrappers: every element between the frame and the box that holds nothing else (Streamlit's
+      // element container, a component's host and its shadow root's div). The outermost one is the space the frame
+      // takes in the box, whatever height the frame itself has at the moment.
+      const holds = (k, n) => { for (; n; n = n.parentNode || n.host) if (n === k) return true; return false; };
+      const tight = [];
+      for (let el = fr.parentNode; el && el !== box; el = el.parentNode || el.host) {
+        if (el.nodeType !== 1) continue;  // a shadow root: go on to its host
+        const inner = [...(el.shadowRoot ? el.shadowRoot.children : el.children)]
+          .filter(k => !/^(STYLE|SCRIPT|LINK)$/.test(k.tagName) && (k.offsetHeight || holds(k, fr)));
+        if (inner.length !== 1) break;
+        tight.push(el);
+      }
+      // Some wrappers have no box of their own (display: contents): the space is the outermost one that has.
+      const outer = [...tight].reverse().find(el => el.offsetHeight) || fr;
       const pad = parseFloat(getComputedStyle(box).paddingBottom) || 0;
       const used = kids[kids.length - 1].getBoundingClientRect().bottom - box.getBoundingClientRect().top
                    + box.scrollTop;
-      const slack = h - pad - used;
-      const want = Math.max(MIN_FRAME, Math.round(fr.offsetHeight + slack));
-      if (Math.abs(want - fr.offsetHeight) <= 2) continue;
-      // The frame's wrappers (Streamlit's element container, a component's host) keep the height they were given:
-      // grow or shrink each one that wraps the frame tightly, so what sits below the frame moves with it.
-      for (let el = fr.parentNode; el && el !== box; el = el.parentNode || el.host) {
-        if (el.nodeType === 1 && Math.abs(el.offsetHeight - fr.offsetHeight) <= 4) {
-          el.style.height = want + "px"; el.style.flex = "0 0 auto";  // Streamlit sizes it by flex-basis
-        }
-      }
+      const want = Math.max(MIN_FRAME, Math.round(outer.offsetHeight + (h - pad - used)));
+      if (Math.abs(want - fr.offsetHeight) <= 2 && tight.every(el => Math.abs(el.offsetHeight - want) <= 2)) continue;
+      // Grow or shrink the frame and its wrappers together, so what sits below the frame moves with it and nothing
+      // overlaps or leaves a gap.
+      for (const el of tight) { el.style.height = want + "px"; el.style.flex = "0 0 auto"; }
       fr.style.height = want + "px";
     }
   }
