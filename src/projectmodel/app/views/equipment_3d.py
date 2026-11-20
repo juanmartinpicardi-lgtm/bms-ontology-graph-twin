@@ -21,6 +21,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
+from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools, box  # noqa: E402
 from projectmodel.equipment_view import equipment_payload, load_anchors, render_html  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
@@ -121,6 +122,9 @@ if st.session_state.get("equip") not in kind:  # first visit, or the project cha
     st.session_state["equip"] = models[0]
     st.session_state["eq_type"] = kind[models[0]]
 equip = st.session_state["equip"]
+screen.focus("equipment", equip, rows[equip][0])
+if (sc := st.session_state.get("sim_scenario")) and sc != "normal":
+    screen.scenario(sc, SCENARIOS.get(sc, sc) + " (simulated)")
 
 
 def name(i: str) -> str:

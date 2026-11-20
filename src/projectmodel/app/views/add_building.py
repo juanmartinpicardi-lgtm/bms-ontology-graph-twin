@@ -30,6 +30,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
+from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.bridge import frame  # noqa: E402
 from projectmodel.app.shell import THEME, box, get_store, knowledge_model, secret, set_project, site_map, theme  # noqa: E402
 from projectmodel.fonts import with_fonts  # noqa: E402
@@ -163,6 +164,7 @@ if st.session_state.get("ab_step") not in FLOW_IDS:
     st.session_state["ab_step"] = "locate" if not it.location else "plans"
 step_id = st.session_state["ab_step"]
 step = steps.BY_ID.get(step_id)
+screen.setup_step(f"{it.slug}:{step_id}", f"{it.name} · {step.title if step else step_id.title()}")
 st.session_state.setdefault("ab_sel", None)
 st.session_state.setdefault("ab_out", "side")  # the outputs panel: side, hidden or full
 

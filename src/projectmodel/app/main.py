@@ -97,6 +97,9 @@ shared = [
 page = st.navigation(overview + projects + this_project + twin + shared, position="hidden")
 ensure_database()
 store = get_store()
+from projectmodel.app import dock, screen  # noqa: E402
+
+screen.begin(page)
 if mapped := list_projects(store):
     active_project(mapped)  # every page: a ?project= deep link opens that project app-wide
 rail([("Overview", ":material/home:", overview), ("Projects", ":material/apartment:", projects + this_project),
@@ -113,4 +116,6 @@ elif among(shared):
     area_header("Shared knowledge", shared, page)
 else:  # every header has the same two rows (title, tabs), so the title and tabs sit at the same place on every page
     area_header("Overview", overview, page)
+slots = dock.open_dock(store)  # before the page: a page may st.stop()
 page.run()
+dock.close_dock(slots, store)  # the page has said what it shows: context chips from it

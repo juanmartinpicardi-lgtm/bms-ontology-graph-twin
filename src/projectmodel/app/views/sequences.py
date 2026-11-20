@@ -12,6 +12,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
+from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.shell import active_project, box, get_store, knowledge_model, page_tools  # noqa: E402
 from projectmodel.intake.state import Intake  # noqa: E402
 from projectmodel.equipment_view import MODULES  # noqa: E402
@@ -58,6 +59,7 @@ with page_tools():
     st.caption("Demo sequences written for Alpha (its own are not public)")
 files = [ROOT / "data/kg.sqlite", doc, APP / "sequences.html", APP / "equipment3d.html",
          *(APP / "equipment3d" / m for m in MODULES)]
+screen.view(sequence=st.query_params.get("seq", ""), mode=st.query_params.get("mode", "read"))
 html = page(project, st.context.theme.type, st.query_params.get("seq", ""), st.query_params.get("mode", "read"),
             tuple(p.stat().st_mtime for p in files))
 if html is None:
