@@ -61,6 +61,9 @@ st.html(f"""<style>
 .st-key-ab_head [data-testid="stIconMaterial"] {{ font-size: 17px; margin-right: -2px; }}
 .st-key-ab_head [data-testid^="stBaseButton-"] p, .st-key-ab_head [data-testid="stPopoverButton"] p {{
   font-size: 13px; letter-spacing: .1px; }}
+.st-key-ab_steps [data-testid^="stBaseButton-"] {{ padding: 0 7px; }}
+/* The stretch between the steps and the tools may shrink to nothing, so the line holds on narrower screens */
+.st-key-ab_head > [data-testid="stElementContainer"]:has(> [data-testid="stSpace"]) {{ flex: 1 1 0 !important; }}
 .st-key-ab_steps [data-testid="stBaseButton-secondary"] {{ border-color: {C["line"]}; }}
 .st-key-ab_steps [data-testid="stBaseButton-secondary"] * {{ color: {C["text2"]}; }}
 .st-key-ab_steps [data-testid="stBaseButton-secondary"]:hover {{ border-color: {C["accent"]}; }}
@@ -79,10 +82,19 @@ st.html(f"""<style>
 .st-key-box_out {{ padding: 12px 16px !important; }}
 .block-container {{ padding-bottom: .6rem !important; }}
 /* The drop zone of an empty step: big, the first thing to do */
-.st-key-ab_drop [data-testid="stFileUploaderDropzone"] {{ min-height: 190px; flex-direction: column;
-  justify-content: center; align-items: center; gap: 14px; text-align: center; border-width: 2px;
-  border-radius: 10px; }}
-.st-key-ab_drop [data-testid="stFileUploaderDropzoneInstructions"] {{ margin: 0; }}
+/* One centred column: an icon, what to drop (set per step in empty_step), the button, then the size and types */
+.st-key-ab_drop [data-testid="stFileUploaderDropzone"] {{ min-height: 200px; flex-direction: column;
+  justify-content: center; align-items: center; gap: 10px; padding: 20px 16px; text-align: center;
+  border-width: 2px; border-radius: 10px; }}
+.st-key-ab_drop [data-testid="stFileUploaderDropzone"]::before {{ order: -2; content: "upload_file";
+  font-family: 'Material Symbols Rounded'; font-size: 34px; line-height: 1; color: {C["accent"]}; }}
+.st-key-ab_drop [data-testid="stFileUploaderDropzone"]::after {{ order: -1; content: var(--ab-drop, "Drop the files here");
+  font-size: 15px; font-weight: 600; color: {C["text"]}; margin-bottom: 2px; }}
+.st-key-ab_drop [data-testid="stFileUploaderDropzone"] > span {{ display: flex; justify-content: center; }}
+.st-key-ab_drop [data-testid="stFileUploaderDropzoneInstructions"] {{ flex: 0 0 auto !important; height: auto !important;
+  margin: 0; justify-content: center; text-align: center; }}
+.st-key-ab_drop [data-testid="stFileUploaderDropzoneInstructions"] > div {{ justify-content: center; }}
+.st-key-ab_drop [data-testid="stFileUploaderDropzoneInstructions"] span {{ font-size: 12px; color: {C["mute"]}; }}
 .st-key-ab_drop [data-testid="stFileUploaderDropzone"] button {{ min-height: 40px; }}
 [class*="st-key-q_"] {{ border-left: 3px solid #F2B134 !important; border-radius: 10px !important; }}
 .st-key-ab_reopen button {{ height: 168px; writing-mode: vertical-rl; border-radius: 4px; padding: 12px 6px; }}
@@ -364,6 +376,8 @@ def graph_view(height: int | str = 720) -> None:
                + (f" · {n['sequence']} sequences" if n.get("sequence") else "")
                + f" · {len(g['links'])} links. Click a node: its source opens in the document.")
     selection_panel()
+    # The graph bursts out from its centre when it has grown since this browser last showed it (a step was read).
+    g["burst"] = f"{it.slug}:{n.get('location', 0)}:{n.get('equipment', 0)}:{n.get('point', 0)}:{len(g['links'])}"
     picked(frame(render_html(g, theme()), {"select": st.session_state["ab_sel"]}, height,
                  key="ab_graph", title="Knowledge graph"))
 
@@ -389,7 +403,7 @@ def selected() -> tuple[dict | None, list[dict]]:
 def answer_selected(f: dict) -> None:
     """Open the selection's question in the step's box: on its own step, Needs you tab, pinned at the top."""
     to = f.get("step") if f.get("step") in FLOW_IDS else step_id
-    st.session_state.update(ab_step=to, ab_work="ask", ab_qpage=0, ab_ask_how="List")
+    st.session_state.update(ab_step=to, ab_work="ask", ab_qpage=0)
 
 
 def selection_panel() -> None:
@@ -752,7 +766,8 @@ def outputs_panel() -> None:
         if want := st.session_state.pop("ab_view_want", None):
             st.session_state["ab_view"] = want
         if st.session_state.get("ab_view") not in outs:
-            st.session_state["ab_view"] = "site" if loc and not it.done("plans") else "twin"
+            # The graph first: it is what every step adds to. Locating the building shows its site.
+            st.session_state["ab_view"] = "site" if loc and step_id == "locate" else "graph"
         with st.container(horizontal=True, vertical_alignment="center", gap="small"):
             st.html('<div class="box-title"><span class="ms">deployed_code</span><span>Built so far</span></div>',
                     width="content")
@@ -767,7 +782,7 @@ def outputs_panel() -> None:
                           help="Open full screen", key="out_full")
                 st.button("", icon=":material/right_panel_close:", on_click=out_mode, args=("hidden",),
                           type="tertiary", help="Hide what is built", key="out_hide")
-        view = st.session_state.get("ab_view") or "twin"
+        view = st.session_state.get("ab_view") or "graph"
         h = 1000 if full else FIT
         if view == "site":
             lat, lng, label, preview = loc
@@ -1002,11 +1017,11 @@ def finish_box() -> None:
                   icon=":material/rocket_launch:", on_click=finish, disabled=not read,
                   help=None if read else "Read at least one document first.")
         if done:
-            st.page_link("tree_app.py", label="Open the project", icon=":material/arrow_forward:")
+            st.page_link("views/graph_3d.py", label="Open the project", icon=":material/arrow_forward:")
     if st.session_state.pop("ab_finished", None):
-        st.session_state["flash"] = (f"{it.name} is ready: every part of the project is in the chips above (location, "
-                                     "tree, graph, equipment, sequences, tables, notes, tribal knowledge, digital twin).")
-        st.switch_page("tree_app.py")
+        st.session_state["flash"] = (f"{it.name} is ready: its knowledge graph is below, and every part of the "
+                                     "project is in the tabs above.")
+        st.switch_page("views/graph_3d.py")  # land on the project's knowledge graph, in 3D
 
 
 # ---------------------------------------------------------------- the document steps
@@ -1020,8 +1035,7 @@ def read_now(files: list[tuple[str, bytes]]) -> None:
         status_box.update(label=f"Read: {n} facts", state="complete", expanded=False)
     st.session_state.update(ab_sel=None, ab_qpage=0, ab_nonce=st.session_state.get("ab_nonce", 0) + 1,
                             ab_work=None)
-    st.session_state["ab_view_want"] = {"plans": "twin", "sequences": "seq", "submittal": "graph",
-                                        "bms": "graph"}.get(step_id, "twin")
+    st.session_state["ab_view_want"] = "graph"  # every document grows the graph: show it bursting into place
     st.toast(f"{step.title}: read", icon=":material/check_circle:")
     st.rerun()
 
@@ -1081,6 +1095,8 @@ def empty_step() -> list[tuple[str, bytes]] | None:
     Returns the files to read now, if any."""
     st.markdown(f"### {step.ask}")
     st.caption(f"**Builds:** {step.builds}  \n**Looks for:** {step.looks_for}")
+    what = step.title.lower().replace('"', "")
+    st.html(f'<style>.st-key-ab_drop {{ --ab-drop: "Drop the {what} here, or"; }}</style>')
     with st.container(key="ab_drop"):
         up = st.file_uploader(f"Drop the {step.title.lower()} here, or browse ({', '.join(step.types).upper()})",
                               type=list(step.types), accept_multiple_files=True,
@@ -1149,19 +1165,9 @@ def document_step() -> None:
     if work == "doc":
         viewer([f["name"] for f in files])
     elif work == "ask":
-        located = {"placement", "room", "room_check"}
-        on_plan = sum(1 for f in it.open_questions(step_id) if f["kind"] in located)
-        if st.session_state.get("ab_ask_how") not in ("List", "On the building"):
-            st.session_state["ab_ask_how"] = "List"
-        how = st.segmented_control("How", ["List", "On the building"], key="ab_ask_how",
-                                   label_visibility="collapsed") or "List"
-        if how == "List":
-            selected_questions()
-            questions([step_id])
-        else:
-            st.caption(f"{on_plan} of this step's {nq} questions have a place on a plan: they pulse in amber. "
-                       "Hover one to answer it there, or step through them with N.")
-            twin_view(FIT, only_ask=True, key="ab_twin_ask", panel=False)
+        # A list here; the panel on the right shows where each question sits (the building, the graph).
+        selected_questions()
+        questions([step_id])
     elif work == "built":
         if step_id == "sequences":
             sequences_view(FIT, key="ab_seq_left")

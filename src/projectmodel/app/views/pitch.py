@@ -12,10 +12,11 @@ PAGE = """<!doctype html><html data-theme="__THEME__"><head><meta charset="utf-8
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <!--__FONTS__-->
 <style>
-/* Design language as in the app: #1E1E1E page, #303030 cards, cyan accent (blue in light), Roobert. */
-:root { --bg:#F0F0F0; --fg:#303030; --mute:#606060; --acc:#1792E5; --card:#FFFFFF; --cardline:rgba(0,0,0,.08);
+/* Design language as in the app: drawn on the card's colour (#303030 dark, white light), cyan accent (blue in
+   light), Roobert. */
+:root { --bg:#FFFFFF; --fg:#303030; --mute:#606060; --acc:#1792E5; --card:#FFFFFF; --cardline:rgba(0,0,0,.08);
   --ink:48,48,48; --blue:23,146,229; --red:#EE3124; --amber:#C98A12; --green:#007000; }
-[data-theme=dark] { --bg:#1E1E1E; --fg:#F0F0F0; --mute:#B0B0B0; --acc:#64C3FF; --card:#303030;
+[data-theme=dark] { --bg:#303030; --fg:#F0F0F0; --mute:#B0B0B0; --acc:#64C3FF; --card:#303030;
   --cardline:rgba(255,255,255,.06); --ink:255,255,255; --blue:100,195,255; --red:#FF644C; --amber:#F2B134;
   --green:#68D560; }
 * { box-sizing:border-box; margin:0; }
@@ -222,5 +223,12 @@ function draw(now) {
 requestAnimationFrame(frame);
 </script></body></html>"""
 
+# The animation is a fixed stage: it fills its card edge to edge, and neither the card nor the page scrolls.
+st.html("""<style>
+.st-key-box_fit_pitch { padding: 0 !important; overflow: hidden !important; }
+.st-key-box_fit_pitch iframe { display: block; border-radius: 10px; }
+[data-testid="stMain"]:has(.st-key-box_fit_pitch) { overflow: hidden !important; }
+.block-container:has(.st-key-box_fit_pitch) { padding-bottom: 0 !important; }
+</style>""")
 with box("pitch", fit=True):
     st.iframe(with_fonts(PAGE).replace("__THEME__", "light" if st.context.theme.type == "light" else "dark"), height=640)

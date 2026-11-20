@@ -22,6 +22,7 @@ from projectmodel.app import screen
 from projectmodel.app.shell import THEME, theme
 
 WIDTH = 400
+GAP = 14  # as between the page's boxes (shell: row gap and FIT_JS GAP)
 
 
 @dataclass
@@ -31,15 +32,24 @@ class Slots:
 
 def _css(open_: bool) -> str:
     c = THEME[theme()]
-    pad = f".block-container {{ padding-right: {WIDTH + 24}px !important; }}" if open_ else ""
+    # Open, the dock is a card like the page's boxes: the header runs across the whole width, and the card sits under
+    # it at the right, its top level with the first box (--pm-dock-top, measured by shell.FIT_JS), GAP from the
+    # screen's right and bottom edges and GAP from the boxes on its left.
+    pad = (f""".block-container {{ padding-right: {WIDTH + 2 * GAP}px !important; }}
+[data-testid="stLayoutWrapper"]:has(> .st-key-areabar), [data-testid="stLayoutWrapper"]:has(> .st-key-projbar) {{
+  width: calc(100% + {WIDTH + GAP}px) !important; max-width: none !important; }}""" if open_ else "")
     return f"""<style>
 {pad}
-.st-key-dock {{ position: fixed; right: 0; top: 52px; bottom: 0; width: {WIDTH}px; z-index: 999990;
-  background: {c["card"]}; border-left: 1px solid {c["line"]}; box-shadow: -4px 0 14px rgba(0,0,0,.12);
-  padding: 12px 14px 10px; gap: 8px; overflow: hidden; }}
+[data-testid="stLayoutWrapper"]:has(> .st-key-dock), [data-testid="stLayoutWrapper"]:has(> .st-key-dock_fab) {{
+  display: contents; }}
+.st-key-dock {{ position: fixed; right: {GAP}px; top: var(--pm-dock-top, 140px); bottom: {GAP}px; width: {WIDTH}px;
+  z-index: 999990; background: {c["card"]}; border: 1px solid {c["card"]}; border-radius: 10px;
+  box-shadow: {c["shadow"]}; padding: 14px 16px 12px; gap: 10px; overflow: hidden; }}
+.st-key-dock_head {{ padding-bottom: 10px; border-bottom: 1px solid {c["line"]}; }}
 .st-key-dock_head p.dock-title {{ margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 1.6px;
   text-transform: uppercase; color: {c["text"]}; }}
-.st-key-dock_conv {{ flex: 1 1 auto; overflow-y: auto; min-height: 120px; padding-right: 4px; }}
+[data-testid="stLayoutWrapper"]:has(> .st-key-dock_conv) {{ flex: 1 1 0; min-height: 0; }}
+.st-key-dock_conv {{ height: 100%; overflow-y: auto; padding-right: 4px; }}
 .st-key-dock_chips {{ gap: 6px !important; flex-wrap: wrap; }}
 .dock-chip {{ display: inline-flex; align-items: center; gap: 5px; max-width: 100%; padding: 3px 9px;
   border-radius: 14px; border: 1px solid {c["tag_line"]}; font-size: 13px; color: {c["text"]};
@@ -54,8 +64,20 @@ def _css(open_: bool) -> str:
 [class*="st-key-dchip_"] [data-testid^="stBaseButton-"] {{ min-height: 24px; height: 24px; padding: 0 3px;
   border: 0; }}
 [class*="st-key-dchip_"] [data-testid^="stBaseButton-"] span {{ font-size: 16px; }}
-.st-key-dock [data-testid="stChatInput"] {{ border-radius: 6px; }}
-.st-key-dock_fab {{ position: fixed; right: 18px; bottom: 18px; z-index: 999990; }}
+/* The composer: the input, and under it (inside the same frame) the model pill and the clear button */
+.st-key-dock_compose {{ border: 1px solid {c["line"]}; border-radius: 8px; background: {c["input"]};
+  padding: 4px 6px 6px !important; gap: 2px !important; }}
+.st-key-dock_compose:focus-within {{ border-color: {c["accent"]}; }}
+.st-key-dock_compose [data-testid="stChatInput"], .st-key-dock_compose [data-testid="stChatInput"] > div {{
+  border: 0 !important; background: transparent !important; box-shadow: none !important; }}
+.st-key-dock_compose [data-testid="stChatInputTextArea"] {{ background: transparent !important; }}
+.st-key-dock_pills {{ gap: 6px !important; padding: 0 4px; }}
+.st-key-dock_pills [data-testid="stSelectbox"] > div > div {{ min-height: 28px; height: 28px; border-radius: 14px;
+  font-size: 13px; background: {c["card2"]}; border-color: {c["tag_line"]}; }}
+.st-key-dock_pills [data-baseweb="select"] > div {{ min-height: 28px; padding-top: 0; padding-bottom: 0; }}
+.st-key-dock_pills [data-testid^="stBaseButton-"] {{ min-height: 28px; height: 28px; }}
+.dock-speed {{ font-size: 12px; color: {c["mute"]}; margin: 0; white-space: nowrap; }}
+.st-key-dock_fab {{ position: fixed; right: {GAP + 4}px; bottom: {GAP + 4}px; z-index: 999990; }}
 .st-key-dock_fab [data-testid^="stBaseButton-"] {{ border-radius: 24px; min-height: 48px;
   box-shadow: 0 4px 14px rgba(0,0,0,.25); }}
 </style>"""

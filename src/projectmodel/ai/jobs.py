@@ -80,7 +80,7 @@ JOBS: dict[str, Job] = {j.id: j for j in [
     Job("equipment_variant", "Equipment 3D: pick the variant", "haiku", ("hydrogen",)),
     Job("memory_curator", "Memory curator", "sonnet", ("hydrogen",), ("opus", "fable"), people="Approve"),
     Job("agent_chat", "Agent, text", "sonnet", ("argon",), ("opus",), prompt="agent_chat", max_tokens=16000,
-        effort="medium", status="built", people="Ask, correct, confirm writes"),
+        effort="low", status="built", people="Ask, correct, confirm writes"),
     Job("agent_reason", "Agent, reasoning", "opus", ("argon",), ("fable",), prompt="agent_chat", max_tokens=32000,
         effort="high", status="built"),
     Job("name_resolve", "Name to entity, when rules are ambiguous", "haiku"),

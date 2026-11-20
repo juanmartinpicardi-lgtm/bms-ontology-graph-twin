@@ -29,7 +29,7 @@ payload = graph_payload(store, project, knowledge_model())
 inst = [n for n in payload["nodes"] if n.get("layer") == "instance"]
 kinds, rels = payload["counts"]["nodes"], payload["counts"]["links"]
 
-info, graph = st.columns([1, 3.2], gap="medium")
+info, graph = st.columns([1.12, 3.2], gap="medium")
 with info, box("graph_info", "This graph", "hub", fit=True):
     st.markdown(f"#### {label(project)}")
     c = st.columns(2)
@@ -55,6 +55,10 @@ with info, box("graph_info", "This graph", "hub", fit=True):
 
 # Labels come from source exports; the viewer escapes every string it puts into the page.
 # The viewer takes the app's light/dark theme so its background matches the page around it.
+if msg := st.session_state.pop("flash", None):  # just finished the guided setup: the project lands here
+    st.toast(msg, icon=":material/task_alt:")
+# The graph bursts out from its centre the first time this browser shows it at this size (new, or grown).
+payload["burst"] = f"{project}:{sum(kinds.values())}:{sum(rels.values())}"
 with graph, box("graph_view", fit=True):
     # A click on a node says what is selected: kept for the agent's context chips.
     ev = frame(render_html(payload, st.context.theme.type), None, 760, key=f"graph_{project}", title="Graph 3D")

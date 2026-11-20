@@ -29,6 +29,9 @@ def main() -> int:
     ap.add_argument("question")
     ap.add_argument("--project", default="alpha/names_paths")
     ap.add_argument("--focus", help="a node id the person is looking at")
+    ap.add_argument("--model", help="pin a model (fable, opus, sonnet, haiku, hydrogen, argon); default: auto")
+    ap.add_argument("--effort", choices=["low", "medium", "high"], help="override the job's effort")
+    ap.add_argument("--quiet", action="store_true", help="print only the summary line")
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
     args = ap.parse_args()
 
@@ -42,6 +45,8 @@ def main() -> int:
     packet = context_packet(chips_for(state), state, tools)
 
     def on(ev: Event) -> None:
+        if args.quiet:
+            return
         if ev.type == "text":
             print(ev.data, end="", flush=True)
         elif ev.type == "tool":
@@ -52,10 +57,11 @@ def main() -> int:
             print(f"[{ev.data['model']}]", flush=True)
 
     agent = Agent(Router(), tools=tools, knowledge=load_knowledge(km=km), project=args.project, store=store)
-    res = agent.run([], args.question, packet, emit=on)
+    res = agent.run([], args.question, packet, emit=on, model=args.model, effort=args.effort)
     print(f"\n\nmodel {res.model} · {len(res.steps)} tool calls · ${res.cost_usd:.4f} · {res.seconds:.1f} s · "
           f"calls {res.calls}")
-    print(f"cited: {res.cited}")
+    if not args.quiet:
+        print(f"cited: {res.cited}")
     if res.error:
         print(f"ERROR: {res.error}")
         return 1

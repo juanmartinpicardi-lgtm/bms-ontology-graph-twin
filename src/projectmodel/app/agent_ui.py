@@ -13,6 +13,7 @@ from projectmodel.agent.chat import Agent, Event, model_label, pick_model
 from projectmodel.agent.context import Chip, context_packet
 from projectmodel.agent_tools import GraphTools
 from projectmodel.ai.calls import default_router
+from projectmodel.ai.models import MODELS
 from projectmodel.app.shell import DB, knowledge_model
 from projectmodel.memory import KNOWLEDGE_DIR, KnowledgeError, load_knowledge
 from projectmodel.projects import site_of, summaries
@@ -78,7 +79,7 @@ def knowledge():
 def status_badge() -> None:
     r = default_router()
     if r.ready:
-        key = pick_model(r, "agent_chat")
+        key = picked()[0] or pick_model(r, "agent_chat")
         off = "".join(f" {model_label(k)} is not enabled in this project, so {model_label(key)} answers."
                       for k in r.not_enabled if k == "sonnet")
         st.badge(f"{model_label(key).split(' (')[0]} · Vertex AI", color="green", icon=":material/cloud_done:",
@@ -160,6 +161,35 @@ def show_packet(store, chips: list[Chip], state) -> None:
             st.warning(err)
 
 
+# The model picker under the input. "auto" lets the job route: Sonnet 5.5 at low effort where it is enabled, else
+# Gemini 4 Argon; Opus 5.5 to think it through. A pick "<model>" or "<model>:<effort>" pins that model for the turn.
+PICKS = ["auto", "argon", "argon:high", "hydrogen", "sonnet", "opus", "haiku"]
+PICK_NOTE = {"argon": "fast", "argon:high": "thorough", "hydrogen": "cheaper, uneven speed"}
+
+
+def _short(key: str) -> str:
+    return MODELS[key].label.split(" (")[0].replace("Claude ", "").replace("Gemini 4 ", "")
+
+
+def pick_label(pick: str) -> str:
+    r = default_router()
+    if pick == "auto":
+        return f"Auto · {_short(pick_model(r, 'agent_chat'))}" if r.ready else "Auto"
+    key, _, effort = pick.partition(":")
+    note = PICK_NOTE.get(pick, "")
+    off = " · not enabled" if key in r.not_enabled else ""
+    return f"{_short(key)}{' · ' + note if note else ''}{off}"
+
+
+def picked() -> tuple[str | None, str | None]:
+    """(model, effort) for Agent.run: (None, None) on auto."""
+    pick = st.session_state.get("dock_model", "auto")
+    if pick == "auto" or pick not in PICKS:
+        return None, None
+    key, _, effort = pick.partition(":")
+    return key, effort or None
+
+
 def _clear() -> None:
     st.session_state["agent_log"] = []
     st.session_state["agent_api"] = []
@@ -179,12 +209,18 @@ def conversation(store, chips: list[Chip], state) -> None:
             _show(turn, tools)
         live = st.container()
     st.session_state["_dock_sees"] = st.expander("What the agent sees", icon=":material/visibility:").empty()
-    with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+    with st.container(key="dock_compose", gap=None):
         question = st.chat_input(f"Ask about {focus.label}…" if focus else "Ask about this building…",
                                  key="dock_input")
-        if log:
-            st.button("", icon=":material/delete_sweep:", key="dock_clear", type="tertiary", on_click=_clear,
-                      help="Start a new conversation")
+        with st.container(key="dock_pills", horizontal=True, vertical_alignment="center", gap="small"):
+            st.selectbox("Model", PICKS, key="dock_model", format_func=pick_label, label_visibility="collapsed",
+                         width=240, help="Which model answers. Auto: Sonnet 5.5 where this GCP project has it, else "
+                         "Gemini 4 Argon, both thinking briefly; a question that asks to think it through goes to the "
+                         "reasoning model. Thorough thinks longer and answers later.")
+            st.space("stretch")
+            if log:
+                st.button("", icon=":material/delete_sweep:", key="dock_clear", type="tertiary", on_click=_clear,
+                          help="Start a new conversation")
     if question:
         _answer(question, chips, state, tools, project, store, live)
 
@@ -217,7 +253,8 @@ def _answer(question: str, chips: list[Chip], state, tools, project, store, live
 
             agent = Agent(default_router(), tools=tools, knowledge=knowledge(), project=project,
                           person=st.session_state.get("author") or None, store=store)
-            res = agent.run(api, question, packet, emit=on)
+            model, effort = picked()
+            res = agent.run(api, question, packet, emit=on, model=model, effort=effort)
             status.update(label=f"{len(res.steps)} steps" if res.steps else "Answered", state="error" if res.error
                           else "complete", expanded=False)
     log.append({"role": "assistant", "text": res.text, "steps": res.steps, "model": res.model, "cost": res.cost_usd,

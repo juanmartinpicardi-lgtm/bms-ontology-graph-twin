@@ -277,6 +277,14 @@ export default function () {
   function fit() {
     const main = document.querySelector('[data-testid="stMain"]');
     const scrolled = main ? main.scrollTop : 0;
+    // The agent dock's top: level with the first box under the page header, wherever the header ends.
+    const hd = document.querySelector('.st-key-projbar, .st-key-areabar');
+    if (hd) {
+      const top = Math.round(hd.getBoundingClientRect().bottom + scrolled
+                             + (parseFloat(getComputedStyle(hd).marginBottom) || 0) + GAP) + "px";
+      if (document.documentElement.style.getPropertyValue("--pm-dock-top") !== top)
+        document.documentElement.style.setProperty("--pm-dock-top", top);
+    }
     for (const box of document.querySelectorAll('[class*="st-key-box_fit_"]')) {
       const r = box.getBoundingClientRect();
       if (!r.width) continue;
