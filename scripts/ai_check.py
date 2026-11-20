@@ -26,6 +26,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("models", nargs="*", default=list(MODELS))
     ap.add_argument("--job", help="run one job on a sample input instead")
+    ap.add_argument("--model", help="with --job: run it on this model instead of the job's default (no escalation)")
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
     args = ap.parse_args()
 
@@ -39,7 +40,7 @@ def main() -> int:
         cands = ["Zone_Air_Temperature_Sensor", "Discharge_Air_Temperature_Sensor", "Zone_Air_Temperature_Setpoint"]
         res = run_job("point_class", {"name": "ZN-T", "path": "Floor 2/VAV-2-14", "equipment_class": "VAV",
                                       "candidates": "\n".join(f"- {c}" for c in cands), "candidate_list": cands},
-                      router=router, store=store, project="ai_check")
+                      router=router, store=store, project="ai_check", model=args.model)
         print(res.output, res.model, f"${res.cost_usd:.5f}", f"{res.latency_s:.2f}s", res.attempts)
         return 0
 
