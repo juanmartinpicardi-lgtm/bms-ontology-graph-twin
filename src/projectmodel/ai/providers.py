@@ -120,7 +120,8 @@ class VertexClaude:
         if client is None:
             from anthropic import AnthropicVertex
 
-            client = AnthropicVertex(project_id=config.project, region=config.region_for("claude"), max_retries=2)
+            client = AnthropicVertex(project_id=config.project, region=config.region_for("claude"), max_retries=2,
+                                     credentials=config.credentials)
         self.client = client
 
     def complete(self, model: Model, req: ModelRequest, on_text: OnText = None) -> ModelResponse:
@@ -233,7 +234,8 @@ class VertexGemini:
         if client is None:
             from google import genai
 
-            client = genai.Client(vertexai=True, project=config.project, location=config.region_for("gemini"))
+            client = genai.Client(vertexai=True, project=config.project, location=config.region_for("gemini"),
+                                  credentials=config.credentials)
         self.client = client
 
     def complete(self, model: Model, req: ModelRequest, on_text: OnText = None) -> ModelResponse:

@@ -71,6 +71,46 @@ def test_project_from_environment(monkeypatch):
         load_config.cache_clear()
 
 
+def test_service_account_from_the_app_secrets(monkeypatch):
+    """Streamlit Cloud: no ADC, a key in the app's secrets gives the credentials and the project."""
+    from google.oauth2 import service_account
+
+    from projectmodel.ai import config
+    seen = {}
+
+    def fake_info(info, scopes):
+        seen.update(info=info, scopes=scopes)
+        return "CREDS"
+
+    for var in ("PM_AI", "PM_GCP_PROJECT", "GOOGLE_CLOUD_PROJECT", "PM_VERTEX_REGION"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setattr(config, "_secrets", lambda: {"service_account": {"type": "service_account",
+                                                                         "project_id": "sa-proj"}})
+    monkeypatch.setattr(service_account.Credentials, "from_service_account_info", staticmethod(fake_info))
+    load_config.cache_clear()
+    try:
+        cfg = load_config()
+        assert cfg.ready and cfg.project == "sa-proj" and cfg.credentials == "CREDS"
+        assert seen["scopes"] == ["https://www.googleapis.com/auth/cloud-platform"]
+        assert "CREDS" not in repr(cfg)
+        client = SimpleNamespace()
+        assert VertexGemini(cfg, client=client).client is client  # a given client is used as is
+    finally:
+        load_config.cache_clear()
+
+
+def test_a_broken_key_turns_calls_off_with_the_reason(monkeypatch):
+    from projectmodel.ai import config
+    monkeypatch.delenv("PM_AI", raising=False)
+    monkeypatch.setattr(config, "_secrets", lambda: {"service_account": {"type": "service_account"}})
+    load_config.cache_clear()
+    try:
+        cfg = load_config()
+        assert not cfg.ready and "service account key" in cfg.why_off
+    finally:
+        load_config.cache_clear()
+
+
 def test_every_prompt_loads_and_every_built_job_has_one():
     ids = {p.id for p in all_prompts()}
     assert {"point_class", "agent_chat"} <= ids
