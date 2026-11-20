@@ -103,7 +103,8 @@ class GraphTools:
 
     def find_nodes(self, query: str = "", cls: str = "", kind: str = "", limit: int = 20) -> dict:
         words = query.lower().split()
-        hits = []
+        compact = "".join(ch for ch in query.lower() if ch.isalnum())
+        hits, loose = [], []
         for n in self.tree.by_id.values():
             if n.id == UNPLACED or (kind and n.kind != kind) or (cls and not self._is_a(n.cls, cls)):
                 continue
@@ -111,6 +112,9 @@ class GraphTools:
             text = f"{n.label} {eq.label if eq and eq is not n else ''}".lower()
             if all(w in text for w in words):
                 hits.append(n)
+            elif compact and compact in "".join(ch for ch in text if ch.isalnum()):
+                loose.append(n)  # the same name with other separators: "VAV-1-2-14" for "VAV 1-2-14"
+        hits = hits or loose
         hits.sort(key=lambda n: (n.kind != "equipment", len(n.label), n.label))
         return {"total": len(hits), "nodes": [self._brief(n) for n in hits[:limit]]}
 
