@@ -19,6 +19,7 @@ model call off (the app then runs on rules only, as before).
 from __future__ import annotations
 
 import functools
+import json
 import os
 import shutil
 import subprocess
@@ -53,22 +54,40 @@ def _plain(value: Any) -> Any:
     return value
 
 
+def _on_streamlit() -> bool:
+    try:
+        from streamlit.runtime import exists
+
+        return exists()
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def _secrets() -> dict:
     """Section [ai] of the app's secrets: Streamlit's store when the app runs in Streamlit (on Cloud too), else the
     repo's `.streamlit/secrets.toml`."""
-    try:
-        import streamlit as st
-        from streamlit.runtime import exists
+    if _on_streamlit():
+        try:
+            import streamlit as st
 
-        if exists():
             return _plain(st.secrets.get("ai", {}))
-    except Exception:  # noqa: BLE001 - no secrets at all is a normal state
-        pass
+        except Exception:  # noqa: BLE001 - no secrets at all is a normal state
+            pass
     path = ROOT / ".streamlit" / "secrets.toml"
     try:
         return tomllib.loads(path.read_text()).get("ai", {}) if path.exists() else {}
     except (OSError, tomllib.TOMLDecodeError):
         return {}
+
+
+def _secret_sections() -> list[str]:
+    """The names (only) of the app's top-level secrets, to say what is there when [ai] is missing."""
+    try:
+        import streamlit as st
+
+        return sorted(st.secrets.keys())
+    except Exception:  # noqa: BLE001
+        return []
 
 
 def _service_account(info: dict | None) -> Any:
@@ -102,11 +121,21 @@ def _adc_project() -> str | None:
         return None
 
 
-@functools.cache
+_ENV = ("PM_AI", "PM_GCP_PROJECT", "GOOGLE_CLOUD_PROJECT", "PM_VERTEX_REGION", "PM_VERTEX_REGION_GEMINI")
+
+
 def load_config() -> AIConfig:
+    """The config for the secrets and environment as they are now. Built once per distinct value: secrets saved on
+    Streamlit Cloud while the server runs reach the next call, with no restart."""
+    sec = _secrets()
+    return _load(json.dumps([sec, [os.environ.get(v) for v in _ENV]], sort_keys=True, default=str))
+
+
+@functools.lru_cache(maxsize=8)
+def _load(key: str) -> AIConfig:
+    sec = json.loads(key)[0]
     if os.environ.get("PM_AI", "").lower() in ("off", "0", "false", "none"):
         return AIConfig(project=None, enabled=False, why_off="PM_AI=off")
-    sec = _secrets()
     key = sec.get("service_account") or None
     try:
         credentials = _service_account(key)
@@ -120,6 +149,14 @@ def load_config() -> AIConfig:
     if g := os.environ.get("PM_VERTEX_REGION_GEMINI"):
         regions["gemini"] = g
     if not project:
-        return AIConfig(project=None, region=region, enabled=False,
-                        why_off="no GCP project: set PM_GCP_PROJECT or run `gcloud config set project …`")
+        if _on_streamlit():
+            seen = ", ".join(f"[{n}]" for n in _secret_sections()) or "none"
+            why = (f"no GCP project: the app's secrets need an [ai.service_account] section (secret sections seen: "
+                   f"{seen}; see docs/deploy_streamlit_cloud.md)")
+        else:
+            why = "no GCP project: set PM_GCP_PROJECT or run `gcloud config set project …`"
+        return AIConfig(project=None, region=region, enabled=False, why_off=why)
     return AIConfig(project=project, region=region, regions=regions, credentials=credentials)
+
+
+load_config.cache_clear = _load.cache_clear  # type: ignore[attr-defined] - tests reset the cache this way

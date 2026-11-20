@@ -43,6 +43,7 @@ class Router:
     def __init__(self, config: AIConfig | None = None, providers: dict[str, Provider] | None = None):
         self.config = config or load_config()
         self._providers: dict[str, Provider] = dict(providers or {})
+        self._given = bool(providers)  # tests hand in their providers: ready whatever the config says
         self.not_enabled: dict[str, str] = {}  # model key -> why, learnt from calls (404 / 403 from Vertex AI)
 
     def first_enabled(self, keys: list[str]) -> str:
@@ -51,7 +52,7 @@ class Router:
 
     @property
     def ready(self) -> bool:
-        return bool(self._providers) or self.config.ready
+        return self._given or self.config.ready
 
     def why_not_ready(self) -> str:
         return "" if self.ready else (self.config.why_off or "model calls are off")
@@ -123,15 +124,21 @@ def parse_json(text: str) -> Any:
 
 
 _default: Router | None = None
+_pinned = False
 
 
 def default_router() -> Router:
+    """The app's router, rebuilt when the config changes (e.g. secrets saved while the server runs)."""
     global _default
-    if _default is None:
-        _default = Router()
+    if _pinned and _default is not None:
+        return _default
+    cfg = load_config()
+    if _default is None or _default.config is not cfg:
+        _default = Router(cfg)
     return _default
 
 
 def set_default_router(router: Router | None) -> None:
-    global _default
-    _default = router
+    """Use this router everywhere (tests), or None to go back to the one built from the config."""
+    global _default, _pinned
+    _default, _pinned = router, router is not None

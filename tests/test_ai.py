@@ -99,6 +99,33 @@ def test_service_account_from_the_app_secrets(monkeypatch):
         load_config.cache_clear()
 
 
+def test_secrets_saved_while_running_reach_the_next_call(monkeypatch):
+    """Streamlit Cloud: secrets pasted while the server runs must not need a restart."""
+    from projectmodel.ai import calls, config
+    for var in ("PM_AI", "PM_GCP_PROJECT", "GOOGLE_CLOUD_PROJECT"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setattr(config, "_gcloud_project", lambda: None)
+    monkeypatch.setattr(config, "_adc_project", lambda: None)
+    monkeypatch.setattr(config, "_on_streamlit", lambda: True)
+    monkeypatch.setattr(config, "_secret_sections", lambda: ["google_maps_api_key"])
+    secrets = {}
+    monkeypatch.setattr(config, "_secrets", lambda: dict(secrets))
+    load_config.cache_clear()
+    calls.set_default_router(None)
+    try:
+        before = calls.default_router()
+        assert not before.ready and "[google_maps_api_key]" in before.why_not_ready()
+        before.provider("gemini")  # a call while off creates NoModel: still not ready
+        assert not before.ready
+        secrets["project"] = "now-set"
+        after = calls.default_router()
+        assert after is not before and after.ready and after.config.project == "now-set"
+        assert calls.default_router() is after  # same secrets: same router (it keeps what it learnt)
+    finally:
+        load_config.cache_clear()
+        calls.set_default_router(None)
+
+
 def test_a_broken_key_turns_calls_off_with_the_reason(monkeypatch):
     from projectmodel.ai import config
     monkeypatch.delenv("PM_AI", raising=False)
