@@ -200,6 +200,19 @@ def test_mapper_uses_the_point_class_job_for_leftovers_only(km):
     assert any(n["method"] == "llm" for n in store.nodes("t", "point"))
 
 
+def test_a_sure_model_still_goes_to_review(km):
+    from projectmodel.mapper.pipeline import LLM_CAP
+    from projectmodel.scoring.score import DEFAULT_ACCEPT
+    store = Store(":memory:")
+    recs = [RawRecord("p1", "test", "t.csv", 1, "Sply Tmp Alt", path="AHU-1")]
+    clf = JobClassifier(km, router=Router(READY, providers={"claude": _PickFirst(0.99)}))
+    Mapper(km, llm=clf, llm_below=0.99).run(recs, store, "t")
+    (n,) = [n for n in store.nodes("t", "point") if n["method"] == "llm"]
+    assert n["confidence"] == LLM_CAP < DEFAULT_ACCEPT
+    logged = json.loads(store.conn.execute("SELECT output FROM llm_calls").fetchone()[0])[0]["text"]
+    assert json.loads(logged)["confidence"] == 0.99  # the model's own number is kept in the log
+
+
 def test_mapper_without_credentials_keeps_the_rules_answer(km):
     store = Store(":memory:")
     clf = JobClassifier(km, router=Router(AIConfig(project=None, enabled=False, why_off="off")))
@@ -219,10 +232,13 @@ class _PickFirst:
     """Answers point_class with the first candidate, like a cautious model."""
     name = "pick-first"
 
+    def __init__(self, confidence=0.7):
+        self.confidence = confidence
+
     def complete(self, model, req, on_text=None):
         user = req.messages[0]["content"]
         first = next(line[2:].split(":")[0] for line in user.splitlines() if line.startswith("- "))
-        text = answer(first, 0.7)
+        text = answer(first, self.confidence)
         return ModelResponse(text, [{"type": "text", "text": text}], [], "end_turn", 50, 10, model=model.key)
 
 
