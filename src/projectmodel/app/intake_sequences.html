@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequences</title>
+<!--__FONTS__-->
+<style>
+  /* The sequences of operation read in the guided setup, with every unit, group of units and point they name linked
+     to the knowledge graph: solid when the graph has it, dashed when the sequence needs it and the graph does not
+     have it yet. A click shows what it links to; from there the document, the building or the graph opens. */
+  :root { --bg: #ffffff; --panel: #f7f7f7; --line: #d0d0d0; --text: #303030; --muted: #707070; --accent: #1792e5;
+    --on: #ffffff; --ok: #007000; --gap: #c98a12; --val: #8250df; --eq: #1792e5; --pt: #1a9e95; --seq: #c2369b; }
+  :root[data-theme="dark"] { --bg: #303030; --panel: #272727; --line: #505050; --text: #f0f0f0; --muted: #a0a0a0;
+    --accent: #64c3ff; --on: #1e1e1e; --ok: #68d560; --gap: #f2b134; --val: #b99cff; --eq: #64c3ff; --pt: #39c5bb;
+    --seq: #ef6fc8; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 500 14px/1.6 "Roobert", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  body { display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+  #seqs { display: flex; gap: 6px; padding: 2px 2px 10px; overflow-x: auto; scrollbar-width: thin; }
+  #seqs button { flex: none; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer;
+    border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  #seqs button small { color: var(--muted); font-weight: 500; margin-left: 4px; }
+  #seqs button.on { background: var(--seq); border-color: var(--seq); color: var(--on); }
+  #seqs button.on small { color: var(--on); opacity: .8; }
+  #main { display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr auto; min-height: 0; gap: 10px; }
+  @media (min-width: 820px) { #main { grid-template-columns: 1fr 300px; grid-template-rows: 1fr; } }
+  #doc { overflow: auto; padding: 4px 10px 30px 2px; min-height: 0; }
+  #doc h3 { margin: 0 0 2px; font-size: 18px; }
+  .meta { color: var(--muted); font-size: 12.5px; margin-bottom: 8px; }
+  .applies { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 12px; }
+  .sec { margin: 12px 0; }
+  .sec h4 { margin: 0 0 2px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .sec p { margin: 0; }
+  .m { cursor: pointer; border-bottom: 2px solid; padding: 0 1px; border-radius: 2px; transition: background .12s; }
+  .m.equipment, .m.units { color: var(--eq); border-color: var(--eq); font-weight: 600; }
+  .m.point { color: var(--pt); border-color: var(--pt); font-weight: 600; }
+  .m.gap { border-bottom-style: dashed; border-color: var(--gap); }
+  .m:hover, .m.sel { background: color-mix(in srgb, currentColor 16%, transparent); }
+  .v { color: var(--val); font-weight: 700; white-space: nowrap; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 6px;
+    padding: 1px 7px; font-size: 12.5px; cursor: pointer; background: transparent; color: var(--text); font: inherit;
+    font-size: 12.5px; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.eq { color: var(--eq); } .chip.pt { color: var(--pt); }
+  #insp { background: var(--panel); border-radius: 10px; padding: 12px 14px; overflow: auto; min-height: 0;
+    max-height: 100%; font-size: 13px; }
+  @media (max-width: 819px) { #insp { max-height: 42vh; } }
+  #insp h4 { margin: 0 0 2px; font-size: 16px; }
+  #insp .kick { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  #insp .acts { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 6px; }
+  #insp .acts button { border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 4px;
+    padding: 4px 10px; font: inherit; font-weight: 600; cursor: pointer; }
+  #insp .acts button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  #insp ul { list-style: none; padding: 0; margin: 6px 0 0; }
+  #insp li { padding: 4px 0; border-top: 1px solid var(--line); }
+  #insp .find { margin-top: 8px; padding: 8px 10px; border-radius: 6px; border-left: 3px solid; }
+  #insp .find.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 10%, transparent); }
+  #insp .find.gap { border-color: var(--gap); background: color-mix(in srgb, var(--gap) 12%, transparent); }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 12px; margin-top: 10px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 16px; height: 0; border-bottom: 2px solid; display: inline-block; }
+  .muted { color: var(--muted); }
+  #none { padding: 30px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<div id="seqs"></div>
+<div id="main"><div id="doc"></div><div id="insp"></div></div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const human = c => String(c || "").replace(/_/g, " ");
+let D = null, seq = null, sel = null;
+const send = value => parent.postMessage({ pm: "event", value }, "*");
+
+function R(ref) { return seq.refs[ref]; }
+function chip(ref) {
+  const r = R(ref);
+  return `<button class="chip ${r.kind === "point" ? "pt" : "eq"}" data-ref="${esc(ref)}">${esc(r.label)}</button>`;
+}
+function renderList() {
+  $("#seqs").innerHTML = D.sequences.map(s => `<button data-id="${esc(s.id)}" class="${s.id === seq.id ? "on" : ""}">
+    ${esc(s.title)}<small>${s.applies.length} units</small></button>`).join("");
+}
+function renderDoc() {
+  const seg = g => {
+    if (g.value) return `<span class="v">${esc(g.t)}</span>`;
+    if (!g.ref) return esc(g.t);
+    const r = R(g.ref);
+    return `<span class="m ${r.kind} ${r.status}${sel === g.ref ? " sel" : ""}" data-ref="${esc(g.ref)}" title="${esc(r.status === "gap" ? "Not in the graph yet" : r.label)}">${esc(g.t)}</span>`;
+  };
+  const f = seq.found;
+  $("#doc").innerHTML = `<h3>${esc(seq.title)}</h3>
+    <div class="meta">${esc(seq.src.sheet || seq.src.file || "")}${seq.src.page != null ? " · page " + (seq.src.page + 1) : ""} ·
+      ${f.ok || 0} links found in the graph${f.gap ? ` · <b style="color:var(--gap)">${f.gap} not in the graph yet</b>` : ""}</div>
+    <div class="kick muted" style="font-size:12px">Applies to</div>
+    <div class="applies">${seq.applies.map(chip).join("") || '<span class="muted">No scheduled unit yet</span>'}
+      ${seq.missing.map(t => `<span class="chip" style="border-style:dashed;cursor:default">${esc(t)}</span>`).join("")}</div>
+    ${seq.sections.map(x => `<div class="sec"><h4>${esc(x.letter)}. ${esc(x.title)}</h4><p>${x.segs.map(seg).join("")}</p></div>`).join("")}
+    <div class="legend"><span><i style="border-color:var(--eq)"></i>equipment</span><span><i style="border-color:var(--pt)"></i>point</span>
+      <span><i style="border-color:var(--gap);border-bottom-style:dashed"></i>not in the graph yet</span>
+      <span><b style="color:var(--val)">55 °F</b>&nbsp;setpoint</span></div>`;
+}
+function acts(fact, label) {
+  if (!fact) return "";
+  return `<div class="acts"><button data-act="doc" data-fact="${esc(fact)}">Open in the document</button>
+    <button data-act="twin" data-fact="${esc(fact)}">On the building</button>
+    <button data-act="graph" data-fact="${esc(fact)}">In the graph</button></div>`;
+}
+function renderInsp() {
+  if (!sel) {
+    const sp = seq.setpoints || [];
+    $("#insp").innerHTML = `<div class="kick">Sequence</div><h4>${esc(seq.title)}</h4>
+      <div class="muted">${seq.applies.length} units · ${seq.sections.length} sections · ${sp.length} setpoints</div>
+      ${acts(seq.fact)}
+      <div class="muted" style="margin-top:6px">Click a highlighted word: the unit, the units or the points it names.</div>
+      ${sp.length ? `<ul>${sp.slice(0, 12).map(s => `<li><span class="v">${esc(s.value)} ${esc(s.unit)}</span> <span class="muted">· ${esc(s.section)}.</span> ${esc(s.text)}</li>`).join("")}</ul>` : ""}`;
+    return;
+  }
+  const r = R(sel);
+  let h = `<div class="kick">${r.kind === "units" ? "Units" : r.kind === "point" ? "Point" : "Equipment"}</div><h4>${esc(r.label)}</h4>`;
+  if (r.kind === "equipment") {
+    h += `<div class="muted">${esc(human(r.cls))}${r.points != null ? ` · ${r.points} points` : ""}</div>`;
+    h += r.status === "ok" ? acts(r.fact) + (seq.applies.includes(sel)
+        ? `<div class="find ok">In the graph: this sequence controls it.</div>`
+        : `<div class="find ok">In the graph. This sequence names it (an interlock or a request); another sequence controls it.</div>`)
+      : `<div class="find gap">The sequence names this unit, but no schedule or plan has it.</div>`;
+  } else if (r.kind === "units") {
+    h += `<div class="muted">Every unit this sequence applies to</div><div class="applies" style="margin-top:8px">${r.units.map(chip).join("")}</div>`;
+  } else {
+    if (r.cls) h += `<div class="muted">The sequence implies: ${esc(human(r.cls))}</div>`;
+    if (r.status === "ok") {
+      h += `<div class="find ok">${r.count} point${r.count > 1 ? "s" : ""} of its units match.</div><ul>` +
+        r.points.map(p => `<li><button class="chip pt" data-fact="${esc(p.fact)}" data-act="graph">${esc(p.unit)} · ${esc(p.label)}</button>
+          <span class="muted">${esc(p.description)} · ${esc(human(p.cls))}</span></li>`).join("") + `</ul>`;
+    } else {
+      h += `<div class="find gap">The sequence needs this, and the graph has no such point on its units yet. The
+        controls submittal (step 4) adds the points; if it still is not there after, it is missing from the job.</div>`;
+    }
+  }
+  $("#insp").innerHTML = h;
+}
+function select(ref) {
+  sel = sel === ref ? null : ref;
+  document.querySelectorAll(".m").forEach(e => e.classList.toggle("sel", e.dataset.ref === sel));
+  renderInsp();
+}
+function setSeq(id) {
+  seq = D.sequences.find(s => s.id === id) || D.sequences[0];
+  sel = null;
+  renderList(); renderDoc(); renderInsp();
+  $("#doc").scrollTop = 0;
+}
+document.addEventListener("click", e => {
+  const s = e.target.closest("#seqs button");
+  if (s) return setSeq(s.dataset.id);
+  const a = e.target.closest("[data-act]");
+  if (a) {
+    if (a.dataset.act === "doc") send({ name: "pick", id: a.dataset.fact, doc: true });
+    else send({ name: "view", view: a.dataset.act, id: a.dataset.fact });
+    return;
+  }
+  const m = e.target.closest("[data-ref]");
+  if (m) select(m.dataset.ref);
+});
+addEventListener("message", e => {
+  if (e.data?.pm !== "data") return;
+  D = e.data.data;
+  document.documentElement.dataset.theme = D.theme === "light" ? "light" : "dark";
+  if (!D.sequences.length) { $("#doc").innerHTML = `<div id="none">No sequence read yet.</div>`; $("#seqs").innerHTML = ""; $("#insp").innerHTML = ""; return; }
+  const keep = seq && D.sequences.some(s => s.id === seq.id) ? seq.id : D.start;
+  setSeq(keep);
+});
+parent.postMessage({ pm: "ready" }, "*");
+</script>
+</body>
+</html>

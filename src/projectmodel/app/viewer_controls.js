@@ -52,14 +52,15 @@ const ViewerControls = (() => {
       </div>
       <div class="grp">
         <button data-a="fit" title="Fit to view (F)" aria-label="Fit to view">${svg("fit")}</button>
-        <button data-a="rotate" title="Auto-rotate (R)" aria-label="Auto-rotate" aria-pressed="false">${svg("rotate")}</button>
+        ${opts.rotate ? `<button data-a="rotate" title="Auto-rotate (R)" aria-label="Auto-rotate" aria-pressed="false">${svg("rotate")}</button>` : ""}
         ${fs ? `<button data-a="full" title="Full screen" aria-label="Full screen">${svg("full")}</button>` : ""}
         <button data-a="help" title="Controls and shortcuts (?)" aria-label="Help" aria-pressed="false">${svg("help")}</button>
       </div>`;
     document.body.appendChild(root);
 
     const rows = list => list.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
-    const keys = [["+ / −", "Zoom in / out", null], ["F", "Fit to view", null], ["R", "Auto-rotate on / off", null],
+    const keys = [["+ / −", "Zoom in / out", null], ["F", "Fit to view", null],
+                  ...(opts.rotate ? [["R", "Auto-rotate on / off", null]] : []),
                   ...(opts.keys || []), ["?", "This help", null]];
     const help = document.createElement("div");
     help.id = "vcHelp";
@@ -69,10 +70,13 @@ const ViewerControls = (() => {
 
     let rotating = false;
     const rotateBtn = root.querySelector('[data-a="rotate"]'), helpBtn = root.querySelector('[data-a="help"]');
+    const listeners = [];
     function setRotate(on) {
+      if (!opts.rotate) return;
       rotating = on;
       rotateBtn.setAttribute("aria-pressed", on);
       opts.rotate(on);
+      listeners.forEach(fn => fn(on));
     }
     function toggleHelp(on = !help.classList.contains("open")) {
       help.classList.toggle("open", on);
@@ -105,7 +109,7 @@ const ViewerControls = (() => {
     // Any drag or wheel by the user stops the auto-rotation, so the scene never fights the hand.
     const stop = () => { if (rotating) setRotate(false); };
     for (const ev of ["pointerdown", "wheel"]) (opts.surface || document).addEventListener(ev, stop, { passive: true });
-    return { setRotate, toggleHelp };
+    return { setRotate, toggleHelp, onRotate: fn => listeners.push(fn), rotating: () => rotating };
   }
 
   return { mount };

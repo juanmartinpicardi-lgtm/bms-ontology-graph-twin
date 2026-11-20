@@ -25,6 +25,8 @@ from .fonts import with_fonts
 
 SEEDS = Path(__file__).resolve().parents[2] / "data/sites"
 GOOGLE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
+PLACES_URL = "https://places.googleapis.com/v1/places:searchText"
+PLACES_FIELDS = "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.addressComponents"
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 USER_AGENT = "projectmodel-prototype/0.1"  # Nominatim's policy asks for an identifying agent, not a library default
 # Our address parts <- the provider's (first one present wins).
@@ -66,6 +68,37 @@ def _get(url: str, params: dict) -> object:
         raise LocateError(f"could not reach {urllib.parse.urlsplit(url).netloc}: {e}") from e
 
 
+def _post(url: str, body: dict, headers: dict) -> object:
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
+                                 headers={"User-Agent": USER_AGENT, "Content-Type": "application/json", **headers})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        raise LocateError(f"{urllib.parse.urlsplit(url).netloc}: HTTP {e.code}") from e
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+        raise LocateError(f"could not reach {urllib.parse.urlsplit(url).netloc}: {e}") from e
+
+
+def parse_places(data: dict, query: str = "") -> list[Location]:
+    """Google Places text search: buildings and places by name ("Troop D headquarters, Springfield") as well as
+    by address, with the place's own name in front of its address."""
+    out = []
+    for r in data.get("places", []):
+        by_type = {t: c for c in r.get("addressComponents", []) for t in c.get("types", [])}
+        parts = {k: next((by_type[t]["longText"] for t in ts if t in by_type), "") for k, ts in GOOGLE_PARTS.items()}
+        if "country" in by_type:
+            parts["country_code"] = by_type["country"].get("shortText", "")
+        name, address = r.get("displayName", {}).get("text", ""), r.get("formattedAddress", "")
+        loc = r.get("location", {})
+        if "latitude" not in loc:
+            continue
+        label = address if not name or address.startswith(name) else f"{name}, {address}"
+        out.append(Location(label, float(loc["latitude"]), float(loc["longitude"]), "google", r.get("id", ""),
+                            {k: v for k, v in parts.items() if v}, (r.get("types") or [""])[0], query))
+    return out
+
+
 def parse_google(data: dict, query: str = "") -> list[Location]:
     status = data.get("status")
     if status == "ZERO_RESULTS":
@@ -105,7 +138,16 @@ class GoogleGeocoder:
         self.key = key
 
     def search(self, query: str) -> list[Location]:
-        return parse_google(_get(GOOGLE_URL, {"address": query, "key": self.key}), query)
+        """Places first (it knows buildings by name), then the geocoder (addresses); the same spot only once. A key
+        without the Places API (New) gets the geocoder alone."""
+        try:
+            found = parse_places(_post(PLACES_URL, {"textQuery": query, "maxResultCount": 5},
+                                       {"X-Goog-Api-Key": self.key, "X-Goog-FieldMask": PLACES_FIELDS}), query)
+        except LocateError:
+            found = []
+        seen = {(round(x.lat, 4), round(x.lng, 4)) for x in found}
+        geo = parse_google(_get(GOOGLE_URL, {"address": query, "key": self.key}), query)
+        return found + [g for g in geo if (round(g.lat, 4), round(g.lng, 4)) not in seen]
 
 
 class NominatimGeocoder:
@@ -176,58 +218,108 @@ def osm_embed_url(lat: float, lng: float, span: float = 0.004) -> str:
 
 GOOGLE_MAP = """<!doctype html><html><head><meta charset="utf-8">
 <!--__FONTS__--><style>
-html, body { height: 100%; margin: 0; font: 500 14px "Roobert", system-ui, sans-serif; }
-#map2d, #map3d { position: absolute; inset: 0; } #map3d { display: none; }
-#bar { position: absolute; z-index: 5; top: 10px; left: 10px; display: flex; gap: 6px; }
-#bar button { border: 0; border-radius: 4px; padding: 7px 14px; background: #303030; color: #F0F0F0; cursor: pointer;
-  font: inherit; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,.25); }
-#bar button.on { background: #64C3FF; color: #303030; }
-#msg { position: absolute; z-index: 5; bottom: 10px; left: 10px; right: 10px; padding: 8px 10px; border-radius: 4px;
-  background: #303030; color: #F0F0F0; display: none; }
+:root { --bg: #1e1e1e; --panel: rgba(48,48,48,.94); --text: #f0f0f0; --muted: #a0a0a0; --accent: #64c3ff;
+  --on: #1e1e1e; --line: #505050; }
+:root[data-theme="light"] { --bg: #f0f0f0; --panel: rgba(255,255,255,.95); --text: #303030; --muted: #707070;
+  --accent: #1792e5; --on: #ffffff; --line: #d0d0d0; }
+html, body { height: 100%; margin: 0; background: var(--bg); font: 500 13px "Roobert", system-ui, sans-serif; color: var(--text); }
+/* Two views of the same spot: the satellite map (2D) and Google's photorealistic 3D. Side by side in a wide frame,
+   one above the other in a tall one; or one of them alone. */
+#views { position: absolute; inset: 0; display: grid; gap: 8px; grid-template: "a" 1fr "b" 1fr / 1fr; }
+@media (min-aspect-ratio: 7/5) { #views { grid-template: "a b" 1fr / 1fr 1fr; } }
+#views.only2d { grid-template: "a" 1fr / 1fr; } #views.only3d { grid-template: "b" 1fr / 1fr; }
+#views.only2d #p3, #views.only3d #p2 { display: none; }
+.pane { position: relative; border-radius: 8px; overflow: hidden; background: #111; }
+#p2 { grid-area: a; } #p3 { grid-area: b; }
+#map2d, #map3d { position: absolute; inset: 0; }
+.tag { position: absolute; z-index: 5; left: 10px; bottom: 10px; padding: 4px 9px; border-radius: 6px;
+  background: var(--panel); color: var(--text); font-weight: 700; font-size: 12px; pointer-events: none; }
+#bar { position: absolute; z-index: 6; top: 10px; left: 10px; display: flex; gap: 2px; padding: 3px;
+  border-radius: 9px; background: var(--panel); box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+#bar button { border: 0; border-radius: 6px; padding: 6px 12px; background: transparent; color: var(--text);
+  cursor: pointer; font: inherit; font-weight: 700; }
+#bar button.on { background: var(--accent); color: var(--on); }
+#bar .sep { width: 1px; background: var(--line); margin: 4px 3px; }
+.msg { position: absolute; z-index: 5; left: 10px; right: 10px; top: 10px;
+  padding: 10px 12px; border-radius: 6px; background: var(--panel); color: var(--text); display: none; text-align: center; }
 </style></head><body>
-<div id="bar"><button id="b2" class="on">Map</button><button id="b3">3D</button></div>
-<div id="map2d"></div><div id="map3d"></div><div id="msg"></div>
+<div id="views">
+  <div class="pane" id="p2"><div id="map2d"></div><div class="tag">Satellite · 2D</div><div class="msg" id="m2"></div></div>
+  <div class="pane" id="p3"><div id="map3d"></div><div class="tag">Photorealistic · 3D</div><div class="msg" id="m3"></div></div>
+</div>
+<div id="bar"><button data-v="both" class="on">2D + 3D</button><button data-v="only2d">2D</button>
+  <button data-v="only3d">3D</button><span class="sep"></span><button id="orbit" class="on" title="Turn slowly around the building">Orbit</button></div>
 <script>
 const SITE = /*__SITE__*/null;
+document.documentElement.dataset.theme = SITE.theme;
 const pos = {lat: SITE.lat, lng: SITE.lng};
 const $ = id => document.getElementById(id);
-const say = t => { $("msg").textContent = t; $("msg").style.display = t ? "block" : "none"; };
-window.gm_authFailure = () => say("Google rejected the API key: check that Maps JavaScript API is enabled and the " +
-                                  "key's restrictions allow this page.");
-let built3d = false;
-async function show3d() {
-  if (!built3d) {
+const say = (id, t) => { $(id).textContent = t; $(id).style.display = t ? "block" : "none"; };
+window.gm_authFailure = () => say("m2", "Google rejected the API key: check that the Maps JavaScript API is enabled and " +
+                                        "the key's restrictions allow this page.");
+let map3d = null, orbiting = true;
+const CAM = {center: {...pos, altitude: 0}, range: 420, tilt: 62, heading: 20};
+// The orbit turns the camera's heading around the building, a little every frame; any drag or wheel stops it.
+let spin = null;
+function orbit(on) {
+  orbiting = on;
+  $("orbit").className = on ? "on" : "";
+  cancelAnimationFrame(spin); spin = null;
+  if (!on || !map3d) return;
+  const step = () => { map3d.heading = ((map3d.heading || 0) + 0.06) % 360; spin = requestAnimationFrame(step); };
+  spin = requestAnimationFrame(step);
+}
+// The 3D camera looks at a point given in metres above sea level, so it needs the ground's height there: from Google's
+// elevation service (the Elevation API on the same key). Without it, the view looks straight down from high up, where
+// the ground's height does not matter.
+async function groundHeight() {
+  try {
+    const { ElevationService } = await google.maps.importLibrary("elevation");
+    const r = await new ElevationService().getElevationForLocations({locations: [pos]});
+    return r.results?.[0]?.elevation ?? null;
+  } catch (e) { return null; }
+}
+async function build3d() {
+  try {
     const { Map3DElement, Marker3DElement } = await google.maps.importLibrary("maps3d");
-    const map = new Map3DElement({center: {...pos, altitude: 0}, range: 600, tilt: 60, heading: 0, mode: "HYBRID"});
-    map.append(new Marker3DElement({position: pos, label: SITE.label}));
-    $("map3d").append(map);
-    built3d = true;
+    const ground = await groundHeight();
+    if (ground === null) {
+      Object.assign(CAM, {center: {...pos, altitude: 0}, range: 1700, tilt: 0});
+      say("m3", "Seen from above: enable the Elevation API on this key for the angled view.");
+      setTimeout(() => say("m3", ""), 6000);
+    } else CAM.center = {...pos, altitude: ground + 8};
+    map3d = new Map3DElement({...CAM, mode: "HYBRID"});
+    map3d.append(new Marker3DElement({position: pos, label: SITE.label, altitudeMode: "CLAMP_TO_GROUND"}));
+    $("map3d").append(map3d);
+    if (orbiting) orbit(true);
+    for (const ev of ["pointerdown", "wheel"]) $("map3d").addEventListener(ev, () => orbiting && orbit(false), {capture: true, passive: true});
+  } catch (e) {
+    say("m3", "The 3D view is not available for this key or browser: " + e.message);
   }
 }
-function pick(three) {
-  $("map2d").style.display = three ? "none" : "block";
-  $("map3d").style.display = three ? "block" : "none";
-  $("b2").className = three ? "" : "on";
-  $("b3").className = three ? "on" : "";
-  say("");
-  if (three) show3d().catch(e => say("3D view not available here: " + e.message));
+function view(v) {
+  $("views").className = v === "both" ? "" : v;
+  document.querySelectorAll("#bar [data-v]").forEach(b => b.className = b.dataset.v === v ? "on" : "");
+  dispatchEvent(new Event("resize"));
 }
+document.querySelectorAll("#bar [data-v]").forEach(b => b.onclick = () => view(b.dataset.v));
+$("orbit").onclick = () => orbit(!orbiting);
 function init() {
-  const map = new google.maps.Map($("map2d"), {center: pos, zoom: 18, mapTypeId: "hybrid", tilt: 0,
-    mapTypeControlOptions: {position: google.maps.ControlPosition.TOP_RIGHT}, fullscreenControl: false});
+  const map = new google.maps.Map($("map2d"), {center: pos, zoom: 19, mapTypeId: "hybrid", tilt: 0,
+    mapTypeControl: false, streetViewControl: true, fullscreenControl: true, rotateControl: false});
   new google.maps.Marker({position: pos, map, title: SITE.label});
-  $("b2").onclick = () => pick(false);
-  $("b3").onclick = () => pick(true);
+  build3d();
 }
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=__KEY__&v=beta&loading=async&callback=init"></script>
 </body></html>"""
 
 
-def google_map_html(lat: float, lng: float, label: str, browser_key: str) -> str:
-    """A navigable Google map (satellite with labels) and a photorealistic 3D view of the same spot. The key is
-    visible to the browser, as with any Maps JavaScript page: restrict it to this app's address in the console."""
-    site = json.dumps({"lat": lat, "lng": lng, "label": label}).replace("</", "<\\/")
+def google_map_html(lat: float, lng: float, label: str, browser_key: str, theme: str = "dark") -> str:
+    """The exact spot twice: Google's satellite map (2D, with labels and Street View) and its photorealistic 3D view,
+    turning slowly around the building. The key is visible to the browser, as with any Maps JavaScript page: restrict
+    it to this app's address in the console."""
+    site = json.dumps({"lat": lat, "lng": lng, "label": label, "theme": theme}).replace("</", "<\\/")
     return with_fonts(GOOGLE_MAP).replace("/*__SITE__*/null", site).replace("__KEY__", urllib.parse.quote(browser_key, safe=""))
 
 
