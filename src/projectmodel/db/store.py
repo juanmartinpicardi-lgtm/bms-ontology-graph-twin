@@ -68,7 +68,14 @@ CREATE TABLE IF NOT EXISTS llm_calls (
     output      TEXT,
     cost_usd    REAL NOT NULL DEFAULT 0,
     latency_s   REAL NOT NULL DEFAULT 0,
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    job         TEXT,                        -- the job in ai/jobs.py (point_class, agent_chat...)
+    prompt      TEXT,                        -- prompt id and version, e.g. point_class@1
+    input_tokens  INTEGER NOT NULL DEFAULT 0,
+    output_tokens INTEGER NOT NULL DEFAULT 0,
+    cached_tokens INTEGER NOT NULL DEFAULT 0,
+    ok          INTEGER NOT NULL DEFAULT 1,  -- 0: the call failed or its output was invalid
+    error       TEXT
 );
 CREATE TABLE IF NOT EXISTS notes (
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -122,6 +129,19 @@ class Store:
         self.conn.row_factory = sqlite3.Row
         self._migrate_methods()
         self.conn.executescript(SCHEMA)
+        self._migrate_llm_calls()
+
+    LLM_CALL_COLUMNS = {"job": "TEXT", "prompt": "TEXT", "input_tokens": "INTEGER NOT NULL DEFAULT 0",
+                        "output_tokens": "INTEGER NOT NULL DEFAULT 0", "cached_tokens": "INTEGER NOT NULL DEFAULT 0",
+                        "ok": "INTEGER NOT NULL DEFAULT 1", "error": "TEXT"}
+
+    def _migrate_llm_calls(self) -> None:
+        """Older databases have llm_calls without the job, prompt, token and outcome columns: add them."""
+        have = {r[1] for r in self.conn.execute("PRAGMA table_info(llm_calls)")}
+        with self.conn:
+            for col, decl in self.LLM_CALL_COLUMNS.items():
+                if col not in have:
+                    self.conn.execute(f"ALTER TABLE llm_calls ADD COLUMN {col} {decl}")
 
     def _migrate_methods(self) -> None:
         """Older databases check method (or a node's kind) against a shorter list; rebuild those tables with the
@@ -186,13 +206,18 @@ class Store:
                               (seconds, json.dumps(summary), project, revision))
 
     def log_llm_call(self, project: str, revision: int, provider: str, model: str | None, input: str,
-                     output: str | None, cost_usd: float, latency_s: float) -> None:
+                     output: str | None, cost_usd: float, latency_s: float, *, job: str | None = None,
+                     prompt: str | None = None, input_tokens: int = 0, output_tokens: int = 0,
+                     cached_tokens: int = 0, ok: bool = True, error: str | None = None) -> int:
         with self.conn:
-            self.conn.execute(
-                "INSERT INTO llm_calls (project, revision, provider, model, input, output, cost_usd, latency_s)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                (project, revision, provider, model, input, output, cost_usd, latency_s),
+            cur = self.conn.execute(
+                "INSERT INTO llm_calls (project, revision, provider, model, input, output, cost_usd, latency_s, job,"
+                " prompt, input_tokens, output_tokens, cached_tokens, ok, error)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (project, revision, provider, model, input, output, cost_usd, latency_s, job, prompt, input_tokens,
+                 output_tokens, cached_tokens, int(ok), error),
             )
+        return cur.lastrowid
 
     def nodes(self, project: str, kind: str | None = None) -> list[sqlite3.Row]:
         q, args = "SELECT * FROM nodes WHERE project = ?", [project]

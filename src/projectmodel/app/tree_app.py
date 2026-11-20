@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import notes  # noqa: E402
+from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.shell import active_project, box  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.equipment_view import load_anchors  # noqa: E402
@@ -194,6 +195,8 @@ def tree_tab():
             st.info("Select equipment on the left.")
             return
         n = tree.by_id[df.iloc[sel[0]]["id"]]
+        if n.id != UNPLACED:
+            screen.focus("equipment", n.id, n.label)
         st.subheader(n.label)
         st.caption(" › ".join(a.label for a in tree.path(n.id)))
         if n.attrs.get("template") in load_anchors():
@@ -243,6 +246,7 @@ def tree_tab():
                                               min_value=0, max_value=1, format="%.2f")})
         if pev.selection.rows:
             p = tree.by_id[pts.iloc[pev.selection.rows[0]]["id"]]
+            screen.select([("point", p.id, p.label)])
             st.markdown(f"**{p.label}** · `{p.attrs.get('source_id', '')}`")
             provenance_table([fact(f"class = {p.cls or '(none)'}", p.prov), fact(f"on {n.label}", p.via)]
                              + behaviour_facts(tree, p.id))

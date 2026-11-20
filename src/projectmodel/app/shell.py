@@ -479,6 +479,8 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
         set_project(project)
     st.session_state["_project_pick"] = project
     site = site_of(project)
+    from projectmodel.app import screen
+    screen.project(project, site.name)
     with st.container(key="projbar", gap="small"):
         with st.container(key="titlebar", horizontal=True, vertical_alignment="center", gap="small"):
             page_title(site.name)

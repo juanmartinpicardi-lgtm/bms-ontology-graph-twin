@@ -1,0 +1,100 @@
+# Schedule column layouts of True Engineering Group (M-4xx sheets), seeded from intake/schedules.py LAYOUTS.
+# A layout is chosen when its title words appear in the schedule's title; columns follow the equipment tag, in
+# order. Names ending in _cfm, _kw, _gpm... are numbers. Phase M3 makes the reader load this file instead of LAYOUTS.
+layouts:
+- title: FAN POWERED
+  columns:
+  - make
+  - model
+  - unit_size
+  - inlet
+  - cooling_cfm
+  - min_cfm
+  - fan_type
+  - heating_cfm
+  - fan_volts
+  - heat_kw
+  - leaving_air_f
+  - heater_volts
+- title: VAV TERMINAL
+  columns:
+  - make
+  - model
+  - inlet
+  - cooling_cfm
+  - heating_cfm
+  - min_cfm
+  - heat_kw
+  - leaving_air_f
+  - heater_volts
+- title: CHILLER
+  columns:
+  - make
+  - model
+  - tons
+  - ambient_f
+  - gpm
+  - pressure_drop_ft
+  - ewt_f
+  - lwt_f
+  - volts
+- title: PUMP
+  columns:
+  - make
+  - model
+  - suction
+  - discharge
+  - gpm
+  - head_ft
+  - hp
+  - rpm
+- title: MINI-SPLIT
+  columns:
+  - make
+  - outdoor_model
+  - indoor_model
+  - design_db_wb
+  - heating_design
+  - cooling_mbh
+  - heating_mbh
+  - volts
+- title: UNIT HEATER
+  columns:
+  - make
+  - model
+  - kw
+  - amps
+  - breaker
+  - volts
+- title: AIR HANDLING
+  columns:
+  - make
+  - supply_cfm
+  - outside_cfm
+  - supply_esp
+  - supply_fan_hp
+  - supply_volts
+  - exhaust_cfm
+  - exhaust_esp
+  - exhaust_fan_hp
+  - exhaust_volts
+  - preheat_cfm
+  - preheat_ewt_lwt
+  - preheat_kw
+  - preheat_volts
+  - cooling_sensible_mbh
+  - cooling_mbh
+  - cooling_eat
+  - cooling_lat
+  - chw_ewt_lwt
+  - chw_gpm
+  - chw_wpd_ft
+  - humidifier_make
+  - humidifier_cfm
+  - humidifier_lbs_hr
+  - humidifier_kw
+  - humidifier_volts
+  - weight_lbs
+- title: HYDRONIC SPECIALTIES
+  columns:
+  - description

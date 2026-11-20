@@ -13,6 +13,8 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
+from projectmodel.app import screen  # noqa: E402
+from projectmodel.app.bridge import frame  # noqa: E402
 from projectmodel.app.shell import active_project, box, get_store, knowledge_model  # noqa: E402
 from projectmodel.projects import label, list_projects  # noqa: E402
 from projectmodel.viz import graph_payload, render_html  # noqa: E402
@@ -54,4 +56,9 @@ with info, box("graph_info", "This graph", "hub", fit=True):
 # Labels come from source exports; the viewer escapes every string it puts into the page.
 # The viewer takes the app's light/dark theme so its background matches the page around it.
 with graph, box("graph_view", fit=True):
-    st.iframe(render_html(payload, st.context.theme.type), height=760)
+    # A click on a node says what is selected: kept for the agent's context chips.
+    ev = frame(render_html(payload, st.context.theme.type), None, 760, key=f"graph_{project}", title="Graph 3D")
+if ev and ev.get("name") == "select":
+    screen.remember("graph", ev)
+if (picked := screen.recall("graph")) and picked.get("kind") in ("equipment", "point", "location"):
+    screen.focus(picked["kind"], picked["id"], picked.get("label") or picked["id"])

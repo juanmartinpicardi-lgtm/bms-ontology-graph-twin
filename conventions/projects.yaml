@@ -1,5 +1,13 @@
 # Which convention scopes apply to which project ("<site>/<variant>"), merged in layer order:
 # knowledge model <- contractor/* <- customer/* <- site/*. A project not listed here runs blind.
 
+#
+# The same list names the scopes whose memory and skills apply (knowledge/, spec-memory-skills §4), including
+# designer/* scopes and parties with no naming rules yet; those have no conventions file and are skipped here.
+
 alpha/names_paths: [site/alpha]
 alpha/names_only: [site/alpha]
+# Troop D Crime Lab added through the guided setup (test package): designer from the title block, contractor from
+# the submittal cover.
+crime-lab-demo/documents: [designer/true-engineering-group, contractor/ozark-valley-controls]
+troop-d/documents: [designer/true-engineering-group, contractor/ozark-valley-controls]

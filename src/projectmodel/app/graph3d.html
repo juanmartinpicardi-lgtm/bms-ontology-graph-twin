@@ -304,7 +304,10 @@ const Graph = ForceGraph3D({ controlType: "orbit" })(el)
   .linkDirectionalParticleWidth(1.6)
   .linkDirectionalParticleSpeed(0.006)
   .linkLabel(l => `<div class="tip">${esc(byId.get(l.s).label)} <b>${esc(REL[l.rel]?.label || l.rel)}</b> ${esc(byId.get(l.t).label)}</div>`)
-  .onNodeClick(n => { selectNode(n.id, true); if (n.fact && parent !== window) parent.postMessage({ pm: "event", value: { name: "pick", id: n.fact } }, "*"); })
+  .onNodeClick(n => { selectNode(n.id, true); if (parent === window) return;
+    // A fact of the guided setup picks that fact; a graph node tells the app what is selected (agent context).
+    parent.postMessage({ pm: "event", value: n.fact ? { name: "pick", id: n.fact }
+                                                 : { name: "select", id: n.id, label: n.label, kind: n.kind } }, "*"); })
   .onLinkClick(l => selectLink(l))
   .onBackgroundClick(() => clearSelection())
   .onNodeHover(n => { el.style.cursor = n ? "pointer" : null; })

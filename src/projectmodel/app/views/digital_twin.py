@@ -15,6 +15,8 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
+from projectmodel.app import screen  # noqa: E402
+from projectmodel.app.bridge import frame  # noqa: E402
 from projectmodel.app.shell import active_project, box, get_store  # noqa: E402
 from projectmodel.projects import list_projects, site_of  # noqa: E402
 from projectmodel.twin_view import render_html, twin_payload  # noqa: E402
@@ -35,4 +37,12 @@ payload["links"] = {e["id"]: "/Equipment_3D?" + urlencode({"project": project, "
                     for e in payload["equip"] if e["type"] in ("AHU", "VAV", "VAV (dual duct)", "Chiller", "Boiler",
                                                                "Pump")}
 with box("twin", fit=True):  # down to the bottom of the screen; the viewer fills it
-    st.iframe(render_html(payload, st.context.theme.type), height=800)
+    # The viewer says what is selected (a floor, a zone or a unit): kept for the agent's context chips.
+    ev = frame(render_html(payload, st.context.theme.type), None, 800, key=f"twin_{project}", title="Digital twin")
+if ev and ev.get("name") == "context":
+    screen.remember("twin", ev)
+if picked := screen.recall("twin"):
+    if fl := picked.get("floor"):
+        screen.floor(fl["id"], fl["label"])
+    if sel := picked.get("sel"):
+        screen.focus("equipment", sel["id"], sel["label"])

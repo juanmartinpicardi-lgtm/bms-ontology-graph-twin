@@ -170,7 +170,20 @@ function renderToolbar() {
   $("#dock").classList.toggle("on", S.plan);
   $("#legend").innerHTML = legendHTML();
 }
+// Tells the app what is selected (the agent's context), once per change; only inside the app's bridge frame.
+let sentContext = "";
+function emitContext() {
+  if (parent === window) return;
+  const key = (S.floor || "") + "|" + (S.sel || "");
+  if (key === sentContext) return;
+  sentContext = key;
+  const f = S.floor && floorById(S.floor), e = S.sel && byId.get(S.sel);
+  parent.postMessage({ pm: "event", value: { name: "context",
+    floor: f ? { id: f.id, label: f.name } : null,
+    sel: e ? { id: e.id, label: e.label || e.name, type: e.type || "" } : null } }, "*");
+}
 function update(viewOpts = {}) {
+  emitContext();
   renderFilters(); renderCrumbs(); renderFloorNav(); renderDetail(); renderToolbar();
   viewer.set({ color: S.color, match: matches, sel: S.sel, floor: S.floor, ...viewOpts });
   if (S.plan) plan.render({ ...S, match: matches, filtersOn: filtersOn() });

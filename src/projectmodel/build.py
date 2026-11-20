@@ -25,7 +25,7 @@ def map_project(site: str, variant: str, db: Path | str, llm: str = "none", blin
     records = read_blind_export(ROOT / "data/blind" / site / f"{variant}.csv")
     km = load_knowledge_model(conventions=[] if blind else scopes_for(project))
     store = Store(db)
-    summary = Mapper(km, llm=get_provider(llm)).run(records, store, project)
+    summary = Mapper(km, llm=get_provider(llm, km)).run(records, store, project)
     # The sequences' behaviour edges point at mapped nodes: reload them on the graph just built.
     if (behaviour := store_behaviour(store, km, project)) is not None:
         summary["behaviour"] = {k: behaviour[k] for k in ("stored", "edges")} | {"skipped": len(behaviour["skipped"])}

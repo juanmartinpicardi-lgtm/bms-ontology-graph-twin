@@ -50,7 +50,11 @@ class Layer:
 
 
 def scopes_for(project: str, conv_dir: Path = CONV_DIR) -> list[str]:
-    """Scopes that apply to a project ("alpha/names_paths"), in layer order. Unlisted project: none."""
+    """Convention scopes that apply to a project ("alpha/names_paths"), in layer order. Unlisted project: none.
+
+    projects.yaml also lists scopes that only hold memory and skills (designer/*, or a contractor with no naming
+    rules yet); those have no file here and are skipped. The memory loader (memory.py) checks that every listed
+    scope exists somewhere, so a misspelt scope still fails."""
     path = Path(conv_dir) / "projects.yaml"
     if not path.exists():
         return []
@@ -58,7 +62,8 @@ def scopes_for(project: str, conv_dir: Path = CONV_DIR) -> list[str]:
     scopes = data.get(project) or []
     if not isinstance(scopes, list):
         raise ConventionError([f"{path.name}: {project}: must be a list of scopes"])
-    return [str(s) for s in scopes]
+    return [str(s) for s in scopes
+            if str(s).split("/")[0] in LAYER_ORDER and (Path(conv_dir) / f"{s}.yaml").exists()]
 
 
 def load_layers(scopes: list[str], conv_dir: Path = CONV_DIR) -> list[Layer]:
