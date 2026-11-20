@@ -7,7 +7,8 @@ main.py calls `open_dock()` before the page runs and `close_dock()` after it:
   close_dock   the page has published what it shows (app/screen.py): the chips are redrawn from it, each with
                pin and drop. A page that stops early (st.stop) keeps the chips drawn by open_dock.
 
-The dock keeps its conversation across page changes (session state). Collapsed, it is one button at the bottom right.
+The dock keeps its conversation across page changes (session state). It starts collapsed: a round button at the bottom
+right, with a few questions about what is on screen beside it; a click on either opens it. Overview pages have no dock.
 """
 
 from __future__ import annotations
@@ -28,7 +29,8 @@ GAP = 14  # as between the page's boxes (shell: row gap and FIT_JS GAP)
 
 @dataclass
 class Slots:
-    chips: object  # st.empty for the chips row
+    chips: object | None = None  # st.empty for the chips row (open)
+    tips: object | None = None   # st.empty for the questions beside the round button (collapsed)
 
 
 def width() -> int:
@@ -154,11 +156,33 @@ def _css(open_: bool) -> str:
 .st-key-dpill_model [data-testid="stIconMaterial"] {{ color: {c["text2"]} !important; }}
 .st-key-dock_pills [data-testid="stPopoverButton"] svg {{ color: {c["mute"]}; }}
 
-/* Hidden: one button at the bottom right brings it back */
+/* Collapsed: a round button at the bottom right, with questions about the screen beside it */
 .st-key-dock_fab {{ position: fixed !important; right: {GAP + 6}px; bottom: {GAP + 6}px; z-index: 999991;
   width: auto !important; }}
-.st-key-dock_fab [data-testid^="stBaseButton-"] {{ border-radius: 24px; min-height: 48px; padding: 0 20px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.28); }}
+.st-key-dock_fab [data-testid^="stBaseButton-"] {{ width: 52px; height: 52px; min-height: 52px; padding: 0;
+  border-radius: 50%; justify-content: center; background: {c["card"]} !important;
+  border: 2px solid transparent !important; box-shadow: 0 6px 18px rgba(0,0,0,.28);
+  background-image: linear-gradient({c["card"]}, {c["card"]}), linear-gradient(135deg, {c["accent"]}, #C77DFF) !important;
+  background-origin: border-box !important; background-clip: padding-box, border-box !important;
+  transition: transform .12s; }}
+.st-key-dock_fab [data-testid^="stBaseButton-"]:hover {{ transform: scale(1.06); }}
+.st-key-dock_fab [data-testid="stIconMaterial"] {{ font-size: 24px; color: #C77DFF !important; margin: 0; }}
+[data-testid="stLayoutWrapper"]:has(> .st-key-dock_tips),
+[data-testid="stElementContainer"]:has(> .st-key-dock_tips) {{ display: contents; }}
+.st-key-dock_tips {{ position: fixed !important; right: {GAP + 6 + 52 + 12}px; bottom: {GAP + 6}px; z-index: 999990;
+  width: auto !important; max-width: min(380px, 60vw); align-items: flex-end !important; gap: 8px !important; }}
+.st-key-dock_tips [data-testid^="stBaseButton-"] {{ min-height: 36px; height: auto; padding: 6px 14px 6px 8px;
+  border-radius: 10px; border: 1px solid {c["line"]} !important; background: {c["card"]};
+  box-shadow: 0 4px 14px rgba(0,0,0,.18); justify-content: flex-start; max-width: min(380px, 60vw); }}
+.st-key-dock_tips [data-testid^="stBaseButton-"]:hover {{ border-color: {c["accent"]} !important; }}
+.st-key-dock_tips [data-testid^="stBaseButton-"] p {{ font-size: 13.5px; font-weight: 600; color: {c["text"]};
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+.st-key-dock_tips [data-testid="stIconMaterial"] {{ font-size: 16px; width: 26px; height: 26px; border-radius: 50%;
+  display: inline-grid; place-items: center; margin-right: 6px; color: #fff !important; background: {c["good"]}; }}
+.st-key-dtip_1 [data-testid="stIconMaterial"] {{ background: #E8A33D; }}
+.st-key-dtip_2 [data-testid="stIconMaterial"] {{ background: #C77DFF; }}
+.st-key-dock_tips > div:not(:last-child) {{ opacity: .92; }}
+@media (max-width: 700px) {{ .st-key-dock_tips {{ display: none; }} }}
 </style>"""
 
 
@@ -199,14 +223,19 @@ def active_chips() -> list[Chip]:
     return merge_chips(page, st.session_state.get("dock_pinned", []), st.session_state.get("dock_dropped", set()))
 
 
-def open_dock(store) -> Slots | None:
-    open_ = st.session_state.setdefault("dock_open", True)
+def _ask_open(question: str) -> None:
+    st.session_state.update(dock_open=True, dock_ask=question)
+
+
+def open_dock(store) -> Slots:
+    open_ = st.session_state.setdefault("dock_open", False)
     st.html(_css(open_))
     if not open_:
+        tips = st.empty()  # filled after the page ran: questions about what it shows
         with st.container(key="dock_fab", width="content"):
-            st.button("Agent", icon=":material/auto_awesome:", key="dock_show", on_click=_toggle, args=(True,),
-                      type="primary", help="Open the agent")
-        return None
+            st.button("", icon=":material/auto_awesome:", key="dock_show", on_click=_toggle, args=(True,),
+                      help="Ask the agent about this building")
+        return Slots(tips=tips)
     from projectmodel.app import agent_ui
     with st.container(key="dock"):
         agent_ui.header(store)
@@ -215,7 +244,19 @@ def open_dock(store) -> Slots | None:
             st.html('<span class="dock-ctx">Context</span>' + ("".join(_chip_html(c) for c in active_chips()) or
                     '<span class="dock-crumb">Nothing selected: the agent sees the page only.</span>'))
         agent_ui.conversation(store, active_chips(), screen.current())
-    return Slots(chips)
+    return Slots(chips=chips)
+
+
+def _tips(slot, chips: list[Chip]) -> None:
+    """Collapsed: up to three questions about what is on screen, beside the round button. A click opens the dock and
+    asks it."""
+    from projectmodel.app import agent_ui
+    if not agent_ui.router().ready or st.session_state.get("agent_log"):
+        return  # no models, or a conversation is under way: the button alone
+    with slot.container(key="dock_tips", gap="small"):
+        for i, (icon, title, q) in enumerate(agent_ui.suggestions(chips)[:3]):
+            with st.container(key=f"dtip_{i}", width="content"):
+                st.button(title, key=f"dtipb_{i}", icon=f":material/{icon}:", on_click=_ask_open, args=(q,), help=q)
 
 
 def close_dock(slots: Slots | None, store) -> None:
@@ -229,6 +270,10 @@ def close_dock(slots: Slots | None, store) -> None:
         st.session_state["dock_dropped"] = {k for k in st.session_state.get("dock_dropped", set())
                                             if k in {c.key for c in page_chips}}
     if slots is None:
+        return
+    if slots.chips is None:
+        if slots.tips is not None:
+            _tips(slots.tips, active_chips())
         return
     pinned = st.session_state.get("dock_pinned", [])
     chips = active_chips()

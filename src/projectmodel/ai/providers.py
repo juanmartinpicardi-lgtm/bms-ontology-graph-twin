@@ -37,12 +37,15 @@ class ModelNotEnabled(ModelError):
     as data sharing is missing). The router remembers it so callers can move to the job's next model."""
 
 
+def not_enabled(code: Any, message: str) -> bool:
+    """Vertex AI's answer for a model this GCP project cannot call (403 / 404 with a 'not found / no access' text)."""
+    return str(code) in ("403", "404") and any(w in message.lower() for w in (
+        "not found", "access", "data sharing", "permission", "not enabled", "not allowed"))
+
+
 def _status_error(model: Model, code: Any, message: str) -> ModelError:
     text = f"{model.label}: HTTP {code}: {message}"
-    if code in (403, 404) and any(w in message.lower() for w in ("not found", "access", "data sharing", "permission",
-                                                                  "not enabled", "not allowed")):
-        return ModelNotEnabled(text)
-    return ModelError(text)
+    return ModelNotEnabled(text) if not_enabled(code, message) else ModelError(text)
 
 
 def _clean(messages: list[dict]) -> list[dict]:

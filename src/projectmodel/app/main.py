@@ -115,7 +115,9 @@ elif among(projects):
 elif among(shared):
     area_header("Shared knowledge", shared, page)
 else:  # every header has the same two rows (title, tabs), so the title and tabs sit at the same place on every page
-    area_header("Overview", overview, page)
-slots = dock.open_dock(store)  # before the page: a page may st.stop()
+    area_header("Overview", overview, page, agent=False)
+chat = not among(overview)  # the agent works on a building: none on the Overview pages
+slots = dock.open_dock(store) if chat else None  # before the page: a page may st.stop()
 page.run()
-dock.close_dock(slots, store)  # the page has said what it shows: context chips from it
+if chat:
+    dock.close_dock(slots, store)  # the page has said what it shows: context chips from it

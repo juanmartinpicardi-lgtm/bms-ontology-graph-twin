@@ -470,7 +470,7 @@ def _tabs_row(pages: list, current) -> None:
                                                        vertical_alignment="center")
 
 
-def area_header(title: str, pages: list, current) -> None:
+def area_header(title: str, pages: list, current, agent: bool = True) -> None:
     """Areas without a project (Overview, Projects, Shared knowledge). Same rows as a project page's header, so the
     title and tabs sit at the same place on every page: the title with a one-line description, then the tabs."""
     with st.container(key="areabar", gap="small"):
@@ -490,7 +490,7 @@ def area_header(title: str, pages: list, current) -> None:
                     st.selectbox("Project", projects, key="_project_go", format_func=lambda p: site_of(p).name,
                                  label_visibility="collapsed", on_change=_go_project,
                                  help="Open a building: its digital twin, then every project page")
-            top_tools()
+            top_tools(agent)
         _tabs_row(pages, current)
     if st.session_state.pop("_project_open", False):
         st.switch_page("views/digital_twin.py")  # a project opens on its twin
@@ -516,24 +516,27 @@ def _ai_today() -> tuple[int, float]:
     return row[0], row[1]
 
 
-def top_tools() -> None:
-    """The right end of every page's title row: the agent panel, settings, and who you are."""
-    open_ = st.session_state.get("dock_open", True)
+def top_tools(agent: bool = True) -> None:
+    """The right end of every page's title row: the agent panel (not on Overview, which has no agent), settings, and
+    who you are."""
+    open_ = st.session_state.get("dock_open", False)
     with st.container(key="toptools", horizontal=True, vertical_alignment="center", gap="small", width="content"):
-        st.button("", icon=":material/right_panel_close:" if open_ else ":material/right_panel_open:",
-                  key="top_agent", on_click=lambda: st.session_state.update(dock_open=not open_),
-                  help="Hide the agent" if open_ else "Show the agent")
+        if agent:
+            st.button("", icon=":material/right_panel_close:" if open_ else ":material/right_panel_open:",
+                      key="top_agent", on_click=lambda: st.session_state.update(dock_open=not open_),
+                      help="Hide the agent" if open_ else "Show the agent")
         with st.container(key="top_settings", width="content"), st.popover("", icon=":material/settings:",
                                                                             help="Settings"):
             from projectmodel.ai.calls import default_router
-            st.markdown("**Agent**")
-            # The toggles mirror the panel's own buttons, so they are set from its state on every run.
-            st.session_state.update(_top_open=open_, _top_wide=bool(st.session_state.get("dock_wide")))
-            st.toggle("Show the agent panel", key="_top_open",
-                      on_change=lambda: st.session_state.update(dock_open=st.session_state["_top_open"]))
-            st.toggle("Wide panel", key="_top_wide",
-                      on_change=lambda: st.session_state.update(dock_wide=st.session_state["_top_wide"]))
-            st.divider()
+            if agent:
+                st.markdown("**Agent**")
+                # The toggles mirror the panel's own buttons, so they are set from its state on every run.
+                st.session_state.update(_top_open=open_, _top_wide=bool(st.session_state.get("dock_wide")))
+                st.toggle("Show the agent panel", key="_top_open",
+                          on_change=lambda: st.session_state.update(dock_open=st.session_state["_top_open"]))
+                st.toggle("Wide panel", key="_top_wide",
+                          on_change=lambda: st.session_state.update(dock_wide=st.session_state["_top_wide"]))
+                st.divider()
             st.markdown("**Model calls**")
             r = default_router()
             if r.ready:

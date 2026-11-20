@@ -14,7 +14,7 @@ so thinking blocks stay valid). `emit` receives events as they happen, in the AG
 Routing: Sonnet 5.5 at low effort by default; Opus 5.5 when the person asks to think it through, or once the turn
 needs more than HANDOVER tool hops (when that is another model). When the GCP project has not enabled a Claude model,
 the job's contender (Gemini 4 Argon) takes over, with the same tools and history. A model picked in the dock answers
-the whole turn. Every model call is logged by the router (job agent_chat or agent_reason).
+the whole turn (when it is enabled). Every model call is logged by the router (job agent_chat or agent_reason).
 """
 
 from __future__ import annotations
@@ -65,6 +65,7 @@ class TurnResult:
     calls: list[int] = field(default_factory=list)      # llm_calls rows
     cited: list[str] = field(default_factory=list)      # ids cited in the answer
     error: str | None = None
+    note: str | None = None                             # e.g. the picked model was off, another answered
 
 
 def citations(text: str) -> list[str]:
@@ -135,7 +136,8 @@ class Agent:
     def run(self, history: list[dict], question: str, packet: dict,
             emit: Callable[[Event], None] = lambda e: None, model: str | None = None,
             effort: str | None = None) -> TurnResult:
-        """One turn. `model` (a key in ai.models) pins the model for the whole turn: no handover, no fallback.
+        """One turn. `model` (a key in ai.models) pins the model for the whole turn: no handover; when this project
+        cannot call it, the job's model answers and `note` says so.
         `effort` overrides the job's (low | medium | high)."""
         t0 = time.perf_counter()
         system, prompt_ref = self.system()
@@ -144,6 +146,7 @@ class Agent:
         history.append({"role": "user", "content": user})
         job = "agent_reason" if THINK.search(question) else "agent_chat"
         pinned = model is not None
+        asked = model
         model = model or pick_model(self.router, job)
         res = TurnResult(text="", model=model)
         emit(Event("model", {"model": model}))
@@ -157,10 +160,11 @@ class Agent:
                                         project=self.project or "", on_text=lambda d: emit(Event("text", d)))
             except ModelNotEnabled as e:
                 # This project cannot call that model: the job's contender takes the turn (the router remembers).
-                # A model the person picked is not swapped behind their back.
-                if pinned or (nxt := pick_model(self.router, job)) == model:
+                # A picked model too: the person gets an answer, and the answer says which model gave it.
+                if (nxt := pick_model(self.router, job)) == model:
                     res.error = str(e)
                     break
+                pinned = False
                 model = nxt
                 emit(Event("model", {"model": model}))
                 continue
@@ -203,6 +207,9 @@ class Agent:
             # The turn ended without an answer (error or step limit): close it so the next question starts cleanly.
             history.append({"role": "assistant", "content": [{"type": "text", "text": res.error or "(stopped)"}]})
         res.model = model
+        if asked and model != asked and not res.error:
+            res.note = (f"{get_model(asked).label} is not enabled in this Google Cloud project: "
+                        f"{get_model(model).label} answered.")
         res.seconds = round(time.perf_counter() - t0, 2)
         res.cited = citations(res.text)
         return res

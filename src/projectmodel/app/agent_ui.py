@@ -16,7 +16,7 @@ from projectmodel.agent.context import Chip, context_packet
 from projectmodel.agent_tools import GraphTools
 from projectmodel.ai.calls import default_router
 from projectmodel.ai.models import LIVE, MODELS
-from projectmodel.app.shell import DB, knowledge_model
+from projectmodel.app.shell import DB, get_store, knowledge_model
 from projectmodel.memory import KNOWLEDGE_DIR, KnowledgeError, load_knowledge
 from projectmodel.projects import site_of, summaries
 
@@ -78,6 +78,18 @@ def knowledge():
 
 # status ----------------------------------------------------------------------------------------------------------
 
+def router():
+    """The app's router, told which models this GCP project could not call lately (the call log), so a fresh process
+    neither offers them nor tries them first."""
+    r = default_router()
+    if r.ready and not r.learnt:
+        try:
+            r.learn(get_store())
+        except Exception:  # an old database without the log's columns: learn from the calls instead
+            r.learnt = True
+    return r
+
+
 def label_of(key: str) -> str:
     return LIVE.label if key == LIVE.key else model_label(key)
 
@@ -88,18 +100,18 @@ def _short(key: str) -> str:
 
 def answering_model() -> str | None:
     """The model that answers the next typed question: the picked one, else the job's routing."""
-    r = default_router()
+    r = router()
     return (picked()[0] or pick_model(r, "agent_chat")) if r.ready else None
 
 
 def status_line() -> tuple[str, str, bool]:
     """(line under the dock's title, its tooltip, ready)."""
-    r = default_router()
+    r = router()
     if not r.ready:
         return "Models off", r.why_not_ready(), False
     key = answering_model()
-    off = "".join(f" {label_of(k)} is not enabled in this project, so {label_of(key)} answers."
-                  for k in r.not_enabled if k == "sonnet" and key != "sonnet")
+    off = (f" Not enabled in this project: {', '.join(label_of(k) for k in r.not_enabled)}."
+           if r.not_enabled else "")
     return (f"{_short(key)} · Vertex AI", f"GCP project {r.config.project}, region {r.config.region}.{off} Every call "
             "is logged with its cost.", True)
 
@@ -158,6 +170,8 @@ def _show(turn: dict, tools: GraphTools | None) -> None:
         _steps(turn)
         if turn.get("text"):
             st.markdown(render_citations(turn["text"], tools))
+        if turn.get("note"):
+            st.caption(f":material/swap_horiz: {turn['note']}")
         if turn.get("error"):
             st.error(turn["error"], icon=":material/error:")
         if meta := _meta(turn):
@@ -185,9 +199,14 @@ ROUTES = {"auto": ("Auto-route", "auto_awesome", "By the question: brief, or dee
           "thorough": ("Thorough", "psychology", "Thinks longer: slower, for root causes")}
 ROUTE_EFFORT = {"auto": None, "quick": "low", "thorough": "high"}
 PICKS = ["auto", "argon", "hydrogen", "sonnet", "opus", "haiku"]
-PICK_NOTE = {"auto": "Sonnet 5.5 where enabled, else Gemini 4 Argon", "argon": "Steady: 4 to 9 s a step",
-             "hydrogen": "Cheaper; speed varies a lot", "sonnet": "Best balance, where enabled",
-             "opus": "Deepest reasoning, where enabled", "haiku": "Fastest and cheapest, where enabled"}
+PICK_NOTE = {"argon": "Steady: 4 to 9 s a step", "hydrogen": "Cheaper; speed varies a lot",
+             "sonnet": "Best balance", "opus": "Deepest reasoning", "haiku": "Fastest and cheapest"}
+
+
+def picks() -> list[str]:
+    """The models offered in the picker: those this project can call (as far as the call log knows)."""
+    off = router().not_enabled
+    return [k for k in PICKS if k not in off]
 
 
 def picked() -> tuple[str | None, str | None]:
@@ -198,13 +217,18 @@ def picked() -> tuple[str | None, str | None]:
 
 
 def _pick_caption(key: str) -> str:
-    off = " · not enabled in this project" if key in default_router().not_enabled else ""
-    return PICK_NOTE.get(key, "") + off
+    if key == "auto":
+        r = router()
+        return f"Now {_short(pick_model(r, 'agent_chat'))}: the best model this project can call" if r.ready else ""
+    return PICK_NOTE.get(key, "")
 
 
 def pills() -> None:
     route = st.session_state.setdefault("dock_route", "auto")
-    pick = st.session_state.setdefault("dock_model", "auto")
+    shown = picks()
+    if st.session_state.setdefault("dock_model", "auto") not in shown:
+        st.session_state["dock_model"] = "auto"  # found to be off since it was picked
+    pick = st.session_state["dock_model"]
     name, icon, _ = ROUTES.get(route, ROUTES["auto"])
     with st.container(key="dpill_route", width="content"), st.popover(name, icon=f":material/{icon}:",
                                                                         help="How hard the agent thinks"):
@@ -214,8 +238,12 @@ def pills() -> None:
     label = f"Auto · {_short(auto)}" if auto else ("Auto" if pick == "auto" else _short(pick))
     with st.container(key="dpill_model", width="content"), st.popover(label, icon=":material/memory:",
                                                                         help="Which model answers"):
-        st.radio("Model", PICKS, key="dock_model", format_func=lambda k: "Auto" if k == "auto" else _short(k),
-                 captions=[_pick_caption(k) for k in PICKS], label_visibility="collapsed")
+        st.radio("Model", shown, key="dock_model", format_func=lambda k: "Auto" if k == "auto" else _short(k),
+                 captions=[_pick_caption(k) for k in shown], label_visibility="collapsed")
+        if off := [k for k in PICKS if k not in shown]:
+            r = router()
+            st.caption(f"Not enabled in Google Cloud project {r.config.project}: "
+                       f"{', '.join(_short(k) for k in off)}. Turn them on in Vertex AI Model Garden to use them.")
 
 
 # conversations: one at a time in the dock, all of them in the history ---------------------------------------------
@@ -284,8 +312,8 @@ def header(store) -> None:
                   type="tertiary", on_click=lambda: st.session_state.update(dock_wide=not wide),
                   help="Narrower" if wide else "Wider")
         st.button("", icon=":material/close:", key="dock_hide", type="tertiary",
-                  on_click=lambda: st.session_state.update(dock_open=False), help="Hide the agent (bring it back "
-                  "with the Agent button at the bottom right, or from the top bar)")
+                  on_click=lambda: st.session_state.update(dock_open=False), help="Hide the agent (bring it back with the round "
+                  "button at the bottom right, or from the top bar)")
 
 
 def suggestions(chips: list[Chip]) -> list[tuple[str, str, str]]:
@@ -316,11 +344,11 @@ def _ask(question: str) -> None:
 
 
 def welcome(chips: list[Chip], cards: bool = True) -> None:
-    ready = default_router().ready
+    ready = router().ready
     st.html('<div class="dock-welcome"><p>Ask about this building</p><span>The agent reads the knowledge graph, cites '
             'every fact with how far to trust it, and never changes anything. Type, or hold the microphone and '
             'speak.</span></div>' if ready else
-            f'<div class="dock-welcome"><p>Models are off</p><span>{html.escape(default_router().why_not_ready())}'
+            f'<div class="dock-welcome"><p>Models are off</p><span>{html.escape(router().why_not_ready())}'
             '</span></div>')
     for i, (icon, title, q) in enumerate(suggestions(chips) if cards else []):
         st.button(title, key=f"dsug_{i}", icon=f":material/{icon}:", on_click=_ask, args=(q,), width="stretch",
@@ -378,7 +406,7 @@ def conversation(store, chips: list[Chip], state) -> None:
 
 
 def _agent(tools, project, store) -> Agent:
-    return Agent(default_router(), tools=tools, knowledge=knowledge(), project=project,
+    return Agent(router(), tools=tools, knowledge=knowledge(), project=project,
                  person=st.session_state.get("author") or None, store=store)
 
 
@@ -433,6 +461,6 @@ def _answer(question: str, chips: list[Chip], state, tools, project, store, live
             status.update(label=f"{len(res.steps)} steps" if res.steps else "Answered", state="error" if res.error
                           else "complete", expanded=False)
     log.append({"role": "assistant", "text": res.text, "steps": res.steps, "model": res.model, "cost": res.cost_usd,
-                "seconds": res.seconds, "error": res.error, "cited": res.cited})
+                "seconds": res.seconds, "error": res.error, "cited": res.cited, "note": res.note})
     _save(store, project)
     st.rerun()  # redraw the conversation from the log, with the steps folded and the badges final

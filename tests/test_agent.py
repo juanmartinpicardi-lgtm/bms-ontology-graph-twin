@@ -173,13 +173,32 @@ def test_a_picked_model_answers_the_whole_turn():
     assert {req.effort for _, req in gemini.requests} == {"high"}
 
 
-def test_a_picked_model_that_is_off_is_not_swapped():
+def test_a_picked_model_that_is_off_hands_over_and_says_so():
     from projectmodel.ai import ModelNotEnabled
     gemini = Scripted(["Done."])
-    claude = Scripted([ModelNotEnabled("Claude Haiku 5.5: HTTP 404: not found")])
+    claude = Scripted([ModelNotEnabled("Claude Haiku 5.5: HTTP 404: not found"),
+                       ModelNotEnabled("Claude Sonnet 5.5: HTTP 404: not found")])
     r = Router(READY, providers={"claude": claude, "gemini": gemini})
     res = Agent(r, tools=FakeTools(), project="p").run([], "Hi", {}, model="haiku")
-    assert res.model == "haiku" and "404" in res.error and not gemini.requests
+    assert res.model == "argon" and res.error is None and res.text == "Done."
+    assert "Haiku" in res.note and "Argon" in res.note and "haiku" in r.not_enabled
+
+
+def test_the_router_learns_off_models_from_the_call_log(tmp_path):
+    from projectmodel.agent.chat import pick_model
+    store = Store(tmp_path / "kg.sqlite")
+    err = "Claude Sonnet 5.5: HTTP 404: Publisher model ... was not found or your project does not have access to it."
+    store.log_llm_call("p", 0, "vertex-claude", "claude-sonnet-5-5", "{}", None, 0, 1, job="agent_chat", ok=False,
+                       error=err)
+    store.log_llm_call("p", 0, "vertex-claude", "claude-opus-5-5", "{}", None, 0, 1, job="agent_chat", ok=False,
+                       error=err.replace("Sonnet", "Opus"))
+    store.log_llm_call("p", 0, "vertex-claude", "claude-opus-5-5", "{}", "[]", 0, 1, job="agent_chat")  # on since
+    store.log_llm_call("p", 0, "vertex-gemini", "gemini-4-argon", "{}", None, 0, 1, job="agent_chat", ok=False,
+                       error="Gemini 4 Argon: HTTP 503: overloaded")  # a passing problem, not "off"
+    r = Router(READY, providers={"claude": Scripted([]), "gemini": Scripted([])})
+    r.learn(store)
+    assert set(r.not_enabled) == {"sonnet"} and r.learnt
+    assert pick_model(r, "agent_chat") == "argon"
 
 
 def test_no_handover_to_the_same_model():
