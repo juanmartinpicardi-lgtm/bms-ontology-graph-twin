@@ -1017,11 +1017,11 @@ def finish_box() -> None:
                   icon=":material/rocket_launch:", on_click=finish, disabled=not read,
                   help=None if read else "Read at least one document first.")
         if done:
-            st.page_link("views/graph_3d.py", label="Open the project", icon=":material/arrow_forward:")
+            st.page_link("views/digital_twin.py", label="Open the project", icon=":material/arrow_forward:")
     if st.session_state.pop("ab_finished", None):
-        st.session_state["flash"] = (f"{it.name} is ready: its knowledge graph is below, and every part of the "
+        st.session_state["flash"] = (f"{it.name} is ready: its digital twin is below, and every part of the "
                                      "project is in the tabs above.")
-        st.switch_page("views/graph_3d.py")  # land on the project's knowledge graph, in 3D
+        st.switch_page("views/digital_twin.py")  # land on the project's main screen, its twin
 
 
 # ---------------------------------------------------------------- the document steps

@@ -489,11 +489,11 @@ def area_header(title: str, pages: list, current) -> None:
                 with st.container(key="projpick", width="content"):
                     st.selectbox("Project", projects, key="_project_go", format_func=lambda p: site_of(p).name,
                                  label_visibility="collapsed", on_change=_go_project,
-                                 help="Open a building: its project pages, from the tree")
+                                 help="Open a building: its digital twin, then every project page")
             top_tools()
         _tabs_row(pages, current)
     if st.session_state.pop("_project_open", False):
-        st.switch_page("tree_app.py")
+        st.switch_page("views/digital_twin.py")  # a project opens on its twin
 
 
 def _go_project() -> None:

@@ -27,6 +27,8 @@ if not projects:
     st.warning("No mapped projects yet. Run: .venv/bin/python scripts/run_mapper.py alpha names_paths")
     st.stop()
 project = active_project(projects)
+if msg := st.session_state.pop("flash", None):  # just finished the guided setup: the project lands here
+    st.toast(msg, icon=":material/task_alt:")
 
 payload = twin_payload(store, project, site_of(project).name)
 if not any(e["type"].startswith("VAV") for e in payload["equip"]):
