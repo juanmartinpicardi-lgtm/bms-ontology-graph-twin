@@ -71,7 +71,9 @@ JOBS: dict[str, Job] = {j.id: j for j in [
     Job("sequence_read", "Sequences", "sonnet", ("hydrogen",), ("opus",), people="Confirm the logic"),
     Job("submittal_read", "Controls submittal", "hydrogen", ("sonnet",), ("opus",), people="Answer asks"),
     Job("bms_headers", "BMS export: unknown headers", None, (), ("haiku",)),
-    Job("point_class", "Point → class", "haiku", (), ("sonnet",), prompt="point_class", schema=POINT_CLASS_SCHEMA,
+    # Contender: the spec's (Jev, gpt-oss-20b) are not on our Vertex AI project yet; Argon stands in while Claude is
+    # not enabled (live: right class on the sample point, 4.7 s, $0.0023 a point vs Hydrogen's 17 s, $0.0037).
+    Job("point_class", "Point → class", "haiku", ("argon",), ("sonnet",), prompt="point_class", schema=POINT_CLASS_SCHEMA,
         check=_check_point_class, max_tokens=1000, effort="low", status="built",
         people="Review below the threshold"),
     Job("same_unit", "Same unit across documents", "haiku", people="Confirm"),

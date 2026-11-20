@@ -352,35 +352,26 @@ def test_claude_gets_clean_messages_after_gemini_turns():
 def test_not_enabled_models_fall_back_to_the_contender(tmp_path):
     from projectmodel.ai import ModelNotEnabled
     store = Store(tmp_path / "kg.sqlite")
-    from dataclasses import replace
     off = [ModelNotEnabled("Claude Haiku 5.5: HTTP 404: not found"), ModelNotEnabled("Sonnet: HTTP 404: not found")]
     answer_ = '{"class": "Zone_Air_Temperature_Sensor", "confidence": 0.9, "why": "ZN-T"}'
     claude, gemini = Scripted(off), Scripted([answer_, answer_])
     r = Router(READY, providers={"claude": claude, "gemini": gemini})
-    job = JOBS["point_class"]
-    JOBS["point_class"] = replace(job, contender=("argon",))
-    try:
-        assert run_job("point_class", point_values(), router=r, store=store).model == "argon"
-        assert set(r.not_enabled) == {"haiku", "sonnet"}
-        assert run_job("point_class", point_values(), router=r, store=store).model == "argon"
-    finally:
-        JOBS["point_class"] = job
+    assert JOBS["point_class"].contender == ("argon",)
+    assert run_job("point_class", point_values(), router=r, store=store).model == "argon"
+    assert set(r.not_enabled) == {"haiku", "sonnet"}
+    assert run_job("point_class", point_values(), router=r, store=store).model == "argon"
     assert [m for m, _ in claude.requests] == ["haiku", "sonnet"]  # learnt once: the second run goes straight to argon
     oks = sqlite3.connect(tmp_path / "kg.sqlite").execute("SELECT model, ok FROM llm_calls ORDER BY id").fetchall()
     assert oks == [("claude-haiku-5-5", 0), ("claude-sonnet-5-5", 0), ("gemini-4-argon", 1), ("gemini-4-argon", 1)]
 
 
 def test_a_job_that_fails_its_checks_does_not_fall_to_the_contender():
-    from dataclasses import replace
+    gemini = Scripted([])
     r = Router(READY, providers={"claude": Scripted(['{"class": "Made_Up", "confidence": 0.9, "why": "x"}'] * 2),
-                                 "gemini": Scripted([])})
-    job = JOBS["point_class"]
-    JOBS["point_class"] = replace(job, contender=("argon",))
-    try:
-        with pytest.raises(ModelError, match="every model failed"):
-            run_job("point_class", point_values(), router=r)
-    finally:
-        JOBS["point_class"] = job
+                                 "gemini": gemini})
+    with pytest.raises(ModelError, match="every model failed"):
+        run_job("point_class", point_values(), router=r)
+    assert gemini.requests == []
 
 
 def test_status_errors_name_models_that_are_not_enabled():
