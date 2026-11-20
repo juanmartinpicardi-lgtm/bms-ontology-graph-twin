@@ -11,9 +11,10 @@ so thinking blocks stay valid). `emit` receives events as they happen, in the AG
     Event("tool_result", {"name", "summary"})
     Event("model", {"model"})                the model changed (handover to Opus 5.5)
 
-Routing: Sonnet 5.5 by default; Opus 5.5 when the person asks to think it through, or once the turn needs more than
-HANDOVER tool hops. When the GCP project has not enabled a Claude model, the job's contender (Gemini 4 Argon) takes
-over, with the same tools and history. Every model call is logged by the router (job agent_chat or agent_reason).
+Routing: Sonnet 5.5 at low effort by default; Opus 5.5 when the person asks to think it through, or once the turn
+needs more than HANDOVER tool hops (when that is another model). When the GCP project has not enabled a Claude model,
+the job's contender (Gemini 4 Argon) takes over, with the same tools and history. A model picked in the dock answers
+the whole turn. Every model call is logged by the router (job agent_chat or agent_reason).
 """
 
 from __future__ import annotations
@@ -132,26 +133,32 @@ class Agent:
     # the turn ----------------------------------------------------------------------------------------------------
 
     def run(self, history: list[dict], question: str, packet: dict,
-            emit: Callable[[Event], None] = lambda e: None) -> TurnResult:
+            emit: Callable[[Event], None] = lambda e: None, model: str | None = None,
+            effort: str | None = None) -> TurnResult:
+        """One turn. `model` (a key in ai.models) pins the model for the whole turn: no handover, no fallback.
+        `effort` overrides the job's (low | medium | high)."""
         t0 = time.perf_counter()
         system, prompt_ref = self.system()
         tools = self.tool_defs()
         user = f"<context>\n{json.dumps(packet, ensure_ascii=False)}\n</context>\n\n{question}"
         history.append({"role": "user", "content": user})
         job = "agent_reason" if THINK.search(question) else "agent_chat"
-        model = pick_model(self.router, job)
+        pinned = model is not None
+        model = model or pick_model(self.router, job)
         res = TurnResult(text="", model=model)
         emit(Event("model", {"model": model}))
         hops = 0
         for _ in range(MAX_STEPS):
             j = get_job(job)
-            req = ModelRequest(system=system, messages=history, tools=tools, max_tokens=j.max_tokens, effort=j.effort)
+            req = ModelRequest(system=system, messages=history, tools=tools, max_tokens=j.max_tokens,
+                               effort=effort or j.effort)
             try:
                 resp = self.router.call(model, req, job=job, prompt=prompt_ref, store=self.store,
                                         project=self.project or "", on_text=lambda d: emit(Event("text", d)))
             except ModelNotEnabled as e:
                 # This project cannot call that model: the job's contender takes the turn (the router remembers).
-                if (nxt := pick_model(self.router, job)) == model:
+                # A model the person picked is not swapped behind their back.
+                if pinned or (nxt := pick_model(self.router, job)) == model:
                     res.error = str(e)
                     break
                 model = nxt
@@ -182,10 +189,11 @@ class Agent:
                                 **({"is_error": True} if "error" in out else {})})
             history.append({"role": "user", "content": results})
             hops += 1
-            if job == "agent_chat" and hops >= HANDOVER:
-                job, prev = "agent_reason", model
-                model = pick_model(self.router, job)
-                if model != prev:
+            if job == "agent_chat" and hops >= HANDOVER and not pinned:
+                # Hand over to the reasoning model. When that is the same model (no Opus in this project: Argon
+                # both), stay on the chat job: thinking harder half way through costs time and adds little.
+                if (nxt := pick_model(self.router, "agent_reason")) != model:
+                    job, model = "agent_reason", nxt
                     emit(Event("model", {"model": model}))
         else:
             res.error = f"stopped after {MAX_STEPS} steps"

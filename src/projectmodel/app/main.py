@@ -108,8 +108,8 @@ def among(pages):
     return any(p.url_path == page.url_path for p in pages)
 
 
-if among(this_project + twin):  # the twin is a project page too, with its own place on the rail
-    project_header(store, this_project + twin, page, projects[0])
+if among(this_project + twin):  # the twin is a project page too, reached from its own place on the rail
+    project_header(store, this_project, page, projects[0])
 elif among(projects):
     area_header("Projects", projects, page)
 elif among(shared):

@@ -70,8 +70,21 @@
     border-radius: 4px; padding: 5px 8px; font: inherit; }
   input[type=text] { width: 100%; }
   input[type=checkbox] { accent-color: var(--accent); }
-  .toggles { display: flex; flex-wrap: wrap; gap: 6px 12px; }
-  .toggles label { display: flex; gap: 5px; align-items: center; cursor: pointer; }
+  /* The layers, one per line in the order a building's documents add them, each with a switch on the right */
+  .toggles { display: flex; flex-direction: column; gap: 2px; }
+  .toggles .head { color: var(--muted); font-size: 12px; margin: 2px 0 2px; }
+  .toggles label { display: flex; gap: 10px; align-items: center; justify-content: space-between; cursor: pointer;
+    padding: 4px 2px; border-radius: 4px; }
+  .toggles label:hover { background: var(--chip); }
+  .toggles label[hidden] { display: none; }
+  .toggles hr { width: 100%; border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+  .toggles input[type=checkbox] { appearance: none; -webkit-appearance: none; flex: none; margin: 0; position: relative;
+    width: 30px; height: 18px; border-radius: 9px; background: var(--line); cursor: pointer; transition: background .15s; }
+  .toggles input[type=checkbox]::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px;
+    border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform .15s; }
+  .toggles input[type=checkbox]:checked { background: var(--accent); }
+  .toggles input[type=checkbox]:checked::after { transform: translateX(12px); }
+  .toggles input[type=checkbox]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   button { background: var(--chip); color: var(--accent); border: 1px solid var(--accent); border-radius: 4px;
     padding: 5px 10px; font: inherit; font-weight: 700; cursor: pointer; }
   button:hover { background: color-mix(in srgb, var(--accent) 14%, var(--chip)); }
@@ -151,13 +164,15 @@
       <option value="3">3 steps</option>
     </select>
   </label>
-  <div class="toggles">
-    <label><input type="checkbox" id="showPoints" checked> Points</label>
-    <label id="lblLocations" hidden><input type="checkbox" id="showLocations" checked> Floors and rooms</label>
-    <label id="lblSequences" hidden><input type="checkbox" id="showSequences" checked> Sequences</label>
-    <label><input type="checkbox" id="showModel"> Knowledge model layer</label>
-    <label><input type="checkbox" id="showFlow" checked> Animate feeds</label>
-    <label title="Loops, interlocks, resets, requests and modes from the sequences of operation (intent, not as built)"><input type="checkbox" id="showBehaviour"> Behaviour (sequences)</label>
+  <div class="toggles" role="group" aria-label="Layers">
+    <div class="head">Layers, in the order the documents add them</div>
+    <label id="lblLocations" hidden>Floors and rooms <input type="checkbox" role="switch" id="showLocations" checked></label>
+    <label id="lblSequences" hidden>Sequences <input type="checkbox" role="switch" id="showSequences" checked></label>
+    <label title="Loops, interlocks, resets, requests and modes from the sequences of operation (intent, not as built)">Behaviour (sequences) <input type="checkbox" role="switch" id="showBehaviour"></label>
+    <label>Points <input type="checkbox" role="switch" id="showPoints" checked></label>
+    <label>Knowledge model layer <input type="checkbox" role="switch" id="showModel"></label>
+    <hr>
+    <label>Animate feeds <input type="checkbox" role="switch" id="showFlow" checked></label>
   </div>
   <div style="display:flex; gap:6px; align-items:center;">
     <button id="clear">Clear selection</button>
@@ -322,7 +337,7 @@ Object.assign(ctl, { enableDamping: true, dampingFactor: 0.09, zoomToCursor: tru
                      autoRotateSpeed: 0.55, screenSpacePanning: true });
 
 // Fit the camera to the shown nodes. (The library's zoomToFit picked a far too close distance here.)
-function fitView(ms = 800) {
+function fitView(ms = 800, margin = 1) {
   const ns = Graph.graphData().nodes.filter(n => Number.isFinite(n.x));
   if (!ns.length) return;
   const c = ["x", "y", "z"].map(k => ns.reduce((s, n) => s + n[k], 0) / ns.length);
@@ -331,7 +346,7 @@ function fitView(ms = 800) {
   const r = Math.max(10, ds[Math.min(ds.length - 1, Math.floor(ds.length * 0.95))] * 1.08);
   const cam = Graph.camera(), fov = (cam.fov || 40) * Math.PI / 180;
   const half = Math.min(fov, 2 * Math.atan(Math.tan(fov / 2) * (cam.aspect || 1))) / 2;
-  const d = r / Math.sin(half) * 1.05;
+  const d = r / Math.sin(half) * 1.05 * margin;
   const p = Graph.cameraPosition();
   let dir = [p.x - c[0], p.y - c[1], p.z - c[2]];
   const len = Math.hypot(...dir) || 1;
@@ -629,6 +644,30 @@ function renderLegend() {
 
 document.getElementById("project").textContent =
   `${DATA.project} · ${Object.entries(DATA.counts.nodes).map(([k, v]) => `${v} ${k}`).join(" · ")}`;
+// A graph that grew since this browser last showed it (a document was just read, or a project was just finished)
+// bursts out from its centre: every node starts near the middle with a push outwards, and the forces spread it.
+let burst = false;
+if (DATA.burst) {
+  const key = "graph3d-burst:" + String(DATA.burst).split(":")[0];
+  try { burst = localStorage.getItem(key) !== DATA.burst; localStorage.setItem(key, DATA.burst); } catch (e) { burst = true; }
+}
+if (burst) {
+  // Every node starts in a small ball at the centre; heavy damping for the first seconds turns the forces' first
+  // violent push into a visible, smooth burst, then the layout settles as usual.
+  for (const n of nodes) {
+    const u = Math.random() * 2 - 1, a = Math.random() * 2 * Math.PI, s = Math.sqrt(1 - u * u), r = 4 + Math.random() * 14;
+    [n.x, n.y, n.z] = [s * Math.cos(a) * r, s * Math.sin(a) * r, u * r];
+  }
+  Graph.d3VelocityDecay(0.9);
+  [[700, 0.8], [1500, 0.65], [2400, 0.5], [3200, 0.4]].forEach(([t, d]) => setTimeout(() => Graph.d3VelocityDecay(d), t));
+  // Follow it out while it spreads (a big graph spreads for longer), unless the person takes the camera.
+  // The camera stays a little ahead of the spread (margin), then settles on the whole graph.
+  const t1 = performance.now(), follow = setInterval(() => {
+    if (moved) { clearInterval(follow); return; }
+    if (performance.now() - t1 > 6800) { clearInterval(follow); fitted = true; fitView(1400); return; }
+    fitView(550, 1.5);
+  }, 500);
+}
 refresh(true);
 </script>
 </body>

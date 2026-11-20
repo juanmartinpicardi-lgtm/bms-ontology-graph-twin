@@ -162,6 +162,38 @@ def test_gemini_takes_the_turn_when_claude_is_not_enabled():
     assert [m["role"] for m in history] == ["user", "assistant", "user", "assistant"]
 
 
+def test_a_picked_model_answers_the_whole_turn():
+    walk = [tool_use(("find_nodes", {"query": "x"})) for _ in range(HANDOVER + 1)]
+    gemini = Scripted([*walk, "Done."])
+    r = Router(READY, providers={"claude": Scripted([]), "gemini": gemini})
+    res = Agent(r, tools=FakeTools(), project="p").run([], "Where does this come from?", {}, model="hydrogen",
+                                                       effort="high")
+    assert res.model == "hydrogen" and res.text == "Done."
+    assert {m for m, _ in gemini.requests} == {"hydrogen"}  # no handover
+    assert {req.effort for _, req in gemini.requests} == {"high"}
+
+
+def test_a_picked_model_that_is_off_is_not_swapped():
+    from projectmodel.ai import ModelNotEnabled
+    gemini = Scripted(["Done."])
+    claude = Scripted([ModelNotEnabled("Claude Haiku 5.5: HTTP 404: not found")])
+    r = Router(READY, providers={"claude": claude, "gemini": gemini})
+    res = Agent(r, tools=FakeTools(), project="p").run([], "Hi", {}, model="haiku")
+    assert res.model == "haiku" and "404" in res.error and not gemini.requests
+
+
+def test_no_handover_to_the_same_model():
+    """No Opus in the project: Argon does chat and reasoning, so a long walk stays on chat (low effort)."""
+    from projectmodel.ai import ModelNotEnabled
+    walk = [tool_use(("find_nodes", {"query": "x"})) for _ in range(HANDOVER + 1)]
+    gemini = Scripted([*walk, "Done."])
+    claude = Scripted([ModelNotEnabled("Claude Sonnet 5.5: HTTP 404")])
+    r = Router(READY, providers={"claude": claude, "gemini": gemini})
+    r.not_enabled["opus"] = "HTTP 404"
+    res = Agent(r, tools=FakeTools(), project="p").run([], "Where does this come from?", {})
+    assert res.model == "argon" and {req.effort for _, req in gemini.requests} == {"low"}
+
+
 def test_think_it_through_goes_to_opus():
     a, scripted = agent("Here is my reasoning.")
     assert a.run([], "Think it through: why is zone 2-14 warm?", {}).model == "opus"
