@@ -32,6 +32,33 @@ class ModelError(RuntimeError):
     """The model was called and failed (API error, refusal, invalid output)."""
 
 
+class ModelNotEnabled(ModelError):
+    """The model exists but this GCP project cannot call it (not enabled in Model Garden, or a project setting such
+    as data sharing is missing). The router remembers it so callers can move to the job's next model."""
+
+
+def _status_error(model: Model, code: Any, message: str) -> ModelError:
+    text = f"{model.label}: HTTP {code}: {message}"
+    if code in (403, 404) and any(w in message.lower() for w in ("not found", "access", "data sharing", "permission",
+                                                                  "not enabled", "not allowed")):
+        return ModelNotEnabled(text)
+    return ModelError(text)
+
+
+def _clean(messages: list[dict]) -> list[dict]:
+    """Messages for Claude: without our private keys (`_gemini_*`, kept so Gemini gets its thought signatures back)
+    and without the empty text blocks a Gemini turn can leave (Claude refuses them)."""
+    out = []
+    for m in messages:
+        c = m["content"]
+        if isinstance(c, list):
+            c = [{k: v for k, v in b.items() if not k.startswith("_")} if isinstance(b, dict) else b for b in c
+                 if not (isinstance(b, dict) and b.get("type") == "text" and not b.get("text"))]
+            c = c or [{"type": "text", "text": "(no text)"}]
+        out.append({**m, "content": c})
+    return out
+
+
 @dataclass
 class ModelRequest:
     system: str
@@ -104,7 +131,7 @@ class VertexClaude:
             "max_tokens": req.max_tokens,
             # The system prompt is the stable prefix (instructions, knowledge-model excerpt, memory): cache it.
             "system": [{"type": "text", "text": req.system, "cache_control": {"type": "ephemeral"}}],
-            "messages": req.messages,
+            "messages": _clean(req.messages),
         }
         if req.tools:
             kwargs["tools"] = [{k: t[k] for k in _TOOL_KEYS if k in t} for t in req.tools]
@@ -122,7 +149,7 @@ class VertexClaude:
                         on_text(text)
                 msg = stream.get_final_message()
         except anthropic.APIStatusError as e:
-            raise ModelError(f"{model.label}: HTTP {e.status_code}: {e.message}") from e
+            raise _status_error(model, e.status_code, str(e.message)) from e
         except anthropic.APIConnectionError as e:
             raise ModelError(f"{model.label}: connection failed: {e}") from e
         except Exception as e:  # google.auth refresh errors surface here when ADC is missing or expired
@@ -142,21 +169,58 @@ class VertexClaude:
 
 # Gemini ----------------------------------------------------------------------------------------------------------
 
-def _gemini_parts(content: Any) -> list:
+THINKING_LEVEL = {"low": "LOW", "medium": "MEDIUM", "high": "HIGH", "xhigh": "XHIGH", "max": "XHIGH"}
+REFUSAL = {"safety", "prohibited_content", "blocklist", "spii", "recitation", "image_safety"}
+
+
+def _sig(b: dict) -> bytes | None:
+    s = b.get("_gemini_sig")
+    return base64.b64decode(s) if s else None
+
+
+def _tool_output(content: Any) -> Any:
+    """A tool_result's content as a JSON value for Gemini's function response."""
+    if isinstance(content, list):  # text blocks
+        content = "".join(c.get("text", "") for c in content if isinstance(c, dict))
+    if isinstance(content, str):
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError:
+            return content
+    return content
+
+
+def _gemini_parts(content: Any, names: dict[str, str] | None = None) -> list:
+    """Anthropic-shape blocks -> Gemini parts. `names` maps tool_use ids to tool names (a function response needs
+    the name; it is filled as tool_use blocks go by)."""
     from google.genai import types
 
+    names = {} if names is None else names
     if isinstance(content, str):
         return [types.Part.from_text(text=content)]
     parts = []
     for b in content:
         kind = b.get("type")
         if kind == "text":
-            parts.append(types.Part.from_text(text=b["text"]))
+            if b["text"] or _sig(b):
+                parts.append(types.Part(text=b["text"], thought_signature=_sig(b)))
         elif kind in ("image", "document") and b.get("source", {}).get("type") == "base64":
             src = b["source"]
             parts.append(types.Part.from_bytes(data=base64.b64decode(src["data"]), mime_type=src["media_type"]))
+        elif kind == "tool_use":
+            names[b["id"]] = b["name"]
+            gid = b["id"] if "_gemini_id" not in b else b["_gemini_id"]
+            parts.append(types.Part(function_call=types.FunctionCall(id=gid, name=b["name"], args=b.get("input") or {}),
+                                    thought_signature=_sig(b)))
         elif kind == "tool_result":
-            parts.append(types.Part.from_text(text=json.dumps(b.get("content"))))
+            tid = b.get("tool_use_id", "")
+            out = _tool_output(b.get("content"))
+            response = {"error": out} if b.get("is_error") else {"output": out}
+            gid = tid if not tid.startswith("gm_") else None  # our own id for a call Gemini sent without one
+            parts.append(types.Part(function_response=types.FunctionResponse(id=gid, name=names.get(tid, "tool"),
+                                                                             response=response)))
+        elif kind in ("thinking", "redacted_thinking"):
+            continue  # Claude's own reasoning: only Claude can read it back
         else:
             raise ModelError(f"Gemini provider cannot send a {kind!r} block")
     return parts
@@ -173,39 +237,86 @@ class VertexGemini:
         self.client = client
 
     def complete(self, model: Model, req: ModelRequest, on_text: OnText = None) -> ModelResponse:
+        """One model turn. With tools, Gemini's function calls come back as Anthropic tool_use blocks (and tool_result
+        blocks go to Gemini as function responses), so the agent loop is the same for both families. Gemini's thought
+        signatures ride along on the blocks as `_gemini_sig` and go back with the next request, as Gemini requires."""
         from google.genai import errors, types
 
-        if req.tools:
-            raise ModelError("tool use runs on Claude in this prototype; Gemini jobs are single-shot")
+        names: dict[str, str] = {}
         contents = [types.Content(role="model" if m["role"] == "assistant" else "user",
-                                  parts=_gemini_parts(m["content"])) for m in req.messages]
+                                  parts=_gemini_parts(m["content"], names)) for m in req.messages]
         config = types.GenerateContentConfig(system_instruction=req.system, max_output_tokens=req.max_tokens)
         if req.json_schema:
             config.response_mime_type = "application/json"
             config.response_json_schema = req.json_schema
-        chunks, usage, finish = [], None, ""
+        if req.tools:
+            config.tools = [types.Tool(function_declarations=[
+                types.FunctionDeclaration(name=t["name"], description=t.get("description", ""),
+                                          parameters_json_schema=t.get("input_schema") or {"type": "object"})
+                for t in req.tools])]
+            config.automatic_function_calling = types.AutomaticFunctionCallingConfig(disable=True)
+        if req.effort in THINKING_LEVEL:
+            config.thinking_config = types.ThinkingConfig(thinking_level=THINKING_LEVEL[req.effort])
+        blocks: list[dict] = []
+        usage, finish = None, ""
         try:
             for chunk in self.client.models.generate_content_stream(model=model.id, contents=contents, config=config):
-                if chunk.text:
-                    chunks.append(chunk.text)
-                    if on_text:
-                        on_text(chunk.text)
                 usage = chunk.usage_metadata or usage
-                if chunk.candidates and chunk.candidates[0].finish_reason:
-                    finish = str(chunk.candidates[0].finish_reason.value).lower()
+                if not chunk.candidates:
+                    continue
+                cand = chunk.candidates[0]
+                for p in (cand.content.parts if cand.content and cand.content.parts else []):
+                    _add_part(blocks, p, on_text)
+                if cand.finish_reason:
+                    finish = str(cand.finish_reason.value).lower()
         except errors.APIError as e:
-            raise ModelError(f"{model.label}: HTTP {e.code}: {e.message}") from e
+            raise _status_error(model, e.code, str(e.message)) from e
         except Exception as e:
             if type(e).__module__.startswith("google.auth"):
                 raise ModelUnavailable(f"Google credentials: {e}. Run `gcloud auth application-default login`.") from e
             raise
-        text = "".join(chunks)
+        if finish == "malformed_function_call":
+            raise ModelError(f"{model.label} sent a malformed function call")
+        calls = [ToolCall(b["id"], b["name"], b["input"]) for b in blocks if b["type"] == "tool_use"]
+        stop = ("tool_use" if calls else "max_tokens" if finish == "max_tokens" else
+                "refusal" if finish in REFUSAL else "end_turn")
+        text = "".join(b["text"] for b in blocks if b["type"] == "text")
+        if not blocks:
+            blocks = [{"type": "text", "text": ""}]
         prompt = (usage.prompt_token_count or 0) if usage else 0
         cached = (usage.cached_content_token_count or 0) if usage else 0
         out = ((usage.candidates_token_count or 0) + (usage.thoughts_token_count or 0)) if usage else 0
-        return ModelResponse(text=text, content=[{"type": "text", "text": text}], tool_calls=[],
-                             stop_reason=finish, input_tokens=max(0, prompt - cached), output_tokens=out,
-                             cache_read=cached, model=model.key)
+        return ModelResponse(text=text, content=blocks, tool_calls=calls, stop_reason=stop,
+                             input_tokens=max(0, prompt - cached), output_tokens=out, cache_read=cached,
+                             model=model.key)
+
+
+def _add_part(blocks: list[dict], p: Any, on_text: OnText) -> None:
+    """Fold one streamed Gemini part into Anthropic-shape blocks: text joins the text block before it, a function
+    call is a tool_use block. Thoughts are skipped; a signature sits on the block it came with."""
+    sig = base64.b64encode(p.thought_signature).decode() if getattr(p, "thought_signature", None) else None
+    if getattr(p, "thought", False):
+        return
+    if p.function_call:
+        fc = p.function_call
+        n = sum(b["type"] == "tool_use" for b in blocks)
+        block = {"type": "tool_use", "id": fc.id or f"gm_{n}_{fc.name}", "name": fc.name, "input": dict(fc.args or {})}
+        if not fc.id:
+            block["_gemini_id"] = None
+        if sig:
+            block["_gemini_sig"] = sig
+        blocks.append(block)
+        return
+    if p.text is None and not sig:
+        return
+    if blocks and blocks[-1]["type"] == "text" and not blocks[-1].get("_gemini_sig"):
+        blocks[-1]["text"] += p.text or ""
+    else:
+        blocks.append({"type": "text", "text": p.text or ""})
+    if sig:
+        blocks[-1]["_gemini_sig"] = sig
+    if p.text and on_text:
+        on_text(p.text)
 
 
 # No model and scripted -------------------------------------------------------------------------------------------

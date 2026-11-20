@@ -283,17 +283,115 @@ def test_vertex_claude_request_shape_and_response():
 
 
 class _FakeGenai:
-    def __init__(self):
+    """generate_content_stream answering with scripted chunks: each a list of google.genai Parts, the last one with
+    the finish reason and usage."""
+
+    def __init__(self, *turns, finish="STOP"):
+        from google.genai import types
         self.models = self
         self.call = None
+        self.calls = []
+        self.turns = list(turns) or [[[types.Part(text='{"a"')], [types.Part(text=": 1}")]]]
+        self.finish = finish
 
     def generate_content_stream(self, model, contents, config):
+        from google.genai import types
         self.call = (model, contents, config)
+        self.calls.append(self.call)
+        chunks = self.turns.pop(0)
         usage = SimpleNamespace(prompt_token_count=200, cached_content_token_count=50, candidates_token_count=30,
                                 thoughts_token_count=10)
-        cand = SimpleNamespace(finish_reason=SimpleNamespace(value="STOP"))
-        yield SimpleNamespace(text='{"a"', usage_metadata=None, candidates=[SimpleNamespace(finish_reason=None)])
-        yield SimpleNamespace(text=": 1}", usage_metadata=usage, candidates=[cand])
+        for i, parts in enumerate(chunks):
+            last = i == len(chunks) - 1
+            cand = SimpleNamespace(content=types.Content(role="model", parts=parts),
+                                   finish_reason=SimpleNamespace(value=self.finish) if last else None)
+            yield SimpleNamespace(usage_metadata=usage if last else None, candidates=[cand])
+
+
+def test_vertex_gemini_tool_round_trip_keeps_signatures():
+    from google.genai import types
+    sig = b"\x01sig"
+    fake = _FakeGenai(
+        [[types.Part(text="thinking", thought=True), types.Part(text="Let me look. ")],
+         [types.Part(function_call=types.FunctionCall(name="describe", args={"node_id": "eq:x"}),
+                     thought_signature=sig)]],
+        [[types.Part(text="It is a VAV [[eq:x]] *likely*.")]])
+    g = VertexGemini(READY, client=fake)
+    tools = [{"name": "describe", "description": "d", "input_schema": {"type": "object", "properties": {}}}]
+    msgs = [{"role": "user", "content": "what is eq:x?"}]
+    seen = []
+    r1 = g.complete(get_model("argon"), ModelRequest("sys", msgs, tools=tools, effort="medium"), seen.append)
+    assert seen == ["Let me look. "] and r1.stop_reason == "tool_use"
+    (tc,) = r1.tool_calls
+    assert tc.name == "describe" and tc.input == {"node_id": "eq:x"}
+    assert r1.content[1]["_gemini_sig"] and r1.content[1]["_gemini_id"] is None
+    _, _, config = fake.call
+    assert config.tools[0].function_declarations[0].name == "describe"
+    assert config.thinking_config.thinking_level.value == "MEDIUM"
+    msgs += [{"role": "assistant", "content": r1.content},
+             {"role": "user", "content": [{"type": "tool_result", "tool_use_id": tc.id, "content": '{"class": "VAV"}'}]}]
+    r2 = g.complete(get_model("argon"), ModelRequest("sys", msgs, tools=tools))
+    assert r2.stop_reason == "end_turn" and r2.text.startswith("It is a VAV")
+    _, contents, _ = fake.call
+    call_part = contents[1].parts[1]
+    assert call_part.function_call.name == "describe" and call_part.thought_signature == sig
+    assert call_part.function_call.id is None
+    resp_part = contents[2].parts[0].function_response
+    assert resp_part.name == "describe" and resp_part.response == {"output": {"class": "VAV"}} and resp_part.id is None
+
+
+def test_claude_gets_clean_messages_after_gemini_turns():
+    from projectmodel.ai.providers import _clean
+    msgs = [{"role": "assistant", "content": [{"type": "text", "text": ""},
+                                              {"type": "tool_use", "id": "gm_0_describe", "name": "describe",
+                                               "input": {}, "_gemini_sig": "AQ==", "_gemini_id": None}]}]
+    assert _clean(msgs)[0]["content"] == [{"type": "tool_use", "id": "gm_0_describe", "name": "describe", "input": {}}]
+    assert msgs[0]["content"][1]["_gemini_sig"] == "AQ=="  # the conversation itself keeps them
+
+
+def test_not_enabled_models_fall_back_to_the_contender(tmp_path):
+    from projectmodel.ai import ModelNotEnabled
+    store = Store(tmp_path / "kg.sqlite")
+    from dataclasses import replace
+    off = [ModelNotEnabled("Claude Haiku 5.5: HTTP 404: not found"), ModelNotEnabled("Sonnet: HTTP 404: not found")]
+    answer_ = '{"class": "Zone_Air_Temperature_Sensor", "confidence": 0.9, "why": "ZN-T"}'
+    claude, gemini = Scripted(off), Scripted([answer_, answer_])
+    r = Router(READY, providers={"claude": claude, "gemini": gemini})
+    job = JOBS["point_class"]
+    JOBS["point_class"] = replace(job, contender=("argon",))
+    try:
+        assert run_job("point_class", point_values(), router=r, store=store).model == "argon"
+        assert set(r.not_enabled) == {"haiku", "sonnet"}
+        assert run_job("point_class", point_values(), router=r, store=store).model == "argon"
+    finally:
+        JOBS["point_class"] = job
+    assert [m for m, _ in claude.requests] == ["haiku", "sonnet"]  # learnt once: the second run goes straight to argon
+    oks = sqlite3.connect(tmp_path / "kg.sqlite").execute("SELECT model, ok FROM llm_calls ORDER BY id").fetchall()
+    assert oks == [("claude-haiku-5-5", 0), ("claude-sonnet-5-5", 0), ("gemini-4-argon", 1), ("gemini-4-argon", 1)]
+
+
+def test_a_job_that_fails_its_checks_does_not_fall_to_the_contender():
+    from dataclasses import replace
+    r = Router(READY, providers={"claude": Scripted(['{"class": "Made_Up", "confidence": 0.9, "why": "x"}'] * 2),
+                                 "gemini": Scripted([])})
+    job = JOBS["point_class"]
+    JOBS["point_class"] = replace(job, contender=("argon",))
+    try:
+        with pytest.raises(ModelError, match="every model failed"):
+            run_job("point_class", point_values(), router=r)
+    finally:
+        JOBS["point_class"] = job
+
+
+def test_status_errors_name_models_that_are_not_enabled():
+    from projectmodel.ai import ModelNotEnabled
+    from projectmodel.ai.providers import _status_error
+    m = get_model("fable")
+    assert isinstance(_status_error(m, 403, "requires data sharing to be enabled"), ModelNotEnabled)
+    assert isinstance(_status_error(m, 404, "Publisher model ... was not found"), ModelNotEnabled)
+    e = _status_error(m, 429, "quota")
+    assert isinstance(e, ModelError) and not isinstance(e, ModelNotEnabled)
+
 
 
 def test_vertex_gemini_request_shape_and_response():

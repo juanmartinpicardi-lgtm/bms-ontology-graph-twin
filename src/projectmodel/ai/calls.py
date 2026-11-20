@@ -15,8 +15,8 @@ from typing import Any
 from ..db.store import Store
 from .config import AIConfig, load_config
 from .models import Model, get_model
-from .providers import (ModelError, ModelRequest, ModelResponse, ModelUnavailable, NoModel, OnText, Provider,
-                        VertexClaude, VertexGemini)
+from .providers import (ModelError, ModelNotEnabled, ModelRequest, ModelResponse, ModelUnavailable, NoModel, OnText,
+                        Provider, VertexClaude, VertexGemini)
 
 
 def _redact(value: Any) -> Any:
@@ -43,6 +43,11 @@ class Router:
     def __init__(self, config: AIConfig | None = None, providers: dict[str, Provider] | None = None):
         self.config = config or load_config()
         self._providers: dict[str, Provider] = dict(providers or {})
+        self.not_enabled: dict[str, str] = {}  # model key -> why, learnt from calls (404 / 403 from Vertex AI)
+
+    def first_enabled(self, keys: list[str]) -> str:
+        """The first of these models not known to be off for this project (the first one when all are)."""
+        return next((k for k in keys if k not in self.not_enabled), keys[0])
 
     @property
     def ready(self) -> bool:
@@ -74,6 +79,8 @@ class Router:
         except ModelUnavailable:
             raise
         except Exception as e:
+            if isinstance(e, ModelNotEnabled):
+                self.not_enabled[m.key] = str(e)
             if store is not None:
                 store.log_llm_call(project, revision, provider.name, m.id, request_log(req), None, 0.0,
                                    round(time.perf_counter() - t0, 3), job=job, prompt=prompt, ok=False,

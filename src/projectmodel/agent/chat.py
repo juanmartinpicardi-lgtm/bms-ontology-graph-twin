@@ -12,7 +12,8 @@ so thinking blocks stay valid). `emit` receives events as they happen, in the AG
     Event("model", {"model"})                the model changed (handover to Opus 5.5)
 
 Routing: Sonnet 5.5 by default; Opus 5.5 when the person asks to think it through, or once the turn needs more than
-HANDOVER tool hops. Every model call is logged by the router (job agent_chat or agent_reason).
+HANDOVER tool hops. When the GCP project has not enabled a Claude model, the job's contender (Gemini 4 Argon) takes
+over, with the same tools and history. Every model call is logged by the router (job agent_chat or agent_reason).
 """
 
 from __future__ import annotations
@@ -30,7 +31,7 @@ from ..ai.calls import Router
 from ..ai.jobs import get_job
 from ..ai.models import get_model
 from ..ai.prompts import load_prompt
-from ..ai.providers import ModelError, ModelRequest, ModelUnavailable
+from ..ai.providers import ModelError, ModelNotEnabled, ModelRequest, ModelUnavailable
 
 MAX_STEPS = 14       # model calls in one turn
 HANDOVER = 4         # tool hops on Sonnet before Opus takes over
@@ -138,7 +139,7 @@ class Agent:
         user = f"<context>\n{json.dumps(packet, ensure_ascii=False)}\n</context>\n\n{question}"
         history.append({"role": "user", "content": user})
         job = "agent_reason" if THINK.search(question) else "agent_chat"
-        model = get_job(job).default
+        model = pick_model(self.router, job)
         res = TurnResult(text="", model=model)
         emit(Event("model", {"model": model}))
         hops = 0
@@ -148,6 +149,14 @@ class Agent:
             try:
                 resp = self.router.call(model, req, job=job, prompt=prompt_ref, store=self.store,
                                         project=self.project or "", on_text=lambda d: emit(Event("text", d)))
+            except ModelNotEnabled as e:
+                # This project cannot call that model: the job's contender takes the turn (the router remembers).
+                if (nxt := pick_model(self.router, job)) == model:
+                    res.error = str(e)
+                    break
+                model = nxt
+                emit(Event("model", {"model": model}))
+                continue
             except (ModelError, ModelUnavailable) as e:
                 res.error = str(e)
                 break
@@ -174,8 +183,10 @@ class Agent:
             history.append({"role": "user", "content": results})
             hops += 1
             if job == "agent_chat" and hops >= HANDOVER:
-                job, model = "agent_reason", get_job("agent_reason").default
-                emit(Event("model", {"model": model}))
+                job, prev = "agent_reason", model
+                model = pick_model(self.router, job)
+                if model != prev:
+                    emit(Event("model", {"model": model}))
         else:
             res.error = f"stopped after {MAX_STEPS} steps"
         if history[-1]["role"] == "user":
@@ -185,6 +196,13 @@ class Agent:
         res.seconds = round(time.perf_counter() - t0, 2)
         res.cited = citations(res.text)
         return res
+
+
+def pick_model(router: Router, job: str) -> str:
+    """The job's default model, or its contender when this GCP project has not enabled the default (Sonnet 5.5 ->
+    Gemini 4 Argon for agent_chat)."""
+    j = get_job(job)
+    return router.first_enabled([m for m in (j.default, *j.contender) if m])
 
 
 def model_label(key: str) -> str:

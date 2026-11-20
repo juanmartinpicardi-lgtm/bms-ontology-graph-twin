@@ -147,6 +147,21 @@ def test_hands_over_to_opus_after_long_walks():
     assert res.model == "opus" and [e.data["model"] for e in events if e.type == "model"] == ["sonnet", "opus"]
 
 
+def test_gemini_takes_the_turn_when_claude_is_not_enabled():
+    from projectmodel.ai import ModelNotEnabled
+    from projectmodel.agent.chat import pick_model
+    gemini = Scripted([tool_use(("find_nodes", {"query": "x"})), "Done."])
+    claude = Scripted([ModelNotEnabled("Claude Sonnet 5.5: HTTP 404: not found")])
+    r = Router(READY, providers={"claude": claude, "gemini": gemini})
+    events, history = [], []
+    res = Agent(r, tools=FakeTools(), project="p").run(history, "Hi", {}, emit=events.append)
+    assert res.error is None and res.model == "argon" and res.text == "Done."
+    assert [e.data["model"] for e in events if e.type == "model"] == ["sonnet", "argon"]
+    assert [m for m, _ in gemini.requests] == ["argon", "argon"] and len(claude.requests) == 1
+    assert pick_model(r, "agent_chat") == "argon"  # the next question goes straight to Gemini
+    assert [m["role"] for m in history] == ["user", "assistant", "user", "assistant"]
+
+
 def test_think_it_through_goes_to_opus():
     a, scripted = agent("Here is my reasoning.")
     assert a.run([], "Think it through: why is zone 2-14 warm?", {}).model == "opus"

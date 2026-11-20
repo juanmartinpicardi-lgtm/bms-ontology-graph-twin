@@ -2,8 +2,9 @@
 output schema.
 
 `run_job` calls the default model; output that fails the schema or the job's own check counts as a failure and goes
-to the next model in the escalation list. Every attempt is logged by the router. The contender is only used when a
-bake-off asks for it explicitly (`model=`).
+to the next model in the escalation list. Every attempt is logged by the router. The contender is used when a
+bake-off asks for it explicitly (`model=`), and in place of the default and escalation models when this GCP project
+has not enabled them (the router learns that from the first 404 / 403).
 
 Jobs marked `planned` have no prompt yet: they document who will do the work and fail clearly if called.
 """
@@ -123,7 +124,11 @@ def run_job(job_id: str, values: dict, *, router: Router | None = None, store: S
     req = ModelRequest(system=system, messages=[{"role": "user", "content": content}], max_tokens=job.max_tokens,
                        json_schema=job.schema, effort=job.effort)
     result = JobResult(job_id, None, "")
-    for key in ([model] if model else job.chain):
+    for key in ([model] if model else job.chain + list(job.contender)):
+        if not model and key in router.not_enabled:
+            continue
+        if not model and key in job.contender and any(a["model"] not in router.not_enabled for a in result.attempts):
+            break  # the contender stands in only for models this project has not enabled
         problem = None
         try:
             resp = router.call(key, req, job=job_id, prompt=prompt.ref, store=store, project=project,

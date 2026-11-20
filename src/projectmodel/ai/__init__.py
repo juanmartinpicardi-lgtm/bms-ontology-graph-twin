@@ -11,7 +11,7 @@
 from .calls import Router, default_router, set_default_router
 from .jobs import JOBS, JobResult, get_job, run_job
 from .models import MODELS, get_model
-from .providers import ModelError, ModelRequest, ModelResponse, ModelUnavailable, Scripted
+from .providers import ModelError, ModelNotEnabled, ModelRequest, ModelResponse, ModelUnavailable, Scripted
 
-__all__ = ["JOBS", "MODELS", "JobResult", "ModelError", "ModelRequest", "ModelResponse", "ModelUnavailable",
+__all__ = ["JOBS", "MODELS", "JobResult", "ModelError", "ModelNotEnabled", "ModelRequest", "ModelResponse", "ModelUnavailable",
            "Router", "Scripted", "default_router", "get_job", "get_model", "run_job", "set_default_router"]

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from projectmodel.agent.chat import Agent, Event, model_label
+from projectmodel.agent.chat import Agent, Event, model_label, pick_model
 from projectmodel.agent.context import Chip, context_packet
 from projectmodel.agent_tools import GraphTools
 from projectmodel.ai.calls import default_router
@@ -78,8 +78,12 @@ def knowledge():
 def status_badge() -> None:
     r = default_router()
     if r.ready:
-        st.badge(f"{model_label('sonnet')} · Vertex AI", color="green", icon=":material/cloud_done:",
-                 help=f"GCP project {r.config.project}, region {r.config.region}. Every call is logged with its cost.")
+        key = pick_model(r, "agent_chat")
+        off = "".join(f" {model_label(k)} is not enabled in this project, so {model_label(key)} answers."
+                      for k in r.not_enabled if k == "sonnet")
+        st.badge(f"{model_label(key).split(' (')[0]} · Vertex AI", color="green", icon=":material/cloud_done:",
+                 help=f"GCP project {r.config.project}, region {r.config.region}.{off} Every call is logged with its "
+                      "cost.")
     else:
         st.badge("Models off", color="gray", icon=":material/cloud_off:", help=r.why_not_ready())
 
