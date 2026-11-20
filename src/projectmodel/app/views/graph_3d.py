@@ -55,8 +55,6 @@ with info, box("graph_info", "This graph", "hub", fit=True):
 
 # Labels come from source exports; the viewer escapes every string it puts into the page.
 # The viewer takes the app's light/dark theme so its background matches the page around it.
-if msg := st.session_state.pop("flash", None):  # just finished the guided setup: the project lands here
-    st.toast(msg, icon=":material/task_alt:")
 # The graph bursts out from its centre the first time this browser shows it at this size (new, or grown).
 payload["burst"] = f"{project}:{sum(kinds.values())}:{sum(rels.values())}"
 with graph, box("graph_view", fit=True):
