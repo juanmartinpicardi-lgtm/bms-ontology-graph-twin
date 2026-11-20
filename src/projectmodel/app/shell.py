@@ -153,6 +153,21 @@ def chrome_css() -> str:
    everywhere; its right end stays clear of the fixed toolbar (theme switch and the menu) in the top right corner */
 .st-key-titlebar {{ min-height: 40px; padding-right: 72px; }}
 .st-key-titlebar [data-testid="stCaptionContainer"] {{ margin-top: 6px; }}
+/* Top right: project, then the agent panel, settings and you, as in an app bar */
+.st-key-projpick [data-baseweb="select"] > div {{ min-height: 36px; border-radius: 6px; min-width: 200px; }}
+.st-key-toptools {{ gap: 8px !important; }}
+.st-key-toptools [data-testid^="stBaseButton-"], .st-key-top_settings [data-testid="stPopoverButton"] {{
+  width: 36px; min-height: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 6px;
+  background: {c["card2"]}; border: 1px solid {c["line"]}; }}
+.st-key-toptools [data-testid^="stBaseButton-"]:hover, .st-key-top_settings [data-testid="stPopoverButton"]:hover {{
+  border-color: {c["tag_line"]}; background: {c["card2"]}; text-decoration: none; }}
+.st-key-toptools [data-testid="stIconMaterial"] {{ font-size: 19px; color: {c["text2"]} !important; }}
+.st-key-top_settings [data-testid="stPopoverButton"] svg, .st-key-top_me [data-testid="stPopoverButton"] svg {{
+  display: none; }}
+.st-key-top_me [data-testid="stPopoverButton"] {{ width: 36px; min-height: 36px; height: 36px; padding: 0;
+  border-radius: 50%; justify-content: center; background: {c["mute"]}; border: 0; }}
+.st-key-top_me [data-testid="stPopoverButton"] p {{ color: {c["bg"]} !important; font-size: 13px; font-weight: 800;
+  letter-spacing: .3px; }}
 
 /* The theme switch, next to the menu: one click between light and dark */
 #pm-theme {{ display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
@@ -463,7 +478,78 @@ def area_header(title: str, pages: list, current) -> None:
             page_title(title)
             if sub := AREA_SUBTITLES.get(title, ""):
                 st.caption(sub, width="content")
+            st.space("stretch")
+            every = list_projects(get_store())
+            projects = main_projects(every)
+            if projects:
+                # Show the active building (its main project) without changing which project is active.
+                cur = active_project(every)
+                st.session_state["_project_go"] = cur if cur in projects else next(
+                    (p for p in projects if p.split("/")[0] == cur.split("/")[0]), projects[0])
+                with st.container(key="projpick", width="content"):
+                    st.selectbox("Project", projects, key="_project_go", format_func=lambda p: site_of(p).name,
+                                 label_visibility="collapsed", on_change=_go_project,
+                                 help="Open a building: its project pages, from the tree")
+            top_tools()
         _tabs_row(pages, current)
+    if st.session_state.pop("_project_open", False):
+        st.switch_page("tree_app.py")
+
+
+def _go_project() -> None:
+    set_project(st.session_state["_project_go"])
+    st.session_state["_project_open"] = True
+
+
+def _initials(name: str) -> str:
+    parts = [w for w in name.replace(".", " ").split() if w[:1].isalnum()]
+    return ("".join(w[0] for w in parts[:2]) or "?").upper()
+
+
+def _set_author() -> None:
+    st.session_state["author"] = st.session_state["_author_input"].strip()
+
+
+def _ai_today() -> tuple[int, float]:
+    row = get_store().conn.execute("SELECT count(*), coalesce(sum(cost_usd), 0) FROM llm_calls "
+                                   "WHERE created_at >= date('now')").fetchone()
+    return row[0], row[1]
+
+
+def top_tools() -> None:
+    """The right end of every page's title row: the agent panel, settings, and who you are."""
+    open_ = st.session_state.get("dock_open", True)
+    with st.container(key="toptools", horizontal=True, vertical_alignment="center", gap="small", width="content"):
+        st.button("", icon=":material/right_panel_close:" if open_ else ":material/right_panel_open:",
+                  key="top_agent", on_click=lambda: st.session_state.update(dock_open=not open_),
+                  help="Hide the agent" if open_ else "Show the agent")
+        with st.container(key="top_settings", width="content"), st.popover("", icon=":material/settings:",
+                                                                            help="Settings"):
+            from projectmodel.ai.calls import default_router
+            st.markdown("**Agent**")
+            # The toggles mirror the panel's own buttons, so they are set from its state on every run.
+            st.session_state.update(_top_open=open_, _top_wide=bool(st.session_state.get("dock_wide")))
+            st.toggle("Show the agent panel", key="_top_open",
+                      on_change=lambda: st.session_state.update(dock_open=st.session_state["_top_open"]))
+            st.toggle("Wide panel", key="_top_wide",
+                      on_change=lambda: st.session_state.update(dock_wide=st.session_state["_top_wide"]))
+            st.divider()
+            st.markdown("**Model calls**")
+            r = default_router()
+            if r.ready:
+                n, usd = _ai_today()
+                st.caption(f"Vertex AI · project {r.config.project} · region {r.config.region}  \n"
+                           f"Today: {n} calls · ${usd:.2f}. Every call is logged with its input, output and cost.")
+            else:
+                st.caption(f"Off: {r.why_not_ready()}")
+        author = st.session_state.get("author", "")
+        if st.session_state.get("_author_input") != author:
+            st.session_state["_author_input"] = author
+        with st.container(key="top_me", width="content"), st.popover(_initials(author), help=author or "Who are you?"):
+            st.text_input("Your name", key="_author_input", on_change=_set_author, placeholder="First and last name",
+                          help="Recorded with your notes, answers and confirmations, and used by the agent to "
+                               "remember what you told it.")
+            st.caption("There are no accounts yet: the name stays with this browser tab.")
 
 
 def _pick_project() -> None:
@@ -507,6 +593,7 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
                 st.selectbox("Project", shown, key="_project_pick", format_func=lambda p: site_of(p).name,
                              label_visibility="collapsed", on_change=_pick_project,
                              help="Every project page shows this building. Switch it here at any time.")
+            top_tools()
         _tabs_row(sections, current)
 
 

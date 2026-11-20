@@ -95,9 +95,9 @@ class Agent:
 
     # prompt ------------------------------------------------------------------------------------------------------
 
-    def system(self) -> tuple[str, str]:
+    def system(self, prompt_id: str = "agent_chat") -> tuple[str, str]:
         """(system prompt, prompt ref). Stable for a project and person, so it is cached across turns."""
-        p = load_prompt("agent_chat")
+        p = load_prompt(prompt_id)
         parts = [p.render()[0]]
         if self.kb is not None:
             scopes = self.kb.scopes_for(self.project)
@@ -192,7 +192,9 @@ class Agent:
             if job == "agent_chat" and hops >= HANDOVER and not pinned:
                 # Hand over to the reasoning model. When that is the same model (no Opus in this project: Argon
                 # both), stay on the chat job: thinking harder half way through costs time and adds little.
-                if (nxt := pick_model(self.router, "agent_reason")) != model:
+                # A family that already answered "not enabled" (Sonnet 404: Claude is off here) is not tried again.
+                off = {get_model(k).family for k in self.router.not_enabled}
+                if (nxt := pick_model(self.router, "agent_reason")) != model and get_model(nxt).family not in off:
                     job, model = "agent_reason", nxt
                     emit(Event("model", {"model": model}))
         else:

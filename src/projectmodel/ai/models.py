@@ -48,3 +48,9 @@ def get_model(key: str) -> Model:
     if key not in MODELS:
         raise KeyError(f"unknown model {key!r}; known: {sorted(MODELS)}")
     return MODELS[key]
+
+
+# The voice model runs on the Live API (a WebSocket session, not generate_content), in one region: it is not in MODELS,
+# so the text pickers and ai_check leave it out. Priced per million audio tokens (about 25 a second), unconfirmed.
+LIVE = Model("live", "gemini-live", "gemini-3.8-live", "Gemini 3.8 Live (price unconfirmed)", 3.00, 12.00)
+LIVE_REGION_DEFAULT = "us-central1"  # Live models answer there on our project (not on global, 2026-11-20)

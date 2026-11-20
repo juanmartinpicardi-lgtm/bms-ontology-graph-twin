@@ -189,7 +189,6 @@ def test_no_handover_to_the_same_model():
     gemini = Scripted([*walk, "Done."])
     claude = Scripted([ModelNotEnabled("Claude Sonnet 5.5: HTTP 404")])
     r = Router(READY, providers={"claude": claude, "gemini": gemini})
-    r.not_enabled["opus"] = "HTTP 404"
     res = Agent(r, tools=FakeTools(), project="p").run([], "Where does this come from?", {})
     assert res.model == "argon" and {req.effort for _, req in gemini.requests} == {"low"}
 

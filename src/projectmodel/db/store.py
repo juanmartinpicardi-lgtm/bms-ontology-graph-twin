@@ -77,6 +77,16 @@ CREATE TABLE IF NOT EXISTS llm_calls (
     ok          INTEGER NOT NULL DEFAULT 1,  -- 0: the call failed or its output was invalid
     error       TEXT
 );
+CREATE TABLE IF NOT EXISTS agent_chats (       -- the agent dock's conversations, for its history
+    id          TEXT PRIMARY KEY,
+    project     TEXT NOT NULL DEFAULT '',
+    person      TEXT NOT NULL DEFAULT '',
+    title       TEXT NOT NULL,
+    log         TEXT NOT NULL,                -- what the dock shows: turns with steps, model, cost
+    api         TEXT NOT NULL,                -- the messages sent to the model, so the conversation can go on
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
 CREATE TABLE IF NOT EXISTS notes (
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
     project      TEXT NOT NULL,
@@ -218,6 +228,28 @@ class Store:
                  output_tokens, cached_tokens, int(ok), error),
             )
         return cur.lastrowid
+
+    def save_chat(self, chat_id: str, title: str, log: list, api: list, project: str = "", person: str = "") -> None:
+        with self.conn:
+            self.conn.execute(
+                "INSERT INTO agent_chats (id, project, person, title, log, api) VALUES (?, ?, ?, ?, ?, ?)"
+                " ON CONFLICT(id) DO UPDATE SET project = excluded.project, person = excluded.person,"
+                " title = excluded.title, log = excluded.log, api = excluded.api, updated_at = datetime('now')",
+                (chat_id, project or "", person or "", title, json.dumps(log, default=str), json.dumps(api, default=str)))
+
+    def chats(self, limit: int = 30) -> list[dict]:
+        """The latest conversations, newest first: id, title, project, person, updated_at, turns."""
+        rows = self.conn.execute("SELECT id, title, project, person, updated_at, json_array_length(log) AS n"
+                                 " FROM agent_chats ORDER BY updated_at DESC, rowid DESC LIMIT ?", (limit,)).fetchall()
+        return [dict(r) for r in rows]
+
+    def chat(self, chat_id: str) -> dict | None:
+        r = self.conn.execute("SELECT * FROM agent_chats WHERE id = ?", (chat_id,)).fetchone()
+        return None if r is None else {**dict(r), "log": json.loads(r["log"]), "api": json.loads(r["api"])}
+
+    def delete_chat(self, chat_id: str) -> None:
+        with self.conn:
+            self.conn.execute("DELETE FROM agent_chats WHERE id = ?", (chat_id,))
 
     def nodes(self, project: str, kind: str | None = None) -> list[sqlite3.Row]:
         q, args = "SELECT * FROM nodes WHERE project = ?", [project]
