@@ -284,6 +284,9 @@ class Mapper:
 
         rec_by_pid = {f"pt:{r.source_id}": r for r in records}
         llm_calls = 0
+        logs_itself = getattr(self.llm, "logs_calls", False)
+        if logs_itself:
+            self.llm.bind(store, project, revision)
         for pid, (cls, conf, _) in list(final.items()):
             if conf >= self.llm_below:
                 continue
@@ -294,8 +297,9 @@ class Mapper:
             if ans is None:
                 continue
             llm_calls += 1
-            store.log_llm_call(project, revision, self.llm.name, ans.model, json.dumps(req.__dict__),
-                               ans.raw_output, ans.cost_usd, ans.latency_s)
+            if not logs_itself:
+                store.log_llm_call(project, revision, self.llm.name, ans.model, json.dumps(req.__dict__),
+                                   ans.raw_output, ans.cost_usd, ans.latency_s)
             if ans.cls in req.candidates:
                 final[pid] = (ans.cls, ans.confidence, "llm")
 
