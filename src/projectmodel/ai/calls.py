@@ -9,14 +9,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 from typing import Any
 
 from ..db.store import Store
 from .config import AIConfig, load_config
-from .models import Model, get_model
+from .models import MODELS, Model, get_model
 from .providers import (ModelError, ModelNotEnabled, ModelRequest, ModelResponse, ModelUnavailable, NoModel, OnText,
-                        Provider, VertexClaude, VertexGemini)
+                        Provider, VertexClaude, VertexGemini, not_enabled)
 
 
 def _redact(value: Any) -> Any:
@@ -45,6 +46,20 @@ class Router:
         self._providers: dict[str, Provider] = dict(providers or {})
         self._given = bool(providers)  # tests hand in their providers: ready whatever the config says
         self.not_enabled: dict[str, str] = {}  # model key -> why, learnt from calls (404 / 403 from Vertex AI)
+        self.learnt = False  # learn() has read the call log
+
+    def learn(self, store: Store, days: int = 3) -> None:
+        """Remember the models whose latest call in the last `days` answered "not enabled in this project", so a
+        fresh process (a restart, a code reload) does not try them again first. A later successful call clears it."""
+        by_id = {m.id: m.key for m in MODELS.values()}
+        rows = store.conn.execute("SELECT model, ok, error FROM llm_calls WHERE created_at >= datetime('now', ?) "
+                                  "ORDER BY id", (f"-{days} days",)).fetchall()
+        latest = {r["model"]: r for r in rows if r["model"] in by_id}
+        for model_id, r in latest.items():
+            m = re.search(r"HTTP (\d{3}): (.*)", r["error"] or "", re.S)
+            if not r["ok"] and m and not_enabled(m.group(1), m.group(2)):
+                self.not_enabled.setdefault(by_id[model_id], r["error"])
+        self.learnt = True
 
     def first_enabled(self, keys: list[str]) -> str:
         """The first of these models not known to be off for this project (the first one when all are)."""
@@ -77,6 +92,7 @@ class Router:
         t0 = time.perf_counter()
         try:
             resp = provider.complete(m, req, on_text)
+            self.not_enabled.pop(m.key, None)  # enabled since (e.g. turned on in Model Garden)
         except ModelUnavailable:
             raise
         except Exception as e:
