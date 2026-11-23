@@ -20,6 +20,7 @@ from pathlib import Path
 
 from . import pdfdoc
 
+PARTIAL = 0.25  # more than this share of a step's items unlinked is a partial read, said once, not only item by item
 SCANNED_WORDS = 25  # a page with fewer words than this has no usable text layer (a scan, or a picture of a sheet)
 
 
@@ -105,6 +106,13 @@ def check(step: str, facts: list[dict], files: list[tuple[Path, str]]) -> list[d
         if not n("controller"):
             out.append(_issue(step, "no-riser", "No controllers were read from a network riser (trunk headings like "
                               "\"FC-1 - …\" with address, device, controller, instance rows).", first))
+        else:
+            lone = [c for c in kinds["controller"] if not c["data"].get("equip")]
+            if len(lone) > PARTIAL * n("controller"):
+                out.append(_issue(step, "few-linked", f"{len(lone)} of {n('controller')} controllers on the riser match "
+                                  "no scheduled equipment, so their points have no unit. The submittal may name units "
+                                  "another way than the schedules (floor in the tag, another scheme): answer one, or "
+                                  "add the scheme as a setup rule.", first))
     elif step == "bms":
         aliases = kinds.get("alias", [])
         if not n("bms_object"):
@@ -114,4 +122,9 @@ def check(step: str, facts: list[dict], files: list[tuple[Path, str]]) -> list[d
             out.append(_issue(step, "no-links", f"None of the {len(aliases)} BMS devices could be linked to "
                               "equipment: their names carry no equipment tag and match no device instance on the "
                               "riser.", first))
+        elif aliases and (lone := [a for a in aliases if not a["data"].get("equip")]) \
+                and len(lone) > PARTIAL * len(aliases):
+            out.append(_issue(step, "few-links", f"{len(lone)} of {len(aliases)} BMS devices are linked to no "
+                              "equipment. The BMS may name devices another way than the drawings; answer one, or add "
+                              "the scheme as a setup rule.", first))
     return out

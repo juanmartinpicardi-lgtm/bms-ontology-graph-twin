@@ -34,8 +34,8 @@ def test_no_step_is_silent(results, name):
     assert r["silent"] == [], f"{name}: {r['silent']} read nothing and asked nothing"
 
 
-# Partial reads nothing reports yet (W0, "partial-read checks"). Shrink this list as checks land; never grow it.
-KNOWN_QUIET = {"all PDFs: tags with floor (VAVE-1-07)", "sequences: sections numbered 1. 2. 3."}
+# Partial reads nothing reports. Empty since the partial-read checks (W0); a new one fails the test.
+KNOWN_QUIET: set[str] = set()
 
 
 def test_partial_reads_say_so(results):

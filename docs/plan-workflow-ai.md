@@ -213,8 +213,9 @@ Status, 23 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
   - Done: coverage checks after every step (`intake/coverage.py`); the stress suite as a test
     (`tests/test_stress_intake.py`); rule fixes for FLR titles, Niagara export columns, the device instance join,
     4-digit rooms, and unread point rows in the submittal.
-  - Left: partial-read checks for the scenarios still marked "quiet"; `point_class` in the setup; 3 real document
-    sets.
+  - Also done: partial-read checks in every step, and numbered sequence sections. Over 17 variations, 10 read
+    correctly, 7 say what they missed and ask, and 0 are quiet or silent.
+  - Left: `point_class` in the setup, and 3 real document sets (each in its own session and PR).
 - **Per-project completeness** (`progress.py`) measures every project against the graph standard and names the next
   step. It is shown on the Roadmap and All projects pages. Alpha stays the demo set, unchanged.
 
