@@ -49,6 +49,9 @@ Source adapters  →  Raw records  →  Mapper  →  Knowledge graph  →  Revie
 - **Dev set:** Project Haystack site **Alpha** (central plant + VAV, ~1,842 points).
 - **Test set:** none for now (Bravo was removed). When one is added, never tune rules or prompts on it.
 - **Later:** LBNL Building 59 (Brick), Mortar (breadth), Reflow demo station (real Niagara file).
+- **Real document sets for the guided setup** (`docs/real-document-sets.md`, files in `data/raw/`):
+  - Dev: `msu_mbb` (Montana State University lab and office renovation) and `itd_d1_lab` (Idaho DOT testing laboratory). Rules and prompts may be tuned on these.
+  - **Held out: `liberty_boe`** (Liberty County, GA, school board office HVAC replacement). Never tune rules or prompts on it. Run it only to report headline counts (`scripts/run_real_sets.py` writes nothing else for it), and don't open its questions, issues or facts when choosing fixes.
 
 Download from project-haystack.org/example (CSV or Zinc). Store raw downloads in `/data/raw/` untouched.
 
