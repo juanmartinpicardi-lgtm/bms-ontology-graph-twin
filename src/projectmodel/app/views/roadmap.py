@@ -23,9 +23,10 @@ from projectmodel.app.story import Go, Section, features, hero, icon, p, steps, 
 from projectmodel.intake.coverage import stress_state  # noqa: E402
 from projectmodel.intake.state import list_intakes  # noqa: E402
 from projectmodel.projects import label, list_projects, main_projects  # noqa: E402
-from projectmodel.roadmap import PACKAGES, PRINCIPLES, STAGES, WAVES  # noqa: E402
+from projectmodel.roadmap import PACKAGES, PRINCIPLES, REAL_SETS, STAGES, WAVES  # noqa: E402
 
 STRESS = ROOT / "reports/stress_intake.json"
+REAL = ROOT / "reports/real_sets.json"
 DB = ROOT / "data/kg.sqlite"
 km = knowledge_model()
 
@@ -199,6 +200,31 @@ def stress_view() -> tuple[str, dict]:
 stress_html, stress_counts = stress_view()
 
 
+def real_view() -> str:
+    """The rules on real buildings from other firms (scripts/run_real_sets.py), against a person's hand count. Dev
+    sets only: the held-out set is never shown in detail."""
+    if not REAL.exists():
+        return ""
+    runs = [r for r in json.loads(REAL.read_text()) if r.get("role") == "dev" and r.get("mode") == "sheets"
+            and r["set"] in REAL_SETS]
+    rows = []
+    for r in runs:
+        exp, h = REAL_SETS[r["set"]], r["headline"]
+        cells = []
+        for k, word in (("rooms", "rooms"), ("equipment", "units"), ("sequences", "sequences")):
+            pct = 100 * h.get(k, 0) / exp[k] if exp[k] else 0
+            kind = "ok" if pct >= 90 else "ask" if pct >= 40 else "bad"
+            cells.append(f'<div class="rm-lbar"><span>{word}<b>{h.get(k, 0)} of ~{exp[k]}</b></span>'
+                         f'{meter(min(pct, 100), kind)}</div>')
+        rows.append(f'<li>{icon("apartment")}<span><b>{escape(exp["name"])}</b><div class="rm-lbars" '
+                    f'style="margin:6px 0 0">{"".join(cells)}</div></span><span></span></li>')
+    return (f'<div class="rm-box"><header>{icon("travel_explore")} Real buildings from other '
+            f'firms · rules only · a third set is held out</header><ul class="rm-rows">{"".join(rows)}</ul></div>')
+
+
+real_html = real_view()
+
+
 # 6 · Roadmap
 def package(pk: dict) -> str:
     st_ = {"done": badge("done", "ok", "check"), "doing": badge("in progress", "ai", "progress_activity"),
@@ -302,26 +328,28 @@ story([
               "and lets the next building go faster."),
             layers,
             [Go("See the ontology", "views/ontology.py", "category")]),
-    Section("Harsh reality", "crisis_alert", "Another firm's documents break rules. Now they say so.",
-            p("We ran every reader on one building with one realistic change at a time: another firm's titles, room "
-              "numbers, heading style, another vendor's export, a scanned sheet.",
+    Section("Harsh reality", "crisis_alert", "Another firm's documents break rules. Real buildings break them more.",
+            p("First, one building with one realistic change at a time: another firm's titles, room numbers, heading "
+              "style, another vendor's export, a scanned sheet.",
               f"Before the guardrails, 9 of the first 16 dropped a step to zero or near it, 7 of them silently. Now, "
               f"of {sum(stress_counts.values())}, "
               f"<b>{stress_counts.get('reads', 0)}</b> read correctly, <b>{stress_counts.get('asks', 0)}</b> say "
               f"what they missed and ask you, <b>{stress_counts.get('quiet', 0)}</b> still read only part with "
               f"nothing said, and <b>{stress_counts.get('silent', 0)}</b> are silent.",
-              "The ones that ask are where the AI reader starts (W6, W8): the rules have run out, and they know it.")
+              "Then three real buildings from other firms, read by the rules unchanged (below the list). Most of "
+              "each building is missed, and some facts are wrong: canopy hoods tagged CH-n become chillers. Those "
+              "sets are the yardstick for the AI reader (W6, W8), and one stays held out to keep the score honest.")
             if stress_counts else p("The stress test results are not available yet."),
-            stress_html),
+            f'<div style="display:grid;gap:12px;width:100%">{stress_html}{real_html}</div>'),
     Section("Roadmap", "route", "What comes next, in order.",
             p("The plan is built in waves. The first wave makes the base honest: guardrails, valid ontology terms, "
               "a data model for many sources, and a scorer for every AI job.",
               "The second wave brings AI into the readers, plans first. Graphics, binding and the learning loop "
               "follow. Each package lands only when it beats rules alone on a measured test.")
-            + features([("check_circle", "Shipped:", "coverage and partial-read checks in every step, the stress "
-                                                     "suite as a test, six rule fixes."),
-                        ("pending", "Left in W0:", "AI point classification in the setup, three more real "
-                                                   "document sets.")]),
+            + features([("check_circle", "W0 done:", "coverage and partial-read checks, the stress suite as a "
+                                                     "test, AI point classes in the setup (51% → 74% exact), three "
+                                                     "real document sets."),
+                        ("pending", "Next:", "W1 ontology fixes, W3 data model, W5 scoring and calibration.")]),
             waves),
     Section("Your projects", "monitoring", "How complete each project is, and what to do next.",
             p("Each project is measured against the same standard as the Complete graph page: six layers, from "
