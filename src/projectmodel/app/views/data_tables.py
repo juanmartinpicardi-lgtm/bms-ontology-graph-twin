@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.shell import active_project, box, get_store  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
+from projectmodel.tree import rel_source  # noqa: E402
 
 store = get_store()
 projects = list_projects(store)
@@ -22,9 +23,14 @@ project = active_project(projects)
 
 COLS = ["id", "label", "class", "confidence", "method", "status", "source_file", "source_ref", "revision"]
 on = {e["dst"]: e["src"] for e in store.edges(project, "hasPoint") if e["status"] != "rejected"}
-points = pd.DataFrame([{**{k: n[k] for k in COLS}, "equipment": on.get(n["id"], "")}
-                       for n in store.nodes(project, "point")])
-equipment = pd.DataFrame([{k: n[k] for k in COLS} for n in store.nodes(project, "equipment")])
+
+
+def row(n) -> dict:
+    return {k: rel_source(n[k]) if k == "source_file" else n[k] for k in COLS}
+
+
+points = pd.DataFrame([{**row(n), "equipment": on.get(n["id"], "")} for n in store.nodes(project, "point")])
+equipment = pd.DataFrame([row(n) for n in store.nodes(project, "equipment")])
 links = pd.DataFrame([{k: e[k] for k in ("src", "rel", "dst", "confidence", "method", "status", "source_ref")}
                       for e in store.edges(project)])
 

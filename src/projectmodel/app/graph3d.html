@@ -213,6 +213,7 @@ const fmt = v => typeof v === "number" ? (Number.isInteger(v) ? v : v.toFixed(2)
 const nodes = DATA.nodes;
 const links = DATA.links.map(l => ({ ...l, s: l.source, t: l.target }));
 const byId = new Map(nodes.map(n => [n.id, n]));
+links.forEach(l => { if (!l.prov && l.rel === "type") l.prov = byId.get(l.s)?.prov; });  // sent once, on the node
 const adj = new Map(nodes.map(n => [n.id, []]));
 links.forEach(l => { adj.get(l.s).push(l); adj.get(l.t).push(l); });
 const parentOf = new Map();  // point/equipment -> containing equipment

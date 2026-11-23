@@ -172,6 +172,8 @@ body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; poin
 .st-key-chip_on [data-testid="stPageLink-NavLink"] {{ border-bottom-color: {c["accent"]}; }}
 .st-key-chip_on [data-testid="stPageLink-NavLink"] p {{ color: {c["text"]}; font-weight: 800; }}
 .st-key-chip_on [data-testid="stPageLink-NavLink"] span {{ color: {c["accent"]} !important; }}
+.st-key-pagetools {{ margin-left: auto; }}
+.st-key-pagetools:empty, .st-key-pagetools:not(:has(*)) {{ display: none; }}
 
 /* Cards */
 [class*="st-key-box_"] {{ border: 1px solid {c["card"]} !important; border-radius: 10px !important;
@@ -442,9 +444,10 @@ def _tabs_row(pages: list, current) -> None:
     end (page_tools)."""
     with st.container(horizontal=True, vertical_alignment="center", gap="small"):
         chips(pages, current)
-        st.space("stretch")
+        # Pushed right by an auto margin, not a stretch spacer: the spacer's own width made the tools wrap onto a
+        # line of their own (at the left) whenever the tabs left less than ~500px.
         st.session_state["_page_tools"] = st.container(horizontal=True, width="content", gap="small",
-                                                       vertical_alignment="center")
+                                                       vertical_alignment="center", key="pagetools")
 
 
 def area_header(title: str, pages: list, current) -> None:

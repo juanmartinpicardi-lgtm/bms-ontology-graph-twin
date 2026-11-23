@@ -11,8 +11,8 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import notes  # noqa: E402
 from projectmodel.app.shell import box, get_store  # noqa: E402
-from projectmodel.conventions import layer_entries, load_layers, scopes_for  # noqa: E402
-from projectmodel.projects import label, summaries  # noqa: E402
+from projectmodel.conventions import layer_table, load_layers, scopes_for  # noqa: E402
+from projectmodel.projects import label, list_projects, main_projects, summaries  # noqa: E402
 
 store = get_store()
 
@@ -40,15 +40,17 @@ c[2].button("Review proposed conventions", icon=":material/inbox:", disabled=Tru
 captured = box("tk_captured", "Captured so far", "inventory_2")
 captured.write("Every review decision is already tribal knowledge for that one point. The coming features turn "
          "repeated decisions into rules.")
-rows = [(label(p), s.get("human", 0), len(notes.notes_by_project(store, p)), " <- ".join(scopes_for(p)) or "none")
-        for p, s in sorted(summaries(store).items())]
+every = summaries(store)
+shown = main_projects(list_projects(store))  # one per building, as everywhere in the app (names-only is for scoring)
+rows = [(label(p), every.get(p, {}).get("human", 0), len(notes.notes_by_project(store, p)),
+         " <- ".join(scopes_for(p)) or "none") for p in shown]
 captured.dataframe({"Project": [r[0] for r in rows], "Human decisions": [r[1] for r in rows],
               "Active notes": [r[2] for r in rows], "Conventions": [r[3] for r in rows]}, hide_index=True)
 
 conv = box("tk_conv", "Conventions in use", "rule")
 conv.caption("Files under conventions/, layered knowledge model <- contractor <- customer <- site "
            "(conventions/projects.yaml says which apply where).")
-entries = layer_entries(load_layers(sorted({s for p in summaries(store) for s in scopes_for(p)})))
+entries = layer_table(load_layers(sorted({s for p in every for s in scopes_for(p)})))
 if entries:
     conv.dataframe(entries, hide_index=True)
 else:

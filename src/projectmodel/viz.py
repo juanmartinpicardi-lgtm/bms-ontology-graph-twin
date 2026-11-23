@@ -46,7 +46,9 @@ def add_model_layer(nodes: list[dict], links: list[dict], km: KnowledgeModel) ->
     count = {}
     for n in nodes:
         if n["layer"] == "instance" and n["cls"] in wanted:
-            links.append({"source": n["id"], "target": f"cls:{n['cls']}", "rel": "type", "prov": n["prov"]})
+            # No prov of its own: a type link's provenance is its instance's, and the viewer reads it from there.
+            # Copying it here would add a duplicate of every instance's provenance to the page (~0.5 MB on Alpha).
+            links.append({"source": n["id"], "target": f"cls:{n['cls']}", "rel": "type"})
             count[n["cls"]] = count.get(n["cls"], 0) + 1
     for n in nodes:
         if n["kind"] == "class":

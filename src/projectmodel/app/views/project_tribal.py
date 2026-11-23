@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import notes  # noqa: E402
 from projectmodel.app.shell import active_project, box, get_store  # noqa: E402
-from projectmodel.conventions import layer_entries, load_layers, scopes_for  # noqa: E402
+from projectmodel.conventions import layer_table, load_layers, scopes_for  # noqa: E402
 from projectmodel.intake import knowledge  # noqa: E402
 from projectmodel.intake.state import Intake  # noqa: E402
 from projectmodel.projects import label, list_projects, summaries  # noqa: E402
@@ -28,7 +28,7 @@ project = active_project(projects)
 every = notes.notes_by_project(store, project, status=None)
 active = [x for x in every if x["status"] == "active"]
 scopes = scopes_for(project)
-conventions = layer_entries(load_layers(scopes)) if scopes else []
+conventions = layer_table(load_layers(scopes)) if scopes else []
 setup = Intake(project.split("/")[0]) if project.endswith("/documents") else None
 rules = knowledge.get(setup) if setup and setup.s else {"tags": [], "terms": [], "notes": []}
 human = summaries(store).get(project, {}).get("human", 0)

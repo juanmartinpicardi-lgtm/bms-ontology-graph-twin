@@ -38,8 +38,13 @@ with box("notes", "Notes", "sticky_note_2", fit=True):
              and (not authors or x["author"] in authors)]
     shown.sort(key=lambda x: (x["id"] not in orphan_ids, x["target_kind"] != "project", -x["id"]))
     st.caption(f"{len(shown)} of {len(every)} notes shown · {len(orphan_ids)} orphaned in total")
+    if not every:
+        st.info("No notes for this building yet. Notes are written on the Tree page: select equipment or a point, "
+                "then add what you know about it.", icon=":material/sticky_note_2:")
+        st.page_link("tree_app.py", label="Open the Tree", icon=":material/account_tree:")
+        st.stop()
     if not shown:
-        st.info("No notes match.")
+        st.info("No notes match these filters. Clear a filter above to see more.", icon=":material/filter_alt_off:")
         st.stop()
 
     df = pd.DataFrame([{
