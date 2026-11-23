@@ -150,8 +150,28 @@ def chrome_css() -> str:
 .st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid {c["line"]}; padding-bottom: 0; margin-bottom: 10px; }}
 .page-title {{ font-size: 24px; line-height: 32px; font-weight: 800; color: {c["text"]}; margin: 0; }}
 /* The title row is 40px on every page (with or without the project picker), so the tabs sit at the same height
-   everywhere; its right end stays clear of the fixed toolbar (theme switch and the menu) in the top right corner */
-.st-key-titlebar {{ min-height: 40px; padding-right: 72px; }}
+   everywhere. Its right end stays clear of Streamlit's toolbar in the top right corner, whose width THEME_WATCH_JS
+   measures into --pm-tb: the theme switch and the menu locally, plus Share and two icons on Streamlit Cloud. */
+.st-key-titlebar {{ min-height: 40px; padding-right: calc(var(--pm-tb, 72px) + 12px); }}
+
+/* Streamlit's toolbar, level with the title row (THEME_WATCH_JS moves it), its buttons drawn like the app's own top
+   tools: 36px, a filled ground and a thin outline. The header around them stays transparent and lets clicks through. */
+[data-testid="stHeader"] [data-testid="stBaseButton-header"], #pm-theme {{ height: 36px; min-height: 36px;
+  min-width: 36px; padding: 0 12px; border-radius: 6px; background: {c["card2"]}; border: 1px solid {c["line"]};
+  color: {c["text2"]}; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }}
+[data-testid="stHeader"] [data-testid="stBaseButton-header"]:hover, #pm-theme:hover {{
+  border-color: {c["tag_line"]}; background: {c["card2"]}; color: {c["text"]}; }}
+[data-testid="stHeader"] [data-testid="stBaseButton-header"] * {{ color: inherit; fill: currentColor; }}
+[data-testid="stHeader"] [data-testid="stToolbarActionButtonLabel"] {{ font-size: 14px; font-weight: 600;
+  color: {c["text"]}; }}
+[data-testid="stToolbarActions"] {{ gap: 8px; align-items: center; }}
+[data-testid="stToolbarActionButton"] {{ margin: 0; }}
+/* "Running… Stop": out of the crowded corner, a small pill at the bottom left, by the rail */
+[data-testid="stStatusWidget"] {{ position: fixed !important; left: 78px; bottom: 14px; top: auto !important;
+  right: auto !important; z-index: 999996; display: flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px;
+  border-radius: 8px; background: {c["card"]} !important; border: 1px solid {c["line"]}; box-shadow: {c["shadow"]};
+  pointer-events: auto; }}
+[data-testid="stStatusWidget"] * {{ pointer-events: auto; }}
 .st-key-titlebar [data-testid="stCaptionContainer"] {{ margin-top: 6px; }}
 /* Top right: project, then the agent panel, settings and you, as in an app bar */
 .st-key-projpick [data-baseweb="select"] > div {{ min-height: 36px; border-radius: 6px; min-width: 200px; }}
@@ -170,10 +190,8 @@ def chrome_css() -> str:
   letter-spacing: .3px; }}
 
 /* The theme switch, next to the menu: one click between light and dark */
-#pm-theme {{ display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
-  margin-right: 2px; padding: 0; border: 0; border-radius: 6px; background: transparent; cursor: pointer;
-  color: {c["mute"]}; transition: color .12s ease, background .12s ease; }}
-#pm-theme:hover {{ color: {c["text"]}; background: color-mix(in srgb, {c["text"]} 8%, transparent); }}
+#pm-theme {{ width: 36px; padding: 0; margin: 0; cursor: pointer;
+  transition: color .12s ease, border-color .12s ease; }}
 #pm-theme:focus-visible {{ outline: 2px solid {c["accent"]}; outline-offset: 1px; }}
 #pm-theme span {{ font-family: 'Material Symbols Rounded'; font-size: 18px; line-height: 1; }}
 /* While the switch drives Streamlit's menu, the menu is not shown */
@@ -263,7 +281,8 @@ body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; poin
   color: {c["accent"]}; font-weight: 400; }}
 
 /* The project picker sits top right of a project page */
-.st-key-projpick [data-testid="stSelectbox"] [data-baseweb="select"] > div {{ min-width: 220px; }}
+.st-key-projpick [data-testid="stSelectbox"] [data-baseweb="select"] > div {{ min-width: 220px; min-height: 36px;
+  height: 36px; }}  /* the height of the buttons beside it */
 </style>"""
 
 
@@ -416,10 +435,33 @@ export default function (component) {
       mount();
     }
   }
+  // Streamlit's toolbar (the theme switch and the menu; on Streamlit Cloud also Share and two icons): its width is
+  // reserved at the right end of the title row (--pm-tb), and the header is moved down so the toolbar sits on the
+  // title row's centre line. Measured, not guessed: the toolbar has a different width locally and on Cloud.
+  const fitHeader = () => {
+    const head = document.querySelector('[data-testid="stHeader"]');
+    if (!head) return;
+    const parts = [...head.querySelectorAll('[data-testid="stToolbarActions"], [data-testid="stMainMenu"]')]
+      .map(e => e.getBoundingClientRect()).filter(r => r.width);
+    if (!parts.length) return;
+    const root = document.documentElement;
+    const w = Math.ceil(innerWidth - Math.min(...parts.map(r => r.left)));
+    if (root.style.getPropertyValue("--pm-tb") !== w + "px") root.style.setProperty("--pm-tb", w + "px");
+    const row = document.querySelector(".st-key-titlebar");
+    if (!row) return;
+    const main = document.querySelector('[data-testid="stMain"]');
+    const r = row.getBoundingClientRect();
+    const rowMid = r.top + r.height / 2 + (main ? main.scrollTop : 0);  // where the row is when scrolled to the top
+    const now = parseFloat(head.style.top) || 0;
+    const barMid = Math.max(...parts.map(p => p.top + p.height / 2)) - now;  // where the toolbar is unmoved
+    const top = Math.max(0, Math.round(rowMid - barMid));
+    if (Math.abs(top - now) >= 1) head.style.top = top + "px";
+  };
   clearInterval(globalThis.__pmThemeWatch);
-  globalThis.__pmThemeWatch = setInterval(() => { check(); mount(); }, 300);
+  globalThis.__pmThemeWatch = setInterval(() => { check(); mount(); fitHeader(); }, 300);
   check();
   mount();
+  fitHeader();
 }
 """
 _theme_watch = st.components.v2.component("projectmodel.theme_watch", js=THEME_WATCH_JS)
