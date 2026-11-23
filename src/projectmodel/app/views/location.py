@@ -43,7 +43,7 @@ with left, box("loc_info", "Where it is", "location_on", fit=True):
                 ("Postcode", parts.get("postcode")), ("Country", parts.get("country")),
                 ("Latitude", f"{saved['lat']:.6f}"), ("Longitude", f"{saved['lng']:.6f}"),
                 ("Found as", saved["kind"]), ("Place id", saved["place_id"]), ("Searched for", saved["query"])]
-        st.dataframe(pd.DataFrame([(k, v) for k, v in rows if v], columns=["", "Value"]), hide_index=True,
+        st.dataframe(pd.DataFrame([(k, v) for k, v in rows if v], columns=["Field", "Value"]), hide_index=True,
                      width="stretch")
     else:
         st.info(f"{site.name} is not located yet. Search for it below.", icon=":material/location_off:")
