@@ -1,7 +1,7 @@
 """A scroll-synced story: the layout of the Overview pages.
 
-A column of section cards (text on the left, one simple visual on the right) with a navigation that stays centred
-on screen beside them. The section nearest the middle of the screen is the active one: a highlight slides to its
+A column of section cards (text on the left, one simple visual on the right) with a navigation that stays on
+screen beside them. The section nearest the middle of the screen is the active one: a highlight slides to its
 name in the navigation, and clicking a name scrolls that section to the middle. Under about 900 px the navigation
 is hidden and the cards stack.
 
@@ -154,9 +154,10 @@ CSS = """
 
 .grid { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 44px; align-items: start; }
 
-/* The navigation: as tall as the screen and stuck to it, so its list stays centred while the cards scroll by. */
-.side { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center;
-  gap: 18px; }
+/* The navigation: level with the first card, then stuck near the top of the screen while the cards scroll by.
+   (Centred in a screen-tall box, it started half a screen down and its last names were below the fold.) */
+.side { position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; display: flex;
+  flex-direction: column; justify-content: flex-start; gap: 18px; padding-top: 4vh; }
 .side ul { list-style: none; margin: 0; padding: 0; position: relative; }
 .side li { margin: 0; padding: 0; }
 .side button { display: flex; align-items: center; gap: 10px; width: 100%; height: 46px; padding: 0 14px;

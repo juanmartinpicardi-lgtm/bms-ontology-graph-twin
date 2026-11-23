@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 
 from .db.store import Store
@@ -15,15 +16,19 @@ UNPLACED = "eq:(unplaced)"
 ROOT = Path(__file__).resolve().parents[2]
 
 
+@lru_cache(maxsize=256)  # a few distinct files, thousands of rows: resolve() touches the disk
+def rel_source(src: str) -> str:
+    """A stored source file, relative to the repo when it is inside it (the mapper stores the path it read)."""
+    try:
+        return str(Path(src).resolve().relative_to(ROOT))
+    except (ValueError, OSError):
+        return src
+
+
 def provenance(row) -> dict:
     """The provenance fields of a node or edge row, with the source file relative to the repo."""
     attrs = json.loads(row["attrs"])
-    src = row["source_file"]
-    try:
-        src = str(Path(src).resolve().relative_to(ROOT))
-    except ValueError:
-        pass
-    out = {"source_file": src, "source_ref": row["source_ref"], "method": row["method"],
+    out = {"source_file": rel_source(row["source_file"]), "source_ref": row["source_ref"], "method": row["method"],
            "confidence": row["confidence"], "status": row["status"], "revision": row["revision"]}
     if "review" in attrs:
         out["review"] = attrs["review"]

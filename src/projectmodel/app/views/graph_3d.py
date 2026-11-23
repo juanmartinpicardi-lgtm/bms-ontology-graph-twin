@@ -27,7 +27,9 @@ if not projects:
 project = active_project(projects)
 payload = graph_payload(store, project, knowledge_model())
 inst = [n for n in payload["nodes"] if n.get("layer") == "instance"]
-kinds, rels = payload["counts"]["nodes"], payload["counts"]["links"]
+kinds = payload["counts"]["nodes"]
+MODEL_RELS = ("type", "subClassOf", "isA")  # the model layer's links, drawn but not facts about the building
+rels = {k: v for k, v in payload["counts"]["links"].items() if k not in MODEL_RELS}
 
 info, graph = st.columns([1.12, 3.2], gap="medium")
 with info, box("graph_info", "This graph", "hub", fit=True):
@@ -36,11 +38,12 @@ with info, box("graph_info", "This graph", "hub", fit=True):
     c[0].metric("Equipment", f"{kinds.get('equipment', 0):,}", border=True)
     c[1].metric("Points", f"{kinds.get('point', 0):,}", border=True)
     c = st.columns(2)
-    c[0].metric("Links", f"{sum(v for k, v in rels.items() if k != 'isA'):,}", border=True)
+    c[0].metric("Links", f"{sum(rels.values()):,}", border=True)  # as in Data tables: not the links to classes
     c[1].metric("Classes used", f"{kinds.get('class', 0):,}", border=True)
-    st.caption("**Links by kind**")
-    st.dataframe(pd.DataFrame(sorted(((k, v) for k, v in rels.items()), key=lambda kv: -kv[1]),
-                              columns=["link", "count"]), hide_index=True, width="stretch")
+    st.caption("**Links by kind** · relationships between equipment, points and spaces; the model layer's links "
+               "from each node to its class are not counted")
+    st.dataframe(pd.DataFrame(sorted(rels.items(), key=lambda kv: -kv[1]), columns=["link", "count"]),
+                 hide_index=True, width="stretch")
     methods = Counter(n.get("prov", {}).get("method", "") for n in inst)
     st.caption("**How each node was decided**")
     st.dataframe(pd.DataFrame(methods.most_common(), columns=["method", "nodes"]), hide_index=True, width="stretch")

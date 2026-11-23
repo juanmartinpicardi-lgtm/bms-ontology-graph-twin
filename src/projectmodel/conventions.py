@@ -199,3 +199,20 @@ def layer_entries(layers: list[Layer]) -> list[dict]:
         for g in d.get("ignore") or []:
             rows.append({"scope": layer.scope, "kind": "ignore", "key": g.get("pattern"), "value": g.get("reason")})
     return rows
+
+
+def entry_text(value) -> str:
+    """An entry's value as text: an abbreviation's expansion is a list of words, or a list of alternatives (lists),
+    or empty for a token that carries no meaning."""
+    if isinstance(value, list):
+        if not value:
+            return "(no meaning)"
+        if all(isinstance(v, list) for v in value):
+            return " | ".join(" ".join(map(str, v)) for v in value)
+        return " ".join(map(str, value))
+    return "" if value is None else str(value)
+
+
+def layer_table(layers: list[Layer]) -> list[dict]:
+    """layer_entries for display: every value as text, so a table of them has one type per column."""
+    return [{**e, "value": entry_text(e["value"])} for e in layer_entries(layers)]
