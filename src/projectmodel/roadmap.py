@@ -72,13 +72,15 @@ PRINCIPLES = [
 
 # status: done | doing | next | later. parts: (what, done?) for the package in progress.
 PACKAGES = [
-    {"id": "W0", "name": "Guardrails and real test sets", "wave": 1, "status": "doing",
-     "plain": "Every reader says when it found nothing; the stress suite runs as a test.",
+    {"id": "W0", "name": "Guardrails and real test sets", "wave": 1, "status": "done",
+     "plain": "Every reader says when it found nothing; the stress suite runs as a test; three real sets to measure "
+              "on.",
      "parts": [("Coverage checks in every step", True), ("Stress suite as a test", True),
                ("Rule fixes: FLR titles, Niagara columns, device instance, 4-digit rooms", True),
                ("Partial-read checks: say so when a step reads only part", True),
                ("Numbered sequence sections", True),
-               ("AI point classification inside the setup", False), ("3 more real document sets", False)]},
+               ("AI point classification in the setup: 51% → 74% exact on Troop D", True),
+               ("3 real document sets, 1 held out", True)]},
     {"id": "W1", "name": "Ontology fixes", "wave": 1, "status": "next",
      "plain": "Declare the off-standard relations and the unchecked classes, so every term is valid."},
     {"id": "W3", "name": "Data model for many sources", "wave": 1, "status": "next",
@@ -105,4 +107,11 @@ PACKAGES = [
      "plain": "Niagara and CPO Studio exports, merged on device id, when access exists."},
 ]
 BY_ID = {p["id"]: p for p in PACKAGES}
+
+# The real dev sets (docs/real-document-sets.md) with a person's approximate hand counts, to show the reports'
+# numbers against. The held-out set (liberty_boe) is never shown in detail.
+REAL_SETS = {
+    "msu_mbb": {"name": "Montana State University lab renovation", "rooms": 39, "equipment": 80, "sequences": 2},
+    "itd_d1_lab": {"name": "Idaho DOT District 1 testing lab", "rooms": 27, "equipment": 70, "sequences": 6},
+}
 WAVES = {1: "First wave · now", 2: "Second wave", 3: "Third wave", 4: "When access exists"}
