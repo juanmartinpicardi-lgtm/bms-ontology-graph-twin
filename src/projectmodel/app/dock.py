@@ -25,6 +25,7 @@ from projectmodel.app.shell import THEME, theme
 WIDTH = 400
 WIDE = 600
 GAP = 14  # as between the page's boxes (shell: row gap and FIT_JS GAP)
+FAB_BOTTOM = 46  # the round button's distance from the bottom: above Streamlit Cloud's "Manage app" tab
 
 
 @dataclass
@@ -59,23 +60,47 @@ def _css(open_: bool) -> str:
 /* Header: avatar, title and the model that answers, then the controls */
 .st-key-dock_head {{ padding-bottom: 10px; border-bottom: 1px solid {c["line"]}; gap: 2px !important;
   flex-wrap: nowrap !important; }}
-.st-key-dock_head > [data-testid="stElementContainer"]:first-child {{ min-width: 0; flex: 0 1 auto; overflow: hidden; }}
-.dock-titles {{ min-width: 0; }}
+/* visible overflow: the avatar's waves reach past its box; the titles clip themselves */
+.st-key-dock_head > [data-testid="stElementContainer"]:first-child {{ min-width: 0; flex: 0 1 auto;
+  overflow: visible; }}
+.dock-titles {{ min-width: 0; overflow: hidden; }}
 .dock-sub {{ overflow: hidden; text-overflow: ellipsis; }}
 /* icon-only popovers: no chevron */
 .st-key-dock_hist [data-testid="stPopoverButton"] div[aria-hidden="true"],
 .st-key-dock_sees [data-testid="stPopoverButton"] div[aria-hidden="true"],
 .st-key-top_settings [data-testid="stPopoverButton"] div[aria-hidden="true"],
 .st-key-top_me [data-testid="stPopoverButton"] div[aria-hidden="true"] {{ display: none; }}
-.st-key-dock_head [data-testid="stHtml"] > div, .st-key-dock_head .stHtml {{ display: flex; align-items: center;
-  gap: 10px; }}
-.dock-avatar {{ position: relative; width: 38px; height: 38px; border-radius: 50%; flex: none; display: grid;
-  place-items: center; background: {c["card2"]}; border: 1px solid {c["line"]}; }}
-.dock-avatar .ms {{ font-size: 21px; background: linear-gradient(135deg, {c["accent"]}, #C77DFF); -webkit-background-clip: text;
+/* Avatar and titles side by side (their own wrapper: a rule on every div of the header used to turn the avatar into
+   a flex row, which pushed its icon to the left edge) */
+.dock-id {{ display: flex; align-items: center; gap: 12px; min-width: 0; padding-left: 4px; }}
+/* The avatar: the sparkle centred on a disc, a gradient ring turning slowly around it, and soft waves going out, the
+   usual sign of an AI at work. Faster while it answers (dock_busy), still when models are off. */
+.dock-avatar {{ position: relative; width: 38px; height: 38px; flex: none; display: grid; place-items: center;
+  isolation: isolate; }}
+.dock-avatar::before {{ content: ""; position: absolute; inset: 0; border-radius: 50%; z-index: -1;
+  background: conic-gradient(from 0deg, {c["accent"]}, #C77DFF, #FF7EB6, #FFB86B, {c["accent"]});
+  animation: pm-spin 6s linear infinite; }}
+.dock-avatar::after {{ content: ""; position: absolute; inset: 2px; border-radius: 50%; background: {c["card2"]};
+  z-index: 0; }}
+.dock-avatar .ms {{ position: relative; z-index: 1; display: block; width: 21px; height: 21px; font-size: 21px;
+  line-height: 21px; text-align: center; overflow: hidden;
+  background: linear-gradient(135deg, {c["accent"]}, #C77DFF); -webkit-background-clip: text;
   background-clip: text; color: transparent; }}
-.dock-avatar i {{ position: absolute; top: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%;
-  background: {c["mute"]}; border: 2px solid {c["card"]}; }}
+.dock-avatar .wave {{ position: absolute; inset: 0; border-radius: 50%; z-index: -2; pointer-events: none;
+  background: radial-gradient(circle, transparent 55%, color-mix(in srgb, #C77DFF 45%, transparent) 70%,
+  color-mix(in srgb, {c["accent"]} 30%, transparent) 85%, transparent 100%);
+  animation: pm-wave 2.8s cubic-bezier(.2, .7, .3, 1) infinite; opacity: 0; }}
+.dock-avatar .wave + .wave {{ animation-delay: 1.4s; }}
+.dock-avatar i {{ position: absolute; top: -1px; right: -1px; z-index: 2; width: 10px; height: 10px;
+  border-radius: 50%; background: {c["mute"]}; border: 2px solid {c["card"]}; }}
 .dock-avatar.on i {{ background: {c["good"]}; }}
+.dock-avatar:not(.on)::before {{ animation: none; filter: grayscale(1); opacity: .5; }}
+.dock-avatar:not(.on) .wave {{ display: none; }}
+.st-key-dock:has(.st-key-dock_busy) .dock-avatar::before {{ animation-duration: 1.6s; }}
+.st-key-dock:has(.st-key-dock_busy) .dock-avatar .wave {{ animation-duration: 1.4s; }}
+.st-key-dock:has(.st-key-dock_busy) .dock-avatar .wave + .wave {{ animation-delay: .7s; }}
+@keyframes pm-spin {{ to {{ transform: rotate(360deg); }} }}
+@keyframes pm-wave {{ 0% {{ transform: scale(.9); opacity: .9; }} 100% {{ transform: scale(1.6); opacity: 0; }} }}
 .dock-titles p {{ margin: 0; line-height: 1.25; }}
 .dock-title {{ font-size: 16px; font-weight: 700; color: {c["text"]}; }}
 .dock-sub {{ font-size: 12.5px; color: {c["mute"]}; white-space: nowrap; }}
@@ -103,7 +128,10 @@ def _css(open_: bool) -> str:
   background: {c["card2"]}; gap: 1px !important; height: 28px; max-width: 100%; transition: border-color .12s; }}
 [class*="st-key-dchip_"]:hover {{ border-color: {c["tag_line"]}; }}
 [class*="st-key-dchip_pin_"] {{ border-color: {c["accent"]}; background: {soft}; }}
+/* the label fills its wrapper's height, so it sits on the same centre line as the pin and drop buttons */
+[class*="st-key-dchip_"] [data-testid="stHtml"] {{ display: flex; align-items: center; height: 26px; }}
 [class*="st-key-dchip_"] .chip-label {{ display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px;
+  height: 26px; line-height: 1;
   color: {c["text"]}; white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }}
 [class*="st-key-dchip_"] .chip-label .ms {{ font-size: 15px; color: {c["accent"]}; }}
 [class*="st-key-dchip_"] .chip-label small {{ color: {c["mute"]}; font-size: 11px; }}
@@ -156,20 +184,33 @@ def _css(open_: bool) -> str:
 .st-key-dpill_model [data-testid="stIconMaterial"] {{ color: {c["text2"]} !important; }}
 .st-key-dock_pills [data-testid="stPopoverButton"] svg {{ color: {c["mute"]}; }}
 
-/* Collapsed: a round button at the bottom right, with questions about the screen beside it */
-.st-key-dock_fab {{ position: fixed !important; right: {GAP + 6}px; bottom: {GAP + 6}px; z-index: 999991;
+/* Collapsed: a round button at the bottom right, with questions about the screen beside it. It sits FAB_BOTTOM up,
+   clear of Streamlit Cloud's "Manage app" tab in the corner. Same ring and waves as the open dock's avatar. */
+.st-key-dock_fab {{ position: fixed !important; right: {GAP + 6}px; bottom: {FAB_BOTTOM}px; z-index: 999991;
   width: auto !important; }}
-.st-key-dock_fab [data-testid^="stBaseButton-"] {{ width: 52px; height: 52px; min-height: 52px; padding: 0;
-  border-radius: 50%; justify-content: center; background: {c["card"]} !important;
-  border: 2px solid transparent !important; box-shadow: 0 6px 18px rgba(0,0,0,.28);
-  background-image: linear-gradient({c["card"]}, {c["card"]}), linear-gradient(135deg, {c["accent"]}, #C77DFF) !important;
-  background-origin: border-box !important; background-clip: padding-box, border-box !important;
+.st-key-dock_fab [data-testid^="stBaseButton-"] {{ position: relative; isolation: isolate; width: 52px; height: 52px;
+  min-height: 52px; padding: 0; border-radius: 50%; justify-content: center; align-items: center;
+  background: {c["card"]} !important; border: 0 !important; box-shadow: 0 6px 18px rgba(0,0,0,.28);
   transition: transform .12s; }}
+.st-key-dock_fab [data-testid^="stBaseButton-"]::before {{ content: ""; position: absolute; inset: -2px;
+  border-radius: 50%; z-index: -1; animation: pm-spin 6s linear infinite;
+  background: conic-gradient(from 0deg, {c["accent"]}, #C77DFF, #FF7EB6, #FFB86B, {c["accent"]}); }}
+.st-key-dock_fab [data-testid^="stBaseButton-"]::after {{ content: ""; position: absolute; inset: 0;
+  border-radius: 50%; z-index: -2; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, transparent 55%, color-mix(in srgb, #C77DFF 45%, transparent) 72%,
+  transparent 100%); animation: pm-wave 2.8s cubic-bezier(.2, .7, .3, 1) infinite; }}
+.st-key-dock_fab [data-testid^="stBaseButton-"] > div {{ position: relative; z-index: 1; width: 100%; height: 100%;
+  display: grid; place-items: center; border-radius: 50%; background: {c["card"]}; }}
 .st-key-dock_fab [data-testid^="stBaseButton-"]:hover {{ transform: scale(1.06); }}
-.st-key-dock_fab [data-testid="stIconMaterial"] {{ font-size: 24px; color: #C77DFF !important; margin: 0; }}
+.st-key-dock_fab [data-testid="stIconMaterial"] {{ font-size: 24px; color: #C77DFF !important; margin: 0;
+  line-height: 1; }}
+@media (prefers-reduced-motion: reduce) {{
+  .dock-avatar::before, .dock-avatar .wave, .st-key-dock_fab [data-testid^="stBaseButton-"]::before,
+  .st-key-dock_fab [data-testid^="stBaseButton-"]::after {{ animation: none !important; }}
+}}
 [data-testid="stLayoutWrapper"]:has(> .st-key-dock_tips),
 [data-testid="stElementContainer"]:has(> .st-key-dock_tips) {{ display: contents; }}
-.st-key-dock_tips {{ position: fixed !important; right: {GAP + 6 + 52 + 12}px; bottom: {GAP + 6}px; z-index: 999990;
+.st-key-dock_tips {{ position: fixed !important; right: {GAP + 6 + 52 + 12}px; bottom: {FAB_BOTTOM}px; z-index: 999990;
   width: auto !important; max-width: min(380px, 60vw); align-items: flex-end !important; gap: 8px !important; }}
 .st-key-dock_tips [data-testid^="stBaseButton-"] {{ min-height: 36px; height: auto; padding: 6px 14px 6px 8px;
   border-radius: 10px; border: 1px solid {c["line"]} !important; background: {c["card"]};

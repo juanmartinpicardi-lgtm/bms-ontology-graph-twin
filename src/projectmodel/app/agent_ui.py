@@ -22,8 +22,12 @@ from projectmodel.projects import site_of, summaries
 
 TRUST_COLOR = {"verified": "green", "stated": "violet", "likely": "blue", "unsure": "orange"}
 CITE = re.compile(r"\[\[([^\]]+)\]\](?:\s*\*(verified|stated|likely|unsure)\*)?")
-TOOL_LABEL = {"find_nodes": "Search the graph", "describe": "Describe", "upstream": "Follow upstream",
-              "downstream": "Follow downstream", "behaviour": "Read the sequences", "skill_view": "Read a skill"}
+# Each tool step in plain words, while it runs and once done: what the agent is looking at, not how it calls it.
+STEP_WORDS = {"find_nodes": ("Searching the graph", "Searched the graph"), "describe": ("Reading", "Read"),
+              "upstream": ("Following what feeds", "Followed what feeds"),
+              "downstream": ("Following what is fed by", "Followed what is fed by"),
+              "behaviour": ("Reading the sequences for", "Read the sequences for"),
+              "skill_view": ("Reading the skill", "Read the skill")}
 
 
 # cached resources ------------------------------------------------------------------------------------------------
@@ -91,7 +95,9 @@ def router():
 
 
 def label_of(key: str) -> str:
-    return LIVE.label if key == LIVE.key else model_label(key)
+    """The model's name as people read it: the catalogue's notes in brackets ("price unconfirmed") are for the cost
+    log, not for the conversation."""
+    return (LIVE.label if key == LIVE.key else model_label(key)).split(" (")[0]
 
 
 def _short(key: str) -> str:
@@ -141,23 +147,33 @@ def render_citations(text: str, tools: GraphTools | None) -> str:
 def _meta(turn: dict) -> str:
     bits = ([":material/mic: voice"] if turn.get("voice") else []) + (
         [label_of(turn["model"])] if turn.get("model") else [])
-    if turn.get("steps"):
-        bits.append(f"{len(turn['steps'])} tool call{'s' if len(turn['steps']) != 1 else ''}")
-    if turn.get("cost") is not None:
+    if turn.get("cost") is not None:  # the steps are counted on their own fold ("Thought in N steps")
         bits.append(f"${turn['cost']:.4f}")
     if turn.get("seconds"):
         bits.append(f"{turn['seconds']:.1f} s")
     return " · ".join(bits)
 
 
-def _steps(turn: dict) -> None:
+def step_text(name: str, args: dict, tools: GraphTools | None, done: bool = False) -> str:
+    """One thinking step in plain words: "Reading AHU-2", "Searching the graph for “zone 2-14”"."""
+    verb = STEP_WORDS.get(name, (name.replace("_", " ").capitalize(),) * 2)[1 if done else 0]
+    args = args or {}
+    if node := args.get("node_id"):
+        return f"{verb} {_label(tools, str(node))}"
+    if what := args.get("query") or args.get("cls") or args.get("name"):
+        return f"{verb} for “{what}”" if name == "find_nodes" else f"{verb} {what}"
+    return verb
+
+
+def _steps(turn: dict, tools: GraphTools | None = None) -> None:
     if not turn.get("steps"):
         return
-    with st.expander(f"{len(turn['steps'])} steps", icon=":material/route:"):
+    n = len(turn["steps"])
+    with st.expander(f"Thought in {n} step{'s' if n != 1 else ''}", icon=":material/neurology:"):
         for s in turn["steps"]:
-            args = ", ".join(f"{k}={v!r}" for k, v in s["input"].items() if v not in ("", None))
             mark = ":red[✕]" if s.get("error") else ":green[✓]"
-            st.markdown(f"{mark} **{TOOL_LABEL.get(s['name'], s['name'])}** `{args}` → {s['summary']}")
+            st.markdown(f"{mark} {step_text(s['name'], s['input'], tools, done=True)}"
+                        + (f" · :gray[{s['summary']}]" if s.get("summary") else ""))
 
 
 def _show(turn: dict, tools: GraphTools | None) -> None:
@@ -167,7 +183,7 @@ def _show(turn: dict, tools: GraphTools | None) -> None:
             if turn.get("context"):
                 st.caption("About: " + " › ".join(turn["context"]))
             return
-        _steps(turn)
+        _steps(turn, tools)
         if turn.get("text"):
             st.markdown(render_citations(turn["text"], tools))
         if turn.get("note"):
@@ -297,10 +313,11 @@ def header(store) -> None:
     """The dock's top: who it is and which model answers, then new chat, history, width and hide."""
     line, tip, ready = status_line()
     with st.container(key="dock_head", horizontal=True, vertical_alignment="center", gap="small"):
-        st.html(f'<div class="dock-avatar{" on" if ready else ""}" title="{html.escape(tip)}">'
-                '<span class="ms">auto_awesome</span><i></i></div>'
+        st.html(f'<div class="dock-id"><div class="dock-avatar{" on" if ready else ""}" title="{html.escape(tip)}">'
+                '<b class="wave"></b><b class="wave"></b><span class="ms" aria-hidden="true">auto_awesome</span>'
+                '<i></i></div>'
                 f'<div class="dock-titles" title="{html.escape(tip)}"><p class="dock-title">Agent</p>'
-                f'<p class="dock-sub">{html.escape(line)}</p></div>', width="content")
+                f'<p class="dock-sub">{html.escape(line)}</p></div></div>', width="content")
         st.space("stretch")
         st.button("", icon=":material/edit_square:", key="dock_new", type="tertiary", on_click=new_chat,
                   help="New conversation")
@@ -435,31 +452,35 @@ def _answer(question: str, chips: list[Chip], state, tools, project, store, live
     packet = context_packet(chips, state, tools, project_summary(store, project))
     user_turn = {"role": "user", "text": question, "context": [c.label for c in chips]}
     log.append(user_turn)
-    with live:
+    # While it thinks: the steps it takes, in plain words, one line each, open; nothing about models or prices. The
+    # dock_busy key lets the agent's avatar show it is working (dock CSS).
+    with live, st.container(key="dock_busy"):
         _show(user_turn, tools)
         with st.chat_message("assistant", avatar=":material/hub:"):
-            status = st.status("Thinking…", expanded=False)
+            status = st.status("Thinking…", expanded=True)
             out = st.empty()
             buf: list[str] = []
-            steps: list[str] = []
+            n_steps = [0]
 
             def on(ev: Event) -> None:
                 if ev.type == "text":
+                    if not buf:
+                        status.update(label="Writing the answer…", expanded=bool(n_steps[0]))
                     buf.append(ev.data)
                     out.markdown(render_citations("".join(buf), tools) + " ▌")
                 elif ev.type == "tool":
-                    args = ", ".join(f"{k}={v!r}" for k, v in ev.data["input"].items() if v not in ("", None))
-                    steps.append(f"**{TOOL_LABEL.get(ev.data['name'], ev.data['name'])}** `{args}`")
-                    status.update(label=f"{TOOL_LABEL.get(ev.data['name'], ev.data['name'])}…", state="running")
-                    status.markdown(steps[-1])
-                    buf.append("\n\n")
-                elif ev.type == "model":
-                    status.update(label=f"{label_of(ev.data['model'])} is working…")
+                    n_steps[0] += 1
+                    line = step_text(ev.data["name"], ev.data.get("input") or {}, tools)
+                    status.update(label=f"{line}…", state="running", expanded=True)
+                    status.markdown(f":gray[{n_steps[0]}.] {line}")
+                    if buf:
+                        buf.append("\n\n")
 
             model, effort = picked()
             res = _agent(tools, project, store).run(api, question, packet, emit=on, model=model, effort=effort)
-            status.update(label=f"{len(res.steps)} steps" if res.steps else "Answered", state="error" if res.error
-                          else "complete", expanded=False)
+            n = len(res.steps)
+            status.update(label=f"Thought in {n} step{'s' if n != 1 else ''}" if n else "Answered",
+                          state="error" if res.error else "complete", expanded=False)
     log.append({"role": "assistant", "text": res.text, "steps": res.steps, "model": res.model, "cost": res.cost_usd,
                 "seconds": res.seconds, "error": res.error, "cited": res.cited, "note": res.note})
     _save(store, project)
