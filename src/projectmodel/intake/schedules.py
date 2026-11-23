@@ -37,6 +37,7 @@ LAYOUTS = [
                       "humidifier_lbs_hr", "humidifier_kw", "humidifier_volts", "weight_lbs"]),
     ("HYDRONIC SPECIALTIES", ["description"]),
 ]
+TAG_LIKE = re.compile(r"^[A-Z]{1,6}-?\d+[A-Z]?(?:-\d+[A-Z]?)+$|^[A-Z]{1,6}-?\d+[A-Z]?$")  # letters then numbers
 TWO_WORD_MAKES = {"BELL", "AMERICAN"}  # BELL & GOSSETT, AMERICAN WHEATLEY
 SPECIALTY_CLASS = [("BUFFER TANK", "Chilled_Water_Storage_Tank"), ("EXPANSION TANK", "Chilled_Water_Thermal_Expansion_Tank"),
                    ("SEPERATOR", "Equipment"), ("SEPARATOR", "Equipment"), ("FEEDER", "Equipment")]
@@ -46,6 +47,7 @@ def read(paths: list[tuple[Path, str]], plan_tags: dict[str, dict], log) -> list
     """`plan_tags`: normal tag -> its placement fact from the floor plans (may be empty)."""
     facts: list[dict] = []
     diagram_tags: dict[str, set[str]] = {}
+    unread: list[tuple] = []
     for path, name in paths:
         for page in range(pdfdoc.page_count(path)):
             ws = pdfdoc.words(path, page)
@@ -62,6 +64,10 @@ def read(paths: list[tuple[Path, str]], plan_tags: dict[str, dict], log) -> list
                 continue
             got = [_row_fact(r, _title_for(r, titles), src) for r in rows]
             got = [f for f in got if f]
+            # Rows under a schedule title that start with something tag-shaped the tag rules don't know (VAVE-1-07,
+            # an owner's own scheme): read nothing from them, but count them so the step can say so.
+            unread += [(r, src) for r in _tag_column(
+                [r for r in _rows(ws, lambda t: bool(TAG_LIKE.match(t)) and not tags.parse(t)) if _title_for(r, titles)])]
             by_title: dict[str, int] = {}
             for f in got:
                 by_title[f["data"]["schedule"]] = by_title.get(f["data"]["schedule"], 0) + 1
@@ -69,21 +75,29 @@ def read(paths: list[tuple[Path, str]], plan_tags: dict[str, dict], log) -> list
                 log(f"Page {page + 1} · {sheet}: {t.title()} — {n} rows")
             facts += got
     facts = _dedupe(facts)
+    if len(unread) >= 3 and len(unread) > 0.1 * len(facts):
+        examples = ", ".join(sorted({r.words[0].text for r, _ in unread})[:4])
+        text = (f"{len(unread)} schedule rows start with a tag the rules don't recognise ({examples}…), against "
+                f"{len(facts)} read. The tags may follow another scheme (floor in the tag, an owner's standard); add "
+                "the scheme as a setup rule, or these rows wait for the AI reader.")
+        log(f"Coverage: {text}")
+        facts.append(_issue("coverage-schedules-unread-rows", text, unread[0][1] | {"bbox": unread[0][0].bbox},
+                            severity="coverage"))
     facts += _checks(facts, plan_tags, log)
     facts += _connections(facts, diagram_tags, log)
     return facts
 
 
-def _rows(ws) -> list[pdfdoc.Line]:
+def _rows(ws, is_start=lambda t: tags.parse(t)) -> list[pdfdoc.Line]:
     """Schedule rows. Tables stand side by side with gaps no wider than the gaps between cells, so a row is anchored
     on its tag: a tag with nothing just left of it and cells to its right. The row runs to the next such tag on the
-    same baseline (the first cell of the next table) or the end of the line."""
+    same baseline (the first cell of the next table) or the end of the line. `is_start`: what counts as a tag."""
     def same_line(a, b):
         return abs(a.top - b.top) < 3
 
     starts = []
     for w in ws:
-        if not tags.parse(w.text):
+        if not is_start(w.text):
             continue
         line = [v for v in ws if same_line(v, w)]
         left = [v for v in line if v.x1 <= w.x0 and w.x0 - v.x1 < 30]
@@ -103,6 +117,21 @@ def _rows(ws) -> list[pdfdoc.Line]:
         if len(out) >= 3:
             rows.append(pdfdoc.Line(tuple(out)))
     return rows
+
+
+def _tag_column(rows: list[pdfdoc.Line]) -> list[pdfdoc.Line]:
+    """Rows whose first cell is in a column of tags: at least 3 starts aligned on the left, all different, with one
+    letter prefix (VAVE-1-01, VAVE-1-02...). A model number repeated down a column (KNUDB181A) is not a tag."""
+    cols: dict[int, list[pdfdoc.Line]] = {}
+    for r in rows:
+        cols.setdefault(round(r.words[0].x0 / 6), []).append(r)
+    out = []
+    for col in cols.values():
+        texts = [r.words[0].text for r in col]
+        prefixes = {re.match(r"[A-Z]+", t).group() for t in texts}
+        if len(col) >= 3 and len(set(texts)) == len(texts) and len(prefixes) == 1:
+            out += col
+    return out
 
 
 def _title_for(row, titles):

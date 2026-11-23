@@ -18,7 +18,7 @@ from pathlib import Path
 from . import pdfdoc, tags
 
 SYSTEM = re.compile(r"^([A-Z][A-Z \-/&]{3,}):$")
-SECTION = re.compile(r"^([A-Z])\.\s+(.+?):")
+SECTION = re.compile(r"^([A-Z]|\d{1,2})\.\s+(.+?):")  # A. General: or 1. General:
 SYSTEM_WORDS = [  # heading words -> family, most specific first
     ("FVAV", "fvav"), ("FAN POWERED", "fvav"), ("VAV", "vav"), ("AIR HANDLING", "ahu"), ("AIR HANDLER", "ahu"),
     ("CHILLED WATER", "chiller"), ("CHILLER", "chiller"), ("EXHAUST FAN", "ef"), ("FAN COIL", "fcu"),
@@ -39,6 +39,18 @@ def read(paths: list[tuple[Path, str]], equipment: list[dict], log) -> list[dict
             sheet = pdfdoc.sheet_number(ws)
             cols = _columns(ws)
             systems = _systems(cols)
+            # Headings that name a system we know, but whose sections no rule read: a partial read, said once.
+            named = {m.group(1).strip() for l in pdfdoc.lines(ws, gap=40)
+                     if (m := SYSTEM.match(l.text.strip())) and _family(m.group(1))}
+            unread = sorted(named - {s["title"] for s in systems})
+            if unread:
+                text = (f"{len(unread)} sequence headings were found but none of their sections could be read "
+                        f"({', '.join(t.title() for t in unread[:4])}). Sections may be numbered or styled another way; "
+                        "these sequences wait for the AI reader.")
+                log(f"Coverage: {text}")
+                facts.append(_issue(f"coverage-sequences-unread-{page}", text,
+                                    {"file": name, "page": page, "sheet": sheet, "bbox": None}) |
+                             {"data": {"text": text, "severity": "coverage"}})
             if not systems:
                 log(f"Page {page + 1} · {sheet}: no sequence headings found")
                 continue
@@ -107,7 +119,11 @@ def _system_facts(s, equipment, src, log) -> list[dict]:
         units += [e for e in equipment if e["data"]["family"] == "pump"]
     prefixes = sorted({tags.parse(e["data"]["tag"]).prefix for e in units if tags.parse(e["data"]["tag"])})
     letters = [x["letter"] for x in s["sections"]]
-    skipped = [chr(c) for c in range(ord("A"), ord(max(letters)) + 1) if chr(c) not in letters] if letters else []
+    if letters and all(x.isdigit() for x in letters):  # numbered 1. 2. 3.
+        skipped = [str(n) for n in range(1, max(map(int, letters)) + 1) if str(n) not in letters]
+    else:
+        letters = [x for x in letters if not x.isdigit()]
+        skipped = [chr(c) for c in range(ord("A"), ord(max(letters)) + 1) if chr(c) not in letters] if letters else []
     setpoints = []
     for sec in s["sections"]:
         for m in SETPOINT.finditer(sec["text"]):

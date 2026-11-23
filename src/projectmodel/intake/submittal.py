@@ -86,7 +86,17 @@ def read(paths: list[tuple[Path, str]], equipment: list[dict], placements: list[
                 parts = [f"{n} {w}" for n, w in zip(got, ["devices", "points", "typical points", "room rows", "RFIs"]) if n]
                 log(f"Page {page + 1} · {src['sheet']}: {', '.join(parts)}")
     facts = _devices(riser, equipment, log)
-    facts += _points(points, typicals, riser, log)
+    pts = _points(points, typicals, riser, log)
+    facts += pts
+    applied = {f["data"]["typical"] for f in pts if f["data"].get("typical")}
+    for example in sorted({t["ref"].split(".")[1] for t in typicals} - applied):
+        rows = [t for t in typicals if t["ref"].split(".")[1] == example]
+        text = (f"Typical point list {example} ({len(rows)} points) matched no controller on the riser, so none of "
+                "its points were created. The riser may name these units another way than the typical.")
+        log(f"Coverage: {text}")
+        facts.append({"id": f"issue:coverage-submittal-typical-{example}", "kind": "issue", "label": text,
+                      "data": {"text": text, "severity": "coverage"}, "src": rows[0]["src"], "method": "rule",
+                      "conf": 0.5, "step": "submittal", "ask": {"q": text, "field": None, "options": []}})
     facts += _room_check(rooms, placements, log)
     for r in rfis:
         text = f"{r['id']} from the contractor: {r['text']}"
