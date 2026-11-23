@@ -60,7 +60,7 @@ from projectmodel.app.shell import (active_project, area_header, ensure_database
                                    project_header, rail)
 from projectmodel.projects import list_projects  # noqa: E402
 
-st.set_page_config(page_title="Project Model", page_icon=":material/hub:", layout="wide")
+st.set_page_config(page_title="Graph and Ontology Builder", page_icon=":material/hub:", layout="wide")
 
 overview = [
     st.Page(APP / "views/pitch.py", title="The idea", icon=":material/auto_awesome:", default=True),

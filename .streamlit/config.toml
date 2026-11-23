@@ -1,5 +1,6 @@
-# The app's design language: dark-first, grey containers on a near-black page, one cyan accent, 4px controls and
-# 10px cards. A light and a dark section keep Streamlit's light/dark switch in the menu, where a single [theme] would
+# The app's design language (see the comment above THEME in src/projectmodel/app/shell.py): dark-first, a black
+# top bar and rail, flat outlined panels on a #202020 page, one light-blue accent, near-square corners, regular
+# weights. A light and a dark section keep Streamlit's light/dark switch in the menu, where a single [theme] would
 # remove it.
 #
 # Font: Roobert (variable, weights 300-900), from Roobert.zip at the repo root. Streamlit serves it from
@@ -12,11 +13,11 @@ enableStaticServing = true
 font = "Roobert"
 headingFont = "Roobert"
 baseFontSize = 14          # body: 14/20
-baseFontWeight = 500       # body text is Medium
-headingFontWeights = [800, 700, 700, 700, 700, 700]
+baseFontWeight = 400       # body text is Regular
+headingFontWeights = [400, 500, 500, 500, 500, 500]
 headingFontSizes = ["24px", "20px", "16px", "14px", "14px", "12px"]  # heading-5, subtitle-1, subtitle-2, body
-baseRadius = "10px"        # cards
-buttonRadius = "4px"       # buttons and inputs
+baseRadius = "4px"         # panels and tables
+buttonRadius = "4px"       # buttons
 showWidgetBorder = true
 
 [[theme.fontFaces]]
@@ -26,18 +27,19 @@ weight = "300 900"
 style = "normal"
 
 [theme.dark]
-primaryColor = "#64C3FF"              # component/primary-default
-backgroundColor = "#1E1E1E"           # page, under the dot vector
+primaryColor = "#7CC1FA"              # accent: tabs, links, count pills
+backgroundColor = "#202020"           # page
 secondaryBackgroundColor = "#303030"  # gray-1000: cards, toolsets, inputs
 textColor = "#F0F0F0"                 # text/text-primary
-linkColor = "#64C3FF"
-borderColor = "#505050"               # component/divider-fullbleed
-dataframeBorderColor = "#505050"
-dataframeHeaderBackgroundColor = "#272727"
+linkColor = "#7CC1FA"
+borderColor = "#585858"               # panel outlines
+dataframeBorderColor = "#454545"      # table row lines
+dataframeHeaderBackgroundColor = "#202020"  # header row in the rows' colour
+dataframeHeaderTextColor = "#FFFFFF"
 codeBackgroundColor = "#272727"
 redColor = "#FF644C"                  # graphic/graphic-bad
-greenColor = "#68D560"                # semantic/good
-blueColor = "#64C3FF"
+greenColor = "#89B445"                # semantic/good
+blueColor = "#7CC1FA"
 
 [theme.light]
 primaryColor = "#1792E5"              # base/blue-600
@@ -46,8 +48,9 @@ secondaryBackgroundColor = "#FFFFFF"  # color-component-container-background-1-l
 textColor = "#303030"                 # color-font-base-default-light
 linkColor = "#005EAC"                 # color-font-blue-light
 borderColor = "#D0D0D0"
-dataframeBorderColor = "#D0D0D0"
-dataframeHeaderBackgroundColor = "#F7F7F7"
+dataframeBorderColor = "#DDDDDD"
+dataframeHeaderBackgroundColor = "#FFFFFF"
+dataframeHeaderTextColor = "#303030"
 redColor = "#EE3124"
 greenColor = "#007000"
 blueColor = "#1792E5"

@@ -260,9 +260,10 @@
   table.rows { width: 100%; border-collapse: collapse; font-size: 12px; }
   table.rows td { padding: 4px 4px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
   table.rows tr { opacity: 0; transition: opacity .4s; } table.rows tr.on { opacity: 1; }
-  table.rows td:first-child { font-weight: 600; }
+  table.rows td:first-child { font-weight: 500; }
   table.rows .fault { color: var(--fault); font-weight: 600; } table.rows .warn { color: var(--warn); font-weight: 600; } table.rows .ok { color: var(--ok); }
-  table.rows th { text-align: left; font-weight: 500; color: var(--muted); font-size: 10.5px; padding: 0 4px 3px; }
+  table.rows th { text-align: left; font-weight: 500; color: var(--text); font-size: 10.5px; padding: 0 4px 5px;
+    text-transform: uppercase; letter-spacing: .8px; }
 
   /* evidence strip */
   #evidence { border-top: 1px solid var(--line); padding: 8px 10px 10px; min-height: 112px; }
