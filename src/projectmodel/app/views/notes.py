@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import notes  # noqa: E402
-from projectmodel.app.shell import active_project, box, get_store  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store, table  # noqa: E402
 from projectmodel.projects import label, list_projects  # noqa: E402
 
 store = get_store()
@@ -53,7 +53,7 @@ with box("notes", "Notes", "sticky_note_2", fit=True):
         "author": x["author"], "source": x["source"] + (f" ({x['source_ref']})" if x["source_ref"] else ""),
         "status": x["status"], "updated": x["updated_at"][:16], "target id": x["target_id"],
     } for x in shown])
-    st.dataframe(df, hide_index=True, width="stretch", height=min(640, 40 + 35 * len(df)),
+    table(df, hide_index=True, width="stretch", height=min(640, 40 + 35 * len(df)),
                  column_config={"orphaned": st.column_config.TextColumn("⚠", width="small",
                                                                          help="Target no longer in the graph"),
                                 "note": st.column_config.TextColumn(width="large")})

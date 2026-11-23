@@ -14,7 +14,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
-from projectmodel.app.shell import active_project, box, get_store, secret, site_map  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store, secret, site_map, table  # noqa: E402
 from projectmodel.locate import LocateError, get_geocoder, get_location, save_location  # noqa: E402
 from projectmodel.projects import list_projects, site_of  # noqa: E402
 
@@ -43,7 +43,7 @@ with left, box("loc_info", "Where it is", "location_on", fit=True):
                 ("Postcode", parts.get("postcode")), ("Country", parts.get("country")),
                 ("Latitude", f"{saved['lat']:.6f}"), ("Longitude", f"{saved['lng']:.6f}"),
                 ("Found as", saved["kind"]), ("Place id", saved["place_id"]), ("Searched for", saved["query"])]
-        st.dataframe(pd.DataFrame([(k, v) for k, v in rows if v], columns=["Field", "Value"]), hide_index=True,
+        table(pd.DataFrame([(k, v) for k, v in rows if v], columns=["Field", "Value"]), hide_index=True,
                      width="stretch")
     else:
         st.info(f"{site.name} is not located yet. Search for it below.", icon=":material/location_off:")

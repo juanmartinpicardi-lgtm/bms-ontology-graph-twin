@@ -6,6 +6,7 @@ from __future__ import annotations
 import html
 import os
 from pathlib import Path
+from urllib.parse import quote
 
 import streamlit as st
 
@@ -83,25 +84,53 @@ def set_project(project: str) -> None:
     st.session_state["project"] = project
 
 
-# No sidebar anywhere: a fixed icon rail picks the area (Overview, Projects, Shared knowledge), chips pick the page
-# inside it, and the project header switches building and input. Page controls live on the page.
-# Design language: the rail is the local navigation, near-black in both themes; the selected item is a grey tile
-# with a blue bar on its left. Pages open with a page header (24px
-# extra-bold title), the area's pages are underlined tabs, and every section is a grey card with a soft shadow.
+# No sidebar anywhere: a black top bar names the app, a fixed icon rail under it picks the area (Overview, Projects,
+# Shared knowledge), folder tabs pick the page inside it, and the project header switches building. Page controls
+# live on the page.
+# Design language (docs/reference: the "List of sites" portal screen): the top bar and the rail are black in both
+# themes; the rail's selected item is a grey tile with a blue bar on its left, its icons thin outlines. A page opens
+# with its title in a regular 28px face, then its pages as folder tabs: grey tabs, the open one in the colour of the
+# band below it, a band that fades from dark into the page. Sub-tabs are plain labels underlined in the accent, with
+# their count in a pill. Sections are flat panels with a thin grey outline; tables have uppercase, letter-spaced
+# headers and thin row lines.
 THEME = {
-    "dark": {"accent": "#64C3FF", "accent_hover": "#8FD3FF", "text": "#F0F0F0", "text2": "#C8C8C8",
-             "mute": "#A0A0A0", "line": "#505050", "card": "#303030", "card2": "#272727", "input": "#1E1E1E",
-             "input_line": "#8A8A8A", "input_hover": "#C8C8C8", "on_accent": "#1E1E1E", "tag_line": "#A0A0A0",
-             "shadow": "0 4px 10px rgba(0,0,0,.25)", "bg": "#1E1E1E", "graph": "#9FD6FF", "good": "#68D560",
-             "warn": "#F2B134", "bad": "#FF644C"},
+    "dark": {"accent": "#7CC1FA", "accent_hover": "#A6D5FC", "text": "#F0F0F0", "text2": "#D0D0D0",
+             "mute": "#B0B0B0", "line": "#454545", "panel_line": "#585858", "card": "#252525", "card2": "#202020",
+             "input": "#202020", "input_line": "#8A8A8A", "input_hover": "#C8C8C8", "on_accent": "#202020",
+             "tag_line": "#A0A0A0", "shadow": "none", "bg": "#202020", "graph": "#9FD6FF", "good": "#89B445",
+             "warn": "#DA8A39", "bad": "#FF644C", "tab": "#303030", "tab_hover": "#3A3A3A", "band": "#101010",
+             "foot": "#303030", "search_btn": "#707070"},
     "light": {"accent": "#1792E5", "accent_hover": "#005EAC", "text": "#303030", "text2": "#505050",
-              "mute": "#707070", "line": "#D0D0D0", "card": "#FFFFFF", "card2": "#F7F7F7", "input": "#FFFFFF",
-              "input_line": "#909090", "input_hover": "#505050", "on_accent": "#FFFFFF", "tag_line": "#909090",
-              "shadow": "0 2px 8px rgba(0,0,0,.08)", "bg": "#F0F0F0", "graph": "#005EAC", "good": "#007000",
-              "warn": "#C98A12", "bad": "#EE3124"},
+              "mute": "#707070", "line": "#D8D8D8", "panel_line": "#C0C0C0", "card": "#FFFFFF", "card2": "#F7F7F7",
+              "input": "#FFFFFF", "input_line": "#909090", "input_hover": "#505050", "on_accent": "#FFFFFF",
+              "tag_line": "#909090", "shadow": "none", "bg": "#F0F0F0", "graph": "#005EAC", "good": "#007000",
+              "warn": "#C98A12", "bad": "#EE3124", "tab": "#E0E0E0", "tab_hover": "#D4D4D4", "band": "#FFFFFF",
+              "foot": "#F0F0F0", "search_btn": "#B0B0B0"},
 }
-NAV = {"bg": "#090909", "fg": "#F0F0F0", "hover": "#262626", "on": "#404040", "bar": "#1792E5"}
+NAV = {"bg": "#000000", "fg": "#FFFFFF", "hover": "#1C1C1C", "on": "#404040", "bar": "#60A5E5"}
 ACCENT = THEME["dark"]["accent"]
+TOP_H, RAIL_W = 50, 56  # the top bar's height and the rail's width, in px
+
+
+def _svg(body: str, stroke: float = 1.25) -> str:
+    """A thin line icon (24px grid) as a CSS url(), drawn in currentColor through a mask."""
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" '
+           f'stroke-width="{stroke}" stroke-linecap="round" stroke-linejoin="round">{body}</svg>')
+    return f'url("data:image/svg+xml;utf8,{quote(svg)}")'
+
+
+ICONS = {
+    "overview": _svg('<path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v11.5h13V9"/><path d="M10 20.5v-6h4v6"/>'),
+    "projects": _svg('<path d="M4.5 20.5V3.5h9.5v17"/><path d="M14 8.5h5.5v12"/><path d="M2.5 20.5h19"/>'
+                     '<path d="M7.5 7h1M10.5 7h1M7.5 10h1M10.5 10h1M7.5 13h1M10.5 13h1M7.5 16h1M10.5 16h1'
+                     'M16.5 12h1M16.5 15h1"/>'),
+    "shared": _svg('<circle cx="12" cy="4.8" r="2"/><circle cx="4.8" cy="18.5" r="2"/><circle cx="19.2" cy="18.5" r="2"/>'
+                   '<circle cx="12" cy="13" r="1.7"/><path d="M12 6.8v4.5M10.6 14.1l-4.2 3.1M13.4 14.1l4.2 3.1'
+                   'M6.8 18.5h10.4"/>'),
+    "back": _svg('<path d="M21 12H3.5M10 5 3 12l7 7"/>', 1.4),
+    "burger": _svg('<path d="M2.5 6h19M2.5 12h19M2.5 18h19"/>', 1.4),
+    "search": _svg('<circle cx="14" cy="10" r="6"/><path d="M9.8 14.2 3.5 20.5"/>', 1.4),
+}
 
 
 def theme() -> str:
@@ -124,108 +153,200 @@ def chrome_css() -> str:
   mask-image: radial-gradient(ellipse 75% 85% at 85% 10%, #000 0%, rgba(0,0,0,.35) 55%, transparent 100%); }}
 [data-testid="stAppViewContainer"] {{ position: relative; z-index: 1; background: transparent; }}
 [data-testid="stMain"], [data-testid="stBottomBlockContainer"] {{ background: transparent; }}
-.block-container {{ padding-top: 1rem; padding-left: calc(64px + 26px); padding-right: 24px; max-width: none; }}
+.block-container {{ padding-top: {TOP_H + 14}px; padding-left: {RAIL_W + 24}px; padding-right: 24px; max-width: none; }}
+[data-testid="stHeader"] {{ z-index: 999998; }}
 [data-testid="stHeader"], [data-testid="stHeader"] * {{ background: transparent; pointer-events: none; }}
 [data-testid="stHeader"] button, [data-testid="stHeader"] button * {{ pointer-events: auto; }}
 [data-testid="stAppDeployButton"] {{ display: none; }}
 
-/* Local navigation */
-.st-key-rail {{ position: fixed; left: 0; top: 0; bottom: 0; width: 64px; z-index: 999995; background: {NAV["bg"]};
-  padding: 23px 0 14px; align-items: stretch; gap: 0; }}
-.st-key-rail > div {{ width: 64px !important; }}
-.st-key-rail [data-testid="stPageLink"] {{ width: 64px; }}
-.st-key-rail [data-testid="stPageLink-NavLink"] {{ position: relative; width: 64px; height: 48px; margin: 0;
-  justify-content: center; padding: 0; border-radius: 5px; color: {NAV["fg"]}; background: transparent; }}
+/* The top bar: the menu button, the app's mark and name. Black in both themes, with a soft shadow on the page. */
+#pm-topbar {{ position: fixed; left: 0; right: 0; top: 0; height: {TOP_H}px; z-index: 2; background: {NAV["bg"]};
+  display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.35); }}
+#pm-nav {{ width: {RAIL_W}px; height: {TOP_H}px; flex: 0 0 auto; }}
+#pm-nav summary {{ list-style: none; width: {RAIL_W}px; height: {TOP_H}px; display: flex; align-items: center;
+  justify-content: center; cursor: pointer; color: {NAV["fg"]}; }}
+#pm-nav summary::-webkit-details-marker {{ display: none; }}
+#pm-nav summary::after {{ content: ""; width: 26px; height: 26px; background: currentColor;
+  -webkit-mask: {ICONS["burger"]} center / contain no-repeat; mask: {ICONS["burger"]} center / contain no-repeat; }}
+#pm-nav summary:hover {{ background: {NAV["hover"]}; }}
+#pm-nav summary:focus-visible {{ outline: 2px solid {NAV["bar"]}; outline-offset: -2px; }}
+.pm-brand {{ display: flex; align-items: center; gap: 14px; margin-left: 6px; color: {NAV["fg"]}; white-space: nowrap; }}
+.pm-mark {{ width: 26px; height: 26px; border-radius: 6px; background: #FFFFFF; display: flex; align-items: center;
+  justify-content: center; font-family: 'Material Symbols Rounded'; font-size: 20px; color: #EE3124; }}
+.pm-sep {{ width: 1px; height: 26px; background: #FFFFFF; opacity: .9; }}
+.pm-name {{ font-size: 20px; line-height: 1; font-weight: 400; letter-spacing: .3px; }}
+
+/* Local navigation: a black rail under the top bar, thin outline icons; the menu button opens it with names */
+.st-key-rail {{ position: fixed; left: 0; top: {TOP_H}px; bottom: 0; width: {RAIL_W}px; z-index: 999995;
+  background: {NAV["bg"]}; padding: 6px 0 14px; align-items: stretch; gap: 0;
+  box-shadow: 2px 0 8px rgba(0,0,0,.35); overflow: visible; }}
+.st-key-rail > div {{ width: 100% !important; }}
+.st-key-rail [data-testid="stPageLink"] {{ width: 100%; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] {{ position: relative; width: 100%; height: 56px; margin: 0;
+  justify-content: flex-start; padding: 0 0 0 {(RAIL_W - 26) // 2}px; border-radius: 0; color: {NAV["fg"]};
+  background: transparent; gap: 16px; }}
+.st-key-rail [data-testid="stPageLink-NavLink"]::after {{ content: ""; order: -1; flex: 0 0 26px; height: 26px;
+  background: currentColor; -webkit-mask: var(--ico) center / contain no-repeat; mask: var(--ico) center / contain no-repeat; }}
 .st-key-rail [data-testid="stPageLink-NavLink"] [data-testid="stMarkdownContainer"] {{ display: none; }}
-.st-key-rail [data-testid="stPageLink-NavLink"] span {{ margin: 0; font-size: 24px; color: inherit !important; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] > span:has([data-testid="stIconMaterial"]) {{ display: none; }}
+.st-key-rail [data-testid="stPageLink-NavLink"] p {{ color: {NAV["fg"]}; font-size: 15px; font-weight: 400;
+  white-space: nowrap; }}
 .st-key-rail [data-testid="stPageLink-NavLink"]:hover {{ background: {NAV["hover"]}; }}
-.st-key-rail_on [data-testid="stPageLink-NavLink"] {{ background: {NAV["on"]}; }}
-.st-key-rail_on [data-testid="stPageLink-NavLink"]::before {{ content: ""; position: absolute; left: 0; top: 0;
-  bottom: 0; width: 4px; border-radius: 1px; background: {NAV["bar"]}; }}
-.rail-logo {{ width: 36px; height: 36px; border-radius: 9px; background: #FFFFFF; display: flex;
-  align-items: center; justify-content: center; margin: 0 auto 27px;
-  box-shadow: 0 0 0 3px rgba(238,49,36,.18); }}
+[class*="st-key-rail_on_"] [data-testid="stPageLink-NavLink"], [class*="st-key-rail_on_"] [data-testid="stPageLink-NavLink"]:hover {{
+  background: {NAV["on"]}; }}
+[class*="st-key-rail_on_"] [data-testid="stPageLink-NavLink"]::before {{ content: ""; position: absolute; left: 0;
+  top: 0; bottom: 0; width: 4px; background: {NAV["bar"]}; }}
+.st-key-rail_overview, .st-key-rail_on_overview {{ --ico: {ICONS["overview"]}; }}
+.st-key-rail_projects, .st-key-rail_on_projects {{ --ico: {ICONS["projects"]}; }}
+.st-key-rail_shared, .st-key-rail_on_shared {{ --ico: {ICONS["shared"]}; }}
+body:has(#pm-nav[open]) .st-key-rail {{ width: 232px; }}
+body:has(#pm-nav[open]) .st-key-rail [data-testid="stPageLink-NavLink"] [data-testid="stMarkdownContainer"] {{
+  display: block; }}
 
-/* Page header and tabs */
-.st-key-areabar, .st-key-projbar {{ border-bottom: 1px solid {c["line"]}; padding-bottom: 0; margin-bottom: 10px; }}
-.page-title {{ font-size: 24px; line-height: 32px; font-weight: 800; color: {c["text"]}; margin: 0; }}
-/* The title row is 40px on every page (with or without the project picker), so the tabs sit at the same height
-   everywhere. Its right end stays clear of Streamlit's toolbar in the top right corner, whose width THEME_WATCH_JS
-   measures into --pm-tb: the theme switch and the menu locally, plus Share and two icons on Streamlit Cloud. */
-.st-key-titlebar {{ min-height: 40px; padding-right: calc(var(--pm-tb, 72px) + 12px); }}
+/* Page header: a back arrow on a project page, the title in a regular 28px face, its description in grey */
+.st-key-areabar, .st-key-projbar {{ padding-bottom: 0; margin-bottom: 0; }}
+.page-title {{ font-size: 28px; line-height: 36px; font-weight: 400; color: {c["text"]}; margin: 0;
+  letter-spacing: .2px; }}
+.st-key-titlebar {{ min-height: 44px; margin-bottom: 6px; }}
+.st-key-titlebar [data-testid="stCaptionContainer"] {{ margin-top: 8px; }}
+.st-key-titlebar [data-testid="stCaptionContainer"] p {{ font-size: 15px; color: {c["mute"]}; }}
+.st-key-backlink [data-testid="stPageLink-NavLink"] {{ width: 36px; height: 36px; padding: 0; margin: 0 4px 0 -6px;
+  justify-content: center; color: {c["text"]}; background: transparent; }}
+.st-key-backlink [data-testid="stPageLink-NavLink"] > * {{ display: none; }}
+.st-key-backlink [data-testid="stPageLink-NavLink"]::after {{ content: ""; width: 28px; height: 28px;
+  background: currentColor; -webkit-mask: {ICONS["back"]} center / contain no-repeat;
+  mask: {ICONS["back"]} center / contain no-repeat; }}
+.st-key-backlink [data-testid="stPageLink-NavLink"]:hover {{ color: {c["accent"]}; background: transparent; }}
 
-/* Streamlit's toolbar, level with the title row (THEME_WATCH_JS moves it), its buttons drawn like the app's own top
-   tools: 36px, a filled ground and a thin outline. The header around them stays transparent and lets clicks through. */
+/* Streamlit's toolbar (the theme switch and the menu) sits in the top bar (THEME_WATCH_JS moves it level with it),
+   drawn like the top bar's own tools: plain white icons on black. */
 [data-testid="stHeader"] [data-testid="stBaseButton-header"], #pm-theme {{ height: 36px; min-height: 36px;
-  min-width: 36px; padding: 0 12px; border-radius: 6px; background: {c["card2"]}; border: 1px solid {c["line"]};
-  color: {c["text2"]}; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }}
+  min-width: 36px; padding: 0 10px; border-radius: 4px; background: transparent; border: 0;
+  color: {NAV["fg"]}; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }}
 [data-testid="stHeader"] [data-testid="stBaseButton-header"]:hover, #pm-theme:hover {{
-  border-color: {c["tag_line"]}; background: {c["card2"]}; color: {c["text"]}; }}
+  background: {NAV["hover"]} !important; color: {NAV["fg"]}; }}
 [data-testid="stHeader"] [data-testid="stBaseButton-header"] * {{ color: inherit; fill: currentColor; }}
-[data-testid="stHeader"] [data-testid="stToolbarActionButtonLabel"] {{ font-size: 14px; font-weight: 600;
-  color: {c["text"]}; }}
-[data-testid="stToolbarActions"] {{ gap: 8px; align-items: center; }}
+[data-testid="stHeader"] [data-testid="stToolbarActionButtonLabel"] {{ font-size: 14px; font-weight: 400;
+  color: {NAV["fg"]}; }}
+[data-testid="stHeader"] [data-testid="stMainMenu"] svg {{ fill: {NAV["fg"]}; color: {NAV["fg"]}; }}
+[data-testid="stToolbarActions"] {{ gap: 4px; align-items: center; }}
 [data-testid="stToolbarActionButton"] {{ margin: 0; }}
 /* "Running… Stop": out of the crowded corner, a small pill at the bottom left, by the rail */
-[data-testid="stStatusWidget"] {{ position: fixed !important; left: 78px; bottom: 14px; top: auto !important;
+[data-testid="stStatusWidget"] {{ position: fixed !important; left: {RAIL_W + 12}px; bottom: 14px; top: auto !important;
   right: auto !important; z-index: 999996; display: flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px;
-  border-radius: 8px; background: {c["card"]} !important; border: 1px solid {c["line"]}; box-shadow: {c["shadow"]};
+  border-radius: 4px; background: {c["card"]} !important; border: 1px solid {c["panel_line"]};
   pointer-events: auto; }}
 [data-testid="stStatusWidget"] * {{ pointer-events: auto; }}
-.st-key-titlebar [data-testid="stCaptionContainer"] {{ margin-top: 6px; }}
-/* Top right: project, then the agent panel, settings and you, as in an app bar */
-.st-key-projpick [data-baseweb="select"] > div {{ min-height: 36px; border-radius: 6px; min-width: 200px; }}
-.st-key-toptools {{ gap: 8px !important; }}
+/* The top bar's right end: the agent panel, settings and you, left of Streamlit's toolbar (--pm-tb wide) */
+.st-key-projpick [data-baseweb="select"] > div {{ min-height: 36px; border-radius: 4px; min-width: 200px; }}
+.st-key-toptools {{ position: fixed; top: {(TOP_H - 36) // 2}px; right: calc(var(--pm-tb, 84px) + 6px); left: auto;
+  width: max-content !important; z-index: 999997; gap: 4px !important; }}
 .st-key-toptools [data-testid^="stBaseButton-"], .st-key-top_settings [data-testid="stPopoverButton"] {{
-  width: 36px; min-height: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 6px;
-  background: {c["card2"]}; border: 1px solid {c["line"]}; }}
+  width: 36px; min-height: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 4px;
+  background: transparent; border: 0; }}
 .st-key-toptools [data-testid^="stBaseButton-"]:hover, .st-key-top_settings [data-testid="stPopoverButton"]:hover {{
-  border-color: {c["tag_line"]}; background: {c["card2"]}; text-decoration: none; }}
-.st-key-toptools [data-testid="stIconMaterial"] {{ font-size: 19px; color: {c["text2"]} !important; }}
-.st-key-top_settings [data-testid="stPopoverButton"] svg, .st-key-top_me [data-testid="stPopoverButton"] svg {{
-  display: none; }}
-.st-key-top_me [data-testid="stPopoverButton"] {{ width: 36px; min-height: 36px; height: 36px; padding: 0;
-  border-radius: 50%; justify-content: center; background: {c["mute"]}; border: 0; }}
-.st-key-top_me [data-testid="stPopoverButton"] p {{ color: {c["bg"]} !important; font-size: 13px; font-weight: 800;
+  background: {NAV["hover"]}; text-decoration: none; }}
+.st-key-toptools [data-testid="stIconMaterial"] {{ font-size: 21px; color: {NAV["fg"]} !important; }}
+.st-key-top_settings [data-testid="stPopoverButton"] svg, .st-key-top_me [data-testid="stPopoverButton"] svg,
+.st-key-top_settings [data-testid="stPopoverButton"] > div > div[aria-hidden="true"],
+.st-key-top_me [data-testid="stPopoverButton"] > div > div[aria-hidden="true"] {{ display: none; }}
+.st-key-top_me {{ margin-left: 6px; }}
+.st-key-top_me [data-testid="stPopoverButton"] {{ width: 34px; min-height: 34px; height: 34px; padding: 0;
+  border-radius: 50%; justify-content: center; background: #D0D0D0; border: 0; }}
+.st-key-top_me [data-testid="stPopoverButton"]:hover {{ background: #FFFFFF; }}
+.st-key-top_me [data-testid="stPopoverButton"] p {{ color: #202020 !important; font-size: 13px; font-weight: 500;
   letter-spacing: .3px; }}
 
 /* The theme switch, next to the menu: one click between light and dark */
-#pm-theme {{ width: 36px; padding: 0; margin: 0; cursor: pointer;
-  transition: color .12s ease, border-color .12s ease; }}
-#pm-theme:focus-visible {{ outline: 2px solid {c["accent"]}; outline-offset: 1px; }}
-#pm-theme span {{ font-family: 'Material Symbols Rounded'; font-size: 18px; line-height: 1; }}
+#pm-theme {{ width: 36px; padding: 0; margin: 0; cursor: pointer; transition: background .12s ease; }}
+#pm-theme:focus-visible {{ outline: 2px solid {NAV["bar"]}; outline-offset: 1px; }}
+#pm-theme span {{ font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; }}
 /* While the switch drives Streamlit's menu, the menu is not shown */
 body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; pointer-events: none !important; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ border: 0; border-radius: 0; padding: 6px 4px 10px;
-  margin: 0 10px 0 0; min-height: 40px; background: transparent; border-bottom: 3px solid transparent; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] p {{ font-weight: 700; color: {c["text2"]}; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] span {{ color: {c["text2"]} !important; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"]:hover {{ background: transparent; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"]:hover p {{ color: {c["accent"]}; }}
-.st-key-chip_on [data-testid="stPageLink-NavLink"] {{ border-bottom-color: {c["accent"]}; }}
-.st-key-chip_on [data-testid="stPageLink-NavLink"] p {{ color: {c["text"]}; font-weight: 800; }}
-.st-key-chip_on [data-testid="stPageLink-NavLink"] span {{ color: {c["accent"]} !important; }}
-.st-key-pagetools {{ margin-left: auto; }}
+
+/* The area's pages: folder tabs. Grey tabs; the open one takes the colour of the band below it, which fades from
+   dark into the page (drawn under the tabs row, full width, behind the content). */
+.st-key-tabsrow {{ position: relative; align-items: flex-end !important; }}
+.st-key-tabsrow::after {{ content: ""; position: absolute; top: 100%; left: -24px; right: -24px; height: 240px;
+  background: linear-gradient(to bottom, {c["band"]}, color-mix(in srgb, {c["band"]} 0%, transparent));
+  z-index: -1; pointer-events: none; }}
+.st-key-tabs {{ gap: 2px !important; align-items: flex-end; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ height: 44px; padding: 0 24px; margin: 0; border: 0;
+  border-radius: 4px 4px 0 0; background: {c["tab"]}; transition: background .12s ease; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] > span:first-child:has([data-testid="stIconMaterial"]) {{
+  display: none; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] p {{ font-size: 16px; font-weight: 500; color: {c["text"]};
+  letter-spacing: .2px; white-space: nowrap; }}
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"]:hover {{ background: {c["tab_hover"]}; }}
+.st-key-chip_on [data-testid="stPageLink-NavLink"], .st-key-chip_on [data-testid="stPageLink-NavLink"]:hover {{
+  background: {c["band"]}; }}
+.st-key-chip_on [data-testid="stPageLink-NavLink"] p {{ color: {c["text"]}; }}
+.st-key-pagetools {{ margin-left: auto; align-self: center; }}
 .st-key-pagetools:empty, .st-key-pagetools:not(:has(*)) {{ display: none; }}
 
-/* Cards */
-[class*="st-key-box_"] {{ border: 1px solid {c["card"]} !important; border-radius: 10px !important;
-  background: {c["card"]}; box-shadow: {c["shadow"]}; padding: 16px 24px !important; }}
-[class*="st-key-box_"] [class*="st-key-box_"] {{ background: {c["card2"]}; border-color: {c["card2"]} !important;
+/* Sub-tabs (st.tabs and segmented controls): plain labels, the open one brighter and underlined in the accent; a
+   count sits in an accent pill (a :blue-badge[...] in the label) */
+[data-testid="stTabs"] [role="tablist"] {{ gap: 36px; border-bottom: 0; box-shadow: none; }}
+[data-testid="stTabs"] [role="tablist"]::after, [data-testid="stTabs"] [role="tablist"]::before {{ display: none; }}
+[data-testid="stTab"] {{ padding: 6px 0 9px; height: auto; min-height: 0; background: transparent; }}
+[data-testid="stTab"] p {{ font-size: 16px; font-weight: 400; color: {c["text2"]}; letter-spacing: .2px; }}
+[data-testid="stTab"]:hover p {{ color: {c["text"]}; }}
+[data-testid="stTab"][aria-selected="true"] p {{ color: {c["text"]}; font-weight: 500; }}
+[data-testid="stTab"] .react-aria-SelectionIndicator {{ height: 3px; background: {c["accent"]}; border-radius: 0; }}
+[data-testid="stTab"] [data-testid="stMarkdownContainer"] p, button[data-variant="segmented_control"] p {{
+  display: inline-flex; align-items: center; gap: 8px; }}
+[data-testid="stTab"] .stMarkdownBadge, button[data-variant="segmented_control"] .stMarkdownBadge {{
+  background: {c["accent"]} !important; color: {c["on_accent"]} !important; border-radius: 999px !important;
+  padding: 0 9px !important; min-width: 26px; display: inline-flex; align-items: center; justify-content: center;
+  font-size: 15px !important; line-height: 23px; height: 23px; font-weight: 400; letter-spacing: .3px; margin: 0; }}
+[role="radiogroup"]:has(> button[data-variant="segmented_control"]) {{ gap: 32px; flex-wrap: wrap; }}
+button[data-variant="segmented_control"] {{ background: transparent !important; border: 0 !important;
+  border-radius: 0 !important; border-bottom: 3px solid transparent !important; padding: 6px 0 6px !important;
+  min-height: 36px; box-shadow: none !important; margin: 0 !important; }}
+button[data-variant="segmented_control"] p {{ font-size: 16px !important; font-weight: 400 !important;
+  color: {c["text2"]} !important; letter-spacing: .2px !important; }}
+button[data-variant="segmented_control"]:hover p {{ color: {c["text"]} !important; }}
+button[data-variant="segmented_control"] [data-testid="stIconMaterial"] {{ display: none; }}
+button[data-variant="segmented_control"][data-selected="true"] {{ border-bottom-color: {c["accent"]} !important; }}
+button[data-variant="segmented_control"][data-selected="true"] p {{ color: {c["text"]} !important; font-weight: 500 !important; }}
+
+/* Sections: flat panels with a thin grey outline, square corners, no shadow */
+[class*="st-key-box_"] {{ border: 1px solid {c["panel_line"]} !important; border-radius: 2px !important;
+  background: {c["card"]}; box-shadow: none; padding: 16px 20px !important; }}
+[class*="st-key-box_"] [class*="st-key-box_"] {{ background: {c["card2"]}; border-color: {c["line"]} !important;
   box-shadow: none; padding: 14px 16px !important; }}
+
+/* Tables: the grid sits flush in its panel; headers are uppercase (table()), rows have thin lines. A table panel
+   (a container keyed tablepanel_...) adds a search bar on top and a footer with the row count, as one outlined block. */
+[data-testid="stDataFrame"] [data-testid="stDataFrameResizable"] {{ border-radius: 0 !important; }}
+[class*="st-key-tablepanel_"] {{ gap: 0 !important; border: 1px solid {c["panel_line"]}; background: {c["card2"]}; }}
+[class*="st-key-tablepanel_"] [data-testid="stDataFrameResizable"] {{ border-left: 0 !important;
+  border-right: 0 !important; }}
+[class*="st-key-tabletools_"] {{ padding: 6px 12px 6px 4px; min-height: 46px; }}
+[class*="st-key-tablefoot_"] {{ background: {c["foot"]}; padding: 4px 12px 4px 16px; min-height: 44px;
+  border-top: 1px solid {c["panel_line"]}; }}
+[class*="st-key-tablefoot_"] [data-testid="stCaptionContainer"] p {{ font-size: 14px; color: {c["text2"]}; }}
+/* A search field (key search_...) has a grey search button at its right end, as one control */
+[class*="st-key-search_"] [data-testid="stTextInputRootElement"] {{ border-radius: 0 !important;
+  padding-right: 44px; position: relative; background: {c["card2"]} !important; }}
+[class*="st-key-search_"] [data-testid="stTextInputRootElement"]::after {{ content: ""; position: absolute; right: 0;
+  top: 0; bottom: 0; width: 44px; background: {c["search_btn"]}; }}
+[class*="st-key-search_"] [data-testid="stTextInputRootElement"]::before {{ content: ""; position: absolute;
+  right: 11px; top: 50%; width: 22px; height: 22px; margin-top: -11px; z-index: 1; background: #FFFFFF;
+  -webkit-mask: {ICONS["search"]} center / contain no-repeat; mask: {ICONS["search"]} center / contain no-repeat; }}
 
 /* Buttons: 40px tall, 4px corners, letter-spaced labels. Primary is filled in the accent with dark text; secondary
    (and popovers) are outlined in the accent on a transparent ground; tertiary is an accent text link. */
 [data-testid^="stBaseButton-"], [data-testid="stPopoverButton"] {{ min-height: 40px; border-radius: 4px;
-  padding: 0 20px; font-size: 15px; font-weight: 600; letter-spacing: .4px; box-shadow: none;
+  padding: 0 20px; font-size: 15px; font-weight: 500; letter-spacing: .4px; box-shadow: none;
   transition: background .12s ease, border-color .12s ease, color .12s ease; }}
-[data-testid^="stBaseButton-"] p, [data-testid="stPopoverButton"] p {{ font-size: 15px; font-weight: 600;
+[data-testid^="stBaseButton-"] p, [data-testid="stPopoverButton"] p {{ font-size: 15px; font-weight: 500;
   letter-spacing: .4px; }}
 [data-testid="stBaseButton-primary"] {{ background: {c["accent"]}; border: 1px solid {c["accent"]};
   color: {c["on_accent"]}; }}
 [data-testid="stBaseButton-primary"] * {{ color: {c["on_accent"]} !important; }}
 [data-testid="stBaseButton-primary"]:hover {{ background: {c["accent_hover"]}; border-color: {c["accent_hover"]}; }}
-[data-testid="stBaseButton-secondary"], [data-testid="stPopoverButton"] {{ background: transparent;
+[data-testid="stBaseButton-secondary"], [data-testid="stPopoverButton"] {{ background: color-mix(in srgb, {c["accent"]} 8%, transparent);
   border: 1px solid {c["accent"]}; color: {c["accent"]}; }}
 [data-testid="stBaseButton-secondary"] *, [data-testid="stPopoverButton"] * {{ color: {c["accent"]}; }}
 [data-testid="stBaseButton-secondary"]:hover, [data-testid="stPopoverButton"]:hover {{
@@ -244,11 +365,11 @@ body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; poin
   background: color-mix(in srgb, {c["bad"]} 12%, transparent); }}
 
 /* Fields: 40px, dark fill inside the grey card, 1px grey outline, 4px corners; the accent on focus */
-[data-testid="stWidgetLabel"] p {{ font-size: 14px; font-weight: 500; color: {c["text"]}; }}
+[data-testid="stWidgetLabel"] p {{ font-size: 14px; font-weight: 400; color: {c["text2"]}; }}
 [data-testid="stSelectbox"] [data-baseweb="select"] > div, [data-testid="stMultiSelect"] [data-baseweb="select"] > div,
 [data-testid="stTextInputRootElement"], [data-testid="stNumberInputContainer"], [data-testid="stDateInput"] > div > div,
 [data-testid="stTextArea"] [data-baseweb="textarea"] {{
-  background: {c["input"]} !important; border: 1px solid {c["input_line"]} !important; border-radius: 4px !important;
+  background: {c["input"]} !important; border: 1px solid {c["input_line"]} !important; border-radius: 2px !important;
   min-height: 40px; transition: border-color .12s ease; }}
 [data-testid="stSelectbox"] [data-baseweb="select"] > div:hover, [data-testid="stMultiSelect"] [data-baseweb="select"] > div:hover,
 [data-testid="stTextInputRootElement"]:hover, [data-testid="stNumberInputContainer"]:hover,
@@ -265,18 +386,19 @@ body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; poin
   font-style: italic; color: {c["mute"]}; }}
 /* Drop zones are dashed, like a place to put something */
 [data-testid="stFileUploaderDropzone"] {{ background: transparent; border: 1px dashed {c["input_line"]};
-  border-radius: 6px; }}
+  border-radius: 2px; }}
 [data-testid="stFileUploaderDropzone"]:hover {{ border-color: {c["accent"]}; }}
 /* Tags (badges) are small outlined labels */
-[data-testid="stBadge"] > span, .stBadge span {{ border-radius: 4px; font-weight: 600; letter-spacing: .2px; }}
+[data-testid="stBadge"] > span, .stBadge span {{ border-radius: 4px; font-weight: 500; letter-spacing: .2px; }}
 /* Expanders and popovers share the card language */
-[data-testid="stExpander"] details {{ border-radius: 6px; border-color: {c["line"]}; }}
-[data-testid="stPopoverBody"] {{ border-radius: 8px; border: 1px solid {c["line"]}; box-shadow: {c["shadow"]}; }}
+[data-testid="stExpander"] details {{ border-radius: 2px; border-color: {c["line"]}; }}
+[data-testid="stPopoverBody"] {{ border-radius: 4px; border: 1px solid {c["panel_line"]};
+  box-shadow: 0 4px 14px rgba(0,0,0,.35); }}
 [data-testid="stProgress"] [role="progressbar"] > div > div {{ border-radius: 4px; }}
 
 /* Section titles inside cards: small caps, letter-spaced, like a form heading */
-.box-title {{ display: flex; align-items: center; gap: 8px; margin: 0 0 2px; font-size: 13px; font-weight: 700;
-  letter-spacing: 1.6px; text-transform: uppercase; color: {c["text"]}; }}
+.box-title {{ display: flex; align-items: center; gap: 8px; margin: 0 0 2px; font-size: 14px; font-weight: 500;
+  letter-spacing: 1.2px; text-transform: uppercase; color: {c["text"]}; }}
 .box-title .ms {{ font-family: 'Material Symbols Rounded'; font-size: 18px; letter-spacing: 0; text-transform: none;
   color: {c["accent"]}; font-weight: 400; }}
 
@@ -436,8 +558,8 @@ export default function (component) {
     }
   }
   // Streamlit's toolbar (the theme switch and the menu; on Streamlit Cloud also Share and two icons): its width is
-  // reserved at the right end of the title row (--pm-tb), and the header is moved down so the toolbar sits on the
-  // title row's centre line. Measured, not guessed: the toolbar has a different width locally and on Cloud.
+  // reserved at the right end of the top bar (--pm-tb, where the app's own top tools end), and the header is moved so
+  // the toolbar sits on the top bar's centre line. Measured, not guessed: the toolbar is wider on Cloud.
   const fitHeader = () => {
     const head = document.querySelector('[data-testid="stHeader"]');
     if (!head) return;
@@ -447,14 +569,13 @@ export default function (component) {
     const root = document.documentElement;
     const w = Math.ceil(innerWidth - Math.min(...parts.map(r => r.left)));
     if (root.style.getPropertyValue("--pm-tb") !== w + "px") root.style.setProperty("--pm-tb", w + "px");
-    const row = document.querySelector(".st-key-titlebar");
+    const row = document.getElementById("pm-topbar");  // fixed: its centre does not move when the page scrolls
     if (!row) return;
-    const main = document.querySelector('[data-testid="stMain"]');
     const r = row.getBoundingClientRect();
-    const rowMid = r.top + r.height / 2 + (main ? main.scrollTop : 0);  // where the row is when scrolled to the top
+    const rowMid = r.top + r.height / 2;
     const now = parseFloat(head.style.top) || 0;
     const barMid = Math.max(...parts.map(p => p.top + p.height / 2)) - now;  // where the toolbar is unmoved
-    const top = Math.max(0, Math.round(rowMid - barMid));
+    const top = Math.round(rowMid - barMid);
     if (Math.abs(top - now) >= 1) head.style.top = top + "px";
   };
   clearInterval(globalThis.__pmThemeWatch);
@@ -467,26 +588,33 @@ export default function (component) {
 _theme_watch = st.components.v2.component("projectmodel.theme_watch", js=THEME_WATCH_JS)
 
 
-RAIL_LOGO = """<div class="rail-logo" title="Project Model"><span aria-hidden="true"
-style="font-family: 'Material Symbols Rounded'; font-size: 24px; color: #EE3124">hub</span></div>"""
+APP_NAME = "Graph and Ontology Builder"
+# The menu button is a <details>: it opens and closes with no rerun, and the rail widens to show the areas' names
+# while it is open (CSS :has). The mark is the app's icon, as in the browser tab.
+TOP_BAR = f"""<div id="pm-topbar"><details id="pm-nav"><summary title="Show the names of the areas"
+aria-label="Menu"></summary></details><div class="pm-brand"><span class="pm-mark" aria-hidden="true"
+translate="no">hub</span><span class="pm-sep"></span><span class="pm-name">{APP_NAME}</span></div></div>"""
+RAIL_SLUG = {"Overview": "overview", "Projects": "projects", "Shared knowledge": "shared"}
 
 
 def rail(areas: list[tuple[str, str, list]], current) -> None:
-    """The fixed icon rail on the left: one icon per area, linking to the area's first page."""
+    """The top bar, and the fixed icon rail under it on the left: one thin outline icon per area (ICONS, by the
+    area's slug), linking to the area's first page. The menu button in the top bar shows their names."""
     st.html(chrome_css())
     with st.container(key="rail"):
-        st.html(RAIL_LOGO)
+        st.html(TOP_BAR)
         _fit(key="fit")
         _theme_watch(data={"theme": theme()}, key="theme_watch", on_changed_change=lambda: None)
-        for name, icon, pages in areas:
+        for name, _icon, pages in areas:
             on = any(p.url_path == current.url_path for p in pages)
-            with st.container(key="rail_on" if on else f"rail_{name}", width="content"):
-                st.page_link(pages[0], label=name, icon=icon, help=name)
+            slug = RAIL_SLUG.get(name, name.lower())
+            with st.container(key=f"rail_on_{slug}" if on else f"rail_{slug}", width="stretch"):
+                st.page_link(pages[0], label=name, help=name)
 
 
 def chips(pages: list, current, labels: dict[str, str] | None = None) -> None:
-    """The pages of one area as a row of chips; the current one is filled."""
-    with st.container(horizontal=True, gap="small", width="content"):
+    """The pages of one area as folder tabs; the open one merges into the band below."""
+    with st.container(horizontal=True, gap=None, width="content", key="tabs"):
         for i, p in enumerate(pages):
             with st.container(key="chip_on" if p.url_path == current.url_path else f"chip_{i}", width="content"):
                 st.page_link(p, label=(labels or {}).get(p.title, p.title), icon=p.icon)
@@ -500,14 +628,14 @@ AREA_SUBTITLES = {
 
 
 def page_title(title: str) -> None:
-    """A page header's title: 24px extra-bold."""
+    """A page header's title: 28px, regular weight."""
     st.html(f'<p class="page-title">{html.escape(title)}</p>', width="content")
 
 
 def _tabs_row(pages: list, current) -> None:
     """The second header row, the same on every page: the area's pages as tabs, the page's own tools at the right
     end (page_tools)."""
-    with st.container(horizontal=True, vertical_alignment="center", gap="small"):
+    with st.container(horizontal=True, vertical_alignment="bottom", gap="small", key="tabsrow"):
         chips(pages, current)
         # Pushed right by an auto margin, not a stretch spacer: the spacer's own width made the tools wrap onto a
         # line of their own (at the left) whenever the tabs left less than ~500px.
@@ -625,6 +753,8 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
     screen.project(project, site.name)
     with st.container(key="projbar", gap="small"):
         with st.container(key="titlebar", horizontal=True, vertical_alignment="center", gap="small"):
+            with st.container(key="backlink", width="content"):
+                st.page_link(all_projects, label="All projects", help="Back to all projects")
             page_title(site.name)
             if site.role == "test":
                 st.badge("Test set · measure only, never tune", color="orange", icon=":material/science:")
@@ -636,7 +766,6 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
             st.caption(f"{site.kind} · {n.get('point', 0):,} points · {n.get('equipment', 0)} equipment",
                        width="content")
             st.space("stretch")
-            st.page_link(all_projects, label="All projects", icon=":material/apps:")
             with st.container(key="projpick", width="content"):
                 st.selectbox("Project", shown, key="_project_pick", format_func=lambda p: site_of(p).name,
                              label_visibility="collapsed", on_change=_pick_project,
@@ -648,3 +777,28 @@ def project_header(store: Store, sections: list, current, all_projects) -> None:
 def page_tools():
     """The page's own tools, at the right end of the header row; in place when the page runs on its own (tests)."""
     return st.session_state.pop("_page_tools", None) or st.container(horizontal=True, horizontal_alignment="right")
+
+
+def table(data, *, column_config: dict | None = None, row_height: int = 34, **kw):
+    """st.dataframe in the app's table style: column headers in upper case (as labels, so the data keeps its column
+    names) and 34px rows. Takes everything st.dataframe takes and returns what it returns (selections)."""
+    if isinstance(data, list) and data and isinstance(data[0], dict):
+        import pandas as pd
+        data = pd.DataFrame(data)
+    cfg = dict(column_config or {})
+    frame = getattr(data, "data", data)  # a pandas Styler holds its frame in .data
+    for col in getattr(frame, "columns", []):
+        name = str(col)
+        v = cfg.get(name, ...)
+        if v is ...:
+            cfg[name] = st.column_config.Column(name.upper())
+        elif isinstance(v, str):
+            cfg[name] = v.upper()
+        elif isinstance(v, dict):
+            cfg[name] = {**v, "label": (v.get("label") or name).upper()}
+    return st.dataframe(data, column_config=cfg, row_height=row_height, **kw)
+
+
+def count(label: str, n: int) -> str:
+    """A sub-tab label with its count in a pill."""
+    return f"{label} :blue-badge[{n:,}]"

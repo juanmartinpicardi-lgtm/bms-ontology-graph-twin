@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import notes  # noqa: E402
-from projectmodel.app.shell import active_project, box, get_store  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store, table  # noqa: E402
 from projectmodel.conventions import layer_table, load_layers, scopes_for  # noqa: E402
 from projectmodel.intake import knowledge  # noqa: E402
 from projectmodel.intake.state import Intake  # noqa: E402
@@ -61,10 +61,10 @@ with left, box("tk_notes", "Notes", "sticky_note_2", fit=True):
 with right, box("tk_rules", "Rules for this building", "rule", fit=True):
     if conventions:
         st.markdown("**Conventions** (conventions/, layered knowledge model ← contractor ← customer ← site)")
-        st.dataframe(pd.DataFrame(conventions), hide_index=True, width="stretch")
+        table(pd.DataFrame(conventions), hide_index=True, width="stretch")
     if rules["tags"] or rules["terms"]:
         st.markdown("**Taught in the guided setup**")
-        st.dataframe(pd.DataFrame(
+        table(pd.DataFrame(
             [{"kind": "tag", "says": f"{t['prefix']} is a {t['class']}", "by": t["by"]} for t in rules["tags"]]
             + [{"kind": "term", "says": f"{t['phrase']} is a {t['class']}", "by": t["by"]} for t in rules["terms"]]),
             hide_index=True, width="stretch")

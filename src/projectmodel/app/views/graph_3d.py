@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.bridge import frame  # noqa: E402
-from projectmodel.app.shell import active_project, box, get_store, knowledge_model  # noqa: E402
+from projectmodel.app.shell import active_project, box, get_store, knowledge_model, table  # noqa: E402
 from projectmodel.projects import label, list_projects  # noqa: E402
 from projectmodel.viz import graph_payload, render_html  # noqa: E402
 
@@ -42,11 +42,11 @@ with info, box("graph_info", "This graph", "hub", fit=True):
     c[1].metric("Classes used", f"{kinds.get('class', 0):,}", border=True)
     st.caption("**Links by kind** · relationships between equipment, points and spaces; the model layer's links "
                "from each node to its class are not counted")
-    st.dataframe(pd.DataFrame(sorted(rels.items(), key=lambda kv: -kv[1]), columns=["link", "count"]),
+    table(pd.DataFrame(sorted(rels.items(), key=lambda kv: -kv[1]), columns=["link", "count"]),
                  hide_index=True, width="stretch")
     methods = Counter(n.get("prov", {}).get("method", "") for n in inst)
     st.caption("**How each node was decided**")
-    st.dataframe(pd.DataFrame(methods.most_common(), columns=["method", "nodes"]), hide_index=True, width="stretch")
+    table(pd.DataFrame(methods.most_common(), columns=["method", "nodes"]), hide_index=True, width="stretch")
     confident = sum(1 for n in inst if (n.get("prov", {}).get("confidence") or 0) >= 0.9)
     st.caption(f"{confident:,} of {len(inst):,} nodes at 90% confidence or more. Every node and link carries its "
                "source, method and confidence: hover one in the graph.")

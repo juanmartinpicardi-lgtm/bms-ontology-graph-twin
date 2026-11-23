@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import km_explorer as kx  # noqa: E402
-from projectmodel.app.shell import active_project, box  # noqa: E402
+from projectmodel.app.shell import active_project, box, count, table  # noqa: E402
 from projectmodel.conventions import CONV_DIR, ConventionError, apply_conventions, load_layers, scopes_for  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
@@ -58,8 +58,13 @@ summary.caption(f"Brick {km.brick_version} subset · relations: {', '.join(km.re
 if not project:
     st.stop()
 
-tab_c, tab_t, tab_u, tab_r, tab_m, tab_v = box("km_tabs").tabs(["Classes", "Templates", "Unknown words", "Relations",
-                                                    "Missing from the model", "Conventions"])
+unk = pd.DataFrame(kx.unknown_tokens(store, project, accept))
+rel = pd.DataFrame(kx.relation_usage(km, store, project))
+miss = pd.DataFrame(kx.missing_classes(km, store, project, gt)) if gt is not None else None
+tab_c, tab_t, tab_u, tab_r, tab_m, tab_v = box("km_tabs").tabs([
+    count("Classes", len(km.classes)), count("Templates", len(km.templates)), count("Unknown words", len(unk)),
+    count("Relations", len(rel)), count("Missing from the model", len(miss)) if miss is not None
+    else "Missing from the model", "Conventions"])
 
 # --- Classes -----------------------------------------------------------------------------------
 with tab_c:
@@ -83,7 +88,7 @@ with tab_c:
                "Select a row for details.")
     left, right = st.columns([1.6, 1])
     with left:
-        ev = st.dataframe(view[cols], hide_index=True, width="stretch", height=560, on_select="rerun",
+        ev = table(view[cols], hide_index=True, width="stretch", height=560, on_select="rerun",
                           selection_mode="single-row", key=f"km_cls_{project}",
                           column_config={"name": st.column_config.TextColumn("class", width="medium"),
                                          "defined in": st.column_config.TextColumn("from", width="small"),
@@ -110,17 +115,17 @@ with tab_c:
             if gt is not None:
                 if d["truly this, mapper said"]:
                     st.markdown("**Truly this class, but the mapper said**")
-                    st.dataframe(pd.DataFrame(d["truly this, mapper said"], columns=["mapper said", "points"]),
+                    table(pd.DataFrame(d["truly this, mapper said"], columns=["mapper said", "points"]),
                                  hide_index=True, width="stretch")
                 if d["mapper said this, truly"]:
                     st.markdown("**The mapper said this class, but truly**")
-                    st.dataframe(pd.DataFrame(d["mapper said this, truly"], columns=["true class", "points"]),
+                    table(pd.DataFrame(d["mapper said this, truly"], columns=["true class", "points"]),
                                  hide_index=True, width="stretch")
 
 # --- Templates ---------------------------------------------------------------------------------
 with tab_t:
     fit = kx.template_fit(km, store, project)
-    st.dataframe(pd.DataFrame([{k: t[k] for k in ("template", "class", "instances", "missing a required point",
+    table(pd.DataFrame([{k: t[k] for k in ("template", "class", "instances", "missing a required point",
                                                   "fewer points than expected", "more points than expected",
                                                   "expected points")} for t in fit]),
                  hide_index=True, width="stretch")
@@ -130,48 +135,45 @@ with tab_t:
     a, b = st.columns([1.5, 1])
     with a:
         st.markdown(f"**Point slots**: how often each is filled on the {t['instances']} equipment of this type")
-        st.dataframe(pd.DataFrame(t["slots"]), hide_index=True, width="stretch",
+        table(pd.DataFrame(t["slots"]), hide_index=True, width="stretch",
                      column_config={"filled %": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f%%")})
     with b:
         st.markdown("**Point classes that fit no slot** (candidates for a new slot, or wrong classes)")
         if t["extra classes"]:
-            st.dataframe(pd.DataFrame(t["extra classes"], columns=["class", "points"]), hide_index=True, width="stretch")
+            table(pd.DataFrame(t["extra classes"], columns=["class", "points"]), hide_index=True, width="stretch")
         else:
             st.caption("None.")
         st.markdown("**Relations the template expects**")
-        st.dataframe(pd.DataFrame(t["relations"]), hide_index=True, width="stretch")
+        table(pd.DataFrame(t["relations"]), hide_index=True, width="stretch")
 
 # --- Unknown words -----------------------------------------------------------------------------
 with tab_u:
-    unk = pd.DataFrame(kx.unknown_tokens(store, project, accept))
     if unk.empty:
         st.success("Every word in the point names is known to the name rules.")
     else:
         st.caption(f"{len(unk)} words the name rules don't know, touching {unk['points'].sum()} point mentions. "
                    "Each one added to `knowledge_model/name_rules/abbreviations.yaml` can lift every point that uses it.")
-        st.dataframe(unk, hide_index=True, width="stretch", height=560)
+        table(unk, hide_index=True, width="stretch", height=560)
 
 # --- Relations ---------------------------------------------------------------------------------
 with tab_r:
-    rel = pd.DataFrame(kx.relation_usage(km, store, project))
     gap = rel[(rel["links"] == 0) & rel["expected by a template"]]
     if len(gap):
         st.warning(f"{len(gap)} relation(s) the templates expect were never found in this project.")
     st.caption("Equipment-to-equipment relations in the graph, grouped by class (has point is left out).")
-    st.dataframe(rel, hide_index=True, width="stretch", height=560)
+    table(rel, hide_index=True, width="stretch", height=560)
 
 # --- Missing -----------------------------------------------------------------------------------
 with tab_m:
     if gt is None:
         st.info("Needs ground truth for this project.")
     else:
-        miss = pd.DataFrame(kx.missing_classes(km, store, project, gt))
         if miss.empty:
             st.success("Every ground-truth class in this project is in the model.")
         else:
             st.caption(f"{len(miss)} ground-truth classes ({miss['points'].sum()} points) are not in the model, "
                        "so the mapper can never get them exactly right.")
-            st.dataframe(miss, hide_index=True, width="stretch")
+            table(miss, hide_index=True, width="stretch")
 
 # --- Conventions -------------------------------------------------------------------------------
 with tab_v:
@@ -190,7 +192,7 @@ with tab_v:
             st.error("\n".join(e.problems))
             st.stop()
         rows = pd.DataFrame(kx.convention_entries(km, store, project, layers))
-        st.dataframe(rows, hide_index=True, width="stretch",
+        table(rows, hide_index=True, width="stretch",
                      column_config={"points here": st.column_config.NumberColumn(
                          help="Nodes in this project whose provenance names this entry (latest mapper run)")})
     else:

@@ -32,7 +32,8 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.bridge import frame  # noqa: E402
-from projectmodel.app.shell import THEME, box, get_store, knowledge_model, secret, set_project, site_map, theme  # noqa: E402
+from projectmodel.app.shell import (THEME, box, get_store, knowledge_model, secret, set_project,  # noqa: E402
+                                   site_map, count, table, theme)
 from projectmodel.fonts import with_fonts  # noqa: E402
 from projectmodel.intake.publish import delete_project, project_id, publish  # noqa: E402
 from projectmodel.locate import LocateError, get_geocoder, location_dict  # noqa: E402
@@ -645,11 +646,11 @@ def built_tables(step_ids: list[str]) -> None:
     if not kinds:
         return
     kind = st.segmented_control("Show", kinds, default=kinds[0], key=f"kind_{step_id}",
-                                format_func=lambda k: f"{KIND_NAME.get(k, k)} ({sum(1 for f in facts if f['kind'] == k)})")
+                                format_func=lambda k: count(KIND_NAME.get(k, k), sum(1 for f in facts if f['kind'] == k)))
     rows = [f for f in facts if f["kind"] == (kind or kinds[0])]
     df = pd.DataFrame([{"status": status_of(f), "what": f["label"], "confidence": f["conf"], "method": f["method"],
                         "source": where(f), **_detail(f)} for f in rows])
-    ev = st.dataframe(df, hide_index=True, height=360, on_select="rerun", selection_mode="single-row",
+    ev = table(df, hide_index=True, height=360, on_select="rerun", selection_mode="single-row",
                       key=f"tbl_{step_id}_{kind}",
                       column_config={"confidence": st.column_config.ProgressColumn("confidence", min_value=0,
                                                                                    max_value=1, format="percent")})
@@ -701,7 +702,7 @@ def viewer(step_files: list[str]) -> None:
             st.caption(f"{csvs[0]} · {len(df)} rows" + (f" · row {row}: the selected item" if row else ""))
             if row:
                 df = df.iloc[max(0, row - 2 - 6):row - 2 + 14]
-            st.dataframe(df, hide_index=False, height=520)
+            table(df, hide_index=False, height=520)
         else:
             st.info("Click a unit, a room or a graph node, or **Show** on a question: the document opens here at "
                     "that place.", icon=":material/description:")
@@ -761,8 +762,8 @@ def outputs_panel() -> None:
             outs["site"] = "Site"
         outs |= {"twin": "Building", "graph": "Knowledge graph"}
         if seqs:
-            outs["seq"] = f"Sequences ({seqs})"
-        outs["review"] = f"Review ({len(it.open_questions())})"
+            outs["seq"] = count("Sequences", seqs)
+        outs["review"] = count("Review", len(it.open_questions()))
         if want := st.session_state.pop("ab_view_want", None):
             st.session_state["ab_view"] = want
         if st.session_state.get("ab_view") not in outs:
@@ -833,7 +834,7 @@ def review_live() -> None:
         rows.append({"step": f"{s_.n} · {s_.title}", "status": "read" if it.done(s_.id) else "to do",
                      "facts": len(fs), "confirmed": sum(1 for f in fs if f["status"] == "confirmed"),
                      "need you": len(it.open_questions(s_.id))})
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+    table(pd.DataFrame(rows), hide_index=True, width="stretch")
     if asks:
         st.markdown("###### Latest questions")
         for i, f in enumerate(asks[-3:]):
@@ -1052,7 +1053,7 @@ def review_step() -> None:
                f"{round(100 * conf / max(1, len(all_facts)))}% of facts confirmed")
     proposed = [f for f in all_facts if f["status"] == "proposed" and not f.get("ask")]
     nq = len(it.open_questions())
-    work = work_tabs({"ask": f"Open questions ({nq})", "wait": f"Waiting ({len(proposed)})", "doc": "Document",
+    work = work_tabs({"ask": count("Open questions", nq), "wait": count("Waiting", len(proposed)), "doc": "Document",
                       "score": "Score and export"}, "ask")
     if work == "doc":
         viewer([f["name"] for fs in it.s["files"].values() for f in fs])
@@ -1078,7 +1079,7 @@ def review_step() -> None:
                 df = pd.DataFrame(score.score(it, key))
                 df["machine %"] = (df["machine"] / df["out of"].clip(lower=1) * 100).round(0)
                 df["with you %"] = (df["with you"] / df["out of"].clip(lower=1) * 100).round(0)
-                st.dataframe(df[["measure", "machine", "with you", "out of", "machine %", "with you %", "what"]],
+                table(df[["measure", "machine", "with you", "out of", "machine %", "with you %", "what"]],
                              hide_index=True)
         graph_json = {"building": it.name, "location": it.location, "facts": all_facts,
                       "knowledge": knowledge.get(it)}
@@ -1131,7 +1132,7 @@ def document_step() -> None:
             read_now(todo)  # in this box, under the drop zone
         return
     nq = len(it.open_questions(step_id))
-    tabs = {"doc": "Document", "ask": f"Needs you ({nq})",
+    tabs = {"doc": "Document", "ask": count("Needs you", nq),
             "built": "Sequences" if step_id == "sequences" else "Results", "log": "Log"}
     todo, reread = None, False
     with st.container(horizontal=True, vertical_alignment="center", gap="small"):

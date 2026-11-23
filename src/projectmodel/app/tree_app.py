@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel import notes  # noqa: E402
 from projectmodel.app import screen  # noqa: E402
-from projectmodel.app.shell import active_project, box  # noqa: E402
+from projectmodel.app.shell import active_project, box, table  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
 from projectmodel.equipment_view import load_anchors  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
@@ -91,7 +91,7 @@ def behaviour_facts(tree, nid: str) -> list[dict]:
 
 
 def provenance_table(rows: list[dict]):
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch",
+    table(pd.DataFrame(rows), hide_index=True, width="stretch",
                  column_config={"confidence": st.column_config.NumberColumn(format="%.2f")})
 
 
@@ -187,7 +187,7 @@ def tree_tab():
     left, right = st.columns([1, 1.5], gap="medium")
     with left, box("tree_list", "Equipment", "account_tree", fit=True):
         df = pd.DataFrame(rows, columns=["id", "equipment", "class", "points", "method", "status"])
-        ev = st.dataframe(df, hide_index=True, width="stretch", height=640, on_select="rerun",
+        ev = table(df, hide_index=True, width="stretch", height=640, on_select="rerun",
                           selection_mode="single-row", key=f"tree_{project}", column_config={"id": None})
     sel = ev.selection.rows
     with right, box("tree_detail", "Provenance", "fact_check", fit=True):
@@ -239,7 +239,7 @@ def tree_tab():
                              "notes": pt_count.get(("node", p.id), 0), "confidence": p.prov["confidence"],
                              "method": p.prov["method"], "status": p.prov["status"], "row": p.prov["source_ref"],
                              "placed by": (p.via or {}).get("method", "")} for p in n.points])
-        pev = st.dataframe(pts, hide_index=True, width="stretch", on_select="rerun", selection_mode="single-row",
+        pev = table(pts, hide_index=True, width="stretch", on_select="rerun", selection_mode="single-row",
                            key=f"tree_pts_{project}_{n.id}",
                            column_config={"id": None, "notes": st.column_config.NumberColumn("📝", width="small"),
                                           "confidence": st.column_config.ProgressColumn(
