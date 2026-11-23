@@ -4,7 +4,8 @@ Run: .venv/bin/streamlit run src/projectmodel/app/main.py
 
 An icon rail on the left picks the area; chips at the top pick the page inside it.
 
-Overview          why the knowledge graph matters, how it works, what a complete graph is
+Overview          why the knowledge graph matters, how it works, the ontology (Brick + our extension, and where
+                  each input lands), what a complete graph is
 Projects          every building, and adding one (guided setup); then one project's pages, with the building and input
                   switched in the project header. A project opens on its digital twin (the building in 3D, with a
                   floor plan), its first tab
@@ -66,6 +67,7 @@ overview = [
     st.Page(APP / "views/pitch.py", title="The idea", icon=":material/auto_awesome:", default=True),
     st.Page(APP / "views/why.py", title="Why it matters", icon=":material/bolt:", url_path="why-it-matters"),
     st.Page(APP / "views/how.py", title="How it works", icon=":material/schema:", url_path="how-it-works"),
+    st.Page(APP / "views/ontology.py", title="Ontology", icon=":material/category:", url_path="ontology"),
     st.Page(APP / "views/complete_graph.py", title="Complete graph", icon=":material/task_alt:",
             url_path="complete-graph"),
     st.Page(APP / "views/agent_tour.py", title="Agent tour", icon=":material/smart_toy:", url_path="agent-tour"),

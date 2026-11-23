@@ -111,7 +111,8 @@ story([
             p("The mapper groups points onto equipment and gives each one a class, in order: structure, naming "
               "rules, equipment templates, then an LLM with a short list of candidates.",
               "Every result gets a confidence between 0 and 1; the low ones go to review."),
-            understand, [Go("Explore the knowledge model", "views/knowledge_model.py")]),
+            understand, [Go("Explore the knowledge model", "views/knowledge_model.py"),
+                         Go("See the ontology", "views/ontology.py", "category")]),
     Section("Build the graph", "hub", "One graph per building, every fact linked.",
             p("Every point and equipment gets the best guess, linked into one graph: points on equipment, parts, "
               "and what feeds what.",
