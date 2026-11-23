@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import bms, coverage, floorplans, knowledge, schedules, sequence_text, submittal
+from . import bms, coverage, floorplans, knowledge, point_ai, schedules, sequence_text, submittal
 from .state import Intake
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -92,6 +92,9 @@ def run(it: Intake, step_id: str, log) -> int:
             facts += bms.read(path, name, live("equipment"), live("controller"), live("point"), say)
     else:
         facts = []
+    if step_id in ("submittal", "bms"):  # points the rules leave unsure: the point_class job proposes a class
+        point_ai.refine(facts, live("equipment"), say, project=f"intake:{it.slug}",
+                        cache=it.s.setdefault("ai_point_class", {}))
     gaps = coverage.check(step_id, facts, files)  # never end with nothing found and nothing said
     for g in gaps:
         say(f"Coverage: {g['label']}")

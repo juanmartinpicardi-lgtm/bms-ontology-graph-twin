@@ -1,0 +1,72 @@
+[
+ {
+  "ai": false,
+  "off": "PM_AI=off",
+  "points": 847,
+  "below_threshold": 679,
+  "score": {
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ]
+  },
+  "questions": 91,
+  "asked": 0,
+  "calls": 0,
+  "cost_usd": 0.0,
+  "seconds": 0.0,
+  "changed": 0,
+  "agreed": 0,
+  "none": 0,
+  "error": 0,
+  "models": {},
+  "usd_per_1000_points": 0.0,
+  "ai_seconds_per_1000_points": 0.0,
+  "llm_methods": 0,
+  "wall_seconds": 9.6
+ },
+ {
+  "ai": true,
+  "off": "",
+  "points": 847,
+  "below_threshold": 679,
+  "score": {
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    628,
+    847
+   ],
+   "Point class right or broader": [
+    715,
+    847
+   ]
+  },
+  "questions": 91,
+  "asked": 91,
+  "calls": 91,
+  "cost_usd": 0.2893,
+  "seconds": 94.0,
+  "changed": 266,
+  "agreed": 413,
+  "none": 0,
+  "error": 0,
+  "models": {
+   "argon": 91
+  },
+  "usd_per_1000_points": 0.342,
+  "ai_seconds_per_1000_points": 111.0,
+  "llm_methods": 679,
+  "wall_seconds": 102.8
+ }
+]
