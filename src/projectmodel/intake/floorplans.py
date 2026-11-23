@@ -19,14 +19,14 @@ from pathlib import Path
 
 from . import pdfdoc, tags
 
-LEVEL = [
-    (re.compile(r"PLAN\s*-\s*LEVEL\s*(\d+)|LEVEL\s*(\d+)\s+(?:\w+\s+)?PLAN"), None),
+LEVEL = [  # LEVEL, FLOOR and FLR: the words title blocks use for a numbered level
+    (re.compile(r"PLAN\s*-\s*(?:LEVEL|FLOOR|FLR\.?)\s*(\d+)|(?:LEVEL|FLOOR|FLR\.?)\s*(\d+)\s+(?:\w+\s+)?PLAN"), None),
     (re.compile(r"(FIRST|SECOND|THIRD|FOURTH|FIFTH)\s+FLOOR\s+(?:\w+\s+)?PLAN"), None),
     (re.compile(r"\bROOF\s+PLAN\b"), "RF"),
     (re.compile(r"\bBASEMENT\b.*\bPLAN\b"), "B1"),
 ]
 ORDINAL = {"FIRST": 1, "SECOND": 2, "THIRD": 3, "FOURTH": 4, "FIFTH": 5}
-ROOM_NO = re.compile(r"^\d{3}[A-Z]?$")
+ROOM_NO = re.compile(r"^[A-Z]?\d{3,4}[A-Z]?$")  # 109, 109A, 1109 (larger buildings), A109 (a wing letter)
 NAME_WORD = re.compile(r"^[A-Z0-9][A-Z0-9'/&.\-]*$")
 UNITS = {"CFM", "GPM", "MBH", "KW", "HP", "LBS", "SF", "X", "TONS"}
 
@@ -144,6 +144,12 @@ def _chain(row, cx):
     return row[lo:hi + 1]
 
 
+def _on_level(number: str, level: str) -> bool:
+    """Room 205 or 2105 is on level 2 (a 4-digit number may lead with a building or wing digit: 1205 = wing 1, L2)."""
+    digits = number.strip("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    return digits.startswith(level) or (len(digits) == 4 and digits[1:].startswith(level))
+
+
 def _room_fact(r: dict, floor_id: str, src: dict) -> dict:
     number, name = r["number"], r["name"]
     level_digit = floor_id[1:] if floor_id.startswith("L") else None
@@ -152,7 +158,7 @@ def _room_fact(r: dict, floor_id: str, src: dict) -> dict:
         conf, note = 0.6, "no name next to the number"
         ask = {"q": f"Room {number} on the plan has no name next to it. Is it a room?", "field": "name",
                "options": [{"value": "", "label": "Yes, a room without a name"}]}
-    elif level_digit and not number.startswith(level_digit):
+    elif level_digit and not _on_level(number, level_digit):
         conf, note = 0.75, f"number does not start with the level ({level_digit})"
         ask = {"q": f"Room {number} {name.title()} is on the {floor_id} plan but its number does not start with "
                     f"{level_digit}. Keep it on this floor?", "field": None, "options": []}

@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.preview import building_svg  # noqa: E402
-from projectmodel.app.shell import THEME, box, get_store, set_project, theme  # noqa: E402
+from projectmodel.app.shell import THEME, box, get_store, knowledge_model, set_project, theme  # noqa: E402
+from projectmodel.progress import project_progress  # noqa: E402
+from projectmodel.progress import setup as setup_progress  # noqa: E402
 from projectmodel.intake.model import progress  # noqa: E402
 from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
 from projectmodel.projects import delete_site, list_projects, main_projects, site_of, summaries  # noqa: E402
@@ -44,6 +46,12 @@ def twin_levels(project: str, revision) -> tuple[list[dict], dict[str, int]]:  #
     for e in p["equip"]:
         counts[e.get("floor")] = counts.get(e.get("floor"), 0) + 1
     return p["levels"], counts
+
+
+@st.cache_data(show_spinner=False, max_entries=64)
+def completeness(project: str, revision) -> dict:  # revision: a re-map refreshes it
+    """The share of the graph standard this project meets, and what to do next (progress.py; Roadmap page)."""
+    return project_progress(get_store(), knowledge_model(), project, n_next=1)
 
 
 def numbers(project: str) -> dict:
@@ -133,6 +141,13 @@ for p in projects:
         else:
             share, label = num["trusted"], f"of the graph trusted (confidence ≥ {TRUSTED:g} or a person decided)"
         st.progress(share, text=f"**{round(share * 100)}%** {label}")
+        done = completeness(p, s.get("revision"))
+        st.progress(done["overall"] / 100, text=f"**{done['overall']:.0f}%** of a complete graph · "
+                                                 f"{done['done']} of {done['facts']} facts done")
+        if done["next"]:
+            n = done["next"][0]
+            st.caption(("Demo set, kept as is. A building from documents adds: " if done["demo"] else "Next: ")
+                       + n["action"])
         kpi_grid([("Points", f"{num['points']:,}"), ("Equipment", f"{num['equipment']:,}"),
                   ("Relationships", f"{sum(v for r, v in s.get('links', {}).items() if r != 'hasPoint'):,}"),
                   ("Levels", str(len(levels))), ("Avg. confidence", f"{num['confidence']:.0%}"),
@@ -165,6 +180,7 @@ for slug in intakes:  # buildings still being set up (a finished one is a projec
         st.badge("Setup in progress", color="violet", icon=":material/add_business:")
         st.image(building_svg([], {}, c, ghost=True), width="stretch")
         st.progress(prog["share"], text=f"**{round(prog['share'] * 100)}%** built from its documents")
+        st.caption("Next: " + setup_progress(slug)["next"])
         kpi_grid([("Documents read", f"{sum(1 for x in prog['steps'].values() if x['read'])} of 5"),
                   ("Questions open", f"{sum(x['open'] for x in prog['steps'].values())}"),
                   ("Located", "Yes" if it.location else "No")])

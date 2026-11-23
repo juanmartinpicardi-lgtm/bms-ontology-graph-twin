@@ -20,13 +20,15 @@ from pathlib import Path
 from . import tags
 from .submittal import classify
 
-COLUMNS = {
-    "ref": ["item reference", "reference", "object reference", "object name", "point name", "name"],
-    "device": ["device", "controller", "device name"],
-    "description": ["description", "desc"],
-    "units": ["units", "unit"],
-    "object": ["object type", "type"],
+COLUMNS = {  # first match wins; Metasys, Niagara and generic BACnet export headers
+    "ref": ["item reference", "reference", "object reference", "object name", "point name", "path", "ord",
+            "point path", "name"],
+    "device": ["device", "controller", "device name", "parent", "controller name"],
+    "description": ["description", "desc", "point description", "display name"],
+    "units": ["units", "unit", "facets"],
+    "object": ["object type", "type", "point type"],
     "instance": ["instance", "object instance"],
+    "device_instance": ["device instance", "device id", "dev. inst.", "device instance number"],
 }
 
 
@@ -59,13 +61,17 @@ def read(path: Path, name: str, equipment: list[dict], controllers: list[dict], 
 
     by_normal = {e["data"]["normal"]: e for e in equipment}
     by_ctrl = {c["data"]["device"]: c for c in controllers}
+    # The riser's device instance identifies a controller whatever the BMS calls it (DEV3104, a controller model...).
+    by_inst = {str(c["data"].get("instance")): c for c in controllers if c["data"].get("instance")}
     facts = []
     linked = 0
     for dev, objs in devices.items():
         norm = tags.normal(dev)
-        ctrl = by_ctrl.get(dev)
+        inst = str(objs[0].get(col["device_instance"] or "", "") or "").strip()
+        ctrl = by_ctrl.get(dev) or by_inst.get(inst)
         eq_norm = ctrl["data"].get("equip") if ctrl and ctrl["data"].get("equip") else (norm if norm in by_normal else None)
-        via = "submittal riser" if ctrl and ctrl["data"].get("equip") else "same tag" if eq_norm else None
+        via = ("submittal riser" if by_ctrl.get(dev) else "device instance on the riser") \
+            if ctrl and ctrl["data"].get("equip") else "same tag" if eq_norm else None
         src = {"file": name, "page": None, "bbox": None, "row": objs[0]["_row"]}
         data = {"device": dev, "objects": len(objs), "equip": eq_norm, "via": via}
         if eq_norm:
@@ -73,7 +79,7 @@ def read(path: Path, name: str, equipment: list[dict], controllers: list[dict], 
             eq = by_normal.get(eq_norm)
             label = f"BMS {dev} = {eq['data']['tag'] if eq else eq_norm}"
             facts.append({"id": f"alias:{dev}", "kind": "alias", "label": label, "data": data, "src": src,
-                          "method": "rule", "conf": 0.96 if via == "submittal riser" else 0.93, "step": "bms", "ask": None})
+                          "method": "rule", "conf": 0.96 if via != "same tag" else 0.93, "step": "bms", "ask": None})
         else:
             options = [{"value": e["data"]["normal"], "label": f"It is {e['data']['tag']}"}
                        for n, e in by_normal.items() if norm and n[:3] == norm[:3]][:4]

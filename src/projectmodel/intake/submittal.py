@@ -25,9 +25,12 @@ RISER = re.compile(r"^(?P<addr>\d{1,3}) (?P<dev>[A-Z][A-Z0-9-]+) (?P<ctrl>.+?) (
 IO = r"AI|AO|BI|BO|AV|BV|MV|BN"
 POINT = re.compile(rf"^(?P<pt>\S+) (?P<desc>.+?) (?P<io>{IO})(?: (?P<units>\S+))? (?P<term>(?:UI|AO|BI|BO)\d+|software|BACnet)"
                    rf"(?: (?P<obj>[a-z]+(?:-[a-z]+)+) (?P<inst>\d+))? (?P<ref>[A-Z0-9-]+/FC-[\dx]+\.[A-Z0-9-]+\.\S+)$")
-ROOM_ROW = re.compile(r"^(?P<floor>L\d|RF|B\d) (?P<room>\d{3}[A-Z]?) (?P<name>.+?) (?P<box>\S+) (?P<ahu>AHU\S*) .* "
+ROOM_ROW = re.compile(r"^(?P<floor>L\d|RF|B\d) (?P<room>[A-Z]?\d{3,4}[A-Z]?)(?P<name>.+?) (?P<box>\S+) (?P<ahu>AHU\S*) .* "
                       r"(?P<trunk>FC-\d+):(?P<addr>\d+)$")
 RFI = re.compile(r"^((?:RFI|CL)-\d+) (.+)$")
+# A line ending in something shaped like an object reference (NAE/TRUNK.DEVICE.POINT) that no pattern read: another
+# vendor's point row. Counted so a step that read a few points out of hundreds says so.
+REF_LIKE = re.compile(r"(?:\S+/\S+\.\S+\.\S+|/\S+/points/\S+)$")  # Metasys-like, or a Niagara ord path
 
 
 @lru_cache
@@ -54,7 +57,7 @@ def classify(description: str, short: str) -> tuple[str | None, float]:
 
 
 def read(paths: list[tuple[Path, str]], equipment: list[dict], placements: list[dict], log) -> list[dict]:
-    riser, points, typicals, rooms, rfis = [], [], [], [], []
+    riser, points, typicals, rooms, rfis, unread = [], [], [], [], [], []
     for path, name in paths:
         trunk, trunk_sheet = None, None  # a riser table may run onto the next page of the same sheet
         for page in range(pdfdoc.page_count(path)):
@@ -76,6 +79,8 @@ def read(paths: list[tuple[Path, str]], equipment: list[dict], placements: list[
                     riser.append(m.groupdict() | {"trunk": trunk, "src": src | {"bbox": l.bbox}})
                 elif (m := RFI.match(t)):
                     rfis.append({"id": m.group(1), "text": m.group(2), "src": src | {"bbox": l.bbox}})
+                elif REF_LIKE.search(t):
+                    unread.append({"text": t, "src": src | {"bbox": l.bbox}})
             got = [a - b for a, b in zip((len(riser), len(points), len(typicals), len(rooms), len(rfis)), n_before)]
             if any(got):
                 parts = [f"{n} {w}" for n, w in zip(got, ["devices", "points", "typical points", "room rows", "RFIs"]) if n]
@@ -90,6 +95,15 @@ def read(paths: list[tuple[Path, str]], equipment: list[dict], placements: list[
                       "ask": {"q": text, "field": None, "options": []}})
     if rfis:
         log(f"{len(rfis)} RFIs and clarifications from the contractor, to read")
+    if len(unread) > 0.1 * (len(points) + len(typicals)) and len(unread) >= 5:
+        text = (f"{len(unread)} rows end with a point reference but were not read as points (e.g. "
+                f"\"{unread[0]['text'][:70]}\"), against {len(points) + len(typicals)} read. The point table may use "
+                "another layout (object types spelled out, other columns); these points wait for the AI reader.")
+        log(f"Coverage: {text}")
+        facts.append({"id": "issue:coverage-submittal-unread-points", "kind": "issue", "label": text,
+                      "data": {"text": text, "severity": "coverage", "rows": len(unread)}, "src": unread[0]["src"],
+                      "method": "rule", "conf": 0.5, "step": "submittal", "ask": {"q": text, "field": None,
+                                                                                  "options": []}})
     return facts
 
 

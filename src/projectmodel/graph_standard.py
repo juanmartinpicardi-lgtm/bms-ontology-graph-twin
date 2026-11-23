@@ -343,14 +343,54 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
         state = state or ("missing" if not pct else "done" if pct >= 100 else "partial")
         return {"pct": pct, "state": state, "note": note}
 
+    # Spaces, nameplates and a second source exist only for buildings read from their documents (guided setup):
+    # measured when the graph has them, otherwise the BMS-only note stands (Alpha).
+    rooms = [n for n in nodes.values() if n["kind"] == "location" and n["class"] == "Room"]
+    floors = [n for n in nodes.values() if n["kind"] == "location" and n["class"] == "Floor"]
+    floor_ids = {n["id"] for n in floors}
+    rooms_placed = {e["dst"] for e in by_rel["hasPart"] if e["src"] in floor_ids} & {n["id"] for n in rooms}
+    served = {e["src"] for e in by_rel["serves"]}
+    eq_attrs = {n["id"]: json.loads(n["attrs"] or "{}") for n in real_equip}
+    scheduled = [i for i, a in eq_attrs.items() if a.get("schedule")]
+    two_docs = sum(1 for i in scheduled if eq_attrs[i].get("controller"))  # on a schedule and on the riser
+    room_agree = sum(1 for n in terminals if eq_attrs[n["id"]].get("room_source") == "plan + submittal agree")
+
+    def spaces_fact():
+        if not rooms:
+            return fact(0, "Not in the input yet: needs drawings, or floors read from zone names.")
+        return fact(_pct(len(rooms_placed), len(rooms)),
+                    f"{len(floors)} floors and {len(rooms)} rooms from the floor plans, {len(rooms_placed)} on their "
+                    "floor. HVAC zones are not separate nodes yet.")
+
+    def serves_fact():
+        if not rooms:
+            return fact(0, "No zones yet, so nothing to serve.")
+        n_served = sum(1 for n in terminals if n["id"] in served)
+        return fact(_pct(n_served, len(terminals)), f"{n_served} of {len(terminals)} terminal units serve a room.")
+
+    def nameplate_fact():
+        if not scheduled:
+            return fact(0, "Needs the mechanical schedule.")
+        return fact(_pct(len(scheduled), len(real_equip)),
+                    f"{len(scheduled)} of {len(real_equip)} equipment have their schedule row (make, model, "
+                    "capacity). Serial numbers come from the site.")
+
+    def agreement_fact():
+        if not scheduled:
+            return fact(0, "One source today (the BMS export), so nothing is confirmed by a second one.")
+        key = len(real_equip) + len(terminals)
+        return fact(_pct(two_docs + room_agree, key),
+                    f"{two_docs} of {len(real_equip)} equipment are on both the schedule and the controls riser; "
+                    f"{room_agree} of {len(terminals)} terminal rooms agree between the plans and the submittal.")
+
     specific_pts = sum(1 for n in points if n["class"] and n["class"] not in GENERIC)
     specific_eq = sum(1 for n in real_equip if n["class"] and n["class"] not in GENERIC)
     validation_checks = [len(on_equip & {n["id"] for n in points}) == len(points),
                          one_feeder == len(terminals) and bool(terminals), not has_cycle(),
                          bool(with_unit)]  # unit matches class: cannot run without units
     return {
-        "spaces": fact(0, "Not in the input yet: needs drawings, or floors read from zone names."),
-        "serves": fact(0, "No zones yet, so nothing to serve."),
+        "spaces": spaces_fact(),
+        "serves": serves_fact(),
         "systems": fact(100.0 if systems else 0, f"{len(systems)} plant and loop nodes, from plant folders. Air "
                                                  "systems are not separate nodes yet.", "partial" if systems else None),
         "membership": fact(_pct(in_system, len(plant)),
@@ -363,7 +403,7 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
         "feeds": fact(_pct(one_feeder, len(terminals)),
                       f"{len(by_rel['feeds'])} feeds links; {one_feeder} of {len(terminals)} terminals have exactly "
                       "one air handler. Inferred from folders and templates, not confirmed by drawings."),
-        "nameplate": fact(0, "Needs the mechanical schedule."),
+        "nameplate": nameplate_fact(),
         "point": fact(None, f"{len(points):,} points, each once, but keyed on the export row: a rename would break "
                             "the link. Needs device + object ID.", "partial" if points else "missing"),
         "point_equip": fact(_pct(len(on_equip & {n['id'] for n in points}), len(points)),
@@ -380,7 +420,7 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
         "validation": fact(_pct(sum(validation_checks), len(validation_checks)),
                            f"{sum(validation_checks)} of {len(validation_checks)} checks pass: every point placed, one "
                            "air handler per terminal, no feed cycles. Unit vs class cannot run without units."),
-        "agreement": fact(0, "One source today (the BMS export), so nothing is confirmed by a second one."),
+        "agreement": agreement_fact(),
         "calibration": fact(_pct(calibrated, sum(b["n"] for b in bands)),
                             "Share of points in a confidence band that is as accurate as it claims. "
                             + next((f"The {b['conf']} band is right {b['exact_pct']:.0f}% of the time."

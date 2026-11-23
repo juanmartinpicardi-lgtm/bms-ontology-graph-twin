@@ -1,0 +1,1229 @@
+[
+ {
+  "scenario": "baseline",
+  "secs": 9.1,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "plans: whole 27-sheet drawing set uploaded",
+  "secs": 23.1,
+  "asks": {
+   "plans": 33,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 3
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    76,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "plans: scanned (no text layer)",
+  "secs": 7.6,
+  "asks": {
+   "plans": 2,
+   "schedules": 1,
+   "sequences": 6,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 11,
+   "bms": 5
+  },
+  "read": {
+   "rooms": 0,
+   "equipment": 72,
+   "points": 847,
+   "devices linked": "64/69"
+  },
+  "coverage": {
+   "plans": 2
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    0,
+    80
+   ],
+   "Room names right": [
+    0,
+    80
+   ],
+   "Equipment found": [
+    69,
+    74
+   ],
+   "Equipment class right": [
+    69,
+    69
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    0,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    64,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "plans: titles say 'FLR' not 'LEVEL'",
+  "secs": 8.6,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "plans + submittal: 4-digit room numbers",
+  "secs": 7.9,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    0,
+    80
+   ],
+   "Room names right": [
+    0,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    0,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    0,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "plans: room number above its name",
+  "secs": 8.5,
+  "asks": {
+   "plans": 124,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 58,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 77,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    45,
+    80
+   ],
+   "Room names right": [
+    0,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    7,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "all PDFs: tags with floor (VAVE-1-07)",
+  "secs": 7.9,
+  "asks": {
+   "plans": 9,
+   "schedules": 1,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 3
+   },
+   "seq_setpoints": 32,
+   "submittal": 65,
+   "bms": 60
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 21,
+   "points": 121,
+   "devices linked": "10/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    72,
+    80
+   ],
+   "Equipment found": [
+    16,
+    74
+   ],
+   "Equipment class right": [
+    16,
+    16
+   ],
+   "Box serves the right room": [
+    0,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    0,
+    56
+   ],
+   "Feeds found": [
+    6,
+    62
+   ],
+   "Points found": [
+    121,
+    847
+   ],
+   "Point class exact": [
+    58,
+    121
+   ],
+   "Point class right or broader": [
+    77,
+    121
+   ],
+   "BMS device linked to its unit": [
+    10,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "schedules: whole 27-sheet drawing set uploaded",
+  "secs": 27.2,
+  "asks": {
+   "plans": 31,
+   "schedules": 17,
+   "sequences": 6,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 5
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    68,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    60,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "schedules: 'VAV' titles read 'AIR TERMINAL'",
+  "secs": 8.2,
+  "asks": {
+   "plans": 31,
+   "schedules": 40,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    53,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "sequences: whole 27-sheet drawing set uploaded",
+  "secs": 28.8,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "sequences: headings in Title Case",
+  "secs": 7.9,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 1,
+   "seq_kinds": {
+    "issue": 1
+   },
+   "seq_setpoints": 0,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1,
+   "sequences": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "sequences: sections numbered 1. 2. 3.",
+  "secs": 7.5,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 1,
+   "seq_kinds": {
+    "sequence": 1,
+    "issue": 1
+   },
+   "seq_setpoints": 16,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "submittal: Niagara-style references",
+  "secs": 9.1,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 38,
+   "bms": 4
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 726,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1,
+   "submittal": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    726,
+    847
+   ],
+   "Point class exact": [
+    372,
+    726
+   ],
+   "Point class right or broader": [
+    614,
+    726
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "submittal: trunks named BUS-n",
+  "secs": 8.4,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 9,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 0,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1,
+   "submittal": 3
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    28,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    0,
+    847
+   ],
+   "Point class exact": [
+    0,
+    0
+   ],
+   "Point class right or broader": [
+    0,
+    0
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "submittal: object types spelled out",
+  "secs": 8.0,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 38,
+   "bms": 4
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 32,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1,
+   "submittal": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    32,
+    847
+   ],
+   "Point class exact": [
+    18,
+    32
+   ],
+   "Point class right or broader": [
+    20,
+    32
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "bms: Niagara export columns",
+  "secs": 7.8,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
+  "scenario": "bms: devices named by instance",
+  "secs": 7.6,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 5,
+   "seq_kinds": {
+    "sequence": 5,
+    "issue": 4
+   },
+   "seq_setpoints": 32,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "64/67"
+  },
+  "coverage": {
+   "plans": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    0,
+    68
+   ]
+  }
+ }
+]
