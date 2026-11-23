@@ -1,0 +1,676 @@
+[
+ {
+  "set": "itd_d1_lab",
+  "role": "dev",
+  "mode": "sheets",
+  "secs": 7.2,
+  "headline": {
+   "floors": 1,
+   "rooms": 28,
+   "equipment": 16,
+   "equipment_by_class": {
+    "Exhaust_Fan": 7,
+    "Chiller": 4,
+    "Hot_Water_Pump": 2,
+    "Boiler": 2,
+    "AHU": 1
+   },
+   "sequences": 0,
+   "points": 0,
+   "coverage_issues": 3,
+   "questions": 44,
+   "silent_steps": [],
+   "crashes": []
+  },
+  "floors_read": [
+   "RF"
+  ],
+  "steps": {
+   "plans": {
+    "uploaded": {
+     "file": "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf",
+     "pages": [
+      3,
+      4,
+      5,
+      6
+     ]
+    },
+    "secs": 4.0,
+    "facts_by_kind": {
+     "floor": 1,
+     "room": 28,
+     "placement": 1
+    },
+    "main_kind": "room",
+    "main_read": 28,
+    "coverage_issues": [],
+    "questions": 25,
+    "question_samples": [
+     "Room 101 on the plan has no name next to it. Is it a room?",
+     "Room 102 on the plan has no name next to it. Is it a room?",
+     "Room 103 on the plan has no name next to it. Is it a room?",
+     "Room 104 on the plan has no name next to it. Is it a room?",
+     "Room 105 on the plan has no name next to it. Is it a room?",
+     "Room 109 on the plan has no name next to it. Is it a room?",
+     "Room 110 on the plan has no name next to it. Is it a room?",
+     "Room 113 on the plan has no name next to it. Is it a room?",
+     "Room 114 on the plan has no name next to it. Is it a room?",
+     "Room 116 on the plan has no name next to it. Is it a room?",
+     "Room 117 on the plan has no name next to it. Is it a room?",
+     "Room 118 on the plan has no name next to it. Is it a room?"
+    ],
+    "question_kinds": {
+     "room": 25
+    },
+    "log": [
+     "Reading 1_floor_plans.pdf…",
+     "Page 1 · : Roof — 27 rooms, 0 equipment tags",
+     "Page 2 · : Roof — 28 rooms, 1 equipment tags",
+     "Page 3 · : Roof — 28 rooms, 0 equipment tags",
+     "Page 4 (no sheet number): no floor named in the title, skipped",
+     "Done: 87 facts — 12 accepted by rule, 74 questions for you, 1 proposed and waiting for another source."
+    ]
+   },
+   "schedules": {
+    "uploaded": {
+     "file": "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf",
+     "pages": [
+      12,
+      13,
+      14,
+      15
+     ]
+    },
+    "secs": 0.9,
+    "facts_by_kind": {
+     "equipment": 16,
+     "relation": 8
+    },
+    "main_kind": "equipment",
+    "main_read": 16,
+    "coverage_issues": [],
+    "questions": 16,
+    "question_samples": [
+     "CH-1 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "CH-2 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "CH-3 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "CH-4 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "HWP-1 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "HWP-2 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "EF-1 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-2 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-3 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-4 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-5 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "B-1 is in a schedule I have no layout for (CONDENSING HOT WATER BOILER SCHEDULE). Keep it as equipment with its raw values?"
+    ],
+    "question_kinds": {
+     "equipment": 16
+    },
+    "log": [
+     "Page 3 · : Louver Schedule — 2 rows",
+     "Page 4 · : Air Handling Unit Schedule — 1 rows",
+     "Note: 15 scheduled units are not drawn on the floor plans (AHU-1, B-1, B-2, CH-1, CH-2, CH-3, CH-4, EF-1, EF-2, EF-3, EF-4, EF-6, EF-7, HWP-1, HWP-2)",
+     "Connected: AHU-1 feeds 0 terminal units (the only AHU)",
+     "Connected: chilled water from 2 pumps through 4 chillers to the AHU coil",
+     "Done: 24 facts — 0 accepted by rule, 16 questions for you, 8 proposed and waiting for another source."
+    ]
+   },
+   "sequences": {
+    "uploaded": {
+     "file": "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf",
+     "pages": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+     ]
+    },
+    "secs": 1.8,
+    "facts_by_kind": {
+     "issue": 1
+    },
+    "main_kind": "sequence",
+    "main_read": 0,
+    "coverage_issues": [
+     "No sequence was found: no system heading like \"AIR HANDLING UNIT:\" with sections A., B., C. The document may use another style (numbered or Title Case headings, spec sections)."
+    ],
+    "questions": 1,
+    "question_samples": [
+     "No sequence was found: no system heading like \"AIR HANDLING UNIT:\" with sections A., B., C. The document may use another style (numbered or Title Case headings, spec sections)."
+    ],
+    "question_kinds": {
+     "issue": 1
+    },
+    "log": [
+     "Page 3 · : no sequence headings found",
+     "Page 4 · : no sequence headings found",
+     "Page 5 · : no sequence headings found",
+     "Page 6 · : no sequence headings found",
+     "Coverage: No sequence was found: no system heading like \"AIR HANDLING UNIT:\" with sections A., B., C. The document may use another style (numbered or Title Case headings, spec sections).",
+     "Done: 1 facts — 0 accepted by rule, 1 questions for you, 0 proposed and waiting for another source."
+    ]
+   },
+   "submittal": {
+    "uploaded": {
+     "file": "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf",
+     "pages": [
+      18,
+      19
+     ]
+    },
+    "secs": 0.5,
+    "facts_by_kind": {
+     "issue": 2
+    },
+    "main_kind": "point",
+    "main_read": 0,
+    "coverage_issues": [
+     "No points were read from the submittal: no point schedule rows in the expected format (point, description, AI/AO/BI/BO, terminal, reference). Another controls vendor's layout needs the AI reader.",
+     "No controllers were read from a network riser (trunk headings like \"FC-1 - …\" with address, device, controller, instance rows)."
+    ],
+    "questions": 2,
+    "question_samples": [
+     "No points were read from the submittal: no point schedule rows in the expected format (point, description, AI/AO/BI/BO, terminal, reference). Another controls vendor's layout needs the AI reader.",
+     "No controllers were read from a network riser (trunk headings like \"FC-1 - …\" with address, device, controller, instance rows)."
+    ],
+    "question_kinds": {
+     "issue": 2
+    },
+    "log": [
+     "Controllers: 0 on the riser, 0 linked to scheduled equipment",
+     "Points: 0 (0 listed, 0 from typicals); 0 classified with confidence, 0 to review",
+     "Coverage: No points were read from the submittal: no point schedule rows in the expected format (point, description, AI/AO/BI/BO, terminal, reference). Another controls vendor's layout needs the AI reader.",
+     "Coverage: No controllers were read from a network riser (trunk headings like \"FC-1 - …\" with address, device, controller, instance rows).",
+     "Done: 2 facts — 0 accepted by rule, 2 questions for you, 0 proposed and waiting for another source."
+    ]
+   },
+   "bms": {
+    "uploaded": null
+   }
+  }
+ },
+ {
+  "set": "itd_d1_lab",
+  "role": "dev",
+  "mode": "whole set",
+  "secs": 48.8,
+  "headline": {
+   "floors": 1,
+   "rooms": 28,
+   "equipment": 16,
+   "equipment_by_class": {
+    "Exhaust_Fan": 7,
+    "Chiller": 4,
+    "Hot_Water_Pump": 2,
+    "Boiler": 2,
+    "AHU": 1
+   },
+   "sequences": 2,
+   "points": 0,
+   "coverage_issues": 1,
+   "questions": 46,
+   "silent_steps": [],
+   "crashes": []
+  },
+  "floors_read": [
+   "RF"
+  ],
+  "steps": {
+   "plans": {
+    "uploaded": {
+     "file": "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf",
+     "pages": "all"
+    },
+    "secs": 16.3,
+    "facts_by_kind": {
+     "floor": 1,
+     "room": 28,
+     "placement": 1,
+     "issue": 1
+    },
+    "main_kind": "room",
+    "main_read": 28,
+    "coverage_issues": [
+     "Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers."
+    ],
+    "questions": 26,
+    "question_samples": [
+     "Room 101 on the plan has no name next to it. Is it a room?",
+     "Room 102 on the plan has no name next to it. Is it a room?",
+     "Room 103 on the plan has no name next to it. Is it a room?",
+     "Room 104 on the plan has no name next to it. Is it a room?",
+     "Room 105 on the plan has no name next to it. Is it a room?",
+     "Room 109 on the plan has no name next to it. Is it a room?",
+     "Room 110 on the plan has no name next to it. Is it a room?",
+     "Room 113 on the plan has no name next to it. Is it a room?",
+     "Room 114 on the plan has no name next to it. Is it a room?",
+     "Room 116 on the plan has no name next to it. Is it a room?",
+     "Room 117 on the plan has no name next to it. Is it a room?",
+     "Room 118 on the plan has no name next to it. Is it a room?"
+    ],
+    "question_kinds": {
+     "room": 25,
+     "issue": 1
+    },
+    "log": [
+     "Page 27 (no sheet number): no floor named in the title, skipped",
+     "Page 28 (no sheet number): no floor named in the title, skipped",
+     "Page 29 (no sheet number): no floor named in the title, skipped",
+     "Coverage: Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers.",
+     "Coverage: Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers.",
+     "Done: 120 facts — 18 accepted by rule, 101 questions for you, 1 proposed and waiting for another source."
+    ]
+   },
+   "schedules": {
+    "uploaded": {
+     "file": "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf",
+     "pages": "all"
+    },
+    "secs": 16.1,
+    "facts_by_kind": {
+     "equipment": 16,
+     "relation": 8
+    },
+    "main_kind": "equipment",
+    "main_read": 16,
+    "coverage_issues": [],
+    "questions": 16,
+    "question_samples": [
+     "CH-1 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "CH-2 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "CH-3 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "CH-4 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "HWP-1 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "HWP-2 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "EF-1 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-2 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-3 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-4 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "EF-5 is in a schedule I have no layout for (EXHAUST FAN SCHEDULE). Keep it as equipment with its raw values?",
+     "B-1 is in a schedule I have no layout for (CONDENSING HOT WATER BOILER SCHEDULE). Keep it as equipment with its raw values?"
+    ],
+    "question_kinds": {
+     "equipment": 16
+    },
+    "log": [
+     "Page 28 · : no schedule rows; a diagram showing 3 tags (AHU1, B1, B2)",
+     "Page 29 · : no schedule rows; a diagram showing 0 tags ()",
+     "Note: 15 scheduled units are not drawn on the floor plans (AHU-1, B-1, B-2, CH-1, CH-2, CH-3, CH-4, EF-1, EF-2, EF-3, EF-4, EF-6, EF-7, HWP-1, HWP-2)",
+     "Connected: AHU-1 feeds 0 terminal units (the only AHU)",
+     "Connected: chilled water from 2 pumps through 4 chillers to the AHU coil",
+     "Done: 24 facts — 0 accepted by rule, 16 questions for you, 8 proposed and waiting for another source."
+    ]
+   },
+   "sequences": {
+    "uploaded": {
+     "file": "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf",
+     "pages": "all"
+    },
+    "secs": 16.3,
+    "facts_by_kind": {
+     "sequence": 2,
+     "issue": 2
+    },
+    "main_kind": "sequence",
+    "main_read": 2,
+    "coverage_issues": [],
+    "questions": 4,
+    "question_samples": [
+     "Which equipment does the sequence 'Note' control?",
+     "Sequence 'Note': sections A are missing (lettering jumps).",
+     "Which equipment does the sequence 'Typical Insulation Thickness Required To Meet These Requirements' control?",
+     "Sequence 'Typical Insulation Thickness Required To Meet These Requirements': sections A, B, C, D, E are missing (lettering jumps)."
+    ],
+    "question_kinds": {
+     "sequence": 2,
+     "issue": 2
+    },
+    "log": [
+     "Page 25 · : no sequence headings found",
+     "Page 26 · : no sequence headings found",
+     "Page 27 · : no sequence headings found",
+     "Page 28 · : no sequence headings found",
+     "Page 29 · : no sequence headings found",
+     "Done: 6 facts — 0 accepted by rule, 6 questions for you, 0 proposed and waiting for another source."
+    ]
+   },
+   "submittal": {
+    "uploaded": null
+   },
+   "bms": {
+    "uploaded": null
+   }
+  }
+ },
+ {
+  "set": "liberty_boe",
+  "role": "heldout",
+  "mode": "sheets",
+  "secs": 7.9,
+  "headline": {
+   "floors": 3,
+   "rooms": 185,
+   "equipment": 2,
+   "sequences": 0,
+   "points": 0,
+   "coverage_issues": 3,
+   "questions": 26,
+   "silent_steps": [],
+   "crashes": []
+  }
+ },
+ {
+  "set": "liberty_boe",
+  "role": "heldout",
+  "mode": "whole set",
+  "secs": 52.7,
+  "headline": {
+   "floors": 3,
+   "rooms": 186,
+   "equipment": 3,
+   "sequences": 0,
+   "points": 0,
+   "coverage_issues": 4,
+   "questions": 29,
+   "silent_steps": [],
+   "crashes": []
+  }
+ },
+ {
+  "set": "msu_mbb",
+  "role": "dev",
+  "mode": "sheets",
+  "secs": 9.9,
+  "headline": {
+   "floors": 1,
+   "rooms": 0,
+   "equipment": 4,
+   "equipment_by_class": {
+    "Boiler": 3,
+    "Chiller": 1
+   },
+   "sequences": 1,
+   "points": 0,
+   "coverage_issues": 3,
+   "questions": 7,
+   "silent_steps": [],
+   "crashes": []
+  },
+  "floors_read": [
+   "RF"
+  ],
+  "steps": {
+   "plans": {
+    "uploaded": {
+     "file": "22-0045 Plans.pdf",
+     "pages": [
+      22,
+      23,
+      24
+     ]
+    },
+    "secs": 5.9,
+    "facts_by_kind": {
+     "floor": 1,
+     "placement": 4,
+     "issue": 1
+    },
+    "main_kind": "room",
+    "main_read": 0,
+    "coverage_issues": [
+     "Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers."
+    ],
+    "questions": 1,
+    "question_samples": [
+     "Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers."
+    ],
+    "question_kinds": {
+     "issue": 1
+    },
+    "log": [
+     "Reading 1_floor_plans.pdf…",
+     "Page 1 (no sheet number): no floor named in the title, skipped",
+     "Page 2 (no sheet number): no floor named in the title, skipped",
+     "Page 3 · : Roof — 0 rooms, 4 equipment tags",
+     "Coverage: Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers.",
+     "Done: 6 facts — 1 accepted by rule, 1 questions for you, 4 proposed and waiting for another source."
+    ]
+   },
+   "schedules": {
+    "uploaded": {
+     "file": "22-0045 Plans.pdf",
+     "pages": [
+      20,
+      21,
+      29
+     ]
+    },
+    "secs": 2.1,
+    "facts_by_kind": {
+     "equipment": 4,
+     "issue": 1
+    },
+    "main_kind": "equipment",
+    "main_read": 4,
+    "coverage_issues": [],
+    "questions": 3,
+    "question_samples": [
+     "B-2 is in a schedule I have no layout for (HOT WATER BOILER SCHEDULE). Keep it as equipment with its raw values?",
+     "B-3 is in a schedule I have no layout for (HOT WATER BOILER SCHEDULE). Keep it as equipment with its raw values?",
+     "On the floor plans but in no schedule: B-1. Their size, make and model are unknown; ask the engineer for the schedule."
+    ],
+    "question_kinds": {
+     "equipment": 2,
+     "issue": 1
+    },
+    "log": [
+     "Page 2 · : Air Cooled Chiller Schedule — 1 rows",
+     "Page 2 · : Hot Water Boiler Schedule — 2 rows",
+     "Page 3 · : no schedule rows; a diagram showing 3 tags (B2, B3, CH1)",
+     "Check: 1 tags on the plans have no schedule row (B-1)",
+     "Connected: chilled water from 0 pumps through 1 chillers to the AHU coil",
+     "Done: 5 facts — 1 accepted by rule, 3 questions for you, 1 proposed and waiting for another source."
+    ]
+   },
+   "sequences": {
+    "uploaded": {
+     "file": "22-0045 Plans.pdf",
+     "pages": [
+      31
+     ]
+    },
+    "secs": 0.4,
+    "facts_by_kind": {
+     "sequence": 1
+    },
+    "main_kind": "sequence",
+    "main_read": 1,
+    "coverage_issues": [],
+    "questions": 1,
+    "question_samples": [
+     "Which equipment does the sequence 'Note' control?"
+    ],
+    "question_kinds": {
+     "sequence": 1
+    },
+    "log": [
+     "Page 1 · : 1 systems — Note",
+     "  Note: 8 sections, 10 setpoints, applies to 0 units",
+     "Done: 1 facts — 0 accepted by rule, 1 questions for you, 0 proposed and waiting for another source."
+    ]
+   },
+   "submittal": {
+    "uploaded": {
+     "file": "22-0045 Plans.pdf",
+     "pages": [
+      30,
+      31
+     ]
+    },
+    "secs": 1.5,
+    "facts_by_kind": {
+     "issue": 2
+    },
+    "main_kind": "point",
+    "main_read": 0,
+    "coverage_issues": [
+     "No points were read from the submittal: no point schedule rows in the expected format (point, description, AI/AO/BI/BO, terminal, reference). Another controls vendor's layout needs the AI reader.",
+     "No controllers were read from a network riser (trunk headings like \"FC-1 - …\" with address, device, controller, instance rows)."
+    ],
+    "questions": 2,
+    "question_samples": [
+     "No points were read from the submittal: no point schedule rows in the expected format (point, description, AI/AO/BI/BO, terminal, reference). Another controls vendor's layout needs the AI reader.",
+     "No controllers were read from a network riser (trunk headings like \"FC-1 - …\" with address, device, controller, instance rows)."
+    ],
+    "question_kinds": {
+     "issue": 2
+    },
+    "log": [
+     "Controllers: 0 on the riser, 0 linked to scheduled equipment",
+     "Points: 0 (0 listed, 0 from typicals); 0 classified with confidence, 0 to review",
+     "Coverage: No points were read from the submittal: no point schedule rows in the expected format (point, description, AI/AO/BI/BO, terminal, reference). Another controls vendor's layout needs the AI reader.",
+     "Coverage: No controllers were read from a network riser (trunk headings like \"FC-1 - …\" with address, device, controller, instance rows).",
+     "Done: 2 facts — 0 accepted by rule, 2 questions for you, 0 proposed and waiting for another source."
+    ]
+   },
+   "bms": {
+    "uploaded": null
+   }
+  }
+ },
+ {
+  "set": "msu_mbb",
+  "role": "dev",
+  "mode": "whole set",
+  "secs": 1088.0,
+  "headline": {
+   "floors": 3,
+   "rooms": 1,
+   "equipment": 6,
+   "equipment_by_class": {
+    "Chiller": 3,
+    "Boiler": 3
+   },
+   "sequences": 1,
+   "points": 0,
+   "coverage_issues": 1,
+   "questions": 8,
+   "silent_steps": [],
+   "crashes": []
+  },
+  "floors_read": [
+   "L1",
+   "L2",
+   "RF"
+  ],
+  "steps": {
+   "plans": {
+    "uploaded": {
+     "file": "22-0045 Plans.pdf",
+     "pages": "all"
+    },
+    "secs": 365.3,
+    "facts_by_kind": {
+     "floor": 3,
+     "room": 1,
+     "placement": 4,
+     "issue": 1
+    },
+    "main_kind": "room",
+    "main_read": 1,
+    "coverage_issues": [
+     "Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers."
+    ],
+    "questions": 2,
+    "question_samples": [
+     "Room 001 E is on the L2 plan but its number does not start with 2. Keep it on this floor?",
+     "Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers."
+    ],
+    "question_kinds": {
+     "room": 1,
+     "issue": 1
+    },
+    "log": [
+     "Page 75 (no sheet number): no floor named in the title, skipped",
+     "Page 76 (no sheet number): no floor named in the title, skipped",
+     "Page 77 (no sheet number): no floor named in the title, skipped",
+     "Page 78 (no sheet number): no floor named in the title, skipped",
+     "Coverage: Roof: the page was read but no room labels were found. Rooms may be numbered another way (letters, more digits) or the names sit below the numbers.",
+     "Done: 12 facts — 4 accepted by rule, 4 questions for you, 4 proposed and waiting for another source."
+    ]
+   },
+   "schedules": {
+    "uploaded": {
+     "file": "22-0045 Plans.pdf",
+     "pages": "all"
+    },
+    "secs": 353.1,
+    "facts_by_kind": {
+     "equipment": 6,
+     "issue": 1
+    },
+    "main_kind": "equipment",
+    "main_read": 6,
+    "coverage_issues": [],
+    "questions": 5,
+    "question_samples": [
+     "B-2 is in a schedule I have no layout for (HOT WATER BOILER SCHEDULE). Keep it as equipment with its raw values?",
+     "B-3 is in a schedule I have no layout for (HOT WATER BOILER SCHEDULE). Keep it as equipment with its raw values?",
+     "CH-23 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "CH-21 is in a schedule I have no layout for (no title found). Keep it as equipment with its raw values?",
+     "On the floor plans but in no schedule: B-1. Their size, make and model are unknown; ask the engineer for the schedule."
+    ],
+    "question_kinds": {
+     "equipment": 4,
+     "issue": 1
+    },
+    "log": [
+     "Page 77 · : no schedule rows; a diagram showing 0 tags ()",
+     "Page 78 · : no schedule rows; a diagram showing 0 tags ()",
+     "Check: 1 tags on the plans have no schedule row (B-1)",
+     "Note: 2 scheduled units are not drawn on the floor plans (CH-21, CH-23)",
+     "Connected: chilled water from 0 pumps through 3 chillers to the AHU coil",
+     "Done: 7 facts — 1 accepted by rule, 5 questions for you, 1 proposed and waiting for another source."
+    ]
+   },
+   "sequences": {
+    "uploaded": {
+     "file": "22-0045 Plans.pdf",
+     "pages": "all"
+    },
+    "secs": 369.3,
+    "facts_by_kind": {
+     "sequence": 1
+    },
+    "main_kind": "sequence",
+    "main_read": 1,
+    "coverage_issues": [],
+    "questions": 1,
+    "question_samples": [
+     "Which equipment does the sequence 'Note' control?"
+    ],
+    "question_kinds": {
+     "sequence": 1
+    },
+    "log": [
+     "Page 74 · : no sequence headings found",
+     "Page 75 · : no sequence headings found",
+     "Page 76 · : no sequence headings found",
+     "Page 77 · : no sequence headings found",
+     "Page 78 · : no sequence headings found",
+     "Done: 1 facts — 0 accepted by rule, 1 questions for you, 0 proposed and waiting for another source."
+    ]
+   },
+   "submittal": {
+    "uploaded": null
+   },
+   "bms": {
+    "uploaded": null
+   }
+  }
+ }
+]
