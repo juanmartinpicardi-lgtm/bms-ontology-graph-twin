@@ -85,7 +85,7 @@ if __name__ == "__main__":
     ap.add_argument("--variants", nargs="+", default=["names_paths", "names_only"])
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
     ap.add_argument("--accept", type=float, default=DEFAULT_ACCEPT)
-    ap.add_argument("--llm", default="none")
+    ap.add_argument("--llm", default="none", help="none | haiku | sonnet (the point_class job on Vertex AI)")
     ap.add_argument("--no-run", action="store_true", help="score the database as it is")
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--compare", action="store_true", help="report every project blind and with conventions")
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     km = load_knowledge_model()  # the bare model; scoring always uses it, so columns stay comparable
     store = Store(args.db)
-    llm = get_provider(args.llm)
+    llm = get_provider(args.llm, km)
     results = []
     for site in args.sites:
         gt = load_ground_truth(site)

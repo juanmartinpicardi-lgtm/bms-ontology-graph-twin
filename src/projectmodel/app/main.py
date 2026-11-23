@@ -6,8 +6,8 @@ An icon rail on the left picks the area; chips at the top pick the page inside i
 
 Overview          why the knowledge graph matters, how it works, what a complete graph is
 Projects          every building, and adding one (guided setup); then one project's pages, with the building and input
-                  switched in the project header
-Digital twin      the active project as a building: floors, zones and equipment in 3D, with a floor plan
+                  switched in the project header. A project opens on its digital twin (the building in 3D, with a
+                  floor plan), its first tab
 Shared knowledge  what sits above all projects: knowledge model, tribal knowledge
 """
 
@@ -75,7 +75,8 @@ projects = [
     st.Page(APP / "views/add_building.py", title="Add a building", icon=":material/add_business:",
             url_path="add-building"),
 ]
-this_project = [
+this_project = [  # the twin first: a project opens on it
+    st.Page(APP / "views/digital_twin.py", title="Digital twin", icon=":material/domain:", url_path="digital-twin"),
     st.Page(APP / "views/location.py", title="Location", icon=":material/location_on:", url_path="location"),
     st.Page(APP / "tree_app.py", title="Tree", icon=":material/account_tree:", url_path="tree"),
     st.Page(APP / "views/graph_3d.py", title="Graph 3D", icon=":material/bubble_chart:", url_path="Graph_3D"),
@@ -87,30 +88,36 @@ this_project = [
     st.Page(APP / "views/project_tribal.py", title="Tribal knowledge", icon=":material/groups:",
             url_path="project-tribal-knowledge"),
 ]
-twin = [st.Page(APP / "views/digital_twin.py", title="Digital twin", icon=":material/domain:", url_path="digital-twin")]
 shared = [
     st.Page(APP / "views/knowledge_model.py", title="Knowledge model", icon=":material/account_tree:",
             url_path="Knowledge_model"),
     st.Page(APP / "views/tribal.py", title="Tribal knowledge", icon=":material/groups:", url_path="tribal-knowledge"),
 ]
 
-page = st.navigation(overview + projects + this_project + twin + shared, position="hidden")
+page = st.navigation(overview + projects + this_project + shared, position="hidden")
 ensure_database()
 store = get_store()
+from projectmodel.app import dock, screen  # noqa: E402
+
+screen.begin(page)
 if mapped := list_projects(store):
     active_project(mapped)  # every page: a ?project= deep link opens that project app-wide
 rail([("Overview", ":material/home:", overview), ("Projects", ":material/apartment:", projects + this_project),
-      ("Digital twin", ":material/domain:", twin), ("Shared knowledge", ":material/account_tree:", shared)], page)
+      ("Shared knowledge", ":material/account_tree:", shared)], page)
 def among(pages):
     return any(p.url_path == page.url_path for p in pages)
 
 
-if among(this_project + twin):  # the twin is a project page too, with its own place on the rail
-    project_header(store, this_project + twin, page, projects[0])
+if among(this_project):
+    project_header(store, this_project, page, projects[0])
 elif among(projects):
     area_header("Projects", projects, page)
 elif among(shared):
     area_header("Shared knowledge", shared, page)
 else:  # every header has the same two rows (title, tabs), so the title and tabs sit at the same place on every page
-    area_header("Overview", overview, page)
+    area_header("Overview", overview, page, agent=False)
+chat = not among(overview)  # the agent works on a building: none on the Overview pages
+slots = dock.open_dock(store) if chat else None  # before the page: a page may st.stop()
 page.run()
+if chat:
+    dock.close_dock(slots, store)  # the page has said what it shows: context chips from it

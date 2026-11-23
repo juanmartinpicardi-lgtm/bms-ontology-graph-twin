@@ -138,11 +138,11 @@ for p in projects:
                   ("Levels", str(len(levels))), ("Avg. confidence", f"{num['confidence']:.0%}"),
                   ("To review", f"{num['review']:,}")])
         with st.container(horizontal=True, gap="small"):
-            if st.button("Open project", key=f"open_{p}", type="primary", on_click=open_project, args=(p,)):
-                st.switch_page("tree_app.py")
-            if st.button("Digital twin", key=f"twin_{p}", icon=":material/domain:", on_click=open_project,
-                         args=(p,)):
+            if st.button("Open project", key=f"open_{p}", type="primary", on_click=open_project, args=(p,),
+                         help="Opens on its digital twin; the tree, graph and tables are in the project's tabs"):
                 st.switch_page("views/digital_twin.py")
+            if st.button("Tree", key=f"tree_{p}", icon=":material/account_tree:", on_click=open_project, args=(p,)):
+                st.switch_page("tree_app.py")
     k += 1
 
 

@@ -1,0 +1,41 @@
+scope: designer/true-engineering-group
+description: >
+  True Engineering Group, LLC: the MEP engineer of record on the Troop D Crime Lab bid set (R2517-01), named in the
+  title block of every mechanical sheet.
+entries:
+  - id: m-0101
+    kind: fact
+    text: >
+      Mechanical sheets are M-1xx plans, M-3xx details and sequences (AHU detail and sequences on M-303 and M-304),
+      M-4xx schedules (equipment schedules on M-401).
+    source: {facts: ["troop_d:plans:M-401", "troop_d:plans:M-304"]}
+    method: human
+    author: project-model-team
+    created: 2026-11-20
+  - id: m-0102
+    kind: fact
+    text: >
+      VAVE is a VAV box with electric reheat; FVAV is a fan-powered box. A quantity marker like (9) after a tag on
+      a plan means nine boxes of that type, not one.
+    source: {facts: ["troop_d:plans:M-401"]}
+    method: human
+    author: project-model-team
+    created: 2026-11-20
+  - id: m-0103
+    kind: fact
+    text: >
+      Schedule columns follow the firm's own order per schedule title (fan powered, VAV terminal, chiller, pump,
+      air handling...). The layouts are in the skill read-true-engineering-schedules.
+    source: {skill: read-true-engineering-schedules}
+    method: human
+    author: project-model-team
+    created: 2026-11-20
+  - id: m-0104
+    kind: warning
+    text: >
+      Which room a box serves comes from the thermostat location on the plans; about one in five placements is
+      only medium confidence. Confirm them against the controls submittal's room schedule.
+    source: {facts: ["troop_d:plans:M-101..M-104"]}
+    method: human
+    author: project-model-team
+    created: 2026-11-20

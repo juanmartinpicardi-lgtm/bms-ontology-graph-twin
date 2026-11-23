@@ -1,0 +1,23 @@
+scope: site/alpha
+description: >
+  Site Alpha (Project Haystack example, office with central plant and VAV, Rolle). Dev set: rules may be tuned here.
+entries:
+  - id: m-0301
+    kind: fact
+    text: >
+      "(CC)" marks 17 points on CH-1 that are the chiller's own refrigerant-cycle diagnostics (efficiencies,
+      saturation, superheat and subcool temperatures, load), not plant water-side readings. What CC stands for is
+      not confirmed by the site.
+    source: {conventions: site/alpha}
+    method: import
+    author: project-model-team
+    created: 2026-11-20
+  - id: m-0302
+    kind: fact
+    text: >
+      Alpha is the dev set for the mapper. There is no test set right now; when one is added, rules and prompts
+      are never tuned on it.
+    source: {doc: CLAUDE.md#5}
+    method: human
+    author: project-model-team
+    created: 2026-11-20

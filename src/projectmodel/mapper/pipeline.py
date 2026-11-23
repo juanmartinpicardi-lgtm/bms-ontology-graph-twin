@@ -6,7 +6,8 @@ Order (CLAUDE.md section 3):
   2. name rules  - parse each name and match it to a Brick class                    (method=rule)
   3. templates   - type each equipment from its name and its points; refine generic
                    point classes from the equipment's template; infer feeds           (method=template)
-  4. LLM         - only for points still below `llm_below`, with a short candidate list (method=llm)
+  4. LLM         - only for points still below `llm_below`, with a short candidate list (method=llm); its
+                   confidence is capped at `llm_cap`, below the auto-accept threshold, so a person reviews it
 Conventions (km.conventions, see conventions.py) take part as rules: a class hint decides a point's class
 before anything else and is not refined by templates (method=rule); abbreviations and equipment patterns
 feed steps 2-3; ignore rules flag points for review. Whatever a convention decided or contributed is
@@ -33,6 +34,9 @@ POSITION_WORDS = {"supply", "discharge", "return", "mixed", "outside", "exhaust"
                   "cold", "deck", "entering", "leaving", "chilled", "condenser", "inlet", "outlet"}
 TEMPLATE_AGREEMENT_BOOST = 0.5  # share of the remaining confidence gained when a point fits a template slot
 HINT_CONFIDENCE = 0.95  # a class hint is a person's statement about this site's names
+# A model's answer is a proposal for review: kept below the auto-accept threshold (scoring.DEFAULT_ACCEPT = 0.8).
+# Chosen on Alpha (dev): Gemini 4 Argon said ~0.98 on the leftover points and had 3 of 23 right.
+LLM_CAP = 0.75
 EQUIP_ID = re.compile(r"\b([A-Za-z]{1,6})[-_ ]?(\d{1,3}[A-Za-z]?)\b")
 
 
@@ -54,8 +58,10 @@ class EquipGroup:
 
 
 class Mapper:
-    def __init__(self, km: KnowledgeModel, llm: LLMProvider | None = None, llm_below: float = 0.4):
+    def __init__(self, km: KnowledgeModel, llm: LLMProvider | None = None, llm_below: float = 0.4,
+                 llm_cap: float = LLM_CAP):
         self.km = km
+        self.llm_cap = llm_cap
         self.points = ClassMatcher(km, "point")
         self.equipment = ClassMatcher(km, "equipment", also=("system",))  # a folder may be a plant / loop
         self.llm = llm or NoLLM()
@@ -284,6 +290,9 @@ class Mapper:
 
         rec_by_pid = {f"pt:{r.source_id}": r for r in records}
         llm_calls = 0
+        logs_itself = getattr(self.llm, "logs_calls", False)
+        if logs_itself:
+            self.llm.bind(store, project, revision)
         for pid, (cls, conf, _) in list(final.items()):
             if conf >= self.llm_below:
                 continue
@@ -294,10 +303,13 @@ class Mapper:
             if ans is None:
                 continue
             llm_calls += 1
-            store.log_llm_call(project, revision, self.llm.name, ans.model, json.dumps(req.__dict__),
-                               ans.raw_output, ans.cost_usd, ans.latency_s)
+            if not logs_itself:
+                store.log_llm_call(project, revision, self.llm.name, ans.model, json.dumps(req.__dict__),
+                                   ans.raw_output, ans.cost_usd, ans.latency_s)
             if ans.cls in req.candidates:
-                final[pid] = (ans.cls, ans.confidence, "llm")
+                # Capped: a model's own confidence is not calibrated, so its answer goes to review, never straight
+                # to auto-accept. The model's number stays in llm_calls.
+                final[pid] = (ans.cls, min(ans.confidence, self.llm_cap), "llm")
 
         nodes, edges = [], []
         for g in groups.values():

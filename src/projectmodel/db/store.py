@@ -68,7 +68,24 @@ CREATE TABLE IF NOT EXISTS llm_calls (
     output      TEXT,
     cost_usd    REAL NOT NULL DEFAULT 0,
     latency_s   REAL NOT NULL DEFAULT 0,
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    job         TEXT,                        -- the job in ai/jobs.py (point_class, agent_chat...)
+    prompt      TEXT,                        -- prompt id and version, e.g. point_class@1
+    input_tokens  INTEGER NOT NULL DEFAULT 0,
+    output_tokens INTEGER NOT NULL DEFAULT 0,
+    cached_tokens INTEGER NOT NULL DEFAULT 0,
+    ok          INTEGER NOT NULL DEFAULT 1,  -- 0: the call failed or its output was invalid
+    error       TEXT
+);
+CREATE TABLE IF NOT EXISTS agent_chats (       -- the agent dock's conversations, for its history
+    id          TEXT PRIMARY KEY,
+    project     TEXT NOT NULL DEFAULT '',
+    person      TEXT NOT NULL DEFAULT '',
+    title       TEXT NOT NULL,
+    log         TEXT NOT NULL,                -- what the dock shows: turns with steps, model, cost
+    api         TEXT NOT NULL,                -- the messages sent to the model, so the conversation can go on
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE TABLE IF NOT EXISTS notes (
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -122,6 +139,19 @@ class Store:
         self.conn.row_factory = sqlite3.Row
         self._migrate_methods()
         self.conn.executescript(SCHEMA)
+        self._migrate_llm_calls()
+
+    LLM_CALL_COLUMNS = {"job": "TEXT", "prompt": "TEXT", "input_tokens": "INTEGER NOT NULL DEFAULT 0",
+                        "output_tokens": "INTEGER NOT NULL DEFAULT 0", "cached_tokens": "INTEGER NOT NULL DEFAULT 0",
+                        "ok": "INTEGER NOT NULL DEFAULT 1", "error": "TEXT"}
+
+    def _migrate_llm_calls(self) -> None:
+        """Older databases have llm_calls without the job, prompt, token and outcome columns: add them."""
+        have = {r[1] for r in self.conn.execute("PRAGMA table_info(llm_calls)")}
+        with self.conn:
+            for col, decl in self.LLM_CALL_COLUMNS.items():
+                if col not in have:
+                    self.conn.execute(f"ALTER TABLE llm_calls ADD COLUMN {col} {decl}")
 
     def _migrate_methods(self) -> None:
         """Older databases check method (or a node's kind) against a shorter list; rebuild those tables with the
@@ -186,13 +216,40 @@ class Store:
                               (seconds, json.dumps(summary), project, revision))
 
     def log_llm_call(self, project: str, revision: int, provider: str, model: str | None, input: str,
-                     output: str | None, cost_usd: float, latency_s: float) -> None:
+                     output: str | None, cost_usd: float, latency_s: float, *, job: str | None = None,
+                     prompt: str | None = None, input_tokens: int = 0, output_tokens: int = 0,
+                     cached_tokens: int = 0, ok: bool = True, error: str | None = None) -> int:
+        with self.conn:
+            cur = self.conn.execute(
+                "INSERT INTO llm_calls (project, revision, provider, model, input, output, cost_usd, latency_s, job,"
+                " prompt, input_tokens, output_tokens, cached_tokens, ok, error)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (project, revision, provider, model, input, output, cost_usd, latency_s, job, prompt, input_tokens,
+                 output_tokens, cached_tokens, int(ok), error),
+            )
+        return cur.lastrowid
+
+    def save_chat(self, chat_id: str, title: str, log: list, api: list, project: str = "", person: str = "") -> None:
         with self.conn:
             self.conn.execute(
-                "INSERT INTO llm_calls (project, revision, provider, model, input, output, cost_usd, latency_s)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                (project, revision, provider, model, input, output, cost_usd, latency_s),
-            )
+                "INSERT INTO agent_chats (id, project, person, title, log, api) VALUES (?, ?, ?, ?, ?, ?)"
+                " ON CONFLICT(id) DO UPDATE SET project = excluded.project, person = excluded.person,"
+                " title = excluded.title, log = excluded.log, api = excluded.api, updated_at = datetime('now')",
+                (chat_id, project or "", person or "", title, json.dumps(log, default=str), json.dumps(api, default=str)))
+
+    def chats(self, limit: int = 30) -> list[dict]:
+        """The latest conversations, newest first: id, title, project, person, updated_at, turns."""
+        rows = self.conn.execute("SELECT id, title, project, person, updated_at, json_array_length(log) AS n"
+                                 " FROM agent_chats ORDER BY updated_at DESC, rowid DESC LIMIT ?", (limit,)).fetchall()
+        return [dict(r) for r in rows]
+
+    def chat(self, chat_id: str) -> dict | None:
+        r = self.conn.execute("SELECT * FROM agent_chats WHERE id = ?", (chat_id,)).fetchone()
+        return None if r is None else {**dict(r), "log": json.loads(r["log"]), "api": json.loads(r["api"])}
+
+    def delete_chat(self, chat_id: str) -> None:
+        with self.conn:
+            self.conn.execute("DELETE FROM agent_chats WHERE id = ?", (chat_id,))
 
     def nodes(self, project: str, kind: str | None = None) -> list[sqlite3.Row]:
         q, args = "SELECT * FROM nodes WHERE project = ?", [project]

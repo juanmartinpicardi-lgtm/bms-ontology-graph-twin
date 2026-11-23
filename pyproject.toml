@@ -4,7 +4,10 @@ version = "0.0.1"
 description = "Prototype: engineering-tool exports -> reviewed building knowledge graph"
 requires-python = ">=3.11,<3.12"
 dependencies = [
+    "anthropic[vertex]>=2.11.0",
     "brickschema>=0.8.0",
+    "google-genai>=3.6.1",
+    "jsonschema>=4.26.0",
     "pandas>=3.1.1",
     "pdfplumber>=0.11.10",
     "pypdfium2>=5.15.2",
