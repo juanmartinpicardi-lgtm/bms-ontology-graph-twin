@@ -1,0 +1,56 @@
+"""The guided setup under realistic variation (scripts/stress_intake.py): another firm's titles, room numbers, heading
+style, another vendor's submittal or BMS export, a scan, the whole drawing set.
+
+The rule: every step either reads its main kind of fact or asks the person. A step that reads nothing and says nothing
+is the failure a person never sees (docs/assessment-rules-vs-ai.md). Each scenario takes about 8 seconds.
+"""
+import importlib.util
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+_spec = importlib.util.spec_from_file_location("stress_intake", ROOT / "scripts/stress_intake.py")
+S = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(S)
+
+
+@pytest.fixture(scope="module")
+def results():
+    return {}
+
+
+def _run(results, name):
+    if name not in results:
+        results[name] = S.run(name, S.SCENARIOS[name])
+    return results[name]
+
+
+@pytest.mark.parametrize("name", list(S.SCENARIOS))
+def test_no_step_is_silent(results, name):
+    r = _run(results, name)
+    crashed = {k: v for k, v in r["asks"].items() if isinstance(v, str) and v.startswith("CRASH")}
+    assert not crashed, crashed
+    assert r["silent"] == [], f"{name}: {r['silent']} read nothing and asked nothing"
+
+
+# Partial reads nothing reports yet (W0, "partial-read checks"). Shrink this list as checks land; never grow it.
+KNOWN_QUIET = {"all PDFs: tags with floor (VAVE-1-07)", "sequences: sections numbered 1. 2. 3."}
+
+
+def test_partial_reads_say_so(results):
+    from projectmodel.intake.coverage import stress_state
+    base = _run(results, "baseline")
+    quiet = {n for n in S.SCENARIOS if n != "baseline" and stress_state(_run(results, n), base)[0] == "quiet"}
+    assert quiet <= KNOWN_QUIET, f"new quiet partial reads: {quiet - KNOWN_QUIET}"
+
+
+def test_variations_the_rules_now_read(results):
+    base = _run(results, "baseline")["read"]
+    assert _run(results, "plans: titles say 'FLR' not 'LEVEL'")["read"]["rooms"] == base["rooms"] == 80
+    four = _run(results, "plans + submittal: 4-digit room numbers")
+    assert four["read"]["rooms"] == 80
+    assert four["asks"]["plans"] <= _run(results, "baseline")["asks"]["plans"] + 2  # 1205 is on L2: not a question
+    assert _run(results, "bms: Niagara export columns")["read"]["devices linked"] == base["devices linked"]
+    linked, total = map(int, _run(results, "bms: devices named by instance")["read"]["devices linked"].split("/"))
+    assert linked >= 60, "devices named DEV3104 should join the riser by device instance"

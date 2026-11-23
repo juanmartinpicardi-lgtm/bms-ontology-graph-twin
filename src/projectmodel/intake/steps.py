@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import bms, floorplans, knowledge, schedules, sequence_text, submittal
+from . import bms, coverage, floorplans, knowledge, schedules, sequence_text, submittal
 from .state import Intake
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -92,6 +92,10 @@ def run(it: Intake, step_id: str, log) -> int:
             facts += bms.read(path, name, live("equipment"), live("controller"), live("point"), say)
     else:
         facts = []
+    gaps = coverage.check(step_id, facts, files)  # never end with nothing found and nothing said
+    for g in gaps:
+        say(f"Coverage: {g['label']}")
+    facts += gaps
     auto = sum(1 for f in facts if f["conf"] >= 0.9 and not f.get("ask"))
     asks = sum(1 for f in facts if f.get("ask"))
     say(f"Done: {len(facts)} facts — {auto} accepted by rule, {asks} questions for you, "

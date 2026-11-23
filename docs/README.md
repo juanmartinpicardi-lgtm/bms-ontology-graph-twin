@@ -13,3 +13,8 @@ Feature specs (post Phase 0):
 - [`spec-ai-architecture.md`](spec-ai-architecture.md) — rules vs models vs people for every stage, models on our GCP (Vertex AI), provider layer, bake-off
 - [`spec-agent.md`](spec-agent.md) — the always-on agent: screen context, text and voice (Gemini Live), screen actions, simulations, charts and previews in the chat
 - [`spec-memory-skills.md`](spec-memory-skills.md) — memory and skills: how engineers work, kept per scope, updated by a curator, approved by people (replaces tribal knowledge T3)
+
+Plans:
+
+- [`plan-workflow-ai.md`](plan-workflow-ai.md) — every workflow stage today vs the ontology framework, what is missing, AI per stage, and the work packages to execute (draft for agreement). In plain words in the app: Overview → Roadmap
+- [`assessment-rules-vs-ai.md`](assessment-rules-vs-ai.md) — stress test of the guided setup against realistic variations from other firms and vendors; where AI is needed (document understanding) and where rules stay
