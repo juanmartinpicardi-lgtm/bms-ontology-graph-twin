@@ -90,7 +90,10 @@ def publish(it: Intake, store: Store) -> str:
         nodes.append((project, pid, "point", d.get("short") or d["ref"].split(".")[-1], d.get("class"), src, ref,
                       method, conf, status, revision,
                       json.dumps({"description": d.get("description", ""), "device": d["device"], "ref": d["ref"],
-                                  "path": owner.split(":", 1)[1]})))
+                                  "path": owner.split(":", 1)[1],
+                                  **({"rule_class": d.get("rule_class"),  # the AI's answer and what the rules said
+                                      "ai": {k: d["ai"].get(k) for k in ("model", "why", "calls")}}
+                                     if d.get("ai") else {})})))
         edges.append((project, owner, "hasPoint", pid, src, ref, method, conf, status, revision, "{}"))
     for r in b["relations"]:
         d = r["data"]

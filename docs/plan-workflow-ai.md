@@ -43,7 +43,7 @@ across every source, and to its place on a graphic.
 
 Readiness: **ready** (works end to end), **partial** (works, with known gaps), **missing**.
 AI today: what a model actually does now. Only three jobs are wired: `point_class`, `agent_chat`, `agent_reason`
-(`ai/jobs.py`). The guided setup's readers call no model.
+(`ai/jobs.py`). In the guided setup only the point classification calls a model (`point_class`, below).
 
 | # | Stage | Readiness | Built today | AI today | Ontology landing |
 |---|---|---|---|---|---|
@@ -51,7 +51,7 @@ AI today: what a model actually does now. Only three jobs are wired: `point_clas
 | 1 | Floor plans | partial | Rules (`intake/floorplans.py`): floor from the sheet title, rooms from labels, tags from `equipment_tags.yaml`, thermostat callouts, nearest-label placement with asks. Vectors for the twin (`intake/vectors.py`) | none. A scanned sheet yields no words, so nothing is read from it | `Floor`, `Room` (Brick, unchecked); `hasPart`, `hasLocation` (Brick); `serves` (off-standard) |
 | 2 | Schedules | partial | Rules (`intake/schedules.py`): rows by tag, column layouts per engineer habit (`LAYOUTS`), class refined by row, cross-checks, `feeds` by rule | none. An unknown layout keeps raw values and asks | Brick equipment classes (`RVAV`, `Unit_Heater` unchecked); nameplate as attributes |
 | 3 | Sequences | partial | Intake: headings, sections, setpoints, phrase-to-point links (`intake/sequence_text.py`, `sequence_links.py`). Projects: a hand-written YAML per site, resolved and stored as edges (`sequences.py`) | none | 6 control relations (off-standard); intended values stay in the document |
-| 4 | Submittal | partial | Rules (`intake/submittal.py`): riser rows, Metasys point rows, typicals, device-to-equipment by tag, room schedule vs plans, RFIs | none | Points in Brick classes; controllers and trunks as attributes, not `ba:` nodes |
+| 4 | Submittal | partial | Rules (`intake/submittal.py`): riser rows, Metasys point rows, typicals, device-to-equipment by tag, room schedule vs plans, RFIs | `point_class` for points the rules leave below 0.9 (`intake/point_ai.py`); proposals capped at 0.85 | Points in Brick classes; controllers and trunks as attributes, not `ba:` nodes |
 | 5 | BMS and tools | partial | BMS CSV (`intake/bms.py`): columns by name, same-as by tag, gaps both ways. Haystack adapter plus mapper: structure, rules, templates, LLM | `point_class` on Haiku 5.5, with Argon as fallback, for what rules leave; answers capped below auto-accept | Brick points, `hasPoint`, `hasPart`, `feeds`; units and ids as attributes |
 | 6 | Point binding | partial | All rules: BMS object to submittal point by reference; device to equipment by tag; point to template slot to 3D anchor (`equipment_view.py`); sequence phrase to point | none | No alias table: one id per source row |
 | 7 | Review | partial | Intake: asks plus decisions kept across re-reads (`intake/state.py`, auto-accept 0.9). Mapper projects: accept, fix, reject (`review.py`) | none | Mapper rows are written `confirmed`; method and confidence still recorded |
@@ -66,6 +66,30 @@ Baseline numbers (Alpha, names plus folders, `reports/score_v2.txt`):
 - Feeds recall 91.5%.
 - 0 LLM calls.
 - Calibration is poor: the 0.9–1.0 band is right 49% of the time, the 0.8–0.9 band 98.7%.
+
+AI point classification in the guided setup (`intake/point_ai.py`, W0):
+- After the submittal and BMS readers, points the rules leave below auto-accept (0.9) go to `point_class`. One
+  question per distinct point (typicals are asked once). The candidate list comes from the knowledge model: the
+  rules' class and runners-up, its subclasses, classes sharing a word, and the generic function classes. At most 15.
+- The answer becomes the proposal (`method=llm`, confidence capped at 0.85, so a person reviews it). The rules'
+  class stays in `data.rule_class`, and the model, reason and call ids in `data.ai`. Every attempt is logged in
+  `llm_calls`. Answers are saved with the building, so a re-read asks only what changed. `PM_AI=off` or no
+  credentials: rules only, unchanged.
+- Troop D, 23 Nov 2026 (`scripts/score_point_ai.py`, intake scorer, machine only):
+
+  | | Point class exact | Right or broader |
+  |---|---|---|
+  | Rules only | 430 / 847 (51%) | 691 / 847 (82%) |
+  | Rules + `point_class` | 628 / 847 (74%) | 715 / 847 (84%) |
+
+  679 points below 0.9 became 91 questions and 91 calls. All were answered by Argon: Haiku and Sonnet 5.5 are not
+  enabled on our GCP project, and each was tried once. Cost: $0.29 ($0.34 per 1,000 points). Time: 94 s with 8 calls
+  at once (111 s per 1,000 points); Argon averaged 5.6 s a call.
+  The model changed 266 points and agreed with the rules on 413.
+- Ceiling: 155 of the 847 answer-key classes are not in the knowledge model (`Temperature_Adjust_Sensor` 56,
+  `Heating_Enable_Command` 38, `Heating_Command` 37, …), so no candidate list can reach them. That is W1.
+  The rules auto-accept 168 points, 66 of them with the wrong class; those never reach the model. That is W5
+  (calibration).
 
 Test sets:
 - **Alpha** (Haystack): points only.
@@ -213,8 +237,9 @@ Status, 23 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
   - Done: coverage checks after every step (`intake/coverage.py`); the stress suite as a test
     (`tests/test_stress_intake.py`); rule fixes for FLR titles, Niagara export columns, the device instance join,
     4-digit rooms, and unread point rows in the submittal.
-  - Left: partial-read checks for the scenarios still marked "quiet"; `point_class` in the setup; 3 real document
-    sets.
+  - AI point classification in the setup (`intake/point_ai.py`): Troop D point class exact went from 51% to 74%, for
+    $0.34 per 1,000 points (§3).
+  - Left: partial-read checks for the scenarios still marked "quiet"; 3 real document sets.
 - **Per-project completeness** (`progress.py`) measures every project against the graph standard and names the next
   step. It is shown on the Roadmap and All projects pages. Alpha stays the demo set, unchanged.
 

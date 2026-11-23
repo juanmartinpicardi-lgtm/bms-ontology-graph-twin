@@ -671,7 +671,10 @@ def _detail(f: dict) -> dict:
     if k == "room":
         return {"floor": d["floor"]}
     if k == "point":
-        return {"class": d["class"] or "", "description": d["description"]}
+        ai = d.get("ai") or {}
+        return {"class": d["class"] or "", "description": d["description"],
+                "rules said": (d.get("rule_class") or "") if ai else "",
+                "AI": f"{ai.get('model', '')}: {ai.get('why') or ai.get('error') or 'no candidate fits'}" if ai else ""}
     if k == "controller":
         return {"controller": d["controller"], "trunk": d["trunk"], "address": d["address"]}
     if k == "room_check":
