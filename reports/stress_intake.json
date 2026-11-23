@@ -1,7 +1,7 @@
 [
  {
   "scenario": "baseline",
-  "secs": 9.1,
+  "secs": 10.4,
   "asks": {
    "plans": 31,
    "schedules": 2,
@@ -73,7 +73,7 @@
  },
  {
   "scenario": "plans: whole 27-sheet drawing set uploaded",
-  "secs": 23.1,
+  "secs": 29.0,
   "asks": {
    "plans": 33,
    "schedules": 2,
@@ -145,7 +145,7 @@
  },
  {
   "scenario": "plans: scanned (no text layer)",
-  "secs": 7.6,
+  "secs": 10.5,
   "asks": {
    "plans": 2,
    "schedules": 1,
@@ -217,7 +217,7 @@
  },
  {
   "scenario": "plans: titles say 'FLR' not 'LEVEL'",
-  "secs": 8.6,
+  "secs": 9.1,
   "asks": {
    "plans": 31,
    "schedules": 2,
@@ -289,7 +289,7 @@
  },
  {
   "scenario": "plans + submittal: 4-digit room numbers",
-  "secs": 7.9,
+  "secs": 9.7,
   "asks": {
    "plans": 31,
    "schedules": 2,
@@ -361,7 +361,7 @@
  },
  {
   "scenario": "plans: room number above its name",
-  "secs": 8.5,
+  "secs": 9.3,
   "asks": {
    "plans": 124,
    "schedules": 2,
@@ -433,18 +433,18 @@
  },
  {
   "scenario": "all PDFs: tags with floor (VAVE-1-07)",
-  "secs": 7.9,
+  "secs": 9.3,
   "asks": {
    "plans": 9,
-   "schedules": 1,
+   "schedules": 2,
    "sequences": 5,
    "seq_kinds": {
     "sequence": 5,
     "issue": 3
    },
    "seq_setpoints": 32,
-   "submittal": 65,
-   "bms": 60
+   "submittal": 69,
+   "bms": 61
   },
   "read": {
    "rooms": 80,
@@ -453,7 +453,10 @@
    "devices linked": "10/69"
   },
   "coverage": {
-   "plans": 1
+   "plans": 1,
+   "schedules": 1,
+   "submittal": 4,
+   "bms": 1
   },
   "silent": [],
   "score": {
@@ -505,7 +508,7 @@
  },
  {
   "scenario": "schedules: whole 27-sheet drawing set uploaded",
-  "secs": 27.2,
+  "secs": 30.9,
   "asks": {
    "plans": 31,
    "schedules": 17,
@@ -577,7 +580,7 @@
  },
  {
   "scenario": "schedules: 'VAV' titles read 'AIR TERMINAL'",
-  "secs": 8.2,
+  "secs": 9.0,
   "asks": {
    "plans": 31,
    "schedules": 40,
@@ -649,7 +652,7 @@
  },
  {
   "scenario": "sequences: whole 27-sheet drawing set uploaded",
-  "secs": 28.8,
+  "secs": 32.3,
   "asks": {
    "plans": 31,
    "schedules": 2,
@@ -721,7 +724,7 @@
  },
  {
   "scenario": "sequences: headings in Title Case",
-  "secs": 7.9,
+  "secs": 8.8,
   "asks": {
    "plans": 31,
    "schedules": 2,
@@ -793,16 +796,16 @@
  },
  {
   "scenario": "sequences: sections numbered 1. 2. 3.",
-  "secs": 7.5,
+  "secs": 8.6,
   "asks": {
    "plans": 31,
    "schedules": 2,
-   "sequences": 1,
+   "sequences": 5,
    "seq_kinds": {
-    "sequence": 1,
-    "issue": 1
+    "sequence": 5,
+    "issue": 4
    },
-   "seq_setpoints": 16,
+   "seq_setpoints": 32,
    "submittal": 37,
    "bms": 3
   },
@@ -864,8 +867,81 @@
   }
  },
  {
+  "scenario": "sequences: sections as bullets",
+  "secs": 7.8,
+  "asks": {
+   "plans": 31,
+   "schedules": 2,
+   "sequences": 2,
+   "seq_kinds": {
+    "issue": 2,
+    "sequence": 1
+   },
+   "seq_setpoints": 16,
+   "submittal": 37,
+   "bms": 3
+  },
+  "read": {
+   "rooms": 80,
+   "equipment": 77,
+   "points": 847,
+   "devices linked": "66/69"
+  },
+  "coverage": {
+   "plans": 1,
+   "sequences": 1
+  },
+  "silent": [],
+  "score": {
+   "Rooms found": [
+    80,
+    80
+   ],
+   "Room names right": [
+    74,
+    80
+   ],
+   "Equipment found": [
+    72,
+    74
+   ],
+   "Equipment class right": [
+    72,
+    72
+   ],
+   "Box serves the right room": [
+    56,
+    56
+   ],
+   "Box room from the floor plan alone": [
+    28,
+    56
+   ],
+   "Feeds found": [
+    62,
+    62
+   ],
+   "Points found": [
+    847,
+    847
+   ],
+   "Point class exact": [
+    430,
+    847
+   ],
+   "Point class right or broader": [
+    691,
+    847
+   ],
+   "BMS device linked to its unit": [
+    66,
+    68
+   ]
+  }
+ },
+ {
   "scenario": "submittal: Niagara-style references",
-  "secs": 9.1,
+  "secs": 7.7,
   "asks": {
    "plans": 31,
    "schedules": 2,
@@ -938,7 +1014,7 @@
  },
  {
   "scenario": "submittal: trunks named BUS-n",
-  "secs": 8.4,
+  "secs": 7.7,
   "asks": {
    "plans": 31,
    "schedules": 2,
@@ -1156,7 +1232,7 @@
  },
  {
   "scenario": "bms: devices named by instance",
-  "secs": 7.6,
+  "secs": 7.8,
   "asks": {
    "plans": 31,
    "schedules": 2,

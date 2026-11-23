@@ -89,6 +89,25 @@ Out of 16 variations:
 | Short, nothing said yet ("quiet") | 2 | Tags with the floor in them (schedules read 21 of 77 units), numbered sequence sections (1 of 5) |
 | Silent (zero and no question) | 0 | |
 
+**Partial-read checks, the same day.** The two quiet cases were fixed:
+- Schedules now count rows in a tag column that the tag rules don't know.
+- The submittal says when a typical point list matches no controller, or when more than 25% of controllers match no
+  unit.
+- The BMS step says when more than 25% of its devices are unlinked.
+- Sequences flag system headings whose sections can't be read.
+- Numbered sections (1. 2. 3.) are now read like lettered ones.
+
+A new variation, sections as bullets, keeps the sequence check under test. The result over 17 variations:
+
+| Outcome | Count |
+|---|---|
+| Reads correctly | 10 |
+| Short, says so and asks | 7 |
+| Quiet | 0 |
+| Silent | 0 |
+
+`tests/test_stress_intake.py` now fails on any new quiet or silent case.
+
 The answer key uses Troop D's own names. So in variations that rename things (room 1109, device DEV3104), the
 scorer shows 0 even when everything was read; the stress script records raw counts for that reason. The 2 quiet
 scenarios are the next guardrails, and they are allowed in the test only as a known list that may shrink, never grow.

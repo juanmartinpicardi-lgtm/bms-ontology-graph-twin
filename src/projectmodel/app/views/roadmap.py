@@ -305,12 +305,12 @@ story([
     Section("Harsh reality", "crisis_alert", "Another firm's documents break rules. Now they say so.",
             p("We ran every reader on one building with one realistic change at a time: another firm's titles, room "
               "numbers, heading style, another vendor's export, a scanned sheet.",
-              f"Before the guardrails, 9 of 16 dropped a step to zero or near it, 7 of them silently. Now "
+              f"Before the guardrails, 9 of the first 16 dropped a step to zero or near it, 7 of them silently. Now, "
+              f"of {sum(stress_counts.values())}, "
               f"<b>{stress_counts.get('reads', 0)}</b> read correctly, <b>{stress_counts.get('asks', 0)}</b> say "
               f"what they missed and ask you, <b>{stress_counts.get('quiet', 0)}</b> still read only part with "
               f"nothing said, and <b>{stress_counts.get('silent', 0)}</b> are silent.",
-              "The ones that ask or read partly are where the AI reader starts (W6, W8). The quiet ones are the "
-              "next guardrails.")
+              "The ones that ask are where the AI reader starts (W6, W8): the rules have run out, and they know it.")
             if stress_counts else p("The stress test results are not available yet."),
             stress_html),
     Section("Roadmap", "route", "What comes next, in order.",
@@ -318,8 +318,8 @@ story([
               "a data model for many sources, and a scorer for every AI job.",
               "The second wave brings AI into the readers, plans first. Graphics, binding and the learning loop "
               "follow. Each package lands only when it beats rules alone on a measured test.")
-            + features([("check_circle", "Shipped:", "coverage checks, the stress suite as a test, four rule "
-                                                     "fixes."),
+            + features([("check_circle", "Shipped:", "coverage and partial-read checks in every step, the stress "
+                                                     "suite as a test, six rule fixes."),
                         ("pending", "Left in W0:", "AI point classification in the setup, three more real "
                                                    "document sets.")]),
             waves),
