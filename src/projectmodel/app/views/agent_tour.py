@@ -28,8 +28,9 @@ SOURCES = [ROOT / "data/kg.sqlite", APP / "agent_tour.html", APP / "use_cases.ht
            ROOT / "data/documents/alpha/sequences.yaml"]
 CASES = {  # chip label -> (case, icon, caption)
     "Root cause": ("root", ":material/troubleshoot:",
-                   "Values are simulated with the \"Chilled water running warm\" scenario; the agent's script is "
-                   "fixed. Space plays or pauses, the arrow keys move between steps."),
+                   "A scripted agent on Alpha's real graph: values are simulated with the \"Chilled water running "
+                   "warm\" scenario and the agent's script is fixed. Space plays or pauses, the arrow keys move "
+                   "between steps."),
     "Functional test": ("test", ":material/fact_check:",
                         "Points, template slots and the sequence come from Alpha's graph and project documents; values "
                         "come from the equipment simulator (hot afternoon)."),
@@ -61,5 +62,7 @@ with box("tour", fit=True):
                                 label_visibility="collapsed") or "Root cause"
     case, _, caption = CASES[pick]
     st.iframe(page(case, st.context.theme.type, tuple(p.stat().st_mtime for p in SOURCES if p.exists())), height=820)
-    st.caption(f"Scripted agent over the knowledge graph of Project Haystack site Alpha (names and folders only). "
+    # The root-cause tour's start screen already says what it runs on: the caption doesn't say it a second time.
+    st.caption(caption if case == "root" else
+               f"Scripted agent over the knowledge graph of Project Haystack site Alpha (names and folders only). "
                f"{caption}")
