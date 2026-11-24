@@ -207,6 +207,9 @@ def tree_tab():
             facts.append(fact(f"part of {tree.by_id[tree.parent[n.id]].label}", n.via))
         facts += [fact(f"feeds {tree.by_id[d].label}", p) for d, p in tree.feeds_to(n.id)]
         facts += [fact(f"fed by {tree.by_id[s].label}", p) for s, p in tree.fed_by(n.id)]
+        for c, p in tree.controlled_by(n.id):  # the riser's controller, and the trunk it is on
+            facts.append(fact(f"controlled by {c.label}", p))
+            facts += [fact(f"{c.label} is on {net.label}", q) for net, q in tree.network_of(c.id)]
         facts += behaviour_facts(tree, n.id)
         if facts:
             provenance_table(facts)
@@ -249,11 +252,13 @@ def tree_tab():
             screen.select([("point", p.id, p.label)])
             st.markdown(f"**{p.label}** · `{p.attrs.get('source_id', '')}`")
             provenance_table([fact(f"class = {p.cls or '(none)'}", p.prov), fact(f"on {n.label}", p.via)]
+                             + [fact(f"lives in {c.label}", q) for c, q in tree.controlled_by(p.id)]
                              + behaviour_facts(tree, p.id))
             a = p.attrs
             detail = {"name words": a.get("words"), "unknown tokens": a.get("unknown_tokens"),
                       "alternatives (class, score)": [f"{c} ({s:g})" for c, s in a.get("alternatives", [])],
-                      "folder path": a.get("path")}
+                      "folder path": a.get("path"), "units": a.get("units"), "QUDT unit": a.get("unit"),
+                      "BACnet object": a.get("bacnet")}
             if "review" in a:
                 detail["before review"] = a["review"].get("previous")
             if "ignore" in a:

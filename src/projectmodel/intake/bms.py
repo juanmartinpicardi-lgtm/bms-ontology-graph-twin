@@ -9,6 +9,8 @@ Rules:
 3. Each BMS object is matched to a submittal point by reference. With no submittal, the object becomes a point of its
    own, classified from its description.
 4. Gaps both ways are reported: points promised but missing in the BMS, BMS objects no document mentions.
+5. What the export says about the BACnet side is kept as written, for the graph: a device's instance, trunk and
+   address; an object's type, instance and units.
 """
 from __future__ import annotations
 
@@ -29,6 +31,8 @@ COLUMNS = {  # first match wins; Metasys, Niagara and generic BACnet export head
     "object": ["object type", "type", "point type"],
     "instance": ["instance", "object instance"],
     "device_instance": ["device instance", "device id", "dev. inst.", "device instance number"],
+    "trunk": ["trunk", "network", "field bus", "fieldbus", "bus"],
+    "address": ["address", "mac address", "mstp address", "ms/tp address"],
 }
 
 
@@ -73,7 +77,8 @@ def read(path: Path, name: str, equipment: list[dict], controllers: list[dict], 
         via = ("submittal riser" if by_ctrl.get(dev) else "device instance on the riser") \
             if ctrl and ctrl["data"].get("equip") else "same tag" if eq_norm else None
         src = {"file": name, "page": None, "bbox": None, "row": objs[0]["_row"]}
-        data = {"device": dev, "objects": len(objs), "equip": eq_norm, "via": via}
+        data = {"device": dev, "objects": len(objs), "equip": eq_norm, "via": via,
+                **_bacnet_device(objs[0], col)}
         if eq_norm:
             linked += 1
             eq = by_normal.get(eq_norm)
@@ -102,7 +107,8 @@ def read(path: Path, name: str, equipment: list[dict], controllers: list[dict], 
             if p:
                 matched += 1
                 facts.append({"id": f"obj:{ref}", "kind": "bms_object", "label": ref,
-                              "data": {"ref": ref, "device": dev, "point": p["id"], "matched": True},
+                              "data": {"ref": ref, "device": dev, "point": p["id"], "matched": True,
+                                       **_bacnet_object(r, col)},
                               "src": src, "method": "rule", "conf": 0.97, "step": "bms", "ask": None})
             else:
                 desc = r.get(col["description"] or "", "") or ref.rsplit(".", 1)[-1]
@@ -112,7 +118,8 @@ def read(path: Path, name: str, equipment: list[dict], controllers: list[dict], 
                 facts.append({"id": f"obj:{ref}", "kind": "bms_object", "label": ref,
                               "data": {"ref": ref, "device": dev, "point": None, "matched": False,
                                        "description": desc, "class": cls, "class_conf": c,
-                                       "units": r.get(col["units"] or "", ""), **({"term": True} if term else {})},
+                                       "units": r.get(col["units"] or "", ""), **_bacnet_object(r, col),
+                                       **({"term": True} if term else {})},
                               "src": src, "method": "rule",
                               "conf": point_conf(cls, c, step="bms", base=0.5, cap=0.9, term=term),
                               "step": "bms", "ask": None})
@@ -129,6 +136,28 @@ def read(path: Path, name: str, equipment: list[dict], controllers: list[dict], 
         text = f"{len(bms_only)} BMS objects are in no document (e.g. {', '.join(bms_only[:3])})."
         facts.append(_issue("bms-extra", text, name))
     return facts
+
+
+def _cell(r: dict, col: dict, key: str) -> str:
+    return str(r.get(col[key] or "", "") or "").strip()
+
+
+def _int(text: str) -> int | str | None:
+    return int(text) if text.isdigit() else (text or None)
+
+
+def _bacnet_device(r: dict, col: dict) -> dict:
+    """The device's BACnet instance, trunk and address, where the export has those columns."""
+    out = {"instance": _int(_cell(r, col, "device_instance")), "trunk": _cell(r, col, "trunk") or None,
+           "address": _int(_cell(r, col, "address"))}
+    return {k: v for k, v in out.items() if v is not None}
+
+
+def _bacnet_object(r: dict, col: dict) -> dict:
+    """The object's type, instance and units, and its device's instance, as the export writes them."""
+    out = {"object_type": _cell(r, col, "object") or None, "object_instance": _int(_cell(r, col, "instance")),
+           "device_instance": _int(_cell(r, col, "device_instance")), "units": _cell(r, col, "units") or None}
+    return {k: v for k, v in out.items() if v is not None}
 
 
 def _issue(id_, text, name):

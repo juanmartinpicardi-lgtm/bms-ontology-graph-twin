@@ -4,7 +4,8 @@ In Phase 0 the "export" the pipeline receives is a blind CSV built from a Haysta
 (see data/blind/README.md), so this adapter reads those, never the tagged source. It is thin
 on purpose: one CSV row becomes one RawRecord, with no interpretation of the name.
 
-Haystack has no BACnet device/object ids, units or kinds in the blind inputs, so those stay None.
+Haystack has no BACnet device/object ids or kinds in the blind inputs, so those stay None. An export may add a
+`units` column (the point's unit as written, e.g. "°F"): it is passed through as is, never interpreted here.
 """
 
 from __future__ import annotations
@@ -30,8 +31,8 @@ def read_blind_export(path: Path) -> list[RawRecord]:
 
     with path.open(newline="") as f:
         reader = csv.DictReader(f)
-        if reader.fieldnames != VARIANTS[variant]:
-            raise ValueError(f"{path}: columns {reader.fieldnames}, expected {VARIANTS[variant]}")
+        if reader.fieldnames not in (VARIANTS[variant], VARIANTS[variant] + ["units"]):
+            raise ValueError(f"{path}: columns {reader.fieldnames}, expected {VARIANTS[variant]} (+ units)")
         records, seen = [], set()
         for row_no, row in enumerate(reader, 1):
             sid = row["blind_id"]
@@ -45,5 +46,6 @@ def read_blind_export(path: Path) -> list[RawRecord]:
                 source_row=row_no,
                 name=row["name"],
                 path=row.get("path") or None,
+                units=(row.get("units") or "").strip() or None,
             ))
     return records

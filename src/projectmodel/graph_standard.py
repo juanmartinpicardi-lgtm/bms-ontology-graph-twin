@@ -11,6 +11,7 @@ import json
 from collections import Counter, defaultdict
 from pathlib import Path
 
+from . import units
 from .db.store import Store
 from .fonts import with_fonts
 from .knowledge_model import KnowledgeModel
@@ -88,6 +89,12 @@ FACTS = [
      "rule": "Every terminal unit (VAV, FCU) serves at least one zone; every zone is served.",
      "sources": {"drawings": "primary", "mech": "primary", "names": "support", "trends": "check"},
      "how": "Air schematics and the mechanical schedule; zone temperature points tie a terminal to its zone."},
+    {"id": "site", "layer": "spaces", "name": "Site and building",
+     "question": "Which building is this, where is it, and which floors does it have?",
+     "rule": "One site and one building per project; every floor is part of the building.",
+     "sources": {"people": "primary", "drawings": "support", "mech": "support"},
+     "how": "The project record (the name and address a person gives the building) and the drawings' title block; "
+            "the floor plans hang their levels under it."},
     # systems
     {"id": "systems", "layer": "systems", "name": "Plants and loops",
      "question": "What is on the chilled water loop?",
@@ -122,6 +129,19 @@ FACTS = [
      "rule": "Capacity, make, model and serial for every major equipment.",
      "sources": {"mech": "primary", "people": "check"},
      "how": "Mechanical schedule and submittals; checked on site."},
+    {"id": "controllers", "layer": "equipment", "name": "Controllers",
+     "question": "Which controller runs VAV-07, and which points live in it?",
+     "rule": "Every controlled equipment has its controller (controls); every point lives in one controller "
+             "(isHostedBy).",
+     "sources": {"device": "primary", "io_list": "primary", "names": "support", "people": "check"},
+     "how": "The controls riser lists each controller with its device instance and the unit it runs; point "
+            "references name their device. The BMS export's device instances confirm the riser."},
+    {"id": "networks", "layer": "equipment", "name": "Control network",
+     "question": "Which trunk is VAV-07's controller on, and what supervises it?",
+     "rule": "Every controller sits on its field network (isOnNetwork); every trunk is one node.",
+     "sources": {"device": "primary", "io_list": "primary", "people": "check"},
+     "how": "Riser trunk headings (FC-1...) and the BMS export's trunk column; the supervisory controller from the "
+            "point references (NAE/FC-1...)."},
     # points
     {"id": "point", "layer": "points", "name": "Every point, with a stable ID",
      "question": "Is this the same point as in last month's export?",
@@ -229,6 +249,16 @@ GENERIC = {"Point", "Sensor", "Setpoint", "Command", "Status", "Alarm", "Equipme
 TERMINALS = {"VAV", "FCU", "Terminal_Unit"}
 
 
+BINARY_IO = {"BI", "BO", "BV", "MI", "MO", "MV"}
+
+
+def unitless(a: dict) -> bool:
+    """A binary or multi-state object: it has states, not an engineering unit."""
+    io = (a.get("io") or "").upper()
+    kind = str((a.get("bacnet") or {}).get("object_type") or "").lower()
+    return io in BINARY_IO or kind.startswith(("binary", "multi-state", "multistate"))
+
+
 def definition() -> dict:
     return {"sources": SOURCES, "layers": LAYERS, "facts": FACTS, "definitions": DEFINITIONS}
 
@@ -333,6 +363,10 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
     plant = [n for n in real_equip if n["class"] in PLANT]
     in_system = sum(1 for n in plant if parent.get(n["id"]) in system_ids)
     with_unit = sum(1 for n in points if attrs[n["id"]].get("units"))
+    qudt = sum(1 for n in points if attrs[n["id"]].get("unit"))
+    # Binary and multi-state objects have no engineering unit: their unit is known to be none.
+    no_unit = sum(1 for n in points if not attrs[n["id"]].get("units") and unitless(attrs[n["id"]]))
+    mismatched = [n for n in points if units.mismatch(n["class"], attrs[n["id"]].get("unit"))]
     with_prov = sum(1 for n in nodes.values() if n["source_file"] and n["source_ref"] and n["method"])
     with_prov += sum(1 for e in edges if e["source_file"] and e["source_ref"] and e["method"])
     # Calibrated: share of labelled points in a confidence band whose accuracy reaches the band's lower edge.
@@ -353,12 +387,27 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
     eq_attrs = {n["id"]: json.loads(n["attrs"] or "{}") for n in real_equip}
     scheduled = [i for i, a in eq_attrs.items() if a.get("schedule")]
 
+    zones = [n for n in nodes.values() if n["kind"] == "location" and n["class"] == "HVAC_Zone"]
+    sites = [n for n in nodes.values() if n["kind"] == "location" and n["class"] == "Site"]
+    buildings = [n for n in nodes.values() if n["kind"] == "location" and n["class"] == "Building"]
+    building_ids = {n["id"] for n in buildings}
+    floors_on_building = {e["dst"] for e in by_rel["hasPart"] if e["src"] in building_ids} & floor_ids
+
     def spaces_fact():
         if not rooms:
             return fact(0, "Not in the input yet: needs drawings, or floors read from zone names.")
         return fact(_pct(len(rooms_placed), len(rooms)),
                     f"{len(floors)} floors and {len(rooms)} rooms from the floor plans, {len(rooms_placed)} on their "
-                    "floor. HVAC zones are not separate nodes yet.")
+                    "floor. " + (f"{len(zones)} HVAC zones, as the sources state them." if zones else
+                                 "No source states HVAC zones, so none are made up."))
+
+    def site_fact():
+        if not sites and not buildings:
+            return fact(0, "No site or building node: a BMS export does not say which building it is.")
+        checks = [bool(sites), bool(buildings), len(floors_on_building) == len(floors)]
+        return fact(_pct(sum(checks), len(checks)),
+                    f"{len(sites)} site and {len(buildings)} building from the project record; "
+                    f"{len(floors_on_building)} of {len(floors)} floors part of the building.")
 
     def serves_fact():
         if not rooms:
@@ -385,14 +434,61 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
                     f"sources; {a['agreed']:,} are confirmed by that agreement, {a['conflicts']:,} disagree and wait "
                     "for review.")
 
+    controllers = [n for n in nodes.values() if n["kind"] == "controller"]
+    networks = [n for n in nodes.values() if n["kind"] == "network"]
+    hosted = {e["src"] for e in by_rel["isHostedBy"]} & {n["id"] for n in points}
+    controlled = {e["dst"] for e in by_rel["controls"]}
+    # Equipment that has points is run by a controller: its points come from one.
+    with_points = [n for n in real_equip if n["id"] in pts_of]
+    on_network = {e["src"] for e in by_rel["isOnNetwork"]}
+
+    def controllers_fact():
+        if not controllers:
+            return fact(0, "No controllers in the graph: needs the controls riser (submittal) or a BMS export with "
+                           "device instances.")
+        n_ctl = sum(1 for n in with_points if n["id"] in controlled)
+        return fact(_pct(len(hosted) + n_ctl, len(points) + len(with_points)),
+                    f"{len(controllers)} controllers; {n_ctl} of {len(with_points)} equipment with points have their "
+                    f"controller, {len(hosted):,} of {len(points):,} points live in one.")
+
+    def networks_fact():
+        if not controllers:
+            return fact(0, "No controllers, so no network to put them on.")
+        n_on = sum(1 for n in controllers if n["id"] in on_network)
+        return fact(_pct(n_on, len(controllers)),
+                    f"{len(networks)} field networks; {n_on} of {len(controllers)} controllers on one.")
+
+    keyed = {a["node_id"] for a in store.conn.execute(
+        "SELECT DISTINCT node_id FROM aliases WHERE project = ? AND scheme = 'device_object'", (project,))}
+    keyed &= {n["id"] for n in points}
+
+    def point_fact():
+        if not points:
+            return fact(0, "No points yet.")
+        if not keyed:
+            return fact(None, f"{len(points):,} points, each once, but keyed on the export row: a rename would break "
+                              "the link. Needs device + object ID.", "partial")
+        return fact(_pct(len(keyed), len(points)),
+                    f"{len(keyed):,} of {len(points):,} points have their BACnet device + object ID, so a rename "
+                    "doesn't break them.")
+
+    def props_fact():
+        if not with_unit and not no_unit:
+            return fact(0, "Not in the input: names and folders only.")
+        return fact(_pct(with_unit + no_unit, len(points)),
+                    f"{with_unit:,} points have a unit ({qudt:,} as a QUDT unit), {no_unit:,} are binary or "
+                    f"multi-state and need none, {len(points) - with_unit - no_unit:,} unknown. Writability is not "
+                    "read yet.")
+
     specific_pts = sum(1 for n in points if n["class"] and n["class"] not in GENERIC)
     specific_eq = sum(1 for n in real_equip if n["class"] and n["class"] not in GENERIC)
     validation_checks = [len(on_equip & {n["id"] for n in points}) == len(points),
                          one_feeder == len(terminals) and bool(terminals), not has_cycle(),
-                         bool(with_unit)]  # unit matches class: cannot run without units
+                         bool(qudt) and not mismatched]  # unit matches class: cannot run without units
     return {
         "spaces": spaces_fact(),
         "serves": serves_fact(),
+        "site": site_fact(),
         "systems": fact(100.0 if systems else 0, f"{len(systems)} plant and loop nodes, from plant folders. Air "
                                                  "systems are not separate nodes yet.", "partial" if systems else None),
         "membership": fact(_pct(in_system, len(plant)),
@@ -406,14 +502,15 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
                       f"{len(by_rel['feeds'])} feeds links; {one_feeder} of {len(terminals)} terminals have exactly "
                       "one air handler. Inferred from folders and templates, not confirmed by drawings."),
         "nameplate": nameplate_fact(),
-        "point": fact(None, f"{len(points):,} points, each once, but keyed on the export row: a rename would break "
-                            "the link. Needs device + object ID.", "partial" if points else "missing"),
+        "controllers": controllers_fact(),
+        "networks": networks_fact(),
+        "point": point_fact(),
         "point_equip": fact(_pct(len(on_equip & {n['id'] for n in points}), len(points)),
                             f"{len(on_equip & {n['id'] for n in points}):,} of {len(points):,} points on equipment."),
         "point_class": fact(_pct(specific_pts, len(points)),
                             f"{specific_pts:,} of {len(points):,} points have a specific class; the rest are "
                             "generic (Sensor, Status...)."),
-        "point_props": fact(_pct(with_unit, len(points)), "Not in the input: names and folders only."),
+        "point_props": props_fact(),
         "required": fact(_pct(req_found, req_total),
                          f"{req_found} of {req_total} required template points found."),
         **behaviour_facts(sequences, Counter(e["rel"] for e in store.edges(project) if e["method"] == "document")),
@@ -421,7 +518,12 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
                            "Source, method, confidence and revision on every node and link."),
         "validation": fact(_pct(sum(validation_checks), len(validation_checks)),
                            f"{sum(validation_checks)} of {len(validation_checks)} checks pass: every point placed, one "
-                           "air handler per terminal, no feed cycles. Unit vs class cannot run without units."),
+                           "air handler per terminal, no feed cycles, unit matches class. "
+                           + (f"{len(mismatched)} points have a unit their class does not measure (e.g. "
+                              f"{mismatched[0]['label']}: {mismatched[0]['class']} in "
+                              f"{attrs[mismatched[0]['id']].get('units')})." if mismatched else
+                              "Unit vs class cannot run without units." if not qudt else
+                              f"Every one of {qudt:,} units matches its point's class.")),
         "agreement": agreement_fact(),
         "calibration": fact(_pct(calibrated, sum(b["n"] for b in bands)),
                             "Share of points in a confidence band that is as accurate as it claims. "

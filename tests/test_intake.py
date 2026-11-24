@@ -190,16 +190,19 @@ def test_publish_makes_a_project(intake):
     assert project == f"{intake.slug}/documents"
     eq, pts = store.nodes(project, "equipment"), store.nodes(project, "point")
     assert len(eq) >= 70 and len(pts) >= 800
-    assert len(store.edges(project, "hasPoint")) == len(pts)
+    # Every point is on its unit, or (W4) lives in a riser controller whose unit is still asked about (CHW-PLANT).
+    on_unit = {e["dst"] for e in store.edges(project, "hasPoint")}
+    hosted = {e["src"] for e in store.edges(project, "isHostedBy")}
+    assert len(on_unit) == len(store.edges(project, "hasPoint")) >= 800 and on_unit | hosted == {p["id"] for p in pts}
     assert store.edges(project, "feeds")
     assert all(n["source_file"] and n["method"] in ("rule", "human", "parsed") for n in eq)
     assert [n["body"] for n in notes.notes_by_project(store, project)] == ["Chiller 2 replaced in 2021."]
     twin = twin_payload(store, project, intake.name)
     assert {e["floor"] for e in twin["equip"]} & {"L1", "L2", "L3"}
     # floors and rooms are in the graph, so the twin builds the real building: its levels, its rooms, each unit in its room
-    floors, rooms = store.conn.execute("SELECT class, COUNT(*) FROM nodes WHERE project = ? AND kind = 'location' "
-                                       "GROUP BY class ORDER BY class", (project,)).fetchall()
-    assert tuple(floors) == ("Floor", 4) and tuple(rooms) == ("Room", 80)
+    spaces = dict(store.conn.execute("SELECT class, COUNT(*) FROM nodes WHERE project = ? AND kind = 'location' "
+                                     "GROUP BY class", (project,)).fetchall())
+    assert spaces == {"Floor": 4, "Room": 80, "Building": 1, "Site": 1}  # W4: the building and its site
     assert [lv["id"] for lv in twin["levels"]] == ["L1", "L2", "L3", "RF"]
     assert sum(len(r) for r in twin["rooms"].values()) == 80 and all(r["xy"] for rs in twin["rooms"].values() for r in rs)
     by_tag = {e["name"]: e for e in twin["equip"]}

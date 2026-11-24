@@ -21,18 +21,27 @@ DEMO = "alpha"
 # fact -> (what to do, app page that does it or None, roadmap package or None). Documents-first wording: a new
 # building comes through the guided setup.
 NEXT = {
+    "site": ("Add the building in the guided setup: its name and address make the site and building, its floor plans "
+             "the floors under it.", "views/add_building.py", None),
     "spaces": ("Upload the floor plans in the guided setup to add floors and rooms.", "views/add_building.py", "W6"),
     "serves": ("Answer the plan's questions on which room each terminal unit serves.", "views/add_building.py", "W6"),
-    "systems": ("Plants and loops come from plant folders today; air systems need the riser as nodes.", None, "W4"),
-    "membership": ("Place each pump and chiller in its plant or loop.", "tree_app.py", "W4"),
+    "systems": ("Plants and loops come from plant folders today; air systems and plants read from the documents "
+                "are not built yet.", None, None),
+    "membership": ("Place each pump and chiller in its plant or loop.", "tree_app.py", None),
     "equipment": ("Upload the equipment schedules to reconcile the equipment list.", "views/add_building.py", None),
     "equip_class": ("Review equipment left with a generic type.", "tree_app.py", None),
     "feeds": ("Check which air handler feeds each terminal unit.", "tree_app.py", "W7"),
     "nameplate": ("Upload the equipment schedules: make, model and capacity per unit.", "views/add_building.py", None),
-    "point": ("Points need a stable id (device + object) so a rename doesn't break them.", None, "W3"),
+    "controllers": ("Upload the controls submittal (its riser) or a BMS export with device instances, and answer "
+                    "which unit each unmatched controller runs.", "views/add_building.py", "W7"),
+    "networks": ("The riser's trunk headings or the BMS export's trunk column put each controller on its network.",
+                 "views/add_building.py", "W7"),
+    "point": ("Upload the BMS export with device instances and object ids, so a rename doesn't break a point.",
+              "views/add_building.py", "W12"),
     "point_equip": ("Place the points left without equipment.", "tree_app.py", "W7"),
     "point_class": ("Review the points left with a generic class.", "tree_app.py", "W5"),
-    "point_props": ("Units and writability come with the BMS export's object properties.", None, "W4"),
+    "point_props": ("Units come with the submittal's point schedule or the BMS export; a Niagara or CPO export adds "
+                    "writability.", "views/add_building.py", "W12"),
     "required": ("Find or record the points each equipment template expects.", "views/equipment_3d.py", None),
     "loops": ("Add the sequence of operations to link setpoints, sensors and outputs.", "views/sequences.py", "W8"),
     "interlocks": ("Interlocks, resets and requests come from the sequence of operations.", "views/sequences.py", "W8"),
