@@ -16,3 +16,4 @@ data/raw/itd_d1_lab/
 data/raw/liberty_boe/
 # guided setup: uploaded documents and answers, per building
 data/intake/
+data/eval/

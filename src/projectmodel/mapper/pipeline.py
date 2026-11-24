@@ -24,6 +24,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ..calibration import calibrate_points
 from ..db.store import Edge, Node, Store
 from ..knowledge_model import KnowledgeModel, Template
 from ..records import RawRecord
@@ -288,6 +289,7 @@ class Mapper:
         for g in groups.values():
             self.type_equipment(g, guesses)
             final.update(self.refine_points(g, guesses))
+        final = calibrate_points(final, guesses, records)  # W5: raw rule/template confidence -> measured accuracy
 
         rec_by_pid = {f"pt:{r.source_id}": r for r in records}
         llm_calls = 0

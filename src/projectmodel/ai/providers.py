@@ -20,7 +20,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from .config import AIConfig
+from .config import AIConfig, request_timeout_s
 from .models import Model
 
 
@@ -32,6 +32,11 @@ class ModelError(RuntimeError):
     """The model was called and failed (API error, refusal, invalid output)."""
 
 
+class ModelTimeout(ModelError):
+    """The request got no answer in time (a stalled stream or a dropped connection). Nothing was billed for an answer
+    we never saw, so the router tries once more."""
+
+
 class ModelNotEnabled(ModelError):
     """The model exists but this GCP project cannot call it (not enabled in Model Garden, or a project setting such
     as data sharing is missing). The router remembers it so callers can move to the job's next model."""
@@ -41,6 +46,21 @@ def not_enabled(code: Any, message: str) -> bool:
     """Vertex AI's answer for a model this GCP project cannot call (403 / 404 with a 'not found / no access' text)."""
     return str(code) in ("403", "404") and any(w in message.lower() for w in (
         "not found", "access", "data sharing", "permission", "not enabled", "not allowed"))
+
+
+_STALLED = ("Timeout", "ConnectError", "ConnectionError", "NetworkError", "RemoteProtocolError", "ProtocolError",
+            "ReadError")
+
+
+def _stalled(e: BaseException | None) -> bool:
+    """A timeout or a dropped connection, from whichever HTTP stack the SDK runs on (httpx, requests, urllib3...):
+    judged by the exception's type name along its cause chain, so no HTTP library has to be importable here."""
+    seen = 0
+    while e is not None and seen < 8:
+        if isinstance(e, (TimeoutError, ConnectionError)) or any(s in type(e).__name__ for s in _STALLED):
+            return True
+        e, seen = e.__cause__ or e.__context__, seen + 1
+    return False
 
 
 def _status_error(model: Model, code: Any, message: str) -> ModelError:
@@ -123,8 +143,9 @@ class VertexClaude:
         if client is None:
             from anthropic import AnthropicVertex
 
+            # The SDK retries timeouts, connection errors, 429 and 5xx itself.
             client = AnthropicVertex(project_id=config.project, region=config.region_for("claude"), max_retries=2,
-                                     credentials=config.credentials)
+                                     timeout=request_timeout_s(), credentials=config.credentials)
         self.client = client
 
     def complete(self, model: Model, req: ModelRequest, on_text: OnText = None) -> ModelResponse:
@@ -236,9 +257,12 @@ class VertexGemini:
     def __init__(self, config: AIConfig, client: Any = None):
         if client is None:
             from google import genai
+            from google.genai import types
 
+            # google-genai has no timeout by default: a stalled stream would wait forever. HttpOptions takes ms.
             client = genai.Client(vertexai=True, project=config.project, location=config.region_for("gemini"),
-                                  credentials=config.credentials)
+                                  credentials=config.credentials,
+                                  http_options=types.HttpOptions(timeout=int(request_timeout_s() * 1000)))
         self.client = client
 
     def complete(self, model: Model, req: ModelRequest, on_text: OnText = None) -> ModelResponse:
@@ -277,6 +301,8 @@ class VertexGemini:
         except errors.APIError as e:
             raise _status_error(model, e.code, str(e.message)) from e
         except Exception as e:
+            if _stalled(e):
+                raise ModelTimeout(f"{model.label}: no answer in time: {type(e).__name__}: {e}") from e
             if type(e).__module__.startswith("google.auth"):
                 raise ModelUnavailable(f"Google credentials: {e}. Run `gcloud auth application-default login`.") from e
             raise

@@ -179,6 +179,58 @@ def test_a_failed_call_is_logged_as_failed():
     assert row["ok"] == 0 and "500" in row["error"]
 
 
+def test_a_timed_out_call_is_logged_and_tried_once_more():
+    from projectmodel.ai.providers import ModelTimeout
+
+    store = Store(":memory:")
+    req = ModelRequest("s", [{"role": "user", "content": "x"}])
+    resp = router(ModelTimeout("stalled"), "ok").call("haiku", req, job="point_class", store=store)
+    assert resp.text == "ok"
+    assert [r[0] for r in store.conn.execute("SELECT ok FROM llm_calls ORDER BY id")] == [0, 1]
+    with pytest.raises(ModelTimeout):  # only once more
+        router(ModelTimeout("a"), ModelTimeout("b"), "never").call("haiku", req, job="point_class", store=store)
+
+
+def test_a_stalled_gemini_stream_is_a_timeout_whatever_the_http_library():
+    from projectmodel.ai.providers import ModelTimeout
+
+    class ReadTimeout(Exception):  # requests' and httpx's names; neither needs to be installed
+        pass
+
+    class Models:
+        def generate_content_stream(self, **_):
+            raise ReadTimeout("read timed out after 90 s")
+
+    p = VertexGemini(READY, client=SimpleNamespace(models=Models()))
+    with pytest.raises(ModelTimeout, match="no answer in time"):
+        p.complete(get_model("argon"), ModelRequest("s", [{"role": "user", "content": "x"}]))
+
+
+def test_providers_have_a_request_timeout(monkeypatch):
+    monkeypatch.setenv("PM_AI_TIMEOUT_S", "7")
+    from projectmodel.ai.config import request_timeout_s
+
+    assert request_timeout_s() == 7.0
+    monkeypatch.setenv("PM_AI_TIMEOUT_S", "x")
+    assert request_timeout_s() == 120.0
+
+
+def test_the_eval_reuses_a_logged_answer_instead_of_paying_twice(monkeypatch, tmp_path):
+    from projectmodel.scoring import eval as ev
+
+    monkeypatch.setattr(ev, "ANSWERS", tmp_path / "answers.json")
+    monkeypatch.setitem(ev._CACHE, "answers", {})
+    store = Store(":memory:")
+    q = {"key": "q1", "values": point_values()}
+    first = ev.ask(q, "haiku", router(answer("Zone_Air_Temperature_Sensor", 0.7)), store)
+    assert first["class"] == "Zone_Air_Temperature_Sensor" and not first.get("cached")
+    ev._CACHE["answers"] = {}  # the answers file is lost, as when a run is stopped before saving it
+    again = ev.ask(q, "haiku", router(), store)  # a provider with no answer left: any call would fail
+    assert again["cached"] and again["class"] == "Zone_Air_Temperature_Sensor" and again["confidence"] == 0.7
+    assert store.conn.execute("SELECT COUNT(*) FROM llm_calls").fetchone()[0] == 1
+    assert ev.ask(q, "sonnet", router(answer("Zone_Air_Temperature_Sensor")), store).get("cached") is None
+
+
 def test_no_model_raises_unavailable_and_logs_nothing():
     store = Store(":memory:")
     r = Router(AIConfig(project=None, enabled=False, why_off="no GCP project"))

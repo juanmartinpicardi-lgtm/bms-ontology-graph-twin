@@ -1,0 +1,753 @@
+{
+ "job": "point_class",
+ "sets": [
+  "troop_d",
+  "alpha/names_paths",
+  "alpha/names_only"
+ ],
+ "k_folds": 5,
+ "min_n": 20,
+ "band_n": 30,
+ "tolerance": 5.0,
+ "budget_usd_per_1000": 1.0,
+ "calibration_before": "point_class@5",
+ "rows": [
+  {
+   "label": "troop_d \u00b7 argon",
+   "kind": "model",
+   "n": 774,
+   "exact_pct": 83.5,
+   "right_or_broader_pct": 84.1,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 2,
+     "mean_conf_pct": 65.0,
+     "accuracy_pct": 100.0,
+     "gap": 35.0
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 6,
+     "mean_conf_pct": 85.0,
+     "accuracy_pct": 33.3,
+     "gap": 51.7
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 101,
+     "mean_conf_pct": 95.4,
+     "accuracy_pct": 85.1,
+     "gap": 10.3
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 11,
+     "mean_conf_pct": 52.4,
+     "accuracy_pct": 72.7,
+     "gap": 20.3
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 21,
+     "mean_conf_pct": 61.7,
+     "accuracy_pct": 52.4,
+     "gap": 9.4
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 28,
+     "mean_conf_pct": 84.6,
+     "accuracy_pct": 85.7,
+     "gap": 1.1
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 49,
+     "mean_conf_pct": 96.6,
+     "accuracy_pct": 95.9,
+     "gap": 0.6
+    }
+   ],
+   "calls_per_1000": 140.8,
+   "usd_per_1000": 0.447,
+   "seconds_per_1000": 797.48,
+   "cost": {
+    "items": 774,
+    "points": 774,
+    "questions": 109,
+    "calls": 109,
+    "usd": 0.3459,
+    "seconds": 617.253,
+    "asked": 0,
+    "cached": 109,
+    "failed": 0,
+    "none": 0
+   },
+   "raw_worst_gap": 10.3,
+   "calibrated_worst_gap": 0.6,
+   "set": "troop_d",
+   "model": "argon",
+   "answered": 774,
+   "questions_answered": 109,
+   "calibrated_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 51,
+     "mean_conf_pct": 50.7,
+     "accuracy_pct": 23.5,
+     "gap": 27.2
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 96,
+     "mean_conf_pct": 61.9,
+     "accuracy_pct": 69.8,
+     "gap": 7.9
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 35,
+     "mean_conf_pct": 84.5,
+     "accuracy_pct": 88.6,
+     "gap": 4.0
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 592,
+     "mean_conf_pct": 97.4,
+     "accuracy_pct": 90.5,
+     "gap": 6.9
+    }
+   ],
+   "raw_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 5,
+     "mean_conf_pct": 65.0,
+     "accuracy_pct": 100.0,
+     "gap": 35.0
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 42,
+     "mean_conf_pct": 85.0,
+     "accuracy_pct": 4.8,
+     "gap": 80.2
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 727,
+     "mean_conf_pct": 97.2,
+     "accuracy_pct": 87.9,
+     "gap": 9.3
+    }
+   ],
+   "calibrated_by_point_worst_gap": 27.2,
+   "reachable_pct": 91.5,
+   "rules_exact_pct": 57.0,
+   "verdict": {
+    "default_ok": true,
+    "checks": {
+     "beats rules alone": true,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": true
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "may be the default"
+   }
+  },
+  {
+   "label": "alpha/names_paths \u00b7 argon",
+   "kind": "model",
+   "n": 556,
+   "exact_pct": 7.6,
+   "right_or_broader_pct": 8.1,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 9,
+     "mean_conf_pct": 45.0,
+     "accuracy_pct": 88.9,
+     "gap": 43.9
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 5,
+     "mean_conf_pct": 65.0,
+     "accuracy_pct": 60.0,
+     "gap": 5.0
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 7,
+     "mean_conf_pct": 74.7,
+     "accuracy_pct": 57.1,
+     "gap": 17.6
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 5,
+     "mean_conf_pct": 85.0,
+     "accuracy_pct": 20.0,
+     "gap": 65.0
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 71,
+     "mean_conf_pct": 93.9,
+     "accuracy_pct": 16.9,
+     "gap": 77.0
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 95,
+     "mean_conf_pct": 33.1,
+     "accuracy_pct": 29.5,
+     "gap": 3.6
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 2,
+     "mean_conf_pct": 66.7,
+     "accuracy_pct": 0.0,
+     "gap": 66.7
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    }
+   ],
+   "calls_per_1000": 178.1,
+   "usd_per_1000": 0.4568,
+   "seconds_per_1000": 1001.08,
+   "cost": {
+    "items": 556,
+    "points": 556,
+    "questions": 99,
+    "calls": 99,
+    "usd": 0.254,
+    "seconds": 556.598,
+    "asked": 2,
+    "cached": 97,
+    "failed": 0,
+    "none": 2
+   },
+   "raw_worst_gap": 77.0,
+   "calibrated_worst_gap": 3.6,
+   "set": "alpha/names_paths",
+   "model": "argon",
+   "answered": 554,
+   "questions_answered": 97,
+   "calibrated_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 549,
+     "mean_conf_pct": 33.0,
+     "accuracy_pct": 7.7,
+     "gap": 25.3
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 5,
+     "mean_conf_pct": 66.7,
+     "accuracy_pct": 0.0,
+     "gap": 66.7
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    }
+   ],
+   "raw_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 10,
+     "mean_conf_pct": 45.0,
+     "accuracy_pct": 80.0,
+     "gap": 35.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 8,
+     "mean_conf_pct": 65.0,
+     "accuracy_pct": 37.5,
+     "gap": 27.5
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 43,
+     "mean_conf_pct": 75.0,
+     "accuracy_pct": 16.3,
+     "gap": 58.7
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 111,
+     "mean_conf_pct": 85.0,
+     "accuracy_pct": 4.5,
+     "gap": 80.5
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 382,
+     "mean_conf_pct": 94.4,
+     "accuracy_pct": 5.0,
+     "gap": 89.5
+    }
+   ],
+   "calibrated_by_point_worst_gap": 25.3,
+   "reachable_pct": 64.0,
+   "rules_exact_pct": 52.7,
+   "verdict": {
+    "default_ok": false,
+    "checks": {
+     "beats rules alone": false,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": true
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "not the default (fails: beats rules alone)"
+   }
+  },
+  {
+   "label": "alpha/names_only \u00b7 argon",
+   "kind": "model",
+   "n": 1475,
+   "exact_pct": 57.2,
+   "right_or_broader_pct": 71.7,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 10,
+     "mean_conf_pct": 45.0,
+     "accuracy_pct": 80.0,
+     "gap": 35.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 4,
+     "mean_conf_pct": 63.7,
+     "accuracy_pct": 75.0,
+     "gap": 11.3
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 13,
+     "mean_conf_pct": 73.7,
+     "accuracy_pct": 38.5,
+     "gap": 35.2
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 7,
+     "mean_conf_pct": 85.0,
+     "accuracy_pct": 28.6,
+     "gap": 56.4
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 88,
+     "mean_conf_pct": 93.0,
+     "accuracy_pct": 31.8,
+     "gap": 61.2
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 122,
+     "mean_conf_pct": 33.2,
+     "accuracy_pct": 37.7,
+     "gap": 4.5
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    }
+   ],
+   "calls_per_1000": 84.1,
+   "usd_per_1000": 0.2137,
+   "seconds_per_1000": 537.39,
+   "cost": {
+    "items": 1475,
+    "points": 1475,
+    "questions": 124,
+    "calls": 124,
+    "usd": 0.3152,
+    "seconds": 792.647,
+    "asked": 0,
+    "cached": 124,
+    "failed": 0,
+    "none": 2
+   },
+   "raw_worst_gap": 61.2,
+   "calibrated_worst_gap": 4.5,
+   "set": "alpha/names_only",
+   "model": "argon",
+   "answered": 1473,
+   "questions_answered": 122,
+   "calibrated_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 1473,
+     "mean_conf_pct": 33.1,
+     "accuracy_pct": 57.3,
+     "gap": 24.2
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    }
+   ],
+   "raw_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 14,
+     "mean_conf_pct": 45.0,
+     "accuracy_pct": 57.1,
+     "gap": 12.1
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 16,
+     "mean_conf_pct": 60.9,
+     "accuracy_pct": 18.8,
+     "gap": 42.2
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 152,
+     "mean_conf_pct": 76.8,
+     "accuracy_pct": 5.9,
+     "gap": 70.9
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 14,
+     "mean_conf_pct": 85.0,
+     "accuracy_pct": 42.9,
+     "gap": 42.1
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 1277,
+     "mean_conf_pct": 92.6,
+     "accuracy_pct": 64.1,
+     "gap": 28.6
+    }
+   ],
+   "calibrated_by_point_worst_gap": 24.2,
+   "reachable_pct": 86.4,
+   "rules_exact_pct": 67.1,
+   "verdict": {
+    "default_ok": false,
+    "checks": {
+     "beats rules alone": false,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": true
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "not the default (fails: beats rules alone)"
+   }
+  }
+ ],
+ "skipped": [],
+ "calibration_after": "point_class@6"
+}

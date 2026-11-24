@@ -104,9 +104,12 @@ class JobClassifier:
             return None
         except ModelError as e:
             return LLMAnswer(None, 0.0, str(e), 0.0, 0.0, self.model)
+        from ..calibration import calibrate_model
+
         out = res.output
-        return LLMAnswer(out["class"], float(out["confidence"]), json.dumps(out), res.cost_usd, res.latency_s,
-                         res.model)
+        # The model's own number stays in llm_calls; the mapper gets it calibrated for this job and model.
+        return LLMAnswer(out["class"], calibrate_model("point_class", float(out["confidence"]), res.model, "mapper"),
+                         json.dumps(out), res.cost_usd, res.latency_s, res.model)
 
 
 def get_provider(name: str, km=None) -> LLMProvider:

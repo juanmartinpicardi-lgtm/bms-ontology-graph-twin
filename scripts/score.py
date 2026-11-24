@@ -6,6 +6,9 @@ Usage:
   .venv/bin/python scripts/score.py --sites alpha --variants names_paths --json
   .venv/bin/python scripts/score.py --compare      # every project twice: blind, then with its conventions
 
+Confidences are calibrated (knowledge_model/calibration/mapper.json), and the curve was fitted on these same points,
+so the calibration table here is in-sample: `scripts/eval.py mapper` gives the held-out one.
+
 Each project runs with its convention layers (conventions/projects.yaml). A site with role TEST is
 always reported twice, blind and with conventions (spec-tribal-knowledge.md section 4.3); the database
 keeps the with-conventions run. There is no test site at the moment.

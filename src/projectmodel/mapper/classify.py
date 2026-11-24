@@ -19,6 +19,7 @@ IMPLIED_WORDS = {"air"}
 COMPONENT_PENALTY = 1.0  # a class naming a component the name never mentions ("Building DP" is not a filter point)
 NAME_COMPONENT_PENALTY = 0.25  # the name says "valve" but the class does not ("Heating Valve Signal" is not Heating_Command)
 ALT_PENALTY = 1.0  # per token read with a less likely abbreviation meaning
+REDUNDANT_READING = 2.0  # extra, in ALT_PENALTY units, when that meaning adds no word the name doesn't already say
 MAX_INTERPRETATIONS = 16
 FALLBACK_CONFIDENCE = 0.1  # a generic class from the point's function only
 # Words naming a kind of equipment or component (vocabulary words of the name rules).
@@ -43,6 +44,7 @@ class ClassMatcher:
         self.cm = km.class_matching
         self.kind = kind
         self.class_words = {c: set(ws) for k in (kind, *also) for c in km.by_kind(k) if (ws := self.cm.class_words(c))}
+        self.functions = set(self.cm.functions) if kind == "point" else set()
 
     def tokens_without(self, name: str, equipment: str | None) -> tuple[list[str], list[str]]:
         """Name tokens with the equipment's own name removed ("B-1 Fire Rate" on B-1 -> fire rate).
@@ -62,8 +64,8 @@ class ClassMatcher:
                 return rest, drop
         return tokens, []
 
-    def _interpretations(self, name: str, equipment: str | None = None) -> tuple[list[tuple[list[str], int]], list[str]]:
-        """Every reading of the name as (words, number of non-default abbreviation meanings used)."""
+    def _interpretations(self, name: str, equipment: str | None = None) -> tuple[list[tuple[list[str], float]], list[str]]:
+        """Every reading of the name as (words, how unlikely the abbreviation meanings used are)."""
         nr = self.km.name_rules
         options, unknown = [], []
         for t in self.tokens_without(name, equipment)[0]:
@@ -76,7 +78,22 @@ class ClassMatcher:
             else:
                 options.append(list(enumerate(alts)))
         combos = list(itertools.islice(itertools.product(*options), MAX_INTERPRETATIONS)) if options else [()]
-        return [([w for _, alt in combo for w in alt], sum(1 for i, _ in combo if i)) for combo in combos], unknown
+        return [([w for _, alt in combo for w in alt], self._unlikely(combo)) for combo in combos], unknown
+
+    def _unlikely(self, combo) -> float:
+        """How unlikely a reading is, in units of ALT_PENALTY: one per less likely abbreviation meaning, and
+        REDUNDANT_READING more when that meaning only repeats what the rest of the name already says ("Building
+        Static_SP": SP as static pressure repeats "static", which already implies pressure; SP is the setpoint)."""
+        out = 0.0
+        for n, (i, alt) in enumerate(combo):
+            if not i:
+                continue
+            out += 1
+            rest = {w for m, (_, other) in enumerate(combo) if m != n for w in other}
+            rest |= {w for k in rest for w in self.cm.point_implies.get(k, [])} if self.kind == "point" else set()
+            if set(alt) <= rest:
+                out += REDUNDANT_READING
+        return out
 
     def _with_function(self, words: list[str]) -> list[str]:
         if self.kind != "point":
@@ -95,10 +112,13 @@ class ClassMatcher:
         if not matched:
             return 0.0
         missing = cls_words - words
+        # A class naming another function than the one the name states ("Static_SP" read as a setpoint is not a
+        # sensor) is as wrong as one naming a component the name never mentions.
+        said = bool(words & self.functions)
         unmatched = len((words & EQUIPMENT_WORDS) - cls_words)  # a component the name has and the class lacks
         return matched - NAME_COMPONENT_PENALTY * unmatched - sum(
             IMPLIED_PENALTY if w in IMPLIED_WORDS else COMPONENT_PENALTY if w in EQUIPMENT_WORDS
-            else MISSING_PENALTY for w in missing)
+            or (said and w in self.functions) else MISSING_PENALTY for w in missing)
 
     def _fallback(self, words: list[str]) -> str | None:
         """Best guess when no class name matches: the generic class of the point's function
