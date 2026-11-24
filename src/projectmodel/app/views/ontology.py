@@ -26,9 +26,20 @@ OFF_RELS = [r for r in (*CONTROL, "serves") if r not in KNOWN]  # written by the
 TAGS = yaml.safe_load((ROOT / "knowledge_model/name_rules/equipment_tags.yaml").read_text())["prefixes"]
 TAG_UNCHECKED = sorted({t["class"] for t in TAGS.values() if t.get("class")} - set(km.classes))
 UNCHECKED = sorted(({"Floor", "Room"} - set(km.classes)) | set(TAG_UNCHECKED))  # classes the readers use, unchecked
+OFF = bool(OFF_RELS or UNCHECKED)  # the loader now refuses a model that leaves these undeclared, so normally False
 brick = [c for c, i in km.classes.items() if i.source == "brick"]
 ba = [c for c, i in km.classes.items() if i.source == "ba"]
-count = {k: sum(1 for c in brick if km.classes[c].kind == k) for k in ("equipment", "point", "system")}
+count = {k: sum(1 for c in brick if km.classes[c].kind == k) for k in ("equipment", "point", "system", "location")}
+LOCATIONS = sorted(c for c, i in km.classes.items() if i.kind == "location")
+
+
+def home(term: str) -> str:
+    """Which layer a term lives in, read from the model: brick, ba, or off (written by the app, declared nowhere)."""
+    if term in km.classes:
+        return km.classes[term].source
+    if term in km.relations:
+        return "brick"
+    return "ba" if term in km.ba_relations else "off"
 
 # Colours for the five places a fact can land. Mid-tone hues, mixed with the page colours so they read in both themes.
 STYLE = """<style>
@@ -113,14 +124,15 @@ def t(term: str, kind: str) -> str:
 def key() -> str:
     return '<ul class="on-key">' + "".join(
         f'<li><span class="on-dot on-{k}"></span><span><b>{escape(h)}</b> {escape(d)}</span></li>'
-        for k, h, d in KINDS) + "</ul>"
+        for k, h, d in KINDS if OFF or k != "off") + "</ul>"
 
 
 def mapping(ic: str, name: str, when: str, rows: list[tuple[str, list[tuple[str, str]]]],
             missing: list[str]) -> str:
     """One source as a card: what is read from it, the terms it becomes, and what is still missing."""
-    body = "".join(f'<li><span>{escape(read)}</span><span class="on-ch">{"".join(t(x, k) for x, k in terms)}</span>'
-                   '</li>' for read, terms in rows)
+    body = "".join(f'<li><span>{escape(read)}</span><span class="on-ch">'
+                   f'{"".join(t(x, home(x) if k == "off" else k) for x, k in terms)}</span></li>'
+                   for read, terms in rows)
     foot = (f'<footer><span class="on-cap">Still missing</span><div class="on-ch">'
             f'{"".join(t(m, "gap") for m in missing)}</div></footer>') if missing else ""
     return (f'<div class="on-map"><header>{icon(ic)}<b>{escape(name)}</b>'
@@ -139,12 +151,13 @@ framework = STYLE + '<div class="on-lays">' + "".join([
     layer("own", "Our own layer", "not ontology",
           ["Provenance on every fact", f"{len(km.templates)} equipment templates",
            f"{len(km.name_rules.abbreviations)} abbreviations", "Conventions", "Notes"], mono=False),
-    layer("off", "In use, off-standard", f"{len(OFF_RELS)} relations, {len(UNCHECKED)} unchecked classes",
-          OFF_RELS + UNCHECKED),
+    *([layer("off", "In use, off-standard", f"{len(OFF_RELS)} relations, {len(UNCHECKED)} unchecked classes",
+             OFF_RELS + UNCHECKED)] if OFF else []),
     layer("ba", "BA extension · ba:", f"{len(ba)} classes, {len(km.ba_relations)} relations",
           ["Field_Controller", "Field_Network", "Software_Point", "Schedule", "Trend_Log"] + km.ba_relations),
     layer("brick", "Brick 1.4.4", f"{len(brick)} classes, {len(km.relations)} relations",
           [f"{count['equipment']} equipment", f"{count['point']} points", f"{count['system']} systems",
+           f"{count['location']} locations (deprecated, rec: replaces)",
            "hasPoint", "hasPart", "feeds", "hasLocation"], mono=False),
 ]) + "</div>"
 
@@ -167,19 +180,19 @@ orient="auto-start-reverse"><path d="M2 1L8 5L2 9"/></marker></defs>
 <g class="on-brick"><path class="vl" d="M210 60 L210 104 L65 104 L65 146" marker-end="url(#on-ar)"/>
 <line class="vl" x1="210" y1="104" x2="210" y2="146" marker-end="url(#on-ar)"/></g>
 <text class="ve" x="137" y="97" text-anchor="middle">hasPoint</text>
-<g class="on-off"><path class="vl" d="M260 60 L260 120 L395 120 L395 146" marker-end="url(#on-ar)"/></g>
+<g class="on-__SERVES__"><path class="vl" d="M260 60 L260 120 L395 120 L395 146" marker-end="url(#on-ar)"/></g>
 <text class="ve" x="330" y="113" text-anchor="middle">serves</text>
 <g class="on-brick"><rect class="vn" x="1" y="150" width="128" height="50" rx="8"/>
 <text class="vt" x="65" y="172" text-anchor="middle">Zone setpoint</text><text class="vs" x="65" y="189" text-anchor="middle">brick point class</text></g>
 <g class="on-brick"><rect class="vn" x="166" y="150" width="128" height="50" rx="8"/>
 <text class="vt" x="230" y="172" text-anchor="middle">Damper cmd</text><text class="vs" x="230" y="189" text-anchor="middle">brick point class</text></g>
-<g class="on-off"><rect class="vn" x="331" y="150" width="128" height="50" rx="8"/>
-<text class="vt" x="395" y="172" text-anchor="middle">Room 204</text><text class="vs" x="395" y="189" text-anchor="middle">Room · unchecked</text></g>
-<g class="on-off"><line class="vl dash" x1="131" y1="175" x2="163" y2="175" marker-end="url(#on-ar)"/></g>
+<g class="on-__ROOM__"><rect class="vn" x="331" y="150" width="128" height="50" rx="8"/>
+<text class="vt" x="395" y="172" text-anchor="middle">Room 204</text><text class="vs" x="395" y="189" text-anchor="middle">brick:Room → rec:Room</text></g>
+<g class="on-__DRIVES__"><line class="vl dash" x1="131" y1="175" x2="163" y2="175" marker-end="url(#on-ar)"/></g>
 <text class="ve" x="147" y="216" text-anchor="middle">drives</text>
 <g class="on-own"><rect class="vn" x="1" y="232" width="458" height="38" rx="8"/></g>
 <text class="vs" x="230" y="255" text-anchor="middle">Every node and edge: source · method · confidence · status · revision</text>
-</svg>"""
+</svg>""".replace("__SERVES__", home("serves")).replace("__ROOM__", home("Room")).replace("__DRIVES__", home("drives"))
 
 # 3-8 · The sources, in the order a building is set up, then the BMS points and the people.
 plans = mapping("map", "Floor plans", "PDF · guided setup", [
@@ -248,12 +261,11 @@ def codes(names: list[str]) -> str:
 
 
 missing = '<div class="on-miss">' + "".join([
-    group("rule", "Fix the ontology", [
+    *([group("rule", "Fix the ontology", [
         f"Declare {codes(OFF_RELS)} in the extension, or map them to standard terms",
-        f"Add {codes(UNCHECKED + ['HVAC_Zone', 'Building', 'Site'])} to the Brick subset",
-        f"Give {codes(['Schedule', 'Trend_Log', 'Alarm_Definition'])} a Brick parent"]),
+        f"Add {codes(UNCHECKED)} to the Brick subset"])] if OFF else []),
     group("verified", "Prove it", [
-        "Export each project graph as Brick Turtle",
+        "Export each project graph as Brick Turtle, with " + codes(LOCATIONS) + " written as their rec: classes",
         "Run SHACL validation on every import, not only in the loader"]),
     group("inventory_2", "Keep what the sources already give", [
         "Controllers and networks from the riser as nodes, not attributes",
@@ -268,10 +280,11 @@ missing = '<div class="on-miss">' + "".join([
 
 hero("Brick at the core. Our extension where Brick stops.",
      "Every input the app reads, what it adds to the graph, and where that lands: standard Brick, our "
-     "building-automation extension, our own layer on top, or somewhere that isn't standard yet.")
+     "building-automation extension, our own layer on top" + (", or somewhere that isn't standard yet." if OFF else "."))
 
 story([
-    Section("Framework", "layers", "Three layers, plus a few things still waiting for a home.",
+    Section("Framework", "layers", "Three layers, plus a few things still waiting for a home." if OFF
+            else "Three layers. Every term the app writes has a home in one of them.",
             p(f"The ontology is Brick {escape(km.brick_version)} plus a small extension of our own. Around it sits a "
               "layer Brick has no place for: where each fact came from, the rules that recognise things, and what "
               "people know.",
@@ -279,15 +292,18 @@ story([
             framework, [Go("Explore the knowledge model", "views/knowledge_model.py")]),
     Section("One VAV", "hvac", "One VAV, coloured by where each piece comes from.",
             p("Equipment, points and the physical links are Brick. The controller is our extension. The room and "
-              "the sequence edge are in use but not standard yet.",
+              "the sequence edge are declared too" + (", but not standard yet." if OFF else
+                                                    ": the room as a Brick location, the edge in our extension."),
               "Under all of it, every node and edge carries its provenance: our own layer."),
             VAV, [Go("Open the graph in 3D", "views/graph_3d.py", "bubble_chart")]),
     Section("Floor plans", "map", "Floor plans give the building its spaces.",
             p("The reader finds the floor from the sheet title, rooms from their labels, and every equipment tag "
               "on the page. A terminal unit serves the room its thermostat is in; other units sit in the room "
               "they're drawn in.",
-              "Floors and rooms are real Brick classes, but they aren't in our subset yet, so nothing checks them. "
-              "Brick links equipment to zones, not rooms, and has no <code>serves</code>.")
+              "Floors and rooms are in our subset and checked at load. Brick 1.4 deprecated them for RealEstateCore "
+              "(<code>rec:Level</code>, <code>rec:Room</code>), which is what export will write. Brick links "
+              "equipment to zones, not rooms, and has no <code>serves</code>: ours is a sub-property of "
+              "<code>feeds</code>.")
             + features([("check_circle", "Brick.", "Tags become Brick equipment classes; hasPart, hasLocation."),
                         ("help", "Asked.", "When two room labels are about as near, the reader asks you.")]),
             plans, [Go("Add a building", "views/add_building.py", "add_business"),
@@ -304,8 +320,8 @@ story([
             p("The sequence says how the building is meant to run: which setpoint drives which output, what must be "
               "proven before a start, what resets what. These become edges between existing points and "
               "equipment, with the document as their source.",
-              f"Brick has no control-logic relations, and {', '.join(CONTROL)} aren't declared in our extension "
-              "yet. Intended values stay in the document. Every phrase the sequence names is checked against the "
+              f"Brick has no control-logic relations, so {', '.join(CONTROL)} are declared in our extension "
+              "(checked at load). Intended values stay in the document. Every phrase the sequence names is checked against the "
               "graph: ok, conflict, or gap.")
             + features([("fact_check", "Intent, not as-built.", "No control program has been read to confirm "
                                                                 "what actually runs.")]),
@@ -338,8 +354,9 @@ story([
                                                    "knowledge-model rules.")]),
             tribal, [Go("Shared tribal knowledge", "views/tribal.py", "groups")]),
     Section("Still missing", "flag", "What a complete graph still needs.",
-            p("First the plumbing: give every term in use a home in the ontology, then export each project graph "
-              "as Brick and validate it. Then keep what the sources already hand us instead of storing it as "
+            p(("First the plumbing: give every term in use a home in the ontology, then export" if OFF else
+               "First the plumbing: every term in use now has a home in the ontology, so export") +
+              " each project graph as Brick and validate it. Then keep what the sources already hand us instead of storing it as "
               "attributes.",
               "Last, the sources that haven't arrived yet: Niagara, CPO Studio, control programs and live data.")
             + features([("task_alt", "Measured.", "The Complete graph page scores each of these facts on a "

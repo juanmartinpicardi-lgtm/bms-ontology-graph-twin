@@ -26,13 +26,12 @@ import yaml
 from .db.store import Edge, Store
 from .fonts import with_fonts
 from .equipment_view import DATA_SLOT, equipment_payload, load_anchors, render_template
-from .knowledge_model import KnowledgeModel
+from .knowledge_model import CONTROL_RELATIONS as CONTROL, KnowledgeModel
 from .tree import build_tree, provenance
 
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / "data/documents"
 APP = Path(__file__).resolve().parent / "app"
-CONTROL = ("drives", "feedback", "requires", "resets", "requests", "switches")
 GRAPH = ("feeds", "hasPart", "hasPoint")
 
 
