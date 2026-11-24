@@ -1,6 +1,9 @@
 """Equipment tree of one project: equipment nested by hasPart, points under their equipment, and the
 provenance of every node and of the edge that places it. Rejected edges are left out; rejected
 nodes stay in the tree (marked) so a reviewer can still see them.
+
+Controllers (from a controls riser or a BMS export) are not equipment: they are kept beside the tree, with the
+equipment each one controls and the network it is on, so a unit or a point can say which controller runs it.
 """
 
 from __future__ import annotations
@@ -74,6 +77,9 @@ class Tree:
     by_id: dict[str, TreeNode]
     parent: dict[str, str]
     feeds: list[tuple[str, str, dict]]  # (src, dst, edge provenance)
+    controllers: dict[str, TreeNode] = field(default_factory=dict)  # controller and network nodes, by id
+    links: list[tuple[str, str, str, dict]] = field(default_factory=list)  # (src, rel, dst, provenance): controls,
+    # isHostedBy, isOnNetwork
 
     def walk(self):
         for r in self.roots:
@@ -93,6 +99,17 @@ class Tree:
 
     def feeds_to(self, node_id: str):
         return [(d, p) for s, d, p in self.feeds if s == node_id]
+
+    def controlled_by(self, node_id: str) -> list[tuple[TreeNode, dict]]:
+        """The controllers that run this equipment (controls), or that this point lives in (isHostedBy)."""
+        return [(self.controllers[s], p) for s, r, d, p in self.links if r == "controls" and d == node_id
+                and s in self.controllers] + \
+               [(self.controllers[d], p) for s, r, d, p in self.links if r == "isHostedBy" and s == node_id
+                and d in self.controllers]
+
+    def network_of(self, controller_id: str) -> list[tuple[TreeNode, dict]]:
+        return [(self.controllers[d], p) for s, r, d, p in self.links if r == "isOnNetwork" and s == controller_id
+                and d in self.controllers]
 
 
 def _node(row) -> TreeNode:
@@ -150,4 +167,7 @@ def build_tree(store: Store, project: str) -> Tree:
     for r in roots:
         settle(r, 0)
     feeds = [(e["src"], e["dst"], provenance(e)) for e in live("feeds") if e["src"] in equip and e["dst"] in equip]
-    return Tree(roots, equip | points, parent, feeds)
+    controllers = {r["id"]: _node(r) for kind in ("controller", "network") for r in store.nodes(project, kind)}
+    links = [(e["src"], rel, e["dst"], provenance(e)) for rel in ("controls", "isHostedBy", "isOnNetwork")
+             for e in live(rel)]
+    return Tree(roots, equip | points, parent, feeds, controllers, links)
