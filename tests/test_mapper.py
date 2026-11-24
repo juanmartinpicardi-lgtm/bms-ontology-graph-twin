@@ -117,7 +117,10 @@ def test_end_to_end_alpha(alpha_run):
     assert len(store.edges("alpha/names_paths", "hasPoint")) == len(recs)
     for n in points + store.nodes("alpha/names_paths", "equipment"):
         assert n["method"] in METHODS and 0 <= n["confidence"] <= 1
-        assert n["source_file"] and n["source_ref"] and n["status"] == "confirmed" and n["revision"] == 1
+        assert n["source_file"] and n["source_ref"] and n["revision"] == 1 and n["source"] == "mapper:names_paths.csv"
+        # Proposed unless the auto-accept rule confirms it (one source: no agreement), and marked as such.
+        auto = n["confidence"] >= 0.9
+        assert (n["status"], n["confirmed_by"]) == (("confirmed", "auto") if auto else ("proposed", None))
     assert summary["llm_calls"] == 0
 
 
