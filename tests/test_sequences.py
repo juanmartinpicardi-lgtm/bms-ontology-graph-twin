@@ -80,7 +80,8 @@ def test_old_database_gains_the_document_method(tmp_path):
     db = tmp_path / "old.sqlite"
     old = sqlite3.connect(db)
     old.executescript(SCHEMA.replace(", 'document'", ""))
-    old.execute("INSERT INTO edges VALUES ('p','a','feeds','b','f','r','parsed',1,'confirmed',1,'{}')")
+    old.execute("INSERT INTO edges (project, src, rel, dst, source_file, source_ref, method, confidence, status,"
+                " revision, attrs) VALUES ('p','a','feeds','b','f','r','parsed',1,'confirmed',1,'{}')")
     old.commit()
     old.close()
     s = Store(db)

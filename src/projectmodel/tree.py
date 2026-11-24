@@ -28,8 +28,14 @@ def rel_source(src: str) -> str:
 def provenance(row) -> dict:
     """The provenance fields of a node or edge row, with the source file relative to the repo."""
     attrs = json.loads(row["attrs"])
+    keys = row.keys()
     out = {"source_file": rel_source(row["source_file"]), "source_ref": row["source_ref"], "method": row["method"],
-           "confidence": row["confidence"], "status": row["status"], "revision": row["revision"]}
+           "confidence": row["confidence"], "status": row["status"], "revision": row["revision"],
+           "source": row["source"] if "source" in keys else "",
+           "confirmed_by": row["confirmed_by"] if "confirmed_by" in keys else None}
+    for k in ("sources", "agree", "conflict"):  # what the other sources say (db/store.py settle)
+        if k in attrs:
+            out[k] = attrs[k]
     if "review" in attrs:
         out["review"] = attrs["review"]
     if "convention" in attrs:

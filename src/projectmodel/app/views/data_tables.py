@@ -21,7 +21,8 @@ if not projects:
 project = active_project(projects)
 
 
-COLS = ["id", "label", "class", "confidence", "method", "status", "source_file", "source_ref", "revision"]
+COLS = ["id", "label", "class", "confidence", "method", "status", "confirmed_by", "source", "source_file", "source_ref",
+        "revision"]
 on = {e["dst"]: e["src"] for e in store.edges(project, "hasPoint") if e["status"] != "rejected"}
 
 
@@ -31,7 +32,8 @@ def row(n) -> dict:
 
 points = pd.DataFrame([{**row(n), "equipment": on.get(n["id"], "")} for n in store.nodes(project, "point")])
 equipment = pd.DataFrame([row(n) for n in store.nodes(project, "equipment")])
-links = pd.DataFrame([{k: e[k] for k in ("src", "rel", "dst", "confidence", "method", "status", "source_ref")}
+links = pd.DataFrame([{k: e[k] for k in ("src", "rel", "dst", "confidence", "method", "status", "confirmed_by",
+                                         "source", "source_ref")}
                       for e in store.edges(project)])
 
 tables = box("tables", "Points, equipment and links", "table", fit=True)

@@ -75,12 +75,12 @@ def main_projects(projects: list[str]) -> list[str]:
 
 
 def delete_site(store: Store, site: str) -> list[str]:
-    """Remove every project (all inputs) of one building from the store: nodes, edges, runs and notes. The raw
+    """Remove every project (all inputs) of one building from the store: nodes, edges, claims, aliases, runs and notes. The raw
     sources are untouched, so a Haystack site comes back with scripts/run_mapper.py. Returns the projects removed."""
     gone = [p for p in list_projects(store) if p.split("/")[0] == site]
     with store.conn:
         for p in gone:
-            for table in ("nodes", "edges", "runs", "notes"):
+            for table in ("nodes", "edges", "claims", "aliases", "runs", "notes"):
                 store.conn.execute(f"DELETE FROM {table} WHERE project = ?", (p,))
     return gone
 

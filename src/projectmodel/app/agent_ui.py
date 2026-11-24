@@ -20,8 +20,8 @@ from projectmodel.app.shell import DB, get_store, knowledge_model
 from projectmodel.memory import KNOWLEDGE_DIR, KnowledgeError, load_knowledge
 from projectmodel.projects import site_of, summaries
 
-TRUST_COLOR = {"verified": "green", "stated": "violet", "likely": "blue", "unsure": "orange"}
-CITE = re.compile(r"\[\[([^\]]+)\]\](?:\s*\*(verified|stated|likely|unsure)\*)?")
+TRUST_COLOR = {"verified": "green", "agreed": "green", "stated": "violet", "likely": "blue", "unsure": "orange"}
+CITE = re.compile(r"\[\[([^\]]+)\]\](?:\s*\*(verified|agreed|stated|likely|unsure)\*)?")
 # Each tool step in plain words, while it runs and once done: what the agent is looking at, not how it calls it.
 STEP_WORDS = {"find_nodes": ("Searching the graph", "Searched the graph"), "describe": ("Reading", "Read"),
               "upstream": ("Following what feeds", "Followed what feeds"),

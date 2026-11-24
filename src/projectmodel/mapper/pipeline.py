@@ -22,6 +22,7 @@ import re
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from ..calibration import calibrate_points
 from ..db.store import Edge, Node, Store
@@ -320,7 +321,7 @@ class Mapper:
             if g.convention:
                 attrs["convention"] = g.convention
             nodes.append(Node(g.id, "equipment", g.label, g.cls, source_file, g.source_ref, g.cls_method,
-                              g.cls_conf, attrs))
+                              g.cls_conf, attrs, aliases=[("bms_path", g.source_ref)] if g.method == "parsed" else []))
             if g.parent:
                 edges.append(Edge(g.parent, "hasPart", g.id, source_file, g.source_ref, "parsed", 1.0))
         for src, dst, conf, medium in self.infer_feeds(groups, {pid: c for pid, (c, _, _) in final.items()}):
@@ -334,11 +335,13 @@ class Mapper:
                 attrs["convention"] = used
             if rule := self.ignore_rule(r.name):
                 attrs["ignore"] = {"reason": rule.reason, "convention": rule.origin}
-            nodes.append(Node(pid, "point", r.name, cls, source_file, str(r.source_row), method, conf, attrs))
+            nodes.append(Node(pid, "point", r.name, cls, source_file, str(r.source_row), method, conf, attrs,
+                              aliases=_point_aliases(r)))
             if pid in member:
                 g = groups[member[pid]]
                 edges.append(Edge(g.id, "hasPoint", pid, source_file, str(r.source_row), g.method, g.confidence))
-        store.replace_machine_rows(project, revision, nodes, edges)
+        # One source per input file: re-running it replaces only its own rows (db/store.py).
+        store.replace_machine_rows(project, revision, nodes, edges, source=f"mapper:{Path(source_file).name}")
 
         seconds = time.perf_counter() - t0
         points = [n for n in nodes if n.kind == "point"]
@@ -361,6 +364,18 @@ class Mapper:
         }
         store.finish_run(project, revision, seconds, summary)
         return summary
+
+
+def _point_aliases(r: RawRecord) -> list[tuple[str, str]]:
+    """The names other sources may use for this point: its id in the export (a Haystack id unless the export is a
+    blind one), its BMS name (folder path and name, when there is a path), its BACnet device and object."""
+    out = [("haystack_id" if r.source_system.startswith("haystack") and "blind" not in r.source_system
+            else "export_id", r.source_id)]
+    if r.path:
+        out.append(("bms_name", f"{r.path}/{r.name}"))
+    if r.device_id and r.object_id:
+        out.append(("device_object", f"{r.device_id}:{r.object_id}"))
+    return out
 
 
 def _count(items) -> dict:

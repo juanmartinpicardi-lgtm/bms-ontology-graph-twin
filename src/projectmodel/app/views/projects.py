@@ -20,7 +20,6 @@ from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
 from projectmodel.projects import delete_site, list_projects, main_projects, site_of, summaries  # noqa: E402
 from projectmodel.twin_view import twin_payload  # noqa: E402
 
-TRUSTED = 0.8  # a fact at or above this confidence, or decided by a person, counts as done
 
 st.html("""<style>
 .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 12px; margin: 2px 0 4px; }
@@ -55,10 +54,9 @@ def completeness(project: str, revision) -> dict:  # revision: a re-map refreshe
 
 
 def numbers(project: str) -> dict:
-    q = store.conn.execute(
-        "SELECT kind, COUNT(*), AVG(confidence), SUM(confidence >= ? OR method = 'human'),"
-        " SUM(confidence < ? AND method != 'human' AND status != 'rejected')"
-        " FROM nodes WHERE project = ? AND kind IN ('point', 'equipment') GROUP BY kind", (TRUSTED, TRUSTED, project))
+    q = store.conn.execute(  # trusted: confirmed (a person, two agreeing sources, auto-accept); to review: proposed
+        "SELECT kind, COUNT(*), AVG(confidence), SUM(status = 'confirmed'), SUM(status = 'proposed')"
+        " FROM nodes WHERE project = ? AND kind IN ('point', 'equipment') GROUP BY kind", (project,))
     rows = {k: (n, avg or 0, ok or 0, low or 0) for k, n, avg, ok, low in q}
     total = sum(r[0] for r in rows.values())
     return {"points": rows.get("point", (0,))[0], "equipment": rows.get("equipment", (0,))[0],
@@ -139,7 +137,9 @@ for p in projects:
         if from_docs:
             share, label = progress(Intake(site_id))["share"], "built from its documents"
         else:
-            share, label = num["trusted"], f"of the graph trusted (confidence ≥ {TRUSTED:g} or a person decided)"
+            share, label = num["trusted"], ("of the graph confirmed (by a person, two sources, or confidence ≥ "
+                                            f"{store.auto.threshold:g})" if store.auto.threshold is not None else
+                                            "of the graph confirmed (by a person or two sources)")
         st.progress(share, text=f"**{round(share * 100)}%** {label}")
         done = completeness(p, s.get("revision"))
         st.progress(done["overall"] / 100, text=f"**{done['overall']:.0f}%** of a complete graph · "
