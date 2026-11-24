@@ -9,8 +9,9 @@ mapper uses (`mapper/llm.py`):
 2. The model gets a short candidate list from the knowledge model, never the full Brick list: the rules' class and
    its runners-up, the more specific classes under the rules' class, the classes sharing a word with the point, and
    the generic function classes (Sensor, Command, Setpoint...) so it can correct the function.
-3. Its answer becomes the proposal (method `llm`), with its confidence capped at AI_CAP, below AUTO_ACCEPT: a person
-   reviews it. The rules' guess stays in the fact's data (`rule_class`), and the model's answer, reason, model and
+3. Its answer becomes the proposal (method `llm`). Its confidence is the model's own, calibrated for the job and
+   model (`calibration.py`, fitted by `scripts/eval.py point_class --fit`), then capped at AI_CAP, below AUTO_ACCEPT:
+   a person reviews it. The rules' guess stays in the fact's data (`rule_class`), and the model's answer, reason, model and
    call ids in `data.ai`. A null answer ("none of these") leaves the rules' guess as it was.
 4. Every call goes through the job runner, so every attempt is a row in llm_calls (input, output, cost, latency).
    Answers are kept in the building's state, so re-reading a step asks again only what changed.
@@ -27,6 +28,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ..calibration import calibrate_model
 from .state import AUTO_ACCEPT
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -112,6 +114,18 @@ def _questions(facts: list[dict], equip_class: dict[str, str], cache: dict, prom
     return list(out.values())
 
 
+def questions_for(facts: list[dict], equipment: list[dict], cache: dict | None = None, prompt_ref: str | None = None
+                  ) -> list[Question]:
+    """The questions `refine` would ask about these facts (equipment classes from `equipment`, devices from the
+    controller and alias facts among `facts` or `equipment`). The eval harness asks the same questions."""
+    from projectmodel.ai.prompts import load_prompt
+
+    eq_class = {e["data"]["normal"]: e["data"].get("class") for e in equipment if e.get("kind", "equipment") == "equipment"}
+    equip_class = {f["data"]["device"]: eq_class.get(f["data"].get("equip"))
+                   for f in [*facts, *equipment] if f.get("kind") in ("controller", "alias") and f["data"].get("equip")}
+    return _questions(facts, equip_class, {} if cache is None else cache, prompt_ref or load_prompt(JOB).ref)
+
+
 def _ask(q: Question, router, store, project: str) -> dict:
     """One run of the job. Returns the answer, or {"error"} when every model failed."""
     from projectmodel.ai.jobs import run_job
@@ -136,7 +150,10 @@ def _apply(f: dict, q: Question, cached: bool) -> str:
     if a.get("error") or not a.get("class"):
         return "error" if a.get("error") else "none"
     agreed = a["class"] == d.get("class")
-    model_conf = min(a["confidence"], AI_CAP)
+    # The model's own number, calibrated for this job and model (calibration.py), then capped below auto-accept.
+    calibrated = calibrate_model(JOB, a["confidence"], a.get("model"))
+    d["ai"]["calibrated"] = calibrated
+    model_conf = min(calibrated, AI_CAP)
     d["class"] = a["class"]
     f["method"] = "llm"
     f["conf"] = round(max(f["conf"], model_conf) if agreed else model_conf, 2)
@@ -152,10 +169,7 @@ def refine(facts: list[dict], equipment: list[dict], log, *, project: str, cache
     from projectmodel.ai.providers import ModelUnavailable
 
     cache = {} if cache is None else cache
-    eq_class = {e["data"]["normal"]: e["data"].get("class") for e in equipment}
-    equip_class = {f["data"]["device"]: eq_class.get(f["data"].get("equip"))
-                   for f in facts if f["kind"] in ("controller", "alias") and f["data"].get("equip")}
-    qs = _questions(facts, equip_class, cache, load_prompt(JOB).ref)
+    qs = questions_for(facts, equipment, cache, load_prompt(JOB).ref)
     summary = {"points": sum(len(q.facts) for q in qs), "questions": len(qs), "asked": 0, "cached": 0, "calls": 0,
                "cost_usd": 0.0, "seconds": 0.0, "changed": 0, "agreed": 0, "none": 0, "error": 0, "skipped": 0,
                "models": {}, "off": ""}

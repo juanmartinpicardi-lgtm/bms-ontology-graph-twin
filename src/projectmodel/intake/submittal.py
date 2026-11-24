@@ -48,12 +48,29 @@ def use_terms(terms: list[tuple[str, str]]) -> None:
     _terms = sorted(terms, key=lambda t: -len(t[0]))  # the longest phrase wins
 
 
-def classify(description: str, short: str) -> tuple[str | None, float]:
+def by_term(description: str, short: str) -> str | None:
+    """The class a person's term for this building gives the point, if one matches."""
     for phrase, cls in _terms:
         if short.lower() == phrase.lower() or re.search(rf"(?<!\w){re.escape(phrase)}(?!\w)", description, re.I):
-            return cls, 0.95
+            return cls
+    return None
+
+
+def classify(description: str, short: str) -> tuple[str | None, float]:
+    if cls := by_term(description, short):
+        return cls, 0.95
     g = _matcher().classify(re.sub(r"\(.*?\)", "", description))
     return g.cls, round(g.confidence, 2)
+
+
+def point_conf(cls: str | None, c: float, *, step: str, base: float, cap: float, term: bool) -> float:
+    """A reader's confidence in a point's class, from the matcher's: `base + 0.4 c`, then calibrated to the accuracy
+    measured on the dev answer key (job `intake`, calibration.py). A person's term is a statement, not a guess: it
+    keeps its confidence."""
+    from projectmodel import calibration
+
+    raw = round(min(cap, base + 0.4 * c), 2) if cls else 0.4
+    return raw if term else round(calibration.load("intake").apply(raw, calibration.intake_keys(cls, step)), 2)
 
 
 def read(paths: list[tuple[Path, str]], equipment: list[dict], placements: list[dict], log) -> list[dict]:
@@ -171,11 +188,13 @@ def _points(points, typicals, riser, log) -> list[dict]:
         seen.add(r["ref"])
         device = r["ref"].split(".")[1]
         cls, c = classify(r["desc"], r["pt"])
-        conf = round(min(0.95, 0.55 + 0.4 * c), 2) if cls else 0.4
+        term = by_term(r["desc"], r["pt"]) is not None
+        conf = point_conf(cls, c, step="submittal", base=0.55, cap=0.95, term=term)
         out.append({"id": f"pt:{r['ref']}", "kind": "point", "label": f"{device}.{r['pt']}",
                     "data": {"ref": r["ref"], "device": device, "short": r["pt"], "description": r["desc"],
                              "io": r["io"], "units": r.get("units") or "", "object": r.get("obj") or "",
-                             "class": cls, "class_conf": c, "typical": r.get("typical")},
+                             "class": cls, "class_conf": c, "typical": r.get("typical"),
+                             **({"term": True} if term else {})},
                     "src": r["src"], "method": "rule", "conf": conf, "step": "submittal", "ask": None})
     low = sum(1 for f in out if f["conf"] < 0.9)
     log(f"Points: {len(out)} ({len(points)} listed, {len(out) - len(points)} from typicals); "

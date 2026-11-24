@@ -18,7 +18,7 @@ import re
 from pathlib import Path
 
 from . import tags
-from .submittal import classify
+from .submittal import by_term, classify, point_conf
 
 COLUMNS = {  # first match wins; Metasys, Niagara and generic BACnet export headers
     "ref": ["item reference", "reference", "object reference", "object name", "point name", "path", "ord",
@@ -107,12 +107,14 @@ def read(path: Path, name: str, equipment: list[dict], controllers: list[dict], 
             else:
                 desc = r.get(col["description"] or "", "") or ref.rsplit(".", 1)[-1]
                 cls, c = classify(desc, ref.rsplit(".", 1)[-1])
+                term = by_term(desc, ref.rsplit(".", 1)[-1]) is not None
                 bms_only.append(ref)
                 facts.append({"id": f"obj:{ref}", "kind": "bms_object", "label": ref,
                               "data": {"ref": ref, "device": dev, "point": None, "matched": False,
                                        "description": desc, "class": cls, "class_conf": c,
-                                       "units": r.get(col["units"] or "", "")},
-                              "src": src, "method": "rule", "conf": round(min(0.9, 0.5 + 0.4 * c), 2) if cls else 0.4,
+                                       "units": r.get(col["units"] or "", ""), **({"term": True} if term else {})},
+                              "src": src, "method": "rule",
+                              "conf": point_conf(cls, c, step="bms", base=0.5, cap=0.9, term=term),
                               "step": "bms", "ask": None})
     found = {r[col["ref"]] for r in rows}
     missing = [ref for ref in promised if ref not in found]
