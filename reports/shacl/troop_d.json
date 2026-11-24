@@ -1,0 +1,1337 @@
+{
+ "name": "troop_d",
+ "project": "troop-d/documents",
+ "scopes": {
+  "confirmed": {
+   "project": "troop-d/documents",
+   "scope": "confirmed",
+   "engine": "shifty",
+   "seconds": 3.81,
+   "conforms": false,
+   "engine_conforms": {
+    "building": false,
+    "brick": false
+   },
+   "export": {
+    "project": "troop-d/documents",
+    "scope": "confirmed",
+    "nodes": 230,
+    "edges": 236,
+    "nodes_by_kind": {
+     "equipment": 76,
+     "location": 83,
+     "point": 71
+    },
+    "nodes_by_status": {
+     "confirmed": 230
+    },
+    "edges_by_relation": {
+     "feeds": 58,
+     "hasPart": 79,
+     "hasPoint": 71,
+     "serves": 28
+    },
+    "edges_by_status": {
+     "confirmed": 236
+    },
+    "edges_left_out": {
+     "hasPoint": 757
+    },
+    "undeclared": {
+     "classes": [],
+     "relations": []
+    },
+    "triples": {
+     "facts": 696,
+     "provenance": 5190
+    }
+   },
+   "totals": {
+    "building_rules": 10,
+    "building_rules_failing": 2,
+    "building_failures": 79,
+    "brick_shapes_failing": 1,
+    "brick_violations": 0,
+    "brick_warnings": 26,
+    "outside_project": {
+     "violation": 38
+    }
+   },
+   "rules": [
+    {
+     "id": "shape:ControlBetweenPoints",
+     "origin": "building",
+     "label": "Control relations run between points",
+     "comment": "The control relations from the sequences (ba:drives, feedback, requires, resets, switches) link one point to another: a setpoint drives an output, a sensor feeds back to it. ba:requests ends on equipment instead and is checked on its own.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:EquipmentHasPoints",
+     "origin": "building",
+     "label": "Controlled HVAC equipment has points",
+     "comment": "An air handler, terminal unit, chiller, boiler or pump the BAS runs must show at least one point; with none, the unit is in the graph but invisible to monitoring.",
+     "severity": "violation",
+     "targets": 61,
+     "failed": 23,
+     "passed": 38,
+     "failing": [
+      {
+       "id": "unit:CH1A",
+       "label": "CH01a",
+       "class": "brick:Chiller",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:CH1B",
+       "label": "CH01b",
+       "class": "brick:Chiller",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:CWP1",
+       "label": "CWP01",
+       "class": "brick:Chilled_Water_Pump",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:CWP2",
+       "label": "CWP02",
+       "class": "brick:Chilled_Water_Pump",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV1",
+       "label": "VAV01",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV10",
+       "label": "VAV10",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV11",
+       "label": "VAV11",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV12",
+       "label": "VAV12",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV13",
+       "label": "VAV13",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV14",
+       "label": "VAV14",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV15",
+       "label": "VAV15",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV16",
+       "label": "VAV16",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV17",
+       "label": "VAV17",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV18",
+       "label": "VAV18",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV19",
+       "label": "VAV19",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV2",
+       "label": "VAV02",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV3",
+       "label": "VAV03",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV4",
+       "label": "VAV04",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV5",
+       "label": "VAV05",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV6",
+       "label": "VAV06",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV7",
+       "label": "VAV07",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV8",
+       "label": "VAV08",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV9",
+       "label": "VAV09",
+       "class": "brick:VAV",
+       "messages": [
+        "The unit has no points. [brick:hasPoint]"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "shape:FeedsBetweenEquipment",
+     "origin": "building",
+     "label": "feeds runs between equipment",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "severity": "violation",
+     "targets": 3,
+     "failed": 0,
+     "passed": 3,
+     "failing": []
+    },
+    {
+     "id": "shape:HasLocationIsLocation",
+     "origin": "building",
+     "label": "hasLocation points at a location",
+     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:HasPointFromEquipment",
+     "origin": "building",
+     "label": "hasPoint runs from equipment to a point",
+     "comment": "brick:hasPoint is only meaningful from a unit (or system, or location) to a point: anything else is a misread grouping.",
+     "severity": "violation",
+     "targets": 71,
+     "failed": 0,
+     "passed": 71,
+     "failing": []
+    },
+    {
+     "id": "shape:HostedByController",
+     "origin": "building",
+     "label": "isHostedBy points at a controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller).",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:NodeHasClass",
+     "origin": "building",
+     "label": "Every node has a class",
+     "comment": "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it.",
+     "severity": "violation",
+     "targets": 230,
+     "failed": 0,
+     "passed": 230,
+     "failing": []
+    },
+    {
+     "id": "shape:PointOnOneEquipment",
+     "origin": "building",
+     "label": "A point belongs to exactly one equipment",
+     "comment": "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself.",
+     "severity": "violation",
+     "targets": 71,
+     "failed": 0,
+     "passed": 71,
+     "failing": []
+    },
+    {
+     "id": "shape:ServesLocation",
+     "origin": "building",
+     "label": "serves runs from equipment to a location",
+     "comment": "ba:serves says a terminal unit's thermostat is in this room or zone (see ba_extension.ttl): equipment on one end, a location on the other.",
+     "severity": "violation",
+     "targets": 28,
+     "failed": 0,
+     "passed": 28,
+     "failing": []
+    },
+    {
+     "id": "shape:VAVHasZoneTemperature",
+     "origin": "building",
+     "label": "A VAV has a zone temperature sensor",
+     "comment": "A VAV box controls to its zone's temperature: without a zone air temperature sensor among its points, its loop can't be monitored or diagnosed. Applies to every VAV subclass (RVAV).",
+     "severity": "violation",
+     "targets": 56,
+     "failed": 56,
+     "passed": 0,
+     "failing": [
+      {
+       "id": "unit:FVAV1",
+       "label": "FVAV01",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV10",
+       "label": "FVAV10",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV11",
+       "label": "FVAV11",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV12",
+       "label": "FVAV12",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV13",
+       "label": "FVAV13",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV14",
+       "label": "FVAV14",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV15",
+       "label": "FVAV15",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV16",
+       "label": "FVAV16",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV17",
+       "label": "FVAV17",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV18",
+       "label": "FVAV18",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV2",
+       "label": "FVAV02",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV3",
+       "label": "FVAV03",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV4",
+       "label": "FVAV04",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV5",
+       "label": "FVAV05",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV6",
+       "label": "FVAV06",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV7",
+       "label": "FVAV07",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV8",
+       "label": "FVAV08",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:FVAV9",
+       "label": "FVAV09",
+       "class": "brick:RVAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV1",
+       "label": "VAV01",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV10",
+       "label": "VAV10",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV11",
+       "label": "VAV11",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV12",
+       "label": "VAV12",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV13",
+       "label": "VAV13",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV14",
+       "label": "VAV14",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "unit:VAV15",
+       "label": "VAV15",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "bsh:DeprecationRuleForInstances",
+     "origin": "brick",
+     "label": "Brick shape on bsh:DeprecationRuleForInstances",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "warning",
+     "targets": 173,
+     "failed": 26,
+     "passed": 147,
+     "failing": [
+      {
+       "id": "room:109",
+       "label": "109 Conference",
+       "class": "rec:Room",
+       "messages": [
+        "room:109 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:110",
+       "label": "110 Director'S Office",
+       "class": "rec:Room",
+       "messages": [
+        "room:110 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:111",
+       "label": "111 Break/Work",
+       "class": "rec:Room",
+       "messages": [
+        "room:111 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:117",
+       "label": "117 Data/Server Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:117 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:120",
+       "label": "120 Firing Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:120 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:121",
+       "label": "121 Firearms Lab",
+       "class": "rec:Room",
+       "messages": [
+        "room:121 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:122",
+       "label": "122 Biohazard",
+       "class": "rec:Room",
+       "messages": [
+        "room:122 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:127",
+       "label": "127 Corridor",
+       "class": "rec:Room",
+       "messages": [
+        "room:127 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:131",
+       "label": "131 Elec",
+       "class": "rec:Room",
+       "messages": [
+        "room:131 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:139",
+       "label": "139 Demarcation Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:139 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:203",
+       "label": "203 Photo Lab",
+       "class": "rec:Room",
+       "messages": [
+        "room:203 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:206",
+       "label": "206 Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:206 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:210",
+       "label": "210 Exam Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:210 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:212",
+       "label": "212 Trace Evidence Lab",
+       "class": "rec:Room",
+       "messages": [
+        "room:212 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:213",
+       "label": "213 Instrument Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:213 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:217",
+       "label": "217 Elec Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:217 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:220",
+       "label": "220 Data Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:220 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:223",
+       "label": "223 Lounge/Breakroom",
+       "class": "rec:Room",
+       "messages": [
+        "room:223 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:302",
+       "label": "302 Toxicology Lab",
+       "class": "rec:Room",
+       "messages": [
+        "room:302 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:304",
+       "label": "304 Shared Chem Storage",
+       "class": "rec:Room",
+       "messages": [
+        "room:304 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:305",
+       "label": "305 Balance Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:305 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:306",
+       "label": "306 Work Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:306 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:308",
+       "label": "308 Drug Chem Instrument Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:308 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:319",
+       "label": "319 Lounge/Breakroom",
+       "class": "rec:Room",
+       "messages": [
+        "room:319 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:321",
+       "label": "321 Women'S Restroom",
+       "class": "rec:Room",
+       "messages": [
+        "room:321 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      }
+     ]
+    }
+   ],
+   "name": "troop_d",
+   "export_seconds": 0.14,
+   "roundtrip": {
+    "ok": true,
+    "nodes": 230,
+    "edges": 236,
+    "statements_without_fact": 0
+   },
+   "generated": "2026-11-24 12:03",
+   "turtle": "data/export/troop_d.confirmed.ttl"
+  },
+  "with_proposed": {
+   "project": "troop-d/documents",
+   "scope": "confirmed + proposed",
+   "engine": "shifty",
+   "seconds": 4.55,
+   "conforms": false,
+   "engine_conforms": {
+    "building": false,
+    "brick": false
+   },
+   "export": {
+    "project": "troop-d/documents",
+    "scope": "confirmed + proposed",
+    "nodes": 989,
+    "edges": 1047,
+    "nodes_by_kind": {
+     "equipment": 77,
+     "location": 84,
+     "point": 828
+    },
+    "nodes_by_status": {
+     "confirmed": 230,
+     "proposed": 759
+    },
+    "edges_by_relation": {
+     "feeds": 62,
+     "hasLocation": 21,
+     "hasPart": 80,
+     "hasPoint": 828,
+     "serves": 56
+    },
+    "edges_by_status": {
+     "confirmed": 993,
+     "proposed": 54
+    },
+    "edges_left_out": {},
+    "undeclared": {
+     "classes": [],
+     "relations": []
+    },
+    "triples": {
+     "facts": 3025,
+     "provenance": 21703
+    }
+   },
+   "totals": {
+    "building_rules": 10,
+    "building_rules_failing": 0,
+    "building_failures": 0,
+    "brick_shapes_failing": 2,
+    "brick_violations": 19,
+    "brick_warnings": 49,
+    "outside_project": {
+     "violation": 38
+    }
+   },
+   "rules": [
+    {
+     "id": "shape:ControlBetweenPoints",
+     "origin": "building",
+     "label": "Control relations run between points",
+     "comment": "The control relations from the sequences (ba:drives, feedback, requires, resets, switches) link one point to another: a setpoint drives an output, a sensor feeds back to it. ba:requests ends on equipment instead and is checked on its own.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:EquipmentHasPoints",
+     "origin": "building",
+     "label": "Controlled HVAC equipment has points",
+     "comment": "An air handler, terminal unit, chiller, boiler or pump the BAS runs must show at least one point; with none, the unit is in the graph but invisible to monitoring.",
+     "severity": "violation",
+     "targets": 61,
+     "failed": 0,
+     "passed": 61,
+     "failing": []
+    },
+    {
+     "id": "shape:FeedsBetweenEquipment",
+     "origin": "building",
+     "label": "feeds runs between equipment",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "severity": "violation",
+     "targets": 5,
+     "failed": 0,
+     "passed": 5,
+     "failing": []
+    },
+    {
+     "id": "shape:HasLocationIsLocation",
+     "origin": "building",
+     "label": "hasLocation points at a location",
+     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "severity": "violation",
+     "targets": 21,
+     "failed": 0,
+     "passed": 21,
+     "failing": []
+    },
+    {
+     "id": "shape:HasPointFromEquipment",
+     "origin": "building",
+     "label": "hasPoint runs from equipment to a point",
+     "comment": "brick:hasPoint is only meaningful from a unit (or system, or location) to a point: anything else is a misread grouping.",
+     "severity": "violation",
+     "targets": 828,
+     "failed": 0,
+     "passed": 828,
+     "failing": []
+    },
+    {
+     "id": "shape:HostedByController",
+     "origin": "building",
+     "label": "isHostedBy points at a controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller).",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:NodeHasClass",
+     "origin": "building",
+     "label": "Every node has a class",
+     "comment": "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it.",
+     "severity": "violation",
+     "targets": 989,
+     "failed": 0,
+     "passed": 989,
+     "failing": []
+    },
+    {
+     "id": "shape:PointOnOneEquipment",
+     "origin": "building",
+     "label": "A point belongs to exactly one equipment",
+     "comment": "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself.",
+     "severity": "violation",
+     "targets": 828,
+     "failed": 0,
+     "passed": 828,
+     "failing": []
+    },
+    {
+     "id": "shape:ServesLocation",
+     "origin": "building",
+     "label": "serves runs from equipment to a location",
+     "comment": "ba:serves says a terminal unit's thermostat is in this room or zone (see ba_extension.ttl): equipment on one end, a location on the other.",
+     "severity": "violation",
+     "targets": 56,
+     "failed": 0,
+     "passed": 56,
+     "failing": []
+    },
+    {
+     "id": "shape:VAVHasZoneTemperature",
+     "origin": "building",
+     "label": "A VAV has a zone temperature sensor",
+     "comment": "A VAV box controls to its zone's temperature: without a zone air temperature sensor among its points, its loop can't be monitored or diagnosed. Applies to every VAV subclass (RVAV).",
+     "severity": "violation",
+     "targets": 56,
+     "failed": 0,
+     "passed": 56,
+     "failing": []
+    },
+    {
+     "id": "brick:Entity",
+     "origin": "brick",
+     "label": "Brick shape on brick:Entity",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 905,
+     "failed": 19,
+     "passed": 886,
+     "failing": [
+      {
+       "id": "unit:AHU1",
+       "label": "AHU01",
+       "class": "brick:AHU",
+       "messages": [
+        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:CH1A",
+       "label": "CH01a",
+       "class": "brick:Chiller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:CH1B",
+       "label": "CH01b",
+       "class": "brick:Chiller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:CWP1",
+       "label": "CWP01",
+       "class": "brick:Chilled_Water_Pump",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:CWP2",
+       "label": "CWP02",
+       "class": "brick:Chilled_Water_Pump",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:EFCONT",
+       "label": "EF-CONT",
+       "class": "brick:Exhaust_Fan",
+       "messages": [
+        "Value room:128 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:EFLAB",
+       "label": "EF-LAB",
+       "class": "brick:Exhaust_Fan",
+       "messages": [
+        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:EFLOCAL",
+       "label": "EF-LOCAL",
+       "class": "brick:Exhaust_Fan",
+       "messages": [
+        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:EFRR",
+       "label": "EF-RR",
+       "class": "brick:Exhaust_Fan",
+       "messages": [
+        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:HS1",
+       "label": "HS01",
+       "class": "brick:Equipment",
+       "messages": [
+        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:HS2",
+       "label": "HS02",
+       "class": "brick:Equipment",
+       "messages": [
+        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:HS3",
+       "label": "HS03",
+       "class": "brick:Chilled_Water_Thermal_Expansion_Tank",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:HS4",
+       "label": "HS04",
+       "class": "brick:Equipment",
+       "messages": [
+        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:MS2",
+       "label": "MS02",
+       "class": "brick:HVAC_Equipment",
+       "messages": [
+        "Value room:142 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:MS3",
+       "label": "MS03",
+       "class": "brick:HVAC_Equipment",
+       "messages": [
+        "Value room:142 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:UH1",
+       "label": "UH01",
+       "class": "ba:Unit_Heater",
+       "messages": [
+        "Value room:103 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:UH2",
+       "label": "UH02",
+       "class": "ba:Unit_Heater",
+       "messages": [
+        "Value room:200 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:UH3",
+       "label": "UH03",
+       "class": "ba:Unit_Heater",
+       "messages": [
+        "Value room:134 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "unit:UH5",
+       "label": "UH05",
+       "class": "ba:Unit_Heater",
+       "messages": [
+        "Value room:142 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "bsh:DeprecationRuleForInstances",
+     "origin": "brick",
+     "label": "Brick shape on bsh:DeprecationRuleForInstances",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "warning",
+     "targets": 954,
+     "failed": 49,
+     "passed": 905,
+     "failing": [
+      {
+       "id": "room:101",
+       "label": "101 Evidence Receipt Lobby",
+       "class": "rec:Room",
+       "messages": [
+        "room:101 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:104",
+       "label": "104 Administrative Work Area",
+       "class": "rec:Room",
+       "messages": [
+        "room:104 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:105",
+       "label": "105 Work Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:105 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:109",
+       "label": "109 Conference",
+       "class": "rec:Room",
+       "messages": [
+        "room:109 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:110",
+       "label": "110 Director'S Office",
+       "class": "rec:Room",
+       "messages": [
+        "room:110 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:111",
+       "label": "111 Break/Work",
+       "class": "rec:Room",
+       "messages": [
+        "room:111 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:116",
+       "label": "116 Record Storage",
+       "class": "rec:Room",
+       "messages": [
+        "room:116 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:117",
+       "label": "117 Data/Server Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:117 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:118",
+       "label": "118 Nibin Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:118 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:119",
+       "label": "119 Ammo Storage",
+       "class": "rec:Room",
+       "messages": [
+        "room:119 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:120",
+       "label": "120 Firing Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:120 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:121",
+       "label": "121 Firearms Lab",
+       "class": "rec:Room",
+       "messages": [
+        "room:121 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:122",
+       "label": "122 Biohazard",
+       "class": "rec:Room",
+       "messages": [
+        "room:122 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:123",
+       "label": "123 Tool Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:123 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:127",
+       "label": "127 Corridor",
+       "class": "rec:Room",
+       "messages": [
+        "room:127 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:131",
+       "label": "131 Elec",
+       "class": "rec:Room",
+       "messages": [
+        "room:131 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:137",
+       "label": "137 Elevator Lobby",
+       "class": "rec:Room",
+       "messages": [
+        "room:137 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:139",
+       "label": "139 Demarcation Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:139 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:201",
+       "label": "201 Open Work Area",
+       "class": "rec:Room",
+       "messages": [
+        "room:201 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:202",
+       "label": "202 Latent Prints Lab",
+       "class": "rec:Room",
+       "messages": [
+        "room:202 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:203",
+       "label": "203 Photo Lab",
+       "class": "rec:Room",
+       "messages": [
+        "room:203 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:204",
+       "label": "204",
+       "class": "rec:Room",
+       "messages": [
+        "room:204 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:206",
+       "label": "206 Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:206 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:207",
+       "label": "207 Dna Work Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:207 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      },
+      {
+       "id": "room:208",
+       "label": "208 Dna Exam Room",
+       "class": "rec:Room",
+       "messages": [
+        "room:208 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
+       ]
+      }
+     ]
+    }
+   ],
+   "name": "troop_d",
+   "export_seconds": 0.84,
+   "roundtrip": {
+    "ok": true,
+    "nodes": 989,
+    "edges": 1047,
+    "statements_without_fact": 0
+   },
+   "generated": "2026-11-24 12:04",
+   "turtle": "data/export/troop_d.with_proposed.ttl"
+  }
+ }
+}

@@ -1,0 +1,122 @@
+@prefix ba:    <urn:projectmodel:ba#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rec:   <https://w3id.org/rec#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix shape: <urn:projectmodel:shapes#> .
+
+# Building rules: what a usable building graph must hold, on top of Brick's own shapes.
+# Run by scripts/export_brick.py on every export (src/projectmodel/export/shacl.py), with Brick 1.4.4 and the BA
+# extension as the ontology, so sh:class follows rdfs:subClassOf (an RVAV is a VAV, a rec:Room is a rec:Space).
+#
+# Each rule is one shape, small, with an rdfs:label (the name the app shows) and an rdfs:comment (why it holds).
+# All are violations: a failure is a gap in the graph to fix in the data or the readers, never by loosening the rule.
+#
+# Locations are rec: classes (W1). Brick 1.4's brick:Location is itself a subclass of rec:Space, so "a location"
+# below is rec:Space: it accepts both.
+
+shape:NodeHasClass a sh:NodeShape ;
+    rdfs:label "Every node has a class" ;
+    rdfs:comment "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it." ;
+    sh:targetSubjectsOf rdfs:label ;
+    sh:property [
+        sh:path rdf:type ;
+        sh:minCount 1 ;
+        sh:message "The node has no class." ;
+    ] .
+
+shape:PointOnOneEquipment a sh:NodeShape ;
+    rdfs:label "A point belongs to exactly one equipment" ;
+    rdfs:comment "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself." ;
+    sh:targetClass brick:Point ;
+    sh:property [
+        sh:path [ sh:inversePath brick:hasPoint ] ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "The point is not on exactly one equipment." ;
+    ] .
+
+shape:HasPointFromEquipment a sh:NodeShape ;
+    rdfs:label "hasPoint runs from equipment to a point" ;
+    rdfs:comment "brick:hasPoint is only meaningful from a unit (or system, or location) to a point: anything else is a misread grouping." ;
+    sh:targetObjectsOf brick:hasPoint ;
+    sh:class brick:Point ;
+    sh:message "The end of a hasPoint is not a point." .
+
+shape:HasLocationIsLocation a sh:NodeShape ;
+    rdfs:label "hasLocation points at a location" ;
+    rdfs:comment "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of)." ;
+    sh:targetSubjectsOf brick:hasLocation ;
+    sh:property [
+        sh:path brick:hasLocation ;
+        sh:class rec:Space ;
+        sh:message "hasLocation ends on something that is not a location." ;
+    ] .
+
+shape:ServesLocation a sh:NodeShape ;
+    rdfs:label "serves runs from equipment to a location" ;
+    rdfs:comment "ba:serves says a terminal unit's thermostat is in this room or zone (see ba_extension.ttl): equipment on one end, a location on the other." ;
+    sh:targetSubjectsOf ba:serves ;
+    sh:class brick:Equipment ;
+    sh:property [
+        sh:path ba:serves ;
+        sh:class rec:Space ;
+        sh:message "serves ends on something that is not a location." ;
+    ] .
+
+shape:HostedByController a sh:NodeShape ;
+    rdfs:label "isHostedBy points at a controller" ;
+    rdfs:comment "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller)." ;
+    sh:targetSubjectsOf ba:isHostedBy ;
+    sh:property [
+        sh:path ba:isHostedBy ;
+        sh:class brick:Controller ;
+        sh:message "isHostedBy ends on something that is not a controller." ;
+    ] .
+
+shape:FeedsBetweenEquipment a sh:NodeShape ;
+    rdfs:label "feeds runs between equipment" ;
+    rdfs:comment "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant)." ;
+    sh:targetSubjectsOf brick:feeds ;
+    sh:or ( [ sh:class brick:Equipment ] [ sh:class brick:System ] ) ;
+    sh:property [
+        sh:path brick:feeds ;
+        sh:or ( [ sh:class brick:Equipment ] [ sh:class brick:System ] ) ;
+        sh:message "feeds ends on something that is neither equipment nor a system." ;
+    ] ;
+    sh:message "feeds starts from something that is neither equipment nor a system." .
+
+shape:ControlBetweenPoints a sh:NodeShape ;
+    rdfs:label "Control relations run between points" ;
+    rdfs:comment "The control relations from the sequences (ba:drives, feedback, requires, resets, switches) link one point to another: a setpoint drives an output, a sensor feeds back to it. ba:requests ends on equipment instead and is checked on its own." ;
+    sh:targetSubjectsOf ba:drives, ba:feedback, ba:requires, ba:resets, ba:switches, ba:requests ;
+    sh:class brick:Point ;
+    sh:property [ sh:path ba:drives ; sh:class brick:Point ; sh:message "drives ends on something that is not a point." ] ;
+    sh:property [ sh:path ba:feedback ; sh:class brick:Point ; sh:message "feedback ends on something that is not a point." ] ;
+    sh:property [ sh:path ba:requires ; sh:class brick:Point ; sh:message "requires ends on something that is not a point." ] ;
+    sh:property [ sh:path ba:resets ; sh:class brick:Setpoint ; sh:message "resets ends on something that is not a setpoint." ] ;
+    sh:property [ sh:path ba:switches ; sh:class brick:Point ; sh:message "switches ends on something that is not a point." ] ;
+    sh:property [ sh:path ba:requests ; sh:class brick:Equipment ; sh:message "requests ends on something that is not equipment." ] ;
+    sh:message "A control relation starts from something that is not a point." .
+
+shape:VAVHasZoneTemperature a sh:NodeShape ;
+    rdfs:label "A VAV has a zone temperature sensor" ;
+    rdfs:comment "A VAV box controls to its zone's temperature: without a zone air temperature sensor among its points, its loop can't be monitored or diagnosed. Applies to every VAV subclass (RVAV)." ;
+    sh:targetClass brick:VAV ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "The VAV has no zone air temperature sensor." ;
+    ] .
+
+shape:EquipmentHasPoints a sh:NodeShape ;
+    rdfs:label "Controlled HVAC equipment has points" ;
+    rdfs:comment "An air handler, terminal unit, chiller, boiler or pump the BAS runs must show at least one point; with none, the unit is in the graph but invisible to monitoring." ;
+    sh:targetClass brick:AHU, brick:Terminal_Unit, brick:Chiller, brick:Boiler, brick:Pump ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:minCount 1 ;
+        sh:message "The unit has no points." ;
+    ] .
