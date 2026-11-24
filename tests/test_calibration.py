@@ -108,7 +108,7 @@ def test_the_mapper_writes_calibrated_confidences(on):
     items, _ = ev.mapper_items("alpha/names_paths")
     run = ev.mapper_run("alpha/names_paths")  # raw (calibration off inside)
     final = {i["id"]: (i["cls"], i["raw"], i["method"]) for i in items}
-    out = cal.calibrate_points(final, run["guesses"])
+    out = cal.calibrate_points(final, run["guesses"], run["records"])
     for i in items:
         want = i["raw"] if i["fixed"] else stored.apply(i["raw"], tuple(i["keys"]))
         assert out[i["id"]][1] == want
