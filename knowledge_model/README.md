@@ -10,6 +10,7 @@ The definitions that are the same for every project. Loaded and validated by
 | `templates/*.yaml` | Equipment templates (AHU, VAV, FCU, chiller, boiler, pump): point slots, name patterns, expected feeds. See `templates/README.md`. |
 | `name_rules/abbreviations.yaml` | Tokenizer settings, phrase rules, controlled vocabulary, abbreviations (with alternatives for ambiguous ones), worked examples. |
 | `units.yaml` | Engineering units as sources spell them (°F, cfm, in.wc...) → QUDT unit ids (`unit:DEG_F`), the units Brick uses; what each measures, checked against the point's class. Read by `src/projectmodel/units.py`. |
+| `shapes/*.ttl` | SHACL building rules (W2): a point on exactly one equipment, `hasLocation` to a location, `isHostedBy` to one controller, `feeds` between equipment, a VAV with a zone temperature sensor, and more, each with a label and a comment. Run with Brick 1.4.4's own shapes on every export by `scripts/export_brick.py` (`src/projectmodel/export/`); the report is `reports/shacl/<project>.json`. |
 
 Validation fails the load if: a class is missing or deprecated in Brick 1.4.4, an equipment/point class
 is listed under the wrong kind, an extension class clashes with Brick or has an unknown parent, a

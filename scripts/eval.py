@@ -7,6 +7,7 @@ and the bake-off verdict (§6.4). Results go to reports/eval/<job>.json.
     .venv/bin/python scripts/eval.py point_class --models argon --set troop_d
     .venv/bin/python scripts/eval.py plan_meaning            # the AI plan reader on the real dev sets' keyed sheets
     .venv/bin/python scripts/eval.py all --fit               # recompute every job's calibration, in order
+    .venv/bin/python scripts/eval.py sequence_read --models argon hydrogen --fit   # sequences vs the hand-built key
 
 Accuracy is exact and right-or-broader (the true class or a parent). Calibration is shown raw and calibrated; the
 calibrated column is held out: k-fold by equipment, each fold calibrated by a curve fitted on the others. `--fit`
@@ -31,7 +32,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from projectmodel import calibration as cal  # noqa: E402
 from projectmodel.scoring import eval as ev  # noqa: E402
 
-ORDER = ["mapper", "intake", "point_class", "plan_meaning"]
+ORDER = ["mapper", "intake", "point_class", "plan_meaning", "sequence_read"]
 
 
 def main() -> int:
@@ -39,7 +40,8 @@ def main() -> int:
     ap.add_argument("job", choices=[*ORDER, "all"])
     ap.add_argument("--set", nargs="+", dest="sets", help="dev sets (default: the job's own)")
     ap.add_argument("--models", nargs="+",
-                    help="point_class, plan_meaning: models to run (default: the job's chain and contender)")
+                    help="point_class, plan_meaning, sequence_read: models to run (default: the job's chain and "
+                         "contender)")
     ap.add_argument("--fit", action="store_true", help="store the calibration fitted on all dev items")
     ap.add_argument("--budget", type=float, default=None,
                     help=f"bake-off budget, USD per 1,000 items (default: PM_BUDGET_USD_PER_1000, else the "
@@ -50,7 +52,7 @@ def main() -> int:
 
     budget = args.budget if args.budget is not None else cal.budget_usd_per_1000()
     store = None
-    if args.job in ("point_class", "plan_meaning", "all"):
+    if args.job in ("point_class", "plan_meaning", "sequence_read", "all"):
         from projectmodel.db.store import Store
         store = Store(args.db)
     for job in ORDER if args.job == "all" else [args.job]:

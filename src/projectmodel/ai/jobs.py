@@ -18,6 +18,7 @@ from typing import Any
 import jsonschema
 
 from ..db.store import Store
+from ..intake import sequence_ai as _sequence_ai
 from .calls import Router, default_router
 from .providers import ModelError, ModelRequest, ModelUnavailable
 from .prompts import load_prompt
@@ -111,7 +112,11 @@ JOBS: dict[str, Job] = {j.id: j for j in [
         people="Answer asks"),
     Job("schedule_layout", "Schedules: draft a layout per firm", "opus", ("argon",), ("fable",),
         people="Approve the layout"),
-    Job("sequence_read", "Sequences", "sonnet", ("hydrogen",), ("opus",), people="Confirm the logic"),
+    # Contenders stand in while Claude is not enabled on our project: Hydrogen (the spec's contender; best on the
+    # Troop D bake-off, F1 87 vs Argon's 83, $0.03 a sequence), then Argon. Schema and check: intake/sequence_ai.py.
+    Job("sequence_read", "Sequences", "sonnet", ("hydrogen", "argon"), ("opus",), prompt="sequence_read",
+        schema=_sequence_ai.SCHEMA, check=_sequence_ai.check, max_tokens=32000, effort="low", status="built",
+        people="Confirm the logic"),
     Job("submittal_read", "Controls submittal", "hydrogen", ("sonnet",), ("opus",), people="Answer asks"),
     Job("bms_headers", "BMS export: unknown headers", None, (), ("haiku",)),
     # Contender: the spec's (Jev, gpt-oss-20b) are not on our Vertex AI project yet; Argon stands in while Claude is

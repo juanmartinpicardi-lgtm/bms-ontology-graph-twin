@@ -10,6 +10,7 @@ gives raw confidences.
 | `intake.json` | `intake/submittal.py` and `intake/bms.py`, where a point's class confidence is made (a person's term is left as it is) | `<step>\|<function>`, `<function>` | Troop D |
 | `point_class.json` | `mapper/llm.py` and `intake/point_ai.py`, on the model's own confidence, before the cap below auto-accept | `<model>\|<caller>` (`intake` or `mapper`), `<model>` | Troop D + Alpha points below auto-accept |
 | `plan_meaning.json` | `intake/plan_ai.py`, on the model's confidence after the rules' checks, before the cap below auto-accept (`AI_CAP` = 0.85) | `<model>\|<kind>` (`room` or `placement`), `<model>` | The keyed plan sheets of `msu_mbb` + `itd_d1_lab` (`data/ground_truth/*/plans.yaml`) |
+| `sequence_read.json` | `intake/sequence_ai.py`, on the model's confidence in each control relation, before the cap (0.85) | `<model>\|intake`, `<model>` | Troop D's 5 sequences vs `data/ground_truth/troop_d/sequences.yaml` (folds by sequence section) |
 
 `function` is the point function the class names (Sensor, Setpoint, Command, Status, Alarm, other); `path or name`
 is whether the point came with an equipment folder path. A stratum with fewer than 20 fitting items (`MIN_N`) falls
