@@ -31,7 +31,7 @@ from collections import defaultdict
 
 from ..db.store import METHODS, Claim, Edge, Node, Store
 from ..locate import Location, save_location
-from . import knowledge
+from . import knowledge, sequence_ai
 from .model import building
 from .state import Intake
 
@@ -103,6 +103,7 @@ def publish(it: Intake, store: Store, steps: list[str] | None = None) -> str:
     project = project_id(it)
     knowledge.apply(it)
     out = statements(it)
+    out.update(sequence_ai.statements(it, out))  # W8: the sequences' control logic, its own source
     started = time.time()
     revision = store.start_run(project, "guided setup" + (f": {', '.join(steps)}" if steps else ""))
     if steps is None:

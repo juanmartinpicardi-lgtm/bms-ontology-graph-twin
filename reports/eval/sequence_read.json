@@ -1,0 +1,1973 @@
+{
+ "job": "sequence_read",
+ "sets": [
+  "troop_d"
+ ],
+ "k_folds": 5,
+ "min_n": 20,
+ "band_n": 30,
+ "tolerance": 5.0,
+ "budget_usd_per_1000": 1.0,
+ "prompt": "sequence_read@1",
+ "calibration_before": "none",
+ "rows": [
+  {
+   "label": "troop_d \u00b7 rules",
+   "kind": "rules",
+   "tp": 12,
+   "fp": 6,
+   "dup": 0,
+   "required": 67,
+   "found": 12,
+   "precision_pct": 66.7,
+   "recall_pct": 17.9,
+   "f1": 28.2,
+   "by_kind": {
+    "loop": {
+     "key": 31,
+     "found": 6,
+     "recall_pct": 19.4
+    },
+    "interlock": {
+     "key": 28,
+     "found": 6,
+     "recall_pct": 21.4
+    },
+    "reset": {
+     "key": 0,
+     "found": 0,
+     "recall_pct": null
+    },
+    "mode": {
+     "key": 8,
+     "found": 0,
+     "recall_pct": 0.0
+    }
+   },
+   "relations": 18,
+   "gaps": {
+    "key": 16,
+    "found": 4
+   },
+   "conflicts": {
+    "key": 2,
+    "found": 0
+   },
+   "usd_per_sequence": 0.0,
+   "usd_per_1000": 0.0,
+   "seconds_per_sequence": 0.0,
+   "cost": {
+    "sequences": 5,
+    "usd": 0.0,
+    "seconds": 0.0,
+    "calls": 0
+   },
+   "per_sequence": {
+    "air-handling-unit": {
+     "tp": 11,
+     "fp": 6,
+     "dup": 0,
+     "required": 36,
+     "found": 11,
+     "by_kind": {
+      "loop": {
+       "key": 13,
+       "found": 6,
+       "answered": 12
+      },
+      "interlock": {
+       "key": 20,
+       "found": 5,
+       "answered": 5
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 1
+     },
+     "conflicts": {
+      "key": 2,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "F AHU.BLDGP-SP drives AHU.EAD1-O",
+      "F AHU.BLDG-P feedback AHU.EAD1-O",
+      "G AHU.MA-T feedback AHU.ECON-O",
+      "I AHU.MA-SP drives AHU.PH-O",
+      "I AHU.MA-T feedback AHU.PH-O",
+      "J AHU.HUM-SP drives AHU.HUM-O",
+      "J AHU.HUM-H feedback AHU.HUM-O",
+      "E AHU.SF1-S requires AHU.SF-C",
+      "G AHU.OA-T requires AHU.ECON-O",
+      "G AHU.ECON-O drives/requires AHU.RAD-O",
+      "G AHU.ECON-O requires AHU.EF1-C",
+      "G AHU.OA-H requires AHU.ECON-O",
+      "I AHU.MA-T requires AHU.PH-E",
+      "J AHU.HUM-H requires AHU.HUM-E",
+      "K AHU.MA-T requires AHU.CHWV-O",
+      "K AHU.OA-T requires AHU.CHWV-O",
+      "L AHU.LT-A requires AHU.CHWV-O",
+      "L AHU.LT-A requests/requires CWP.C",
+      "L AHU.HSP-A requires AHU.EF1-C",
+      "L AHU.LEAK-A requires AHU.CHWV-O",
+      "M AHU.SF-C requires AHU.SF-O",
+      "M AHU.EF1-C requires AHU.EF1-O",
+      "C AHU.OCC-SCHEDULE switches AHU.SF-C",
+      "C AHU.OCC-SCHEDULE switches AHU.EF1-C",
+      "H AHU.OCC-SCHEDULE switches AHU.MOA-O"
+     ],
+     "false": [
+      "E AHU.DA-P feedback AHU.SF-C",
+      "E AHU.DAP-SP drives AHU.SF-C",
+      "F AHU.BLDG-P feedback AHU.EF1-C",
+      "F AHU.BLDGP-SP drives AHU.EF1-C",
+      "I AHU.MA-T feedback AHU.PH-E",
+      "I AHU.MA-SP drives AHU.PH-E"
+     ]
+    },
+    "vav-terminal-units": {
+     "tp": 0,
+     "fp": 0,
+     "dup": 0,
+     "required": 8,
+     "found": 0,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 0,
+       "answered": 0
+      },
+      "interlock": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 4,
+      "found": 2,
+      "said": 2
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "F VAV.OCC-CLG-SP drives VAV.DPR-O",
+      "F VAV.ZN-T feedback VAV.DPR-O",
+      "F VAV.SAFLOW-SP drives VAV.DPR-O",
+      "F VAV.SA-F feedback VAV.DPR-O",
+      "G VAV.OCC-HTG-SP drives VAV.HTG-E",
+      "G VAV.ZN-T feedback VAV.HTG-E",
+      "G VAV.DA-T feedback VAV.HTG-O",
+      "D VAV.OCC-SCHEDULE switches VAV.SAFLOW-SP"
+     ],
+     "false": []
+    },
+    "fvav-terminal-units": {
+     "tp": 0,
+     "fp": 0,
+     "dup": 0,
+     "required": 9,
+     "found": 0,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 0,
+       "answered": 0
+      },
+      "interlock": {
+       "key": 1,
+       "found": 0,
+       "answered": 0
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 1
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "F FVAV.OCC-CLG-SP drives FVAV.DPR-O",
+      "F FVAV.ZN-T feedback FVAV.DPR-O",
+      "F FVAV.SAFLOW-SP drives FVAV.DPR-O",
+      "F FVAV.SA-F feedback FVAV.DPR-O",
+      "G FVAV.OCC-HTG-SP drives FVAV.HTG-E",
+      "G FVAV.ZN-T feedback FVAV.HTG-E",
+      "G FVAV.DA-T feedback FVAV.HTG-O",
+      "G FVAV.HTG-E requires FVAV.FAN-C",
+      "D FVAV.OCC-SCHEDULE switches FVAV.SAFLOW-SP"
+     ],
+     "false": []
+    },
+    "chilled-water-system": {
+     "tp": 0,
+     "fp": 0,
+     "dup": 0,
+     "required": 12,
+     "found": 0,
+     "by_kind": {
+      "loop": {
+       "key": 3,
+       "found": 0,
+       "answered": 0
+      },
+      "interlock": {
+       "key": 6,
+       "found": 0,
+       "answered": 0
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 0,
+      "said": 0
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "B CH.LCHWT-SP drives CH.CH-E",
+      "B CH.LEWT feedback CH.CH-E",
+      "A AHU.CHWR-T feedback CWP.O",
+      "A AHU.CHWV-O requests/requires CWP.C",
+      "A CWP.A requires CWP.C",
+      "A AHU.LT-A requests/requires CWP.C",
+      "B CWP.C requires CH.CH-E",
+      "B CHW-PLANT.CW-F feedback/requires CH.CH-E",
+      "B CHW-PLANT.CW-F feedback/requires CH.ISOV-C",
+      "A CHW-PLANT.CWP-LEAD switches CWP.C",
+      "B CHW-PLANT.CH-LEAD switches CH.CH-E",
+      "B CHW-PLANT.CH-LEAD requires/switches CH.ISOV-C"
+     ],
+     "false": []
+    },
+    "exhaust-fans": {
+     "tp": 1,
+     "fp": 0,
+     "dup": 0,
+     "required": 2,
+     "found": 1,
+     "by_kind": {
+      "loop": {
+       "key": 1,
+       "found": 0,
+       "answered": 0
+      },
+      "interlock": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 0,
+      "said": 0
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "A EF-LAB.P feedback EF-LAB.BYP-O"
+     ],
+     "false": []
+    }
+   },
+   "set": "troop_d",
+   "verdict": {
+    "says": "rules: the baseline"
+   }
+  },
+  {
+   "label": "troop_d \u00b7 hydrogen",
+   "kind": "model",
+   "tp": 61,
+   "fp": 8,
+   "dup": 8,
+   "required": 67,
+   "found": 58,
+   "precision_pct": 88.4,
+   "recall_pct": 86.6,
+   "f1": 87.5,
+   "by_kind": {
+    "loop": {
+     "key": 31,
+     "found": 30,
+     "recall_pct": 96.8
+    },
+    "interlock": {
+     "key": 28,
+     "found": 21,
+     "recall_pct": 75.0
+    },
+    "reset": {
+     "key": 0,
+     "found": 0,
+     "recall_pct": null
+    },
+    "mode": {
+     "key": 8,
+     "found": 7,
+     "recall_pct": 87.5
+    }
+   },
+   "relations": 77,
+   "gaps": {
+    "key": 16,
+    "found": 9
+   },
+   "conflicts": {
+    "key": 2,
+    "found": 0
+   },
+   "usd_per_sequence": 0.0307,
+   "usd_per_1000": 1.9961,
+   "seconds_per_sequence": 21.0,
+   "cost": {
+    "sequences": 5,
+    "failed": 0,
+    "calls": 5,
+    "usd": 0.1537,
+    "seconds": 105.2,
+    "logged": 3
+   },
+   "per_sequence": {
+    "air-handling-unit": {
+     "tp": 33,
+     "fp": 1,
+     "dup": 8,
+     "required": 36,
+     "found": 32,
+     "by_kind": {
+      "loop": {
+       "key": 13,
+       "found": 13,
+       "answered": 16
+      },
+      "interlock": {
+       "key": 20,
+       "found": 16,
+       "answered": 22
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 4
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 2,
+      "said": 2
+     },
+     "conflicts": {
+      "key": 2,
+      "found": 0,
+      "said": 1
+     },
+     "missed": [
+      "G AHU.OA-H requires AHU.ECON-O",
+      "L AHU.LEAK-A requires AHU.CHWV-O",
+      "M AHU.SF-C requires AHU.SF-O",
+      "M AHU.EF1-C requires AHU.EF1-O"
+     ],
+     "false": [
+      "G AHU.MA-SP drives AHU.ECON-O"
+     ]
+    },
+    "vav-terminal-units": {
+     "tp": 7,
+     "fp": 3,
+     "dup": 0,
+     "required": 8,
+     "found": 7,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 7,
+       "answered": 8
+      },
+      "interlock": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 0,
+       "answered": 2
+      }
+     },
+     "gaps": {
+      "key": 4,
+      "found": 3,
+      "said": 6
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "D VAV.OCC-SCHEDULE switches VAV.SAFLOW-SP"
+     ],
+     "false": [
+      "C VAV.OCC-SCHEDULE switches VAV.DPR-O",
+      "G VAV.OCC-SCHEDULE switches VAV.HTG-E",
+      "G VAV.OCC-HTG-SP drives VAV.DPR-O"
+     ]
+    },
+    "fvav-terminal-units": {
+     "tp": 8,
+     "fp": 3,
+     "dup": 0,
+     "required": 9,
+     "found": 8,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 7,
+       "answered": 9
+      },
+      "interlock": {
+       "key": 1,
+       "found": 0,
+       "answered": 0
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 1,
+       "answered": 2
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 2,
+      "said": 3
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "G FVAV.HTG-E requires FVAV.FAN-C"
+     ],
+     "false": [
+      "C FVAV.OCC-SCHEDULE switches FVAV.DPR-O",
+      "G FVAV.OCC-HTG-SP drives FVAV.FAN-C",
+      "G FVAV.ZN-T feedback FVAV.FAN-C"
+     ]
+    },
+    "chilled-water-system": {
+     "tp": 11,
+     "fp": 1,
+     "dup": 0,
+     "required": 12,
+     "found": 9,
+     "by_kind": {
+      "loop": {
+       "key": 3,
+       "found": 2,
+       "answered": 3
+      },
+      "interlock": {
+       "key": 6,
+       "found": 4,
+       "answered": 6
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 3
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 1
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "A AHU.CHWR-T feedback CWP.O",
+      "A AHU.LT-A requests/requires CWP.C",
+      "B CHW-PLANT.CW-F feedback/requires CH.ISOV-C"
+     ],
+     "false": [
+      "A CHW-PLANT.CW-F feedback CWP.O"
+     ]
+    },
+    "exhaust-fans": {
+     "tp": 2,
+     "fp": 0,
+     "dup": 0,
+     "required": 2,
+     "found": 2,
+     "by_kind": {
+      "loop": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "interlock": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 1
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [],
+     "false": []
+    }
+   },
+   "set": "troop_d",
+   "model": "hydrogen",
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 1,
+     "mean_conf_pct": 70.0,
+     "accuracy_pct": 100.0,
+     "gap": 30.0
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 6,
+     "mean_conf_pct": 84.2,
+     "accuracy_pct": 83.3,
+     "gap": 0.8
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 70,
+     "mean_conf_pct": 93.2,
+     "accuracy_pct": 90.0,
+     "gap": 3.2
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 5,
+     "mean_conf_pct": 50.0,
+     "accuracy_pct": 100.0,
+     "gap": 50.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 14,
+     "mean_conf_pct": 72.5,
+     "accuracy_pct": 85.7,
+     "gap": 13.2
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 13,
+     "mean_conf_pct": 89.5,
+     "accuracy_pct": 53.8,
+     "gap": 35.6
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 45,
+     "mean_conf_pct": 100.0,
+     "accuracy_pct": 100.0,
+     "gap": 0.0
+    }
+   ],
+   "raw_worst_gap": 3.2,
+   "calibrated_worst_gap": 0.0,
+   "model_relations": 77,
+   "rules_f1": 28.2,
+   "verdict": {
+    "says": "model alone, for reference (the setup uses model + rules)"
+   }
+  },
+  {
+   "label": "troop_d \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "tp": 61,
+   "fp": 8,
+   "dup": 8,
+   "required": 67,
+   "found": 58,
+   "precision_pct": 88.4,
+   "recall_pct": 86.6,
+   "f1": 87.5,
+   "by_kind": {
+    "loop": {
+     "key": 31,
+     "found": 30,
+     "recall_pct": 96.8
+    },
+    "interlock": {
+     "key": 28,
+     "found": 21,
+     "recall_pct": 75.0
+    },
+    "reset": {
+     "key": 0,
+     "found": 0,
+     "recall_pct": null
+    },
+    "mode": {
+     "key": 8,
+     "found": 7,
+     "recall_pct": 87.5
+    }
+   },
+   "relations": 77,
+   "gaps": {
+    "key": 16,
+    "found": 9
+   },
+   "conflicts": {
+    "key": 2,
+    "found": 0
+   },
+   "usd_per_sequence": 0.0307,
+   "usd_per_1000": 1.9961,
+   "seconds_per_sequence": 21.0,
+   "cost": {
+    "sequences": 5,
+    "failed": 0,
+    "calls": 5,
+    "usd": 0.1537,
+    "seconds": 105.2,
+    "logged": 3
+   },
+   "per_sequence": {
+    "air-handling-unit": {
+     "tp": 33,
+     "fp": 1,
+     "dup": 8,
+     "required": 36,
+     "found": 32,
+     "by_kind": {
+      "loop": {
+       "key": 13,
+       "found": 13,
+       "answered": 16
+      },
+      "interlock": {
+       "key": 20,
+       "found": 16,
+       "answered": 22
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 4
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 2,
+      "said": 2
+     },
+     "conflicts": {
+      "key": 2,
+      "found": 0,
+      "said": 1
+     },
+     "missed": [
+      "G AHU.OA-H requires AHU.ECON-O",
+      "L AHU.LEAK-A requires AHU.CHWV-O",
+      "M AHU.SF-C requires AHU.SF-O",
+      "M AHU.EF1-C requires AHU.EF1-O"
+     ],
+     "false": [
+      "G AHU.MA-SP drives AHU.ECON-O"
+     ]
+    },
+    "vav-terminal-units": {
+     "tp": 7,
+     "fp": 3,
+     "dup": 0,
+     "required": 8,
+     "found": 7,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 7,
+       "answered": 8
+      },
+      "interlock": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 0,
+       "answered": 2
+      }
+     },
+     "gaps": {
+      "key": 4,
+      "found": 3,
+      "said": 6
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "D VAV.OCC-SCHEDULE switches VAV.SAFLOW-SP"
+     ],
+     "false": [
+      "C VAV.OCC-SCHEDULE switches VAV.DPR-O",
+      "G VAV.OCC-SCHEDULE switches VAV.HTG-E",
+      "G VAV.OCC-HTG-SP drives VAV.DPR-O"
+     ]
+    },
+    "fvav-terminal-units": {
+     "tp": 8,
+     "fp": 3,
+     "dup": 0,
+     "required": 9,
+     "found": 8,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 7,
+       "answered": 9
+      },
+      "interlock": {
+       "key": 1,
+       "found": 0,
+       "answered": 0
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 1,
+       "answered": 2
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 2,
+      "said": 3
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "G FVAV.HTG-E requires FVAV.FAN-C"
+     ],
+     "false": [
+      "C FVAV.OCC-SCHEDULE switches FVAV.DPR-O",
+      "G FVAV.OCC-HTG-SP drives FVAV.FAN-C",
+      "G FVAV.ZN-T feedback FVAV.FAN-C"
+     ]
+    },
+    "chilled-water-system": {
+     "tp": 11,
+     "fp": 1,
+     "dup": 0,
+     "required": 12,
+     "found": 9,
+     "by_kind": {
+      "loop": {
+       "key": 3,
+       "found": 2,
+       "answered": 3
+      },
+      "interlock": {
+       "key": 6,
+       "found": 4,
+       "answered": 6
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 3
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 1
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "A AHU.CHWR-T feedback CWP.O",
+      "A AHU.LT-A requests/requires CWP.C",
+      "B CHW-PLANT.CW-F feedback/requires CH.ISOV-C"
+     ],
+     "false": [
+      "A CHW-PLANT.CW-F feedback CWP.O"
+     ]
+    },
+    "exhaust-fans": {
+     "tp": 2,
+     "fp": 0,
+     "dup": 0,
+     "required": 2,
+     "found": 2,
+     "by_kind": {
+      "loop": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "interlock": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 1
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [],
+     "false": []
+    }
+   },
+   "set": "troop_d",
+   "model": "hydrogen",
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 1,
+     "mean_conf_pct": 70.0,
+     "accuracy_pct": 100.0,
+     "gap": 30.0
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 6,
+     "mean_conf_pct": 84.2,
+     "accuracy_pct": 83.3,
+     "gap": 0.8
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 70,
+     "mean_conf_pct": 93.2,
+     "accuracy_pct": 90.0,
+     "gap": 3.2
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 5,
+     "mean_conf_pct": 50.0,
+     "accuracy_pct": 100.0,
+     "gap": 50.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 14,
+     "mean_conf_pct": 72.5,
+     "accuracy_pct": 85.7,
+     "gap": 13.2
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 13,
+     "mean_conf_pct": 89.5,
+     "accuracy_pct": 53.8,
+     "gap": 35.6
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 45,
+     "mean_conf_pct": 100.0,
+     "accuracy_pct": 100.0,
+     "gap": 0.0
+    }
+   ],
+   "raw_worst_gap": 3.2,
+   "calibrated_worst_gap": 0.0,
+   "model_relations": 77,
+   "rules_f1": 28.2,
+   "verdict": {
+    "default_ok": false,
+    "checks": {
+     "beats rules alone": true,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": false
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "not the default (fails: under the cost budget)"
+   }
+  },
+  {
+   "label": "troop_d \u00b7 argon",
+   "kind": "model",
+   "tp": 66,
+   "fp": 16,
+   "dup": 13,
+   "required": 67,
+   "found": 58,
+   "precision_pct": 80.5,
+   "recall_pct": 86.6,
+   "f1": 83.4,
+   "by_kind": {
+    "loop": {
+     "key": 31,
+     "found": 26,
+     "recall_pct": 83.9
+    },
+    "interlock": {
+     "key": 28,
+     "found": 24,
+     "recall_pct": 85.7
+    },
+    "reset": {
+     "key": 0,
+     "found": 0,
+     "recall_pct": null
+    },
+    "mode": {
+     "key": 8,
+     "found": 8,
+     "recall_pct": 100.0
+    }
+   },
+   "relations": 95,
+   "gaps": {
+    "key": 16,
+    "found": 13
+   },
+   "conflicts": {
+    "key": 2,
+    "found": 1
+   },
+   "usd_per_sequence": 0.0464,
+   "usd_per_1000": 2.4411,
+   "seconds_per_sequence": 33.6,
+   "cost": {
+    "sequences": 5,
+    "failed": 0,
+    "calls": 5,
+    "usd": 0.2319,
+    "seconds": 168.2,
+    "logged": 3
+   },
+   "per_sequence": {
+    "air-handling-unit": {
+     "tp": 38,
+     "fp": 2,
+     "dup": 12,
+     "required": 36,
+     "found": 34,
+     "by_kind": {
+      "loop": {
+       "key": 13,
+       "found": 13,
+       "answered": 15
+      },
+      "interlock": {
+       "key": 20,
+       "found": 18,
+       "answered": 32
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 5
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 3,
+      "said": 9
+     },
+     "conflicts": {
+      "key": 2,
+      "found": 1,
+      "said": 4
+     },
+     "missed": [
+      "G AHU.OA-H requires AHU.ECON-O",
+      "L AHU.LEAK-A requires AHU.CHWV-O"
+     ],
+     "false": [
+      "L AHU.SYS-RESET requires AHU.SF-C",
+      "M AHU.SF-C requires AHU.CHWV-O"
+     ]
+    },
+    "vav-terminal-units": {
+     "tp": 7,
+     "fp": 7,
+     "dup": 0,
+     "required": 8,
+     "found": 6,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 5,
+       "answered": 8
+      },
+      "interlock": {
+       "key": 0,
+       "found": 0,
+       "answered": 2
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 1
+      },
+      "mode": {
+       "key": 1,
+       "found": 1,
+       "answered": 3
+      }
+     },
+     "gaps": {
+      "key": 4,
+      "found": 4,
+      "said": 8
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 1
+     },
+     "missed": [
+      "G VAV.OCC-HTG-SP drives VAV.HTG-E",
+      "G VAV.ZN-T feedback VAV.HTG-E"
+     ],
+     "false": [
+      "B VAV.OCC-SCHEDULE switches VAV.DPR-O",
+      "B VAV.OCC-SCHEDULE switches VAV.HTG-E",
+      "F VAV.ZN-T resets VAV.SAFLOW-SP",
+      "D VAV.UNOCC-CLG-SP drives VAV.DPR-O",
+      "G VAV.OCC-HTG-SP requires VAV.HTG-E",
+      "G VAV.OCC-HTG-SP drives VAV.DPR-O",
+      "D VAV.UNOCC-HTG-SP drives VAV.DPR-O"
+     ]
+    },
+    "fvav-terminal-units": {
+     "tp": 8,
+     "fp": 5,
+     "dup": 0,
+     "required": 9,
+     "found": 7,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 5,
+       "answered": 5
+      },
+      "interlock": {
+       "key": 1,
+       "found": 1,
+       "answered": 4
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 1,
+       "answered": 4
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 3,
+      "said": 4
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "G FVAV.OCC-HTG-SP drives FVAV.HTG-E",
+      "G FVAV.ZN-T feedback FVAV.HTG-E"
+     ],
+     "false": [
+      "B FVAV.OCC-SCHEDULE switches FVAV.DPR-O",
+      "B FVAV.OCC-SCHEDULE switches FVAV.FAN-C",
+      "B FVAV.OCC-SCHEDULE switches FVAV.HTG-E",
+      "G FVAV.OCC-HTG-SP requires FVAV.HTG-E",
+      "G FVAV.OCC-HTG-SP requires FVAV.FAN-C"
+     ]
+    },
+    "chilled-water-system": {
+     "tp": 11,
+     "fp": 2,
+     "dup": 1,
+     "required": 12,
+     "found": 9,
+     "by_kind": {
+      "loop": {
+       "key": 3,
+       "found": 2,
+       "answered": 3
+      },
+      "interlock": {
+       "key": 6,
+       "found": 4,
+       "answered": 8
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 3
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 2
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "A AHU.CHWR-T feedback CWP.O",
+      "A AHU.LT-A requests/requires CWP.C",
+      "B CHW-PLANT.CW-F feedback/requires CH.ISOV-C"
+     ],
+     "false": [
+      "A CWP.S requires CWP.C",
+      "A CHW-PLANT.CW-F feedback CWP.O"
+     ]
+    },
+    "exhaust-fans": {
+     "tp": 2,
+     "fp": 0,
+     "dup": 0,
+     "required": 2,
+     "found": 2,
+     "by_kind": {
+      "loop": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "interlock": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 2,
+      "said": 2
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [],
+     "false": []
+    }
+   },
+   "set": "troop_d",
+   "model": "argon",
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 2,
+     "mean_conf_pct": 60.0,
+     "accuracy_pct": 100.0,
+     "gap": 40.0
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 1,
+     "mean_conf_pct": 75.0,
+     "accuracy_pct": 0.0,
+     "gap": 75.0
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 18,
+     "mean_conf_pct": 83.3,
+     "accuracy_pct": 66.7,
+     "gap": 16.7
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 74,
+     "mean_conf_pct": 92.3,
+     "accuracy_pct": 87.8,
+     "gap": 4.5
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 2,
+     "mean_conf_pct": 0.0,
+     "accuracy_pct": 100.0,
+     "gap": 100.0
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 18,
+     "mean_conf_pct": 67.1,
+     "accuracy_pct": 66.7,
+     "gap": 0.4
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 27,
+     "mean_conf_pct": 74.5,
+     "accuracy_pct": 92.6,
+     "gap": 18.1
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 14,
+     "mean_conf_pct": 86.5,
+     "accuracy_pct": 50.0,
+     "gap": 36.5
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 34,
+     "mean_conf_pct": 96.0,
+     "accuracy_pct": 97.1,
+     "gap": 1.1
+    }
+   ],
+   "raw_worst_gap": 4.5,
+   "calibrated_worst_gap": 1.1,
+   "model_relations": 95,
+   "rules_f1": 28.2,
+   "verdict": {
+    "says": "model alone, for reference (the setup uses model + rules)"
+   }
+  },
+  {
+   "label": "troop_d \u00b7 argon + rules",
+   "kind": "model+rules",
+   "tp": 66,
+   "fp": 16,
+   "dup": 13,
+   "required": 67,
+   "found": 58,
+   "precision_pct": 80.5,
+   "recall_pct": 86.6,
+   "f1": 83.4,
+   "by_kind": {
+    "loop": {
+     "key": 31,
+     "found": 26,
+     "recall_pct": 83.9
+    },
+    "interlock": {
+     "key": 28,
+     "found": 24,
+     "recall_pct": 85.7
+    },
+    "reset": {
+     "key": 0,
+     "found": 0,
+     "recall_pct": null
+    },
+    "mode": {
+     "key": 8,
+     "found": 8,
+     "recall_pct": 100.0
+    }
+   },
+   "relations": 95,
+   "gaps": {
+    "key": 16,
+    "found": 13
+   },
+   "conflicts": {
+    "key": 2,
+    "found": 1
+   },
+   "usd_per_sequence": 0.0464,
+   "usd_per_1000": 2.4411,
+   "seconds_per_sequence": 33.6,
+   "cost": {
+    "sequences": 5,
+    "failed": 0,
+    "calls": 5,
+    "usd": 0.2319,
+    "seconds": 168.2,
+    "logged": 3
+   },
+   "per_sequence": {
+    "air-handling-unit": {
+     "tp": 38,
+     "fp": 2,
+     "dup": 12,
+     "required": 36,
+     "found": 34,
+     "by_kind": {
+      "loop": {
+       "key": 13,
+       "found": 13,
+       "answered": 15
+      },
+      "interlock": {
+       "key": 20,
+       "found": 18,
+       "answered": 32
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 5
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 3,
+      "said": 9
+     },
+     "conflicts": {
+      "key": 2,
+      "found": 1,
+      "said": 4
+     },
+     "missed": [
+      "G AHU.OA-H requires AHU.ECON-O",
+      "L AHU.LEAK-A requires AHU.CHWV-O"
+     ],
+     "false": [
+      "L AHU.SYS-RESET requires AHU.SF-C",
+      "M AHU.SF-C requires AHU.CHWV-O"
+     ]
+    },
+    "vav-terminal-units": {
+     "tp": 7,
+     "fp": 7,
+     "dup": 0,
+     "required": 8,
+     "found": 6,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 5,
+       "answered": 8
+      },
+      "interlock": {
+       "key": 0,
+       "found": 0,
+       "answered": 2
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 1
+      },
+      "mode": {
+       "key": 1,
+       "found": 1,
+       "answered": 3
+      }
+     },
+     "gaps": {
+      "key": 4,
+      "found": 4,
+      "said": 8
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 1
+     },
+     "missed": [
+      "G VAV.OCC-HTG-SP drives VAV.HTG-E",
+      "G VAV.ZN-T feedback VAV.HTG-E"
+     ],
+     "false": [
+      "B VAV.OCC-SCHEDULE switches VAV.DPR-O",
+      "B VAV.OCC-SCHEDULE switches VAV.HTG-E",
+      "F VAV.ZN-T resets VAV.SAFLOW-SP",
+      "D VAV.UNOCC-CLG-SP drives VAV.DPR-O",
+      "G VAV.OCC-HTG-SP requires VAV.HTG-E",
+      "G VAV.OCC-HTG-SP drives VAV.DPR-O",
+      "D VAV.UNOCC-HTG-SP drives VAV.DPR-O"
+     ]
+    },
+    "fvav-terminal-units": {
+     "tp": 8,
+     "fp": 5,
+     "dup": 0,
+     "required": 9,
+     "found": 7,
+     "by_kind": {
+      "loop": {
+       "key": 7,
+       "found": 5,
+       "answered": 5
+      },
+      "interlock": {
+       "key": 1,
+       "found": 1,
+       "answered": 4
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 1,
+       "found": 1,
+       "answered": 4
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 3,
+      "said": 4
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "G FVAV.OCC-HTG-SP drives FVAV.HTG-E",
+      "G FVAV.ZN-T feedback FVAV.HTG-E"
+     ],
+     "false": [
+      "B FVAV.OCC-SCHEDULE switches FVAV.DPR-O",
+      "B FVAV.OCC-SCHEDULE switches FVAV.FAN-C",
+      "B FVAV.OCC-SCHEDULE switches FVAV.HTG-E",
+      "G FVAV.OCC-HTG-SP requires FVAV.HTG-E",
+      "G FVAV.OCC-HTG-SP requires FVAV.FAN-C"
+     ]
+    },
+    "chilled-water-system": {
+     "tp": 11,
+     "fp": 2,
+     "dup": 1,
+     "required": 12,
+     "found": 9,
+     "by_kind": {
+      "loop": {
+       "key": 3,
+       "found": 2,
+       "answered": 3
+      },
+      "interlock": {
+       "key": 6,
+       "found": 4,
+       "answered": 8
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 3,
+       "found": 3,
+       "answered": 3
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 1,
+      "said": 2
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [
+      "A AHU.CHWR-T feedback CWP.O",
+      "A AHU.LT-A requests/requires CWP.C",
+      "B CHW-PLANT.CW-F feedback/requires CH.ISOV-C"
+     ],
+     "false": [
+      "A CWP.S requires CWP.C",
+      "A CHW-PLANT.CW-F feedback CWP.O"
+     ]
+    },
+    "exhaust-fans": {
+     "tp": 2,
+     "fp": 0,
+     "dup": 0,
+     "required": 2,
+     "found": 2,
+     "by_kind": {
+      "loop": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "interlock": {
+       "key": 1,
+       "found": 1,
+       "answered": 1
+      },
+      "reset": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      },
+      "mode": {
+       "key": 0,
+       "found": 0,
+       "answered": 0
+      }
+     },
+     "gaps": {
+      "key": 3,
+      "found": 2,
+      "said": 2
+     },
+     "conflicts": {
+      "key": 0,
+      "found": 0,
+      "said": 0
+     },
+     "missed": [],
+     "false": []
+    }
+   },
+   "set": "troop_d",
+   "model": "argon",
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 2,
+     "mean_conf_pct": 60.0,
+     "accuracy_pct": 100.0,
+     "gap": 40.0
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 1,
+     "mean_conf_pct": 75.0,
+     "accuracy_pct": 0.0,
+     "gap": 75.0
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 18,
+     "mean_conf_pct": 83.3,
+     "accuracy_pct": 66.7,
+     "gap": 16.7
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 74,
+     "mean_conf_pct": 92.3,
+     "accuracy_pct": 87.8,
+     "gap": 4.5
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 2,
+     "mean_conf_pct": 0.0,
+     "accuracy_pct": 100.0,
+     "gap": 100.0
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 18,
+     "mean_conf_pct": 67.1,
+     "accuracy_pct": 66.7,
+     "gap": 0.4
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 27,
+     "mean_conf_pct": 74.5,
+     "accuracy_pct": 92.6,
+     "gap": 18.1
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 14,
+     "mean_conf_pct": 86.5,
+     "accuracy_pct": 50.0,
+     "gap": 36.5
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 34,
+     "mean_conf_pct": 96.0,
+     "accuracy_pct": 97.1,
+     "gap": 1.1
+    }
+   ],
+   "raw_worst_gap": 4.5,
+   "calibrated_worst_gap": 1.1,
+   "model_relations": 95,
+   "rules_f1": 28.2,
+   "verdict": {
+    "default_ok": false,
+    "checks": {
+     "beats rules alone": true,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": false
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "not the default (fails: under the cost budget)"
+   }
+  }
+ ],
+ "skipped": [],
+ "key": {
+  "sequences": 5,
+  "relations": 86,
+  "required": 67,
+  "loops": 18,
+  "gaps": 16,
+  "conflicts": 2
+ },
+ "calibration_after": "sequence_read@1"
+}
