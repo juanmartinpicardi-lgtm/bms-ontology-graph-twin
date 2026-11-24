@@ -87,6 +87,12 @@ SCENARIOS = {
     "bms: devices named by instance": {"csv": device_by_instance},
 }
 
+# W7: another integrator's BMS export, the binding scenarios of scoring/binding.py (BMS side; their keys and the
+# submittal-side drops are scored by `scripts/eval.py point_bind`).
+from projectmodel.scoring import binding as _binding  # noqa: E402
+SCENARIOS.update({f"bind: {_binding.TITLES[k]}": {"csv": _binding.csv_transform(k)}
+                  for k in ("names", "folders", "instances", "missing", "integrator")})
+
 def run(name, sc):
     words = sc.get("words", {})
     targets = {FILES[k]: fn for k, fn in words.items()}
