@@ -1,0 +1,237 @@
+# Answer key: Troop D's sequences of operation as control logic (W8, plan-workflow-ai §5.3).
+#
+# Hand-built from sheet M-304 of the public bid set (data/raw/troop_d/R2517-01_Final_Bid_Plans.pdf; the same sheet is
+# test_packages/troop_d/3_sequences.pdf, page 1). Written before the sequence_read prompt existed, from the drawing
+# text only. Never give it to the pipeline: scoring only (scoring/sequences.py).
+#
+# Ids are the ones the sequence_read job's candidate list uses (intake/sequence_ai.py):
+#   <TYPE>.<short>   a point of the unit type: the tag without its number (AHU01 -> AHU, CH01a -> CH, CWP02 -> CWP,
+#                    EF-RR -> EF-RR), and the submittal's short name (DA-T). Terminal units of one sequence share one
+#                    type (VAV01 and VAVE01 -> VAV), so VAV.HTG-O is the reheat output only the VAVE boxes have.
+#                    Unbound controllers count as the type their device names (CHW-PLANT, EF-LAB-1 -> EF-LAB).
+#   unit:<TYPE>      the equipment itself (the end of ba:requests).
+# A list is any-of: the relation counts as found if the answer names one of them (nine supply fan statuses prove one
+# supply fan wall; the relation is one fact). `rel` may be a list too, where the text supports either reading.
+# optional: true  stated loosely or only implied: a hit is not a false positive, a miss is not counted against recall.
+#
+# Relations (knowledge_model/ba_extension.ttl, as data/documents/alpha/sequences.yaml uses them):
+#   loop       setpoint -drives-> output, measured -feedback-> output (a loop with no setpoint point is a gap)
+#   requires   source is the condition (proof, interlock, enable, lockout, safety), target the point that acts
+#   switches   source is the mode or schedule, target the point whose operation it changes
+#   resets     source moves the target setpoint
+#   requests   source point asks the target equipment to run
+# gaps       what a step needs that the units do not have (a setpoint with no point, an input with no point)
+# conflicts  two statements that cannot both hold
+site: troop_d
+sheet: M-304
+file: 3_sequences.pdf
+page: 1
+sequences:
+
+  air-handling-unit:
+    title: Air Handling Unit
+    family: ahu
+    units: [AHU01]
+    loops:
+      - {name: Duct static pressure, section: E, role: static_pressure, setpoint: AHU.DAP-SP, measured: AHU.DA-P,
+         output: AHU.SF-O}
+      - {name: Building pressure (outside air damper), section: F, role: building_pressure, setpoint: AHU.BLDGP-SP,
+         measured: AHU.BLDG-P, output: AHU.MOA-O}
+      - {name: Building pressure (exhaust), section: F, role: building_pressure, setpoint: AHU.BLDGP-SP,
+         measured: AHU.BLDG-P, output: [AHU.EF1-O, AHU.EF2-O, AHU.EAD1-O, AHU.EAD2-O]}
+      - {name: Economizer mixed air limit, section: G, role: mixed_temp, setpoint: null, measured: AHU.MA-T,
+         output: AHU.ECON-O, gap: "maximum mixed air temperature 60 °F: the only mixed air setpoint (MA-SP) is 55 °F"}
+      - {name: Preheat, section: I, role: mixed_temp, setpoint: AHU.MA-SP, measured: AHU.MA-T, output: AHU.PH-O}
+      - {name: Humidification, section: J, role: return_humidity, setpoint: AHU.HUM-SP, measured: AHU.HUM-H,
+         output: AHU.HUM-O}
+      - {name: Cooling (discharge air temperature), section: K, role: supply_temp, setpoint: AHU.DA-SP,
+         measured: AHU.DA-T, output: AHU.CHWV-O}
+    interlocks:
+      - {section: E, from: [AHU.SF1-S, AHU.SF2-S, AHU.SF3-S, AHU.SF4-S, AHU.SF5-S, AHU.SF6-S, AHU.SF7-S, AHU.SF8-S,
+                            AHU.SF9-S], rel: requires, to: AHU.SF-C, note: proof of run within 30 s of command}
+      - {section: F, from: AHU.BLDG-P, rel: requires, to: [AHU.EF1-C, AHU.EF2-C], optional: true,
+         note: exhaust fan plenums enable above +0.02 in.wc}
+      - {section: G, from: AHU.OA-T, rel: requires, to: AHU.ECON-O, note: economizer enabled below 55 °F outdoor}
+      - {section: G, from: AHU.ECON-O, rel: [requires, drives], to: AHU.RAD-O, note: economizer open closes the return
+                                                                                     damper}
+      - {section: G, from: AHU.ECON-O, rel: requires, to: [AHU.EF1-C, AHU.EF2-C], note: economizer open enables the
+                                                                                          exhaust fans}
+      - {section: G, from: [AHU.RA-H, AHU.OA-H], rel: requires, to: AHU.ECON-O, note: economizer disabled above 60 %RH}
+      - {section: I, from: AHU.MA-T, rel: requires, to: AHU.PH-E, note: preheat enabled below 55 °F mixed air}
+      - {section: J, from: [AHU.RA-H, AHU.HUM-H], rel: requires, to: AHU.HUM-E,
+         note: humidifier enabled below 40 %RH return}
+      - {section: K, from: AHU.MA-T, rel: requires, to: AHU.CHWV-O, note: cooling valve opens above 55 °F mixed air}
+      - {section: K, from: AHU.OA-T, rel: requires, to: AHU.CHWV-O, note: cooling valve closed below 40 °F outdoor}
+      - {section: L, from: AHU.LT-A, rel: requires, to: AHU.SF-C, note: freezestat stops the supply fan}
+      - {section: L, from: AHU.LT-A, rel: requires, to: [AHU.EF1-C, AHU.EF2-C], note: freezestat stops the exhaust fans}
+      - {section: L, from: AHU.LT-A, rel: requires, to: AHU.CHWV-O, note: freezestat opens the cooling valve}
+      - {section: L, from: AHU.LT-A, rel: [requests, requires], to: [unit:CWP, CWP.C, CWP.O],
+         note: freezestat enables the chilled water pump at 25 %}
+      - {section: L, from: AHU.SMK-A, rel: requires, to: [AHU.SF-C, AHU.EF1-C, AHU.EF2-C], optional: true,
+         note: the text says fire alarm; the duct smoke detector is the nearest input}
+      - {section: L, from: AHU.HSP-A, rel: requires, to: AHU.SF-C, note: high static pressure switch}
+      - {section: L, from: AHU.HSP-A, rel: requires, to: [AHU.EF1-C, AHU.EF2-C]}
+      - {section: L, from: AHU.LSP-A, rel: requires, to: AHU.SF-C, note: low static pressure switch}
+      - {section: L, from: AHU.LSP-A, rel: requires, to: [AHU.EF1-C, AHU.EF2-C]}
+      - {section: L, from: AHU.LEAK-A, rel: requires, to: AHU.CHWV-O, note: drain pan water closes the valve}
+      - {section: M, from: AHU.SF-C, rel: requires, to: AHU.SF-O, note: supply fan VFD to 0 % when stopped}
+      - {section: M, from: [AHU.EF1-C, AHU.EF2-C], rel: requires, to: [AHU.EF1-O, AHU.EF2-O],
+         note: exhaust fan VFD to 0 % when stopped}
+      - {section: M, from: AHU.SF-C, rel: requires, to: [AHU.MOA-O, AHU.ECON-O], optional: true,
+         note: outside air dampers shut on shutdown}
+      - {section: L, from: AHU.SYS-RESET, rel: requires, to: [AHU.LT-A, AHU.HSP-A, AHU.LSP-A], optional: true,
+         note: safeties reset from the BAS}
+    resets: []
+    modes:
+      - {section: C, from: AHU.OCC-SCHEDULE, rel: switches, to: AHU.SF-C, note: supply fans run when occupied}
+      - {section: C, from: AHU.OCC-SCHEDULE, rel: switches, to: [AHU.EF1-C, AHU.EF2-C],
+         note: exhaust fans run when occupied}
+      - {section: H, from: AHU.OCC-SCHEDULE, rel: switches, to: AHU.MOA-O,
+         note: minimum outdoor air damper open when occupied, closed unoccupied}
+      - {section: C, from: AHU.OCC-SCHEDULE, rel: switches, to: [AHU.ECON-O, AHU.CHWV-O, AHU.PH-E, AHU.HUM-E],
+         optional: true, note: the other sequences run when occupied}
+    schedules:
+      - {section: B, text: "Occupied hours from the owner's schedule, set and adjustable in the BAS"}
+      - {section: C, text: "Occupied at all times"}
+    gaps:
+      - {section: G, text: "Economizer maximum mixed air temperature 60 °F: no setpoint point (MA-SP is the preheat's 55 °F)"}
+      - {section: L, text: "Fire alarm shutdown: no fire alarm input on the unit (only the duct smoke detector)"}
+      - {section: D, text: "Section lettering skips D"}
+    conflicts:
+      - {sections: [C, F, G], text: "C runs the exhaust fans whenever occupied; F and G enable them only on high
+          building pressure or an open economizer"}
+      - {sections: [K, M], text: "K closes the chilled water valve below 40 °F outdoor; M opens it 25 % below 32 °F
+          on shutdown"}
+
+  vav-terminal-units:
+    title: VAV Terminal Units
+    family: vav
+    units: [VAV01-VAV19, VAVE01-VAVE19]
+    loops:
+      - {name: Zone cooling, section: F, role: occ_cooling_sp, setpoint: VAV.OCC-CLG-SP, measured: VAV.ZN-T,
+         output: [VAV.SAFLOW-SP, VAV.DPR-O]}
+      - {name: Airflow, section: F, role: airflow, setpoint: VAV.SAFLOW-SP, measured: VAV.SA-F, output: VAV.DPR-O}
+      - {name: Zone heating, section: G, role: occ_heating_sp, setpoint: VAV.OCC-HTG-SP, measured: VAV.ZN-T,
+         output: [VAV.HTG-O, VAV.HTG-E]}
+      - {name: Reheat discharge temperature, section: G, role: discharge_temp, setpoint: null, measured: VAV.DA-T,
+         output: VAV.HTG-O, gap: "discharge air temperature 90 °F: no setpoint point"}
+    interlocks:
+      - {section: G, from: VAV.ZN-T, rel: requires, to: VAV.HTG-E, optional: true,
+         note: reheat enabled when the zone falls below setpoint}
+      - {section: G, from: VAV.HTG-E, rel: requires, to: VAV.HTG-O, optional: true}
+      - {section: G, from: VAV.OCC-HTG-SP, rel: drives, to: VAV.SAFLOW-SP, optional: true,
+         note: damper to the heating cfm setpoint}
+    resets: []
+    modes:
+      - {section: D, from: VAV.OCC-SCHEDULE, rel: switches, to: VAV.SAFLOW-SP,
+         note: unoccupied minimum airflow set to zero}
+      - {section: D, from: VAV.OCC-SCHEDULE, rel: switches,
+         to: [VAV.OCC-CLG-SP, VAV.UNOCC-CLG-SP, VAV.OCC-HTG-SP, VAV.UNOCC-HTG-SP], optional: true,
+         note: setback in unoccupied mode}
+      - {section: B, from: AHU.OCC-SCHEDULE, rel: switches, to: VAV.OCC-SCHEDULE, optional: true,
+         note: the building schedule; the submittal says it comes from AHU01}
+    schedules:
+      - {section: B, text: "Occupied hours from the owner's schedule, set and adjustable in the BAS"}
+    gaps:
+      - {section: G, text: "Reheat discharge air temperature 90 °F: no setpoint point"}
+      - {section: G, text: "Heating describes an electric reheat coil, but the 19 VAV boxes have no heater (only VAVE)"}
+      - {section: C, text: "Minimum, cooling and heating cfm setpoints: the boxes have a single airflow setpoint"}
+      - {section: E, text: "Section lettering skips E"}
+    conflicts: []
+
+  fvav-terminal-units:
+    title: FVAV Terminal Units
+    family: fvav
+    units: [FVAV01-FVAV18]
+    loops:
+      - {name: Zone cooling, section: F, role: occ_cooling_sp, setpoint: FVAV.OCC-CLG-SP, measured: FVAV.ZN-T,
+         output: [FVAV.SAFLOW-SP, FVAV.DPR-O]}
+      - {name: Airflow, section: F, role: airflow, setpoint: FVAV.SAFLOW-SP, measured: FVAV.SA-F, output: FVAV.DPR-O}
+      - {name: Zone heating, section: G, role: occ_heating_sp, setpoint: FVAV.OCC-HTG-SP, measured: FVAV.ZN-T,
+         output: [FVAV.HTG-O, FVAV.HTG-E]}
+      - {name: Reheat discharge temperature, section: G, role: discharge_temp, setpoint: null, measured: FVAV.DA-T,
+         output: FVAV.HTG-O, gap: "discharge air temperature 90 °F: no setpoint point"}
+    interlocks:
+      - {section: G, from: [FVAV.ZN-T, FVAV.HTG-E, FVAV.HTG-O], rel: requires, to: FVAV.FAN-C,
+         note: plenum fan runs in heating, off in cooling}
+      - {section: G, from: FVAV.ZN-T, rel: requires, to: FVAV.HTG-E, optional: true}
+      - {section: G, from: FVAV.HTG-E, rel: requires, to: FVAV.HTG-O, optional: true}
+      - {section: G, from: FVAV.FAN-S, rel: requires, to: [FVAV.HTG-E, FVAV.HTG-O], optional: true,
+         note: fan proof before heat, not stated}
+    resets: []
+    modes:
+      - {section: D, from: FVAV.OCC-SCHEDULE, rel: switches, to: FVAV.SAFLOW-SP,
+         note: unoccupied minimum airflow set to zero}
+      - {section: D, from: FVAV.OCC-SCHEDULE, rel: switches,
+         to: [FVAV.OCC-CLG-SP, FVAV.UNOCC-CLG-SP, FVAV.OCC-HTG-SP, FVAV.UNOCC-HTG-SP], optional: true}
+      - {section: B, from: AHU.OCC-SCHEDULE, rel: switches, to: FVAV.OCC-SCHEDULE, optional: true}
+    schedules:
+      - {section: B, text: "Occupied hours from the owner's schedule, set and adjustable in the BAS"}
+    gaps:
+      - {section: G, text: "Reheat discharge air temperature 90 °F: no setpoint point"}
+      - {section: C, text: "Minimum, cooling and heating cfm setpoints: the boxes have a single airflow setpoint"}
+      - {section: E, text: "Section lettering skips E"}
+    conflicts: []
+
+  chilled-water-system:
+    title: Chilled Water System
+    family: chiller
+    units: [CH01a, CH01b, CWP01, CWP02]
+    loops:
+      - {name: Leaving chilled water temperature, section: B, role: chw_leaving_temp, setpoint: CH.LCHWT-SP,
+         measured: CH.LEWT, output: CH.CH-E}
+      - {name: Pump speed on return water temperature, section: A, role: speed, setpoint: null,
+         measured: [AHU.CHWR-T, CHW-PLANT.CWR-T], output: CWP.O,
+         gap: "return water temperature 55 °F: no setpoint point"}
+    interlocks:
+      - {section: A, from: AHU.CHWV-O, rel: [requests, requires], to: [unit:CWP, CWP.C],
+         note: pumps enable when the air handler's valve opens, disable after 10 min closed}
+      - {section: A, from: CWP.A, rel: requires, to: CWP.C, note: standby pump enables when the duty pump alarms}
+      - {section: A, from: AHU.LT-A, rel: [requests, requires], to: [unit:CWP, CWP.C, CWP.O],
+         note: freezestat enables the duty pump at 25 %}
+      - {section: B, from: [CWP.S, CWP.C], rel: requires, to: CH.CH-E, note: chiller runs once the pumps are enabled}
+      - {section: B, from: CHW-PLANT.CW-F, rel: [requires, feedback], to: CH.CH-E,
+         note: lag chiller on above 140 gpm, off below 130 gpm}
+      - {section: B, from: CHW-PLANT.CW-F, rel: [requires, feedback], to: CH.ISOV-C,
+         note: lag chiller valve opens with it}
+      - {section: B, from: [CHW-PLANT.LAG-ON-SP, CHW-PLANT.LAG-OFF-SP], rel: [drives, requires], to: CH.CH-E,
+         optional: true}
+      - {section: B, from: CH.EVAP-FS, rel: requires, to: CH.CH-E, optional: true, note: flow proof, not stated}
+      - {section: A, from: AHU.CHWV-O, rel: requests, to: unit:CH, optional: true}
+    resets: []
+    modes:
+      - {section: A, from: CHW-PLANT.CWP-LEAD, rel: switches, to: CWP.C, note: duty and standby pumps}
+      - {section: B, from: CHW-PLANT.CH-LEAD, rel: switches, to: CH.CH-E, note: lead and lag chillers}
+      - {section: B, from: CHW-PLANT.CH-LEAD, rel: [switches, requires], to: CH.ISOV-C,
+         note: the lead chiller's valve opens}
+    schedules:
+      - {section: A, text: "Duty pump rotates every week (adj)"}
+      - {section: B, text: "Lead/lag chillers rotate every week (adj)"}
+    gaps:
+      - {section: A, text: "Return water temperature 55 °F for pump speed: no setpoint point"}
+      - {section: A, text: "Call for cooling: no point says the building calls for cooling"}
+      - {section: A, text: "Chiller minimum flow: no point or value for the pumps' minimum flow"}
+    conflicts: []
+
+  exhaust-fans:
+    title: Exhaust Fans
+    family: ef
+    units: [EF-CONT, EF-LAB, EF-LOCAL, EF-RR]
+    loops:
+      - {name: Lab exhaust duct static pressure, section: A, role: static_pressure, setpoint: null,
+         measured: EF-LAB.P, output: EF-LAB.BYP-O, gap: "duct static pressure setpoint: no point"}
+    interlocks:
+      - {section: B, from: [AHU.SF-C, AHU.SF1-S, AHU.SF2-S, AHU.SF3-S, AHU.SF4-S, AHU.SF5-S, AHU.SF6-S, AHU.SF7-S,
+                            AHU.SF8-S, AHU.SF9-S, unit:AHU], rel: requires, to: EF-RR.C,
+         note: EF-RR interlocked with AHU01}
+      - {section: C, from: EF-CONT.S, rel: requires, to: EF-CONT.C, optional: true, note: alarm when status is off}
+    resets: []
+    modes: []
+    schedules:
+      - {section: A, text: "Lab exhaust fans run continuously"}
+      - {section: C, text: "EF-CONT runs continuously"}
+    gaps:
+      - {section: A, text: "Lab exhaust duct static pressure setpoint: no point"}
+      - {section: C, text: "EF-CONT fan status alarm: no alarm point"}
+      - {section: D, text: "EF-LOCAL has local controls only: no BAS points expected"}
+    conflicts: []

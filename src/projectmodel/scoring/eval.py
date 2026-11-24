@@ -564,3 +564,221 @@ def write_report(r: dict, reports: Path = ROOT / "reports/eval") -> Path:
     p = reports / f"{r['job']}.json"
     p.write_text(json.dumps(r, indent=1) + "\n")
     return p
+
+
+# sequence_read (W8) ------------------------------------------------------------------------------------------------
+# The sequences of operation as control logic, scored per relation against the hand-built key
+# (data/ground_truth/<site>/sequences.yaml, scoring/sequences.py). Rows: the rules alone, each model alone, each model
+# plus the rules (the setup's reading). Calibration items are the model's relations (one judgment each), right when
+# the key has them; folds split by sequence section. Cost is per sequence and per 1,000 relations proposed.
+
+SETS["sequence_read"] = ["troop_d"]
+
+
+def sequence_read_questions(site: str = "troop_d") -> list:
+    """The job's questions on a dev set, as the setup asks them after its rules-only readers."""
+    from ..intake import sequence_ai
+    from ..intake.model import building
+
+    if site.split("/")[0] in HELD_OUT:
+        raise ValueError(f"{site} is held out")
+    run = _cache(("intake", site), lambda: intake_run(site))
+    return sequence_ai.questions(building(run["intake"]))
+
+
+def _sequence_rule_gaps(site: str) -> dict[str, list[dict]]:
+    """The rules' own gaps and conflicts per sequence (sequence_text's issues: lettering, reheat with no heater)."""
+    it = _cache(("intake", site), lambda: intake_run(site))["intake"]
+    out: dict[str, list[dict]] = {}
+    for f in it.facts(step="sequences", kind="issue"):
+        sid = next((s["id"] for s in it.facts(kind="sequence") if f["id"].startswith("issue:" + s["id"][4:] + "-")),
+                   None)
+        if sid:
+            out.setdefault(sid, []).append({"section": "", "text": f["label"]})
+    return out
+
+
+def _sequence_row(label: str, kind: str, logic: dict[str, dict], key: dict, rule_gaps: dict, cost: dict) -> dict:
+    from . import sequences as sq
+
+    per = {}
+    gaps_hit = gaps_n = conf_hit = conf_n = 0
+    for sid, k in key["sequences"].items():
+        m = logic.get(f"seq:{sid}", {"relations": [], "gaps": [], "conflicts": []})
+        per[sid] = sq.score(m["relations"], sq.key_relations(k))
+        g = sq.gaps_found(m["gaps"] + rule_gaps.get(f"seq:{sid}", []), k.get("gaps", []))
+        c = sq.conflicts_found(m["conflicts"], k.get("conflicts", []))
+        gaps_hit, gaps_n, conf_hit, conf_n = gaps_hit + sum(g), gaps_n + len(g), conf_hit + sum(c), conf_n + len(c)
+        per[sid]["gaps"] = {"key": len(g), "found": sum(g), "said": len(m["gaps"]) + len(rule_gaps.get(f"seq:{sid}", []))}
+        per[sid]["conflicts"] = {"key": len(c), "found": sum(c), "said": len(m["conflicts"])}
+    s = sq.summary(per)
+    n_rel = sum(len(m["relations"]) for m in logic.values())
+    row = {"label": label, "kind": kind, **s, "relations": n_rel,
+           "gaps": {"key": gaps_n, "found": gaps_hit}, "conflicts": {"key": conf_n, "found": conf_hit},
+           "usd_per_sequence": round(cost.get("usd", 0.0) / max(1, cost.get("sequences", 1)), 4),
+           "usd_per_1000": round(1000 * cost.get("usd", 0.0) / n_rel, 4) if n_rel else 0.0,
+           "seconds_per_sequence": round(cost.get("seconds", 0.0) / max(1, cost.get("sequences", 1)), 1),
+           "cost": cost,
+           "per_sequence": {sid: {k: v for k, v in x.items() if k not in ("hits", "false", "missed", "labels")}
+                            | {"missed": [f"{k['section']} {sorted(k['from'])[0]} {'/'.join(sorted(k['rel']))} "
+                                          f"{sorted(k['to'])[0]}" for k in x["missed"]],
+                               "false": [f"{r.get('section')} {r['from']} {r['rel']} {r['to']}" for r in x["false"]]}
+                            for sid, x in per.items()}}
+    row["_labels"] = {sid: x["labels"] for sid, x in per.items()}
+    return row
+
+
+def sequence_read_evaluate(sets: list[str] | None = None, models: list[str] | None = None, *, router=None,
+                           store=None, fit: bool = False, budget: float | None = None, log=print) -> dict:
+    from ..ai.calls import Router
+    from ..ai.jobs import get_job
+    from ..ai.prompts import load_prompt
+    from ..intake import sequence_ai
+    from . import sequences as sq
+
+    job = "sequence_read"
+    sets = sets or SETS[job]
+    if any(s.split("/")[0] in HELD_OUT for s in sets):
+        raise ValueError(f"held-out sets are never evaluated here: {sets}")
+    out = {"job": job, "sets": sets, "k_folds": K_FOLDS, "min_n": cal.MIN_N, "band_n": cal.BAND_N,
+           "tolerance": cal.TOLERANCE, "budget_usd_per_1000": budget, "prompt": load_prompt(job).ref,
+           "calibration_before": cal.load(job).ref or "none", "rows": [], "skipped": []}
+    fit_items: list[dict] = []
+    for site in sets:
+        key = sq.load_key(site)
+        qs = _cache(("seqq", site), lambda: sequence_read_questions(site))
+        rule_gaps = _sequence_rule_gaps(site)
+        out["key"] = {"sequences": len(key["sequences"]),
+                      "relations": sum(len(sq.key_relations(k)) for k in key["sequences"].values()),
+                      "required": sum(not r["optional"] for k in key["sequences"].values()
+                                      for r in sq.key_relations(k)),
+                      "loops": sum(len(k.get("loops", [])) for k in key["sequences"].values()),
+                      "gaps": sum(len(k.get("gaps", [])) for k in key["sequences"].values()),
+                      "conflicts": sum(len(k.get("conflicts", [])) for k in key["sequences"].values())}
+        rules_logic = {}
+        for q in qs:
+            q.answer = None
+            rules_logic[q.seq["id"]] = sequence_ai.merge(q, calibrate=False)
+        rules = _sequence_row(f"{site} · rules", "rules", rules_logic, key, rule_gaps,
+                              {"sequences": len(qs), "usd": 0.0, "seconds": 0.0, "calls": 0})
+        rules["set"] = site
+        rules["verdict"] = {"says": "rules: the baseline"}
+        rules.pop("_labels")
+        out["rows"].append(rules)
+        models_ = models or [*get_job(job).chain, *get_job(job).contender]
+        router = router or Router()
+        if not router.ready:
+            out["skipped"] += [{"model": m, "why": router.why_not_ready() or "model calls are off"} for m in models_]
+            log(f"{job}: model rows skipped ({out['skipped'][0]['why']})")
+            continue
+        if store is None:
+            from ..db.store import Store
+            store = Store(ROOT / "data/kg.sqlite")
+        for m in models_:
+            for q in qs:
+                q.answer = None
+            sequence_ai.ask_all(qs, router, store, f"eval:{job}", model=m, log=log)
+            failed = [q for q in qs if q.answer.get("error")]
+            if failed and all(("404" in q.answer["error"] or "not enabled" in q.answer["error"].lower())
+                              for q in failed) and len(failed) == len(qs):
+                out["skipped"].append({"model": m, "why": failed[0].answer["error"][:160]})
+                log(f"{job}: {m} skipped ({failed[0].answer['error'][:120]})")
+                continue
+            cost = {"sequences": len(qs), "failed": len(failed), "calls": sum(len(q.answer.get("calls", [])) for q in qs),
+                    "usd": round(sum(q.answer.get("cost_usd", 0.0) or q.answer.get("paid_usd", 0.0) for q in qs), 4),
+                    "seconds": round(sum(q.answer.get("latency_s", 0.0) for q in qs), 1),
+                    "logged": sum(bool(q.answer.get("logged")) for q in qs)}
+            both = {q.seq["id"]: sequence_ai.merge(q, calibrate=False) for q in qs if not q.answer.get("error")}
+            alone = {sid: dict(x, relations=[r for r in x["relations"] if r["method"] == "llm"])
+                     for sid, x in both.items()}
+            row_m = _sequence_row(f"{site} · {m}", "model", alone, key, rule_gaps, cost)
+            row_b = _sequence_row(f"{site} · {m} + rules", "model+rules", both, key, rule_gaps, cost)
+            items = []
+            for sid, x in alone.items():
+                labels = row_m["_labels"].get(sid[4:], {})
+                for r in x["relations"]:
+                    lab = labels.get((r["from"], r["rel"], r["to"]))
+                    if lab is None:
+                        continue
+                    items.append({"raw": r["raw"], "ok": lab != "fp", "keys": list(cal.model_keys(m, sequence_ai.CALLER)),
+                                  "group": f"{sid}:{r['section']}", "fixed": False, "set": site})
+            held = _heldout(job, items) if items else []
+            for row in (row_m, row_b):
+                row.pop("_labels")
+                row["set"], row["model"] = site, m
+                row["raw"] = cal.band_table([i["raw"] for i in items], [i["ok"] for i in items])
+                row["calibrated"] = cal.band_table(held, [i["ok"] for i in items])
+                row["raw_worst_gap"], row["calibrated_worst_gap"] = (cal.worst_gap(row["raw"]),
+                                                                     cal.worst_gap(row["calibrated"]))
+                row["model_relations"] = len(items)
+                row["rules_f1"] = rules["f1"]
+            row_b["verdict"] = cal.verdict(metric=row_b["f1"], rules_metric=rules["f1"], table=row_b["calibrated"],
+                                           usd_per_1000=row_b["usd_per_1000"], budget=budget)
+            row_m["verdict"] = {"says": "model alone, for reference (the setup uses model + rules)"}
+            out["rows"] += [row_m, row_b]
+            fit_items += items
+    if fit:
+        if not fit_items:
+            log(f"{job}: nothing to fit (no model relations); the stored calibration is unchanged")
+        else:
+            c = cal.fit(job, fit_items)
+            p = cal.save(c, {"sets": sets, "n": len(fit_items), "k_folds": K_FOLDS, "min_n": cal.MIN_N,
+                             "strata": sorted(k for k in c.curves if k != "*"),
+                             "heldout_worst_gap": {r["label"]: r.get("calibrated_worst_gap") for r in out["rows"]
+                                                   if r["kind"] == "model+rules"}})
+            out["calibration_after"] = c.ref
+            log(f"{job}: calibration {c.ref} written to {p.relative_to(ROOT)}")
+    return out
+
+
+def sequence_read_print(r: dict, out=print) -> None:
+    out(f"\n=== {r['job']} · sets {', '.join(r['sets'])} · prompt {r['prompt']} · calibration "
+        f"{r.get('calibration_after') or r['calibration_before']}")
+    if k := r.get("key"):
+        out(f"  key: {k['sequences']} sequences, {k['loops']} loops, {k['relations']} relations "
+            f"({k['required']} required), {k['gaps']} gaps, {k['conflicts']} conflicts")
+    for s in r["skipped"]:
+        out(f"  skipped {s['model']}: {s['why']}")
+    for row in r["rows"]:
+        out(f"\n  {row['label']}")
+        out(f"    relations       precision {_fmt(row['precision_pct'], '%')} ({row['tp']} right, {row['fp']} not in "
+            f"the key, {row['dup']} repeats), recall {_fmt(row['recall_pct'], '%')} ({row['found']} of "
+            f"{row['required']}), F1 {row['f1']}")
+        out("    by kind         " + ", ".join(f"{k} {v['found']}/{v['key']}" for k, v in row["by_kind"].items()
+                                               if v["key"]))
+        out(f"    gaps found      {row['gaps']['found']} of {row['gaps']['key']}; conflicts found "
+            f"{row['conflicts']['found']} of {row['conflicts']['key']}")
+        if row["kind"] != "rules":
+            c = row["cost"]
+            out(f"    cost            ${row['usd_per_sequence']} per sequence, ${row['usd_per_1000']} per 1,000 "
+                f"relations, {row['seconds_per_sequence']} s per sequence ({c['calls']} calls, {c['logged']} logged "
+                f"answers reused, {c['failed']} failed)")
+            out(f"    calibration     {'band':9}{'raw: n':>8} {'conf':>6} {'right':>6}   "
+                f"{'calibrated, held-out: n':>24} {'conf':>6} {'right':>6}   ({row['model_relations']} model relations)")
+            for a, b in zip(row["raw"], row["calibrated"]):
+                if a["n"] or b["n"]:
+                    out(f"                    {a['band']:9}{a['n']:>8} {_fmt(a['mean_conf_pct']):>6} "
+                        f"{_fmt(a['accuracy_pct']):>6}   {b['n']:>24} {_fmt(b['mean_conf_pct']):>6} "
+                        f"{_fmt(b['accuracy_pct']):>6}")
+            out(f"    worst gap (bands of {cal.BAND_N}+): raw {_fmt(row['raw_worst_gap'])} pts, calibrated "
+                f"{_fmt(row['calibrated_worst_gap'])} pts (target ≤ {cal.TOLERANCE:g})")
+        out(f"    verdict         {row['verdict']['says']}")
+
+
+_evaluate_jobs = evaluate
+_print_jobs = print_report
+
+
+def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None = None, *, router=None,  # noqa: F811
+             store=None, fit: bool = False, budget: float | None = None, max_questions: int | None = None,
+             log=print) -> dict:
+    if job == "sequence_read":
+        return sequence_read_evaluate(sets, models, router=router, store=store, fit=fit, budget=budget, log=log)
+    return _evaluate_jobs(job, sets, models, router=router, store=store, fit=fit, budget=budget,
+                          max_questions=max_questions, log=log)
+
+
+def print_report(r: dict, out=print) -> None:  # noqa: F811
+    if r["job"] == "sequence_read":
+        return sequence_read_print(r, out)
+    return _print_jobs(r, out)

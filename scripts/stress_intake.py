@@ -72,6 +72,11 @@ SCENARIOS = {
     "sequences: sections numbered 1. 2. 3.": {"words": {"sequences": per_word(section_numbers)}},
     "sequences: sections as bullets": {"words": {"sequences": per_word(lambda t: "•" if re.fullmatch(r"[A-H]\.", t)
                                                                          else t)}},
+    # W8: the sequence logic reads sections and phrases; another engineer's wording must still read or ask.
+    "sequences: 'AIR HANDLER' heading, sections lettered A)": {"words": {"sequences": per_word(
+        lambda t: "HANDLER" if t == "HANDLING" else f"{t[0]})" if re.fullmatch(r"[A-M]\.", t) else t)}},
+    "sequences: degrees written °F, 'interlocked' as 'tied'": {"words": {"sequences": per_word(
+        lambda t: {"degrees": "°F", "interlocked": "tied"}.get(t, t))}},
     "submittal: Niagara-style references": {"words": {"submittal": per_word(niagara_ref)}},
     "submittal: trunks named BUS-n": {"words": {"submittal": per_word(lambda t: t.replace("FC-", "BUS-"))}},
     "submittal: object types spelled out": {"words": {"submittal": per_word(lambda t: IO_LONG.get(t, t))}},
