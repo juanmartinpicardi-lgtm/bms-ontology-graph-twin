@@ -16,6 +16,8 @@ is built from the Troop D key, exactly:
     instances   device instances renumbered and devices named by them (DEV100037), object instances renumbered
     missing     8% of BMS objects and 8% of submittal points dropped (by a stable hash of the reference)
     integrator  all of it at once: names, folders, renumbered instances, missing points
+    integrator_names_only   the same with no descriptions (a Niagara station's export): added after the first
+                rules-only results showed the six above bound 99-100% by rules; frozen before anything ran on it
 
 Key: for every submittal point the scenario keeps, the BMS reference it is (after the rewrite), or None when the BMS
 side dropped it. The scenarios and keys were committed before any binder ran on them; they are never tuned after.
@@ -207,7 +209,7 @@ def drop_bms(rows: list[dict]) -> list[dict]:
 
 def dropped_submittal(scenario: str) -> set[str]:
     """Submittal references the scenario drops (the submittal does not list them)."""
-    if scenario not in ("missing", "integrator"):
+    if scenario not in ("missing", "integrator", "integrator_names_only"):
         return set()
     return {ref for ref in key_points() if _hash("submittal", ref) % 100 < DROP_PCT}
 
@@ -219,6 +221,10 @@ SCENARIOS: dict[str, Callable[[list[dict]], list[dict]]] = {
     "instances": lambda rows: renumber(rows, rename_devices=True),
     "missing": drop_bms,
     "integrator": lambda rows: drop_bms(renumber(folders(names(rows)), rename_devices=False)),
+    # Added after the first rules-only results (the six above bound 99-100% by rules): many exports (a Niagara
+    # station's) carry no description at all, so the name is all there is. Frozen before anything ran on it.
+    "integrator_names_only": lambda rows: [dict(r, Description="") for r in
+                                           drop_bms(renumber(folders(names(rows)), rename_devices=False))],
 }
 TITLES = {
     "baseline": "Troop D as generated (names line up)",
@@ -227,6 +233,7 @@ TITLES = {
     "instances": "device and object instances renumbered, devices named DEV<instance>",
     "missing": "8% of points missing on each side",
     "integrator": "another integrator: all of the above at once",
+    "integrator_names_only": "another integrator, names only (no descriptions)",
 }
 
 
@@ -258,3 +265,86 @@ def key(scenario: str) -> dict[str, str | None]:
     now = {r[ORIG]: r["Item Reference"] for r in variant_rows(scenario)}
     gone = dropped_submittal(scenario)
     return {ref: now.get(ref) for ref in key_points() if ref not in gone}
+
+
+# running and scoring ------------------------------------------------------------------------------------------------
+
+def base_intake():
+    """Troop D's guided setup, rules only (scoring/eval.py's intake run, cached): its submittal points, controllers
+    and equipment are the submittal side of every scenario."""
+    from . import eval as ev
+    return ev._cache(("intake", "troop_d"), lambda: ev.intake_run("troop_d"))["intake"]
+
+
+def run(scenario: str, ai=None, log=lambda m: None) -> dict:
+    """The BMS step on the scenario's export, with the submittal points it keeps; raw confidences. `ai`: an
+    intake.binding.AI to let the point_bind job bind what the rules leave."""
+    import tempfile
+
+    from .. import calibration as cal
+    from ..intake import bms
+
+    it = base_intake()
+    gone = dropped_submittal(scenario)
+    points = [p for p in it.facts(kind="point", live=True) if p["data"]["ref"] not in gone]
+    with tempfile.TemporaryDirectory() as d:
+        path = Path(d) / "5_bms_export.csv"
+        path.write_bytes(variant_csv(scenario))
+        with cal.disabled():
+            facts = bms.read(path, path.name, it.facts(kind="equipment", live=True),
+                             it.facts(kind="controller", live=True), points, log, ai=ai)
+    return {"scenario": scenario, "points": points, "facts": facts}
+
+
+def pairs(facts: list[dict]) -> dict[str, dict]:
+    """Submittal reference -> {bms, rule, raw, model} for every bound BMS object."""
+    out = {}
+    for f in facts:
+        d = f["data"]
+        if f["kind"] == "bms_object" and d.get("matched") and d.get("point"):
+            b = d.get("bind", {})
+            out[d["point"][3:]] = {"bms": d["ref"], "rule": b.get("rule", "reference"), "raw": b.get("raw", f["conf"]),
+                                   "model": b.get("model"), "device": d["device"]}
+    return out
+
+
+def items(scenario: str, got: dict[str, dict]) -> list[dict]:
+    """One scored item per binding made: raw confidence, right or not, calibration keys and fold group (the
+    submittal's device, the same in every scenario)."""
+    from .. import calibration as cal
+    from ..intake.binding import CALLER
+
+    k = key(scenario)
+    out = []
+    for sub, g in got.items():
+        model = g.get("model")
+        keys = cal.model_keys(model, CALLER) if model else (f"rule|{g['rule']}",)
+        out.append({"raw": float(g["raw"]), "ok": k.get(sub) == g["bms"], "keys": list(keys), "rule": g["rule"],
+                    "group": REF.match(sub)["device"], "set": scenario, "model": model, "fixed": False, "id": sub})
+    return out
+
+
+def score(scenario: str, got: dict[str, dict], conf: dict[str, float] | None = None,
+          threshold: float = 0.9) -> dict:
+    """Precision and recall of the bindings against the scenario's key; auto-bound: bindings whose (calibrated)
+    confidence `conf` reaches the threshold, as a share of the key's bindings, and how many of them are wrong."""
+    k = key(scenario)
+    want = {s: b for s, b in k.items() if b}
+    tp = sum(1 for s, g in got.items() if want.get(s) == g["bms"])
+    fp = len(got) - tp
+    precision = round(100 * tp / len(got), 1) if got else None
+    recall = round(100 * tp / len(want), 1) if want else None
+    f1 = round(2 * precision * recall / (precision + recall), 1) if precision and recall else 0.0
+    out = {"scenario": scenario, "points": len(k), "key_bindings": len(want), "bound": len(got), "right": tp,
+           "wrong": fp, "missed": len(want) - tp, "precision_pct": precision, "recall_pct": recall, "f1": f1,
+           "by_rule": {}}
+    for s, g in got.items():
+        r = out["by_rule"].setdefault(g["rule"], {"n": 0, "right": 0})
+        r["n"] += 1
+        r["right"] += want.get(s) == g["bms"]
+    if conf is not None:
+        auto = [s for s in got if conf.get(s, 0.0) >= threshold]
+        out["auto"] = {"threshold": threshold, "n": len(auto),
+                       "pct": round(100 * len(auto) / len(want), 1) if want else None,
+                       "wrong": sum(1 for s in auto if want.get(s) != got[s]["bms"])}
+    return out

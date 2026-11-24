@@ -15,6 +15,7 @@ DIGESTS = {
     "instances": "ddb22d5a8c4510a6",
     "missing": "1c13b5bfdd089820",
     "integrator": "4ecc0a24385d7725",
+    "integrator_names_only": "31b75538da82803c",  # added after the first rules-only results, before any run on it
 }
 
 

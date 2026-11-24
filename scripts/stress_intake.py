@@ -91,7 +91,7 @@ SCENARIOS = {
 # submittal-side drops are scored by `scripts/eval.py point_bind`).
 from projectmodel.scoring import binding as _binding  # noqa: E402
 SCENARIOS.update({f"bind: {_binding.TITLES[k]}": {"csv": _binding.csv_transform(k)}
-                  for k in ("names", "folders", "instances", "missing", "integrator")})
+                  for k in ("names", "folders", "instances", "missing", "integrator", "integrator_names_only")})
 
 def run(name, sc):
     words = sc.get("words", {})
