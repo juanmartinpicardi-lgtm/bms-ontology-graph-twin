@@ -293,7 +293,7 @@ def test_invalid_json_escalates_then_fails_when_every_model_fails():
 
 def test_planned_jobs_fail_clearly():
     with pytest.raises(ModelError, match="planned"):
-        run_job("plan_meaning", {}, router=router())
+        run_job("schedule_layout", {}, router=router())  # plan_meaning is built since W6
 
 
 # mapper ----------------------------------------------------------------------------------------------------------

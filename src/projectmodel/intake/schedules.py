@@ -240,10 +240,12 @@ def _checks(equip, plan_tags, log) -> list[dict]:
             log(f"Check: {len(missing)} tags on the plans have no schedule row ({shown})")
             for n in missing:  # still equipment: the plan shows it, the tag gives its class
                 p = plan_tags[n]
-                tag = tags.parse(p["data"]["tag"])
+                tag = tags.parse(p["data"]["tag"])  # None for a form the knowledge model can't read yet (the AI
+                # plan reader's FC-1.16, SAV-3): the unit stays, with no class
                 out.append({"id": f"equip:{n}", "kind": "equipment", "label": p["data"]["tag"],
-                            "data": {"tag": p["data"]["tag"], "normal": n, "class": tag.cls, "family": tag.family,
-                                     "terminal": tag.terminal, "schedule": "", "attrs": {},
+                            "data": {"tag": p["data"]["tag"], "normal": n, "class": tag.cls if tag else None,
+                                     "family": tag.family if tag else None,
+                                     "terminal": tag.terminal if tag else False, "schedule": "", "attrs": {},
                                      "note": "drawn on the plans, in no schedule: class from the tag only"},
                             "src": p["src"], "method": "rule", "conf": 0.8, "step": "schedules", "ask": None})
         off_plan = sorted(set(scheduled) - set(plan_tags), key=_natural)

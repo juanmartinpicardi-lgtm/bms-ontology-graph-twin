@@ -245,6 +245,17 @@ def test_refine_asks_once_per_sheet_logs_the_call_and_the_cost(tmp_path):
     assert s2["cached"] == 1 and s2["asked"] == 0 and not gemini.answers and len(gemini.requests) == 1
 
 
+def test_a_tag_only_the_model_placed_reaches_the_schedules_check():
+    """FC-1.16 (a dotted number the knowledge model's tag patterns don't read yet) placed by the model: the schedules
+    step keeps it as a unit drawn on the plans with no class, instead of crashing."""
+    from projectmodel.intake import schedules
+    p = {"id": "place:FC1.16", "kind": "placement", "data": {"tag": "FC-1.16", "normal": "FC1.16"},
+         "src": {"file": NAME, "page": 0}}
+    out = schedules._checks([], {"FC1.16": p}, lambda m: None)
+    unit = next(f for f in out if f["kind"] == "equipment")
+    assert unit["data"]["tag"] == "FC-1.16" and unit["data"]["class"] is None
+
+
 def test_merge_asks_when_the_model_reads_another_name():
     facts = rules_facts()
     pc = plan_ai.candidates(pdfdoc.words(PLANS, 0), 0, pdfdoc.page_size(PLANS, 0))
