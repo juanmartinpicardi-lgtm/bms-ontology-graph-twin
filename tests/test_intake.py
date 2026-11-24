@@ -1,5 +1,7 @@
 """Guided setup (src/projectmodel/intake): tag rules, each document reader, and the whole Troop D package end to end,
 scored against the Troop D answer key."""
+import json
+
 import pytest
 
 from projectmodel.intake import model, score, steps, tags
@@ -207,6 +209,49 @@ def test_publish_makes_a_project(intake):
     assert by_tag["AHU01"]["floor"] == "RF" and by_tag["UH01"]["type"] == "Unit heater"
     assert sum(1 for e in twin["equip"] if e.get("room")) >= 70
     assert publish(intake, store) == project and len(store.nodes(project, "equipment")) == len(eq)  # replaces
+
+
+def test_each_step_is_a_source_that_republishes_alone(intake):
+    """The setup's steps are sources: aliases name one unit across the schedule, the submittal and the BMS export;
+    the BMS confirms the submittal's points; re-publishing one step leaves the other steps' rows and people's
+    decisions as they are."""
+    from collections import defaultdict
+
+    from projectmodel import review
+    from projectmodel.db.store import Store
+    from projectmodel.intake.publish import publish
+    store = Store(":memory:")
+    project = publish(intake, store)
+    assert {"setup:plans", "setup:schedules", "setup:submittal", "setup:bms"} <= set(store.sources(project))
+    names = defaultdict(lambda: defaultdict(set))
+    for a in store.aliases(project):
+        names[a["node_id"]][a["scheme"]].add(a["value"])
+    three = {"schedule_tag", "submittal_ref", "bms_name"}
+    units = [n for n, a in names.items() if n.startswith("unit:") and three <= set(a)]
+    assert len(units) >= 50
+    for n in units:
+        a = names[n]
+        assert {store.resolve(project, s, v) for s in ("schedule_tag", "submittal_ref", "bms_name") for v in a[s]} == {n}
+    pts = [n for n, a in names.items() if n.startswith("pt:") and {"submittal_ref", "bms_name"} <= set(a)]
+    assert len(pts) >= 800
+
+    def agreed(rel):
+        return sum(1 for e in store.edges(project, rel) if e["confirmed_by"] == "agreement")
+    assert agreed("hasPoint") >= 800  # on the submittal's controller and on the same BMS device
+    assert all(r["status"] == "proposed" for r in store.conn.execute(  # disagreements wait for a person
+        "SELECT status FROM edges WHERE project = ? AND attrs LIKE '%\"conflict\"%'", (project,)))
+
+    some_point = store.nodes(project, "point")[0]["id"]
+    review.reject(store, project, [some_point], "sam")
+    others = lambda: {r["id"]: dict(r) | {"attrs": json.loads(r["attrs"])} for r in store.nodes(project)  # noqa: E731
+                      if r["source"] != "setup:bms"}
+    before = others()
+    store.remove_source(project, "setup:bms")  # as if the BMS export were taken away
+    assert agreed("hasPoint") == 0 and len(store.edges(project, "hasPoint")) >= 800  # rows stay, only less sure
+    publish(intake, store, steps=["bms"])
+    assert agreed("hasPoint") >= 800 and others() == before
+    publish(intake, store)  # everything again: the decision stays
+    assert {r["id"]: r["status"] for r in store.nodes(project, "point")}[some_point] == "rejected"
 
 
 def test_reset_and_delete(tmp_path):
