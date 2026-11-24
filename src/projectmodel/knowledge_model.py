@@ -28,10 +28,12 @@ BA = rdflib.Namespace("urn:projectmodel:ba#")
 REC = rdflib.Namespace("https://w3id.org/rec#")  # RealEstateCore, which replaces Brick 1.4's location classes
 
 # Relations the app writes that are not Brick's own. The sequences loader writes the control relations
-# (sequences.py reads CONTROL from here) and the guided setup writes `serves` (floor plans). The loader fails
-# unless every one is declared in ba_extension.ttl or listed in the Brick subset.
+# (sequences.py reads CONTROL from here) and the guided setup writes `serves` (floor plans) and the controls riser
+# (`isHostedBy`, `isOnNetwork`, `controls`: intake/publish.py). The loader fails unless every one is declared in
+# ba_extension.ttl or listed in the Brick subset.
 CONTROL_RELATIONS = ("drives", "feedback", "requires", "resets", "requests", "switches")
-WRITTEN_RELATIONS = (*CONTROL_RELATIONS, "serves")
+HARDWARE_RELATIONS = ("isHostedBy", "isOnNetwork", "controls")
+WRITTEN_RELATIONS = (*CONTROL_RELATIONS, "serves", *HARDWARE_RELATIONS)
 
 
 class KnowledgeModelError(ValueError):

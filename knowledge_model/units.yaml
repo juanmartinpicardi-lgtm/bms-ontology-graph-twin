@@ -1,0 +1,48 @@
+# Engineering units -> QUDT unit ids (the units Brick uses: brick:hasUnit unit:DEG_F).
+#
+# Each QUDT unit lists the spellings BMS exports, submittals and Haystack use for it. A spelling is matched after
+# trimming, case-insensitively, with "₂" read as "2" and inner spaces removed ("in. wc" = "in.wc"). A spelling that
+# could mean two units is left out on purpose ("F" may be Fahrenheit or farad, "MBH" is not a QUDT unit): it keeps its
+# raw text on the point and gets no QUDT id. Never guess.
+#
+# `quantity` is what the unit measures. The graph standard's validation compares it with the point's class: a
+# Temperature class with a pressure unit is a finding (see `class_words`).
+
+units:
+  DEG_F:          {quantity: temperature, spellings: ["°F", "ºF", "degF", "deg F", "deg-F", "°f", "fahrenheit", "°Fahrenheit"]}
+  DEG_C:          {quantity: temperature, spellings: ["°C", "ºC", "degC", "deg C", "deg-C", "celsius", "°Celsius"]}
+  K:              {quantity: temperature, spellings: ["K", "kelvin"]}
+  PERCENT:        {quantity: ratio,       spellings: ["%", "percent", "pct"]}
+  PERCENT_RH:     {quantity: humidity,    spellings: ["%RH", "% RH", "RH%", "%rh"]}
+  FT3-PER-MIN:    {quantity: flow,        spellings: ["cfm", "ft³/min", "ft3/min", "ft^3/min"]}
+  L-PER-SEC:      {quantity: flow,        spellings: ["L/s", "l/s", "lps"]}
+  M3-PER-HR:      {quantity: flow,        spellings: ["m³/h", "m3/h", "m³/hr", "m3/hr"]}
+  GAL_US-PER-MIN: {quantity: flow,        spellings: ["gpm", "gal/min", "GPM"]}
+  IN_H2O:         {quantity: pressure,    spellings: ["in.wc", "inwc", "in.w.c.", "\"wc", "in wc", "inH2O", "inH₂O", "in. H2O", "iwc", "in.wg", "\"wg"]}
+  PSI:            {quantity: pressure,    spellings: ["psi", "psig", "psid", "lbf/in²"]}
+  PA:             {quantity: pressure,    spellings: ["Pa", "pascal"]}
+  KiloPA:         {quantity: pressure,    spellings: ["kPa"]}
+  FT-PER-MIN:     {quantity: velocity,    spellings: ["fpm", "ft/min"]}
+  KiloW:          {quantity: power,       spellings: ["kW"]}
+  W:              {quantity: power,       spellings: ["W", "watt", "watts"]}
+  KiloW-HR:       {quantity: energy,      spellings: ["kWh", "kW-h", "kW·h", "kWhr"]}
+  A:              {quantity: current,     spellings: ["A", "amp", "amps", "ampere"]}
+  V:              {quantity: voltage,     spellings: ["V", "volt", "volts", "VAC", "VDC"]}
+  HZ:             {quantity: frequency,   spellings: ["Hz", "hertz"]}
+  REV-PER-MIN:    {quantity: speed,       spellings: ["rpm", "RPM", "rev/min"]}
+  HR:             {quantity: time,        spellings: ["h", "hr", "hrs", "hours"]}
+  MIN:            {quantity: time,        spellings: ["min", "minutes"]}
+  SEC:            {quantity: time,        spellings: ["s", "sec", "seconds"]}
+  PPM:            {quantity: concentration, spellings: ["ppm"]}
+
+# The word in a point class that names what it measures, and the quantities a unit on such a point may have. Checked
+# only when the point has a QUDT unit and its class has one of these words (Fan_Speed_Command in % says nothing).
+class_words:
+  Temperature: [temperature]
+  Humidity:    [humidity, ratio]
+  Pressure:    [pressure]
+  Flow:        [flow, velocity]
+  Power:       [power]
+  Energy:      [energy]
+  Current:     [current]
+  Frequency:   [frequency]
