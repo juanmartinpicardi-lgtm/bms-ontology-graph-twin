@@ -292,7 +292,7 @@ def verdict(*, metric: float | None, rules_metric: float | None, table: list[dic
     }
     failed = [k if v is False else f"{k}: unknown" for k, v in checks.items() if v is not True]
     return {"default_ok": not failed, "checks": checks, "budget_usd_per_1000": budget,
-            "says": "may be the default" if not failed else "not the default (" + "; ".join(failed) + ")"}
+            "says": "may be the default" if not failed else "not the default (fails: " + "; ".join(failed) + ")"}
 
 
 def budget_usd_per_1000() -> float | None:

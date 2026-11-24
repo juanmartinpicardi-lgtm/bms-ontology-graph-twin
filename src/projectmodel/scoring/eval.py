@@ -184,11 +184,10 @@ def _answers() -> dict:
 
 def _save_answers() -> None:
     ANSWERS.parent.mkdir(parents=True, exist_ok=True)
-    with _LOCK:
-        text = json.dumps(_answers(), indent=0, sort_keys=True)
-    tmp = ANSWERS.with_suffix(".tmp")
-    tmp.write_text(text)
-    tmp.replace(ANSWERS)
+    with _LOCK:  # one writer at a time: the threads share the temporary file
+        tmp = ANSWERS.with_suffix(".tmp")
+        tmp.write_text(json.dumps(_answers(), indent=0, sort_keys=True))
+        tmp.replace(ANSWERS)
 
 
 def point_class_questions(source: str) -> list[dict]:
@@ -281,7 +280,7 @@ def ask(q: dict, model: str, router, store) -> dict:
     ref = load_prompt("point_class").ref
     akey = json.dumps([model, ref, q["key"]])
     saved = _answers().get(akey)
-    if saved is not None:
+    if saved is not None and not saved.get("error"):  # failures saved by older runs are asked again
         return dict(saved, cached=True)
     if (a := logged_answer(store, model, q["values"])) is not None:
         with _LOCK:
@@ -295,7 +294,7 @@ def ask(q: dict, model: str, router, store) -> dict:
         a = {"error": str(e)[:300], "cost_usd": 0.0, "latency_s": 0.0, "calls": 1}
         if "not enabled" in str(e).lower() or "404" in str(e) or "403" in str(e):
             a["not_enabled"] = True
-            return a  # not saved: asked again once the model is enabled
+        return a  # not saved: a failure (a timeout, a model not enabled yet) is asked again on the next run
     with _LOCK:
         _answers()[akey] = a
     return a

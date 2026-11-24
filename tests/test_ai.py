@@ -191,6 +191,21 @@ def test_a_timed_out_call_is_logged_and_tried_once_more():
         router(ModelTimeout("a"), ModelTimeout("b"), "never").call("haiku", req, job="point_class", store=store)
 
 
+def test_a_stalled_gemini_stream_is_a_timeout_whatever_the_http_library():
+    from projectmodel.ai.providers import ModelTimeout
+
+    class ReadTimeout(Exception):  # requests' and httpx's names; neither needs to be installed
+        pass
+
+    class Models:
+        def generate_content_stream(self, **_):
+            raise ReadTimeout("read timed out after 90 s")
+
+    p = VertexGemini(READY, client=SimpleNamespace(models=Models()))
+    with pytest.raises(ModelTimeout, match="no answer in time"):
+        p.complete(get_model("argon"), ModelRequest("s", [{"role": "user", "content": "x"}]))
+
+
 def test_providers_have_a_request_timeout(monkeypatch):
     monkeypatch.setenv("PM_AI_TIMEOUT_S", "7")
     from projectmodel.ai.config import request_timeout_s

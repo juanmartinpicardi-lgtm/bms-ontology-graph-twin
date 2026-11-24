@@ -48,6 +48,21 @@ def not_enabled(code: Any, message: str) -> bool:
         "not found", "access", "data sharing", "permission", "not enabled", "not allowed"))
 
 
+_STALLED = ("Timeout", "ConnectError", "ConnectionError", "NetworkError", "RemoteProtocolError", "ProtocolError",
+            "ReadError")
+
+
+def _stalled(e: BaseException | None) -> bool:
+    """A timeout or a dropped connection, from whichever HTTP stack the SDK runs on (httpx, requests, urllib3...):
+    judged by the exception's type name along its cause chain, so no HTTP library has to be importable here."""
+    seen = 0
+    while e is not None and seen < 8:
+        if isinstance(e, (TimeoutError, ConnectionError)) or any(s in type(e).__name__ for s in _STALLED):
+            return True
+        e, seen = e.__cause__ or e.__context__, seen + 1
+    return False
+
+
 def _status_error(model: Model, code: Any, message: str) -> ModelError:
     text = f"{model.label}: HTTP {code}: {message}"
     return ModelNotEnabled(text) if not_enabled(code, message) else ModelError(text)
@@ -286,9 +301,7 @@ class VertexGemini:
         except errors.APIError as e:
             raise _status_error(model, e.code, str(e.message)) from e
         except Exception as e:
-            import httpx
-
-            if isinstance(e, (httpx.TimeoutException, httpx.NetworkError, httpx.RemoteProtocolError)):
+            if _stalled(e):
                 raise ModelTimeout(f"{model.label}: no answer in time: {type(e).__name__}: {e}") from e
             if type(e).__module__.startswith("google.auth"):
                 raise ModelUnavailable(f"Google credentials: {e}. Run `gcloud auth application-default login`.") from e
