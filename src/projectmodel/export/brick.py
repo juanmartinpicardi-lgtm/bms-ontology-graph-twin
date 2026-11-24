@@ -5,6 +5,7 @@ Terms come from the knowledge model, never from the store's spelling alone:
     - a class of the BA extension         -> ba:<Class>
     - a location (Floor, Room, HVAC_Zone…) -> the rec: class that replaces it in Brick 1.4 (W1: rec:Level, rec:Room…)
     - a relation of the subset             -> brick:<rel>;  a relation of the extension -> ba:<rel> (serves, drives…)
+    - a point's unit, where its source spelling names one QUDT unit (W4) -> brick:hasUnit unit:<QUDT id>
 A class or relation the knowledge model doesn't declare is still written (every fact the store holds is exported),
 under the pm-undeclared: namespace, and listed in `Export.summary["undeclared"]`, so nothing passes as Brick that
 isn't.
@@ -42,6 +43,7 @@ from ..knowledge_model import BA, BRICK, REC, KnowledgeModel
 ROOT = Path(__file__).resolve().parents[3]
 PM = rdflib.Namespace("urn:projectmodel:prov#")  # provenance vocabulary of this app
 UNDECLARED = rdflib.Namespace("urn:projectmodel:undeclared#")  # terms the knowledge model doesn't declare
+UNIT = rdflib.Namespace("http://qudt.org/vocab/unit/")  # QUDT units, as Brick uses them (brick:hasUnit unit:DEG_F)
 PROVENANCE = ("source", "source_file", "source_ref", "method", "confidence", "status", "confirmed_by", "revision")
 PM_TERM = {"source": PM.source, "source_file": PM.sourceFile, "source_ref": PM.sourceRef, "method": PM.method,
            "confidence": PM.confidence, "status": PM.status, "confirmed_by": PM.confirmedBy,
@@ -77,6 +79,8 @@ def relation_uri(km: KnowledgeModel, rel: str) -> rdflib.URIRef | None:
 
 def _relative(path: str) -> str:
     """A source file under the repo as a repo-relative path (no machine paths in an export)."""
+    if not Path(path).is_absolute():
+        return path
     try:
         return str(Path(path).resolve().relative_to(ROOT))
     except (ValueError, OSError):
@@ -110,6 +114,7 @@ def _bind(g: rdflib.Graph, project: str) -> None:
     g.bind("rec", REC)
     g.bind("pm", PM)
     g.bind("undeclared", UNDECLARED)
+    g.bind("unit", UNIT)
     g.bind("kg", base(project))
 
 
@@ -134,6 +139,7 @@ def export_project(store: Store, project: str, km: KnowledgeModel, include_propo
     undeclared: dict[str, set] = {"classes": set(), "relations": set()}
     nodes_by_status: Counter = Counter()
     nodes_by_kind: Counter = Counter()
+    units: Counter = Counter()
     exported: set[str] = set()
     for row in store.nodes(project):
         if row["status"] not in statuses:
@@ -149,8 +155,14 @@ def export_project(store: Store, project: str, km: KnowledgeModel, include_propo
                 undeclared["classes"].add(row["class"])
                 c = UNDECLARED[row["class"]]
             g.add((s, RDF.type, c))
+        attrs = json.loads(row["attrs"] or "{}")
+        if str(attrs.get("unit") or "").startswith("unit:"):  # a QUDT id (W4, units.yaml); none when ambiguous
+            g.add((s, BRICK.hasUnit, UNIT[attrs["unit"][5:]]))
+            units[row["kind"]] += 1
         prov.add((s, PM.id, rdflib.Literal(row["id"])))
         prov.add((s, PM.kind, rdflib.Literal(row["kind"])))
+        if attrs.get("units"):  # the unit as the source wrote it
+            prov.add((s, PM.unitText, rdflib.Literal(str(attrs["units"]))))
         _annotate(prov, s, row)
     edges_by_rel: Counter = Counter()
     edges_by_status: Counter = Counter()
@@ -186,6 +198,7 @@ def export_project(store: Store, project: str, km: KnowledgeModel, include_propo
         "nodes_by_kind": dict(sorted(nodes_by_kind.items())), "nodes_by_status": dict(nodes_by_status),
         "edges_by_relation": dict(sorted(edges_by_rel.items())), "edges_by_status": dict(edges_by_status),
         "edges_left_out": dict(sorted(left_out.items())),
+        "with_unit": dict(units),
         "undeclared": {k: sorted(v) for k, v in undeclared.items()},
         "triples": {"facts": len(g), "provenance": len(prov)},
     }

@@ -6,7 +6,7 @@
    "project": "alpha/names_paths",
    "scope": "confirmed",
    "engine": "shifty",
-   "seconds": 5.16,
+   "seconds": 5.7,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -40,6 +40,7 @@
      "hasPoint": 1379,
      "requires": 1
     },
+    "with_unit": {},
     "undeclared": {
      "classes": [],
      "relations": []
@@ -50,7 +51,7 @@
     }
    },
    "totals": {
-    "building_rules": 10,
+    "building_rules": 13,
     "building_rules_failing": 3,
     "building_failures": 149,
     "brick_shapes_failing": 3,
@@ -80,6 +81,28 @@
        ]
       }
      ]
+    },
+    {
+     "id": "shape:ControllerOnNetwork",
+     "origin": "building",
+     "label": "A field controller is on a network",
+     "comment": "Every field controller of a riser talks on a trunk (ba:isOnNetwork to a ba:Field_Network). One with none can't be reached, or the riser was misread.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:ControlsEquipment",
+     "origin": "building",
+     "label": "controls runs from a controller to equipment",
+     "comment": "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
     },
     {
      "id": "shape:EquipmentHasPoints",
@@ -128,8 +151,8 @@
     {
      "id": "shape:HostedByController",
      "origin": "building",
-     "label": "isHostedBy points at a controller",
-     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller).",
+     "label": "isHostedBy points at one controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller), and only one: a BACnet object lives in one device.",
      "severity": "violation",
      "targets": 0,
      "failed": 0,
@@ -248,6 +271,17 @@
      "targets": 0,
      "failed": 0,
      "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:TemperatureUnit",
+     "origin": "building",
+     "label": "A temperature point has a temperature unit",
+     "comment": "Where a temperature sensor or setpoint has a unit (brick:hasUnit, a QUDT unit), it must be a temperature: °F, °C or K. A pressure or flow unit means the class or the unit was misread. A point with no unit is not checked here.",
+     "severity": "violation",
+     "targets": 174,
+     "failed": 0,
+     "passed": 174,
      "failing": []
     },
     {
@@ -540,21 +574,21 @@
     }
    ],
    "name": "alpha",
-   "export_seconds": 0.87,
+   "export_seconds": 0.78,
    "roundtrip": {
     "ok": true,
     "nodes": 640,
     "edges": 760,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 12:03",
+   "generated": "2026-11-24 15:24",
    "turtle": "data/export/alpha.confirmed.ttl"
   },
   "with_proposed": {
    "project": "alpha/names_paths",
    "scope": "confirmed + proposed",
    "engine": "shifty",
-   "seconds": 6.38,
+   "seconds": 7.16,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -589,6 +623,7 @@
      "proposed": 141
     },
     "edges_left_out": {},
+    "with_unit": {},
     "undeclared": {
      "classes": [],
      "relations": []
@@ -599,7 +634,7 @@
     }
    },
    "totals": {
-    "building_rules": 10,
+    "building_rules": 13,
     "building_rules_failing": 1,
     "building_failures": 3,
     "brick_shapes_failing": 3,
@@ -645,6 +680,28 @@
        ]
       }
      ]
+    },
+    {
+     "id": "shape:ControllerOnNetwork",
+     "origin": "building",
+     "label": "A field controller is on a network",
+     "comment": "Every field controller of a riser talks on a trunk (ba:isOnNetwork to a ba:Field_Network). One with none can't be reached, or the riser was misread.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:ControlsEquipment",
+     "origin": "building",
+     "label": "controls runs from a controller to equipment",
+     "comment": "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
     },
     {
      "id": "shape:EquipmentHasPoints",
@@ -693,8 +750,8 @@
     {
      "id": "shape:HostedByController",
      "origin": "building",
-     "label": "isHostedBy points at a controller",
-     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller).",
+     "label": "isHostedBy points at one controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller), and only one: a BACnet object lives in one device.",
      "severity": "violation",
      "targets": 0,
      "failed": 0,
@@ -732,6 +789,17 @@
      "targets": 0,
      "failed": 0,
      "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:TemperatureUnit",
+     "origin": "building",
+     "label": "A temperature point has a temperature unit",
+     "comment": "Where a temperature sensor or setpoint has a unit (brick:hasUnit, a QUDT unit), it must be a temperature: °F, °C or K. A pressure or flow unit means the class or the unit was misread. A point with no unit is not checked here.",
+     "severity": "violation",
+     "targets": 883,
+     "failed": 0,
+     "passed": 883,
      "failing": []
     },
     {
@@ -1096,14 +1164,14 @@
     }
    ],
    "name": "alpha",
-   "export_seconds": 1.95,
+   "export_seconds": 1.96,
    "roundtrip": {
     "ok": true,
     "nodes": 2026,
     "edges": 2300,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 12:03",
+   "generated": "2026-11-24 15:24",
    "turtle": "data/export/alpha.with_proposed.ttl"
   }
  }

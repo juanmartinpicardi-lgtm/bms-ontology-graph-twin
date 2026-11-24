@@ -6,7 +6,7 @@
    "project": "troop-d/documents",
    "scope": "confirmed",
    "engine": "shifty",
-   "seconds": 3.81,
+   "seconds": 4.35,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -15,43 +15,52 @@
    "export": {
     "project": "troop-d/documents",
     "scope": "confirmed",
-    "nodes": 230,
-    "edges": 236,
+    "nodes": 306,
+    "edges": 512,
     "nodes_by_kind": {
+     "controller": 68,
      "equipment": 76,
-     "location": 83,
-     "point": 71
+     "location": 85,
+     "network": 4,
+     "point": 73
     },
     "nodes_by_status": {
-     "confirmed": 230
+     "confirmed": 306
     },
     "edges_by_relation": {
+     "controls": 66,
      "feeds": 58,
-     "hasPart": 79,
+     "hasLocation": 61,
+     "hasPart": 84,
      "hasPoint": 71,
+     "isHostedBy": 73,
+     "isOnNetwork": 71,
      "serves": 28
     },
     "edges_by_status": {
-     "confirmed": 236
+     "confirmed": 512
     },
     "edges_left_out": {
-     "hasPoint": 757
+     "hasLocation": 1,
+     "hasPoint": 757,
+     "isHostedBy": 774
     },
+    "with_unit": {},
     "undeclared": {
      "classes": [],
      "relations": []
     },
     "triples": {
-     "facts": 696,
-     "provenance": 5190
+     "facts": 1124,
+     "provenance": 9262
     }
    },
    "totals": {
-    "building_rules": 10,
-    "building_rules_failing": 2,
-    "building_failures": 79,
-    "brick_shapes_failing": 1,
-    "brick_violations": 0,
+    "building_rules": 13,
+    "building_rules_failing": 3,
+    "building_failures": 81,
+    "brick_shapes_failing": 3,
+    "brick_violations": 35,
     "brick_warnings": 26,
     "outside_project": {
      "violation": 38
@@ -67,6 +76,28 @@
      "targets": 0,
      "failed": 0,
      "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:ControllerOnNetwork",
+     "origin": "building",
+     "label": "A field controller is on a network",
+     "comment": "Every field controller of a riser talks on a trunk (ba:isOnNetwork to a ba:Field_Network). One with none can't be reached, or the riser was misread.",
+     "severity": "violation",
+     "targets": 67,
+     "failed": 0,
+     "passed": 67,
+     "failing": []
+    },
+    {
+     "id": "shape:ControlsEquipment",
+     "origin": "building",
+     "label": "controls runs from a controller to equipment",
+     "comment": "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other.",
+     "severity": "violation",
+     "targets": 64,
+     "failed": 0,
+     "passed": 64,
      "failing": []
     },
     {
@@ -282,9 +313,9 @@
      "label": "hasLocation points at a location",
      "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
      "severity": "violation",
-     "targets": 0,
+     "targets": 61,
      "failed": 0,
-     "passed": 0,
+     "passed": 61,
      "failing": []
     },
     {
@@ -301,12 +332,12 @@
     {
      "id": "shape:HostedByController",
      "origin": "building",
-     "label": "isHostedBy points at a controller",
-     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller).",
+     "label": "isHostedBy points at one controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller), and only one: a BACnet object lives in one device.",
      "severity": "violation",
-     "targets": 0,
+     "targets": 73,
      "failed": 0,
-     "passed": 0,
+     "passed": 73,
      "failing": []
     },
     {
@@ -315,9 +346,9 @@
      "label": "Every node has a class",
      "comment": "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it.",
      "severity": "violation",
-     "targets": 230,
+     "targets": 306,
      "failed": 0,
-     "passed": 230,
+     "passed": 306,
      "failing": []
     },
     {
@@ -326,10 +357,27 @@
      "label": "A point belongs to exactly one equipment",
      "comment": "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself.",
      "severity": "violation",
-     "targets": 71,
-     "failed": 0,
+     "targets": 73,
+     "failed": 2,
      "passed": 71,
-     "failing": []
+     "failing": [
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-S",
+       "label": "EF-LAB-1-S",
+       "class": "brick:Fan_Status",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-S",
+       "label": "EF-LAB-2-S",
+       "class": "brick:Fan_Status",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      }
+     ]
     },
     {
      "id": "shape:ServesLocation",
@@ -340,6 +388,17 @@
      "targets": 28,
      "failed": 0,
      "passed": 28,
+     "failing": []
+    },
+    {
+     "id": "shape:TemperatureUnit",
+     "origin": "building",
+     "label": "A temperature point has a temperature unit",
+     "comment": "Where a temperature sensor or setpoint has a unit (brick:hasUnit, a QUDT unit), it must be a temperature: °F, °C or K. A pressure or flow unit means the class or the unit was misread. A point with no unit is not checked here.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
      "failing": []
     },
     {
@@ -555,14 +614,270 @@
      ]
     },
     {
+     "id": "brick:Collection",
+     "origin": "brick",
+     "label": "Brick shape on brick:Collection",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 4,
+     "failed": 4,
+     "passed": 0,
+     "failing": [
+      {
+       "id": "net:TROOPD-NAE01/FC-1",
+       "label": "FC-1 · Plant, AHU, exhaust, gateways",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      },
+      {
+       "id": "net:TROOPD-NAE01/FC-2",
+       "label": "FC-2 · Level 1 terminal units",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      },
+      {
+       "id": "net:TROOPD-NAE01/FC-3",
+       "label": "FC-3 · Level 2 terminal units",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      },
+      {
+       "id": "net:TROOPD-NAE01/FC-4",
+       "label": "FC-4 · Level 3 terminal units",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "brick:Entity",
+     "origin": "brick",
+     "label": "Brick shape on brick:Entity",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 221,
+     "failed": 31,
+     "passed": 190,
+     "failing": [
+      {
+       "id": "ctrl:3104",
+       "label": "AHU-1 · FAC4911 + IOM4711",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3105",
+       "label": "CHW-PLANT · FAC2611",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3108",
+       "label": "CWP-1 · IOM2721",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3109",
+       "label": "CWP-2 · IOM2721",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3113",
+       "label": "EF-CONT · IOM2721",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:128 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3114",
+       "label": "MS-1, MS-2, MS-3 · LG PI485 BACnet gateway",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3206",
+       "label": "VAV-03 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:116 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3208",
+       "label": "VAV-05 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:137 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3209",
+       "label": "VAV-06 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:119 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3210",
+       "label": "VAV-07 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:118 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3212",
+       "label": "VAVE-01 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:105 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3217",
+       "label": "VAVE-06 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:123 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3219",
+       "label": "FVAV-01 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:104 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3220",
+       "label": "FVAV-02 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:101 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3307",
+       "label": "VAV-12 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:216 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3308",
+       "label": "VAV-13 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:208 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3310",
+       "label": "VAVE-09 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:201 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3311",
+       "label": "VAVE-10 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:201 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3313",
+       "label": "VAVE-12 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:211 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3315",
+       "label": "VAVE-14 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:214 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3317",
+       "label": "FVAV-04 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:201 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3318",
+       "label": "FVAV-05 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:202 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3320",
+       "label": "FVAV-08 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:207 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3321",
+       "label": "FVAV-09 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:209 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3405",
+       "label": "VAV-15 · VMA1930",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:333 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      }
+     ]
+    },
+    {
      "id": "bsh:DeprecationRuleForInstances",
      "origin": "brick",
      "label": "Brick shape on bsh:DeprecationRuleForInstances",
      "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
      "severity": "warning",
-     "targets": 173,
+     "targets": 247,
      "failed": 26,
-     "passed": 147,
+     "passed": 221,
      "failing": [
       {
        "id": "room:109",
@@ -768,21 +1083,21 @@
     }
    ],
    "name": "troop_d",
-   "export_seconds": 0.14,
+   "export_seconds": 0.62,
    "roundtrip": {
     "ok": true,
-    "nodes": 230,
-    "edges": 236,
+    "nodes": 306,
+    "edges": 512,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 12:03",
+   "generated": "2026-11-24 15:23",
    "turtle": "data/export/troop_d.confirmed.ttl"
   },
   "with_proposed": {
    "project": "troop-d/documents",
    "scope": "confirmed + proposed",
    "engine": "shifty",
-   "seconds": 4.55,
+   "seconds": 6.22,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -791,44 +1106,52 @@
    "export": {
     "project": "troop-d/documents",
     "scope": "confirmed + proposed",
-    "nodes": 989,
-    "edges": 1047,
+    "nodes": 1082,
+    "edges": 2098,
     "nodes_by_kind": {
+     "controller": 68,
      "equipment": 77,
-     "location": 84,
-     "point": 828
+     "location": 86,
+     "network": 4,
+     "point": 847
     },
     "nodes_by_status": {
-     "confirmed": 230,
-     "proposed": 759
+     "confirmed": 306,
+     "proposed": 776
     },
     "edges_by_relation": {
+     "controls": 66,
      "feeds": 62,
-     "hasLocation": 21,
-     "hasPart": 80,
+     "hasLocation": 83,
+     "hasPart": 85,
      "hasPoint": 828,
+     "isHostedBy": 847,
+     "isOnNetwork": 71,
      "serves": 56
     },
     "edges_by_status": {
-     "confirmed": 993,
+     "confirmed": 2044,
      "proposed": 54
     },
     "edges_left_out": {},
+    "with_unit": {
+     "point": 658
+    },
     "undeclared": {
      "classes": [],
      "relations": []
     },
     "triples": {
-     "facts": 3025,
-     "provenance": 21703
+     "facts": 4920,
+     "provenance": 35886
     }
    },
    "totals": {
-    "building_rules": 10,
-    "building_rules_failing": 0,
-    "building_failures": 0,
-    "brick_shapes_failing": 2,
-    "brick_violations": 19,
+    "building_rules": 13,
+    "building_rules_failing": 1,
+    "building_failures": 19,
+    "brick_shapes_failing": 3,
+    "brick_violations": 29,
     "brick_warnings": 49,
     "outside_project": {
      "violation": 38
@@ -844,6 +1167,28 @@
      "targets": 0,
      "failed": 0,
      "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:ControllerOnNetwork",
+     "origin": "building",
+     "label": "A field controller is on a network",
+     "comment": "Every field controller of a riser talks on a trunk (ba:isOnNetwork to a ba:Field_Network). One with none can't be reached, or the riser was misread.",
+     "severity": "violation",
+     "targets": 67,
+     "failed": 0,
+     "passed": 67,
+     "failing": []
+    },
+    {
+     "id": "shape:ControlsEquipment",
+     "origin": "building",
+     "label": "controls runs from a controller to equipment",
+     "comment": "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other.",
+     "severity": "violation",
+     "targets": 64,
+     "failed": 0,
+     "passed": 64,
      "failing": []
     },
     {
@@ -874,9 +1219,9 @@
      "label": "hasLocation points at a location",
      "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
      "severity": "violation",
-     "targets": 21,
+     "targets": 83,
      "failed": 0,
-     "passed": 21,
+     "passed": 83,
      "failing": []
     },
     {
@@ -893,12 +1238,12 @@
     {
      "id": "shape:HostedByController",
      "origin": "building",
-     "label": "isHostedBy points at a controller",
-     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller).",
+     "label": "isHostedBy points at one controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller), and only one: a BACnet object lives in one device.",
      "severity": "violation",
-     "targets": 0,
+     "targets": 847,
      "failed": 0,
-     "passed": 0,
+     "passed": 847,
      "failing": []
     },
     {
@@ -907,9 +1252,9 @@
      "label": "Every node has a class",
      "comment": "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it.",
      "severity": "violation",
-     "targets": 989,
+     "targets": 1082,
      "failed": 0,
-     "passed": 989,
+     "passed": 1082,
      "failing": []
     },
     {
@@ -918,10 +1263,163 @@
      "label": "A point belongs to exactly one equipment",
      "comment": "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself.",
      "severity": "violation",
-     "targets": 828,
-     "failed": 0,
+     "targets": 847,
+     "failed": 19,
      "passed": 828,
-     "failing": []
+     "failing": [
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CH-LEAD",
+       "label": "CH-LEAD",
+       "class": "brick:Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CW-F",
+       "label": "CW-F",
+       "class": "brick:Chilled_Water_Flow_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CWP-LEAD",
+       "label": "CWP-LEAD",
+       "class": "brick:Pump_Command",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CWR-T",
+       "label": "CWR-T",
+       "class": "brick:Entering_Chilled_Water_Temperature_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CWS-T",
+       "label": "CWS-T",
+       "class": "brick:Entering_Chilled_Water_Temperature_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.LAG-OFF-SP",
+       "label": "LAG-OFF-SP",
+       "class": "brick:Flow_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.LAG-ON-SP",
+       "label": "LAG-ON-SP",
+       "class": "brick:Enable_Command",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-BYP-O",
+       "label": "EF-LAB-1-BYP-O",
+       "class": "brick:Damper_Command",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-C",
+       "label": "EF-LAB-1-C",
+       "class": "brick:Fan_Command",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-F",
+       "label": "EF-LAB-1-F",
+       "class": "brick:Exhaust_Air_Flow_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-P",
+       "label": "EF-LAB-1-P",
+       "class": "brick:Exhaust_Air_Static_Pressure_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-S",
+       "label": "EF-LAB-1-S",
+       "class": "brick:Fan_Status",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD",
+       "label": "EF-LAB-1-SPD",
+       "class": "brick:Speed_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-BYP-O",
+       "label": "EF-LAB-2-BYP-O",
+       "class": "brick:Damper_Command",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-C",
+       "label": "EF-LAB-2-C",
+       "class": "brick:Fan_Command",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-F",
+       "label": "EF-LAB-2-F",
+       "class": "brick:Exhaust_Air_Flow_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-P",
+       "label": "EF-LAB-2-P",
+       "class": "brick:Exhaust_Air_Static_Pressure_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-S",
+       "label": "EF-LAB-2-S",
+       "class": "brick:Fan_Status",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-SPD",
+       "label": "EF-LAB-2-SPD",
+       "class": "brick:Speed_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      }
+     ]
     },
     {
      "id": "shape:ServesLocation",
@@ -932,6 +1430,17 @@
      "targets": 56,
      "failed": 0,
      "passed": 56,
+     "failing": []
+    },
+    {
+     "id": "shape:TemperatureUnit",
+     "origin": "building",
+     "label": "A temperature point has a temperature unit",
+     "comment": "Where a temperature sensor or setpoint has a unit (brick:hasUnit, a QUDT unit), it must be a temperature: °F, °C or K. A pressure or flow unit means the class or the unit was misread. A point with no unit is not checked here.",
+     "severity": "violation",
+     "targets": 361,
+     "failed": 0,
+     "passed": 361,
      "failing": []
     },
     {
@@ -946,15 +1455,107 @@
      "failing": []
     },
     {
+     "id": "brick:Collection",
+     "origin": "brick",
+     "label": "Brick shape on brick:Collection",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 4,
+     "failed": 4,
+     "passed": 0,
+     "failing": [
+      {
+       "id": "net:TROOPD-NAE01/FC-1",
+       "label": "FC-1 · Plant, AHU, exhaust, gateways",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      },
+      {
+       "id": "net:TROOPD-NAE01/FC-2",
+       "label": "FC-2 · Level 1 terminal units",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      },
+      {
+       "id": "net:TROOPD-NAE01/FC-3",
+       "label": "FC-3 · Level 2 terminal units",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      },
+      {
+       "id": "net:TROOPD-NAE01/FC-4",
+       "label": "FC-4 · Level 3 terminal units",
+       "class": "ba:Field_Network",
+       "messages": [
+        "Fewer than 1 values on path rec:includes [rec:includes]"
+       ]
+      }
+     ]
+    },
+    {
      "id": "brick:Entity",
      "origin": "brick",
      "label": "Brick shape on brick:Entity",
      "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
      "severity": "violation",
-     "targets": 905,
-     "failed": 19,
-     "passed": 886,
+     "targets": 996,
+     "failed": 25,
+     "passed": 971,
      "failing": [
+      {
+       "id": "ctrl:3104",
+       "label": "AHU-1 · FAC4911 + IOM4711",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3105",
+       "label": "CHW-PLANT · FAC2611",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3108",
+       "label": "CWP-1 · IOM2721",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3109",
+       "label": "CWP-2 · IOM2721",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3113",
+       "label": "EF-CONT · IOM2721",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:128 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
+      {
+       "id": "ctrl:3114",
+       "label": "MS-1, MS-2, MS-3 · LG PI485 BACnet gateway",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
+       ]
+      },
       {
        "id": "unit:AHU1",
        "label": "AHU01",
@@ -1115,9 +1716,9 @@
      "label": "Brick shape on bsh:DeprecationRuleForInstances",
      "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
      "severity": "warning",
-     "targets": 954,
+     "targets": 1045,
      "failed": 49,
-     "passed": 905,
+     "passed": 996,
      "failing": [
       {
        "id": "room:101",
@@ -1323,14 +1924,14 @@
     }
    ],
    "name": "troop_d",
-   "export_seconds": 0.84,
+   "export_seconds": 2.17,
    "roundtrip": {
     "ok": true,
-    "nodes": 989,
-    "edges": 1047,
+    "nodes": 1082,
+    "edges": 2098,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 12:04",
+   "generated": "2026-11-24 15:24",
    "turtle": "data/export/troop_d.with_proposed.ttl"
   }
  }

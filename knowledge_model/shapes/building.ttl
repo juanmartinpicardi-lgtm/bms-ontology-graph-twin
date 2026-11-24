@@ -5,6 +5,7 @@
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh:    <http://www.w3.org/ns/shacl#> .
 @prefix shape: <urn:projectmodel:shapes#> .
+@prefix unit:  <http://qudt.org/vocab/unit/> .
 
 # Building rules: what a usable building graph must hold, on top of Brick's own shapes.
 # Run by scripts/export_brick.py on every export (src/projectmodel/export/shacl.py), with Brick 1.4.4 and the BA
@@ -66,13 +67,47 @@ shape:ServesLocation a sh:NodeShape ;
     ] .
 
 shape:HostedByController a sh:NodeShape ;
-    rdfs:label "isHostedBy points at a controller" ;
-    rdfs:comment "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller)." ;
+    rdfs:label "isHostedBy points at one controller" ;
+    rdfs:comment "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller), and only one: a BACnet object lives in one device." ;
     sh:targetSubjectsOf ba:isHostedBy ;
     sh:property [
         sh:path ba:isHostedBy ;
         sh:class brick:Controller ;
-        sh:message "isHostedBy ends on something that is not a controller." ;
+        sh:maxCount 1 ;
+        sh:message "isHostedBy ends on something that is not a controller, or on more than one." ;
+    ] .
+
+shape:ControllerOnNetwork a sh:NodeShape ;
+    rdfs:label "A field controller is on a network" ;
+    rdfs:comment "Every field controller of a riser talks on a trunk (ba:isOnNetwork to a ba:Field_Network). One with none can't be reached, or the riser was misread." ;
+    sh:targetClass ba:Field_Controller ;
+    sh:property [
+        sh:path ba:isOnNetwork ;
+        sh:minCount 1 ;
+        sh:class ba:Field_Network ;
+        sh:message "The controller is on no field network, or on something that is not one." ;
+    ] .
+
+shape:ControlsEquipment a sh:NodeShape ;
+    rdfs:label "controls runs from a controller to equipment" ;
+    rdfs:comment "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other." ;
+    sh:targetSubjectsOf ba:controls ;
+    sh:class brick:Controller ;
+    sh:property [
+        sh:path ba:controls ;
+        sh:class brick:Equipment ;
+        sh:message "controls ends on something that is not equipment." ;
+    ] ;
+    sh:message "controls starts from something that is not a controller." .
+
+shape:TemperatureUnit a sh:NodeShape ;
+    rdfs:label "A temperature point has a temperature unit" ;
+    rdfs:comment "Where a temperature sensor or setpoint has a unit (brick:hasUnit, a QUDT unit), it must be a temperature: °F, °C or K. A pressure or flow unit means the class or the unit was misread. A point with no unit is not checked here." ;
+    sh:targetClass brick:Temperature_Sensor, brick:Temperature_Setpoint ;
+    sh:property [
+        sh:path brick:hasUnit ;
+        sh:in ( unit:DEG_F unit:DEG_C unit:K ) ;
+        sh:message "The temperature point's unit is not a temperature unit." ;
     ] .
 
 shape:FeedsBetweenEquipment a sh:NodeShape ;

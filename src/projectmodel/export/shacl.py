@@ -26,12 +26,14 @@ from rdflib.graph import ReadOnlyGraphAggregate
 from rdflib.namespace import OWL, RDF, RDFS, SH
 
 from ..knowledge_model import KnowledgeModel
-from .brick import PM, Export, base
+from ..units import load as load_units
+from .brick import PM, UNIT, Export, base
 
 ROOT = Path(__file__).resolve().parents[3]
 SHAPES_DIR = ROOT / "knowledge_model" / "shapes"
 OURS = "urn:projectmodel:shapes#"
 FIRST_FAILING = 25  # failing nodes kept per rule in the report
+QUDT = rdflib.Namespace("http://qudt.org/schema/qudt/")
 BSH = rdflib.Namespace("https://brickschema.org/schema/BrickShape#")
 KG_IRI = re.compile(r"<(urn:projectmodel:kg:[^>]+)>")
 ANY_IRI = re.compile(r"<([a-z]+:[^>\s]+)>")
@@ -63,10 +65,17 @@ def _name_shapes(g: rdflib.Graph) -> rdflib.Graph:
 
 def _ontology(km: KnowledgeModel) -> rdflib.Graph:
     """The knowledge model's ontology (Brick + BA, with Brick's shapes) with its shapes named, made once per model.
-    Read only: callers never add to it."""
+    Read only: callers never add to it.
+
+    QUDT itself is not loaded with Brick, so a unit the export writes (unit:DEG_F) would fail Brick's hasUnit shape
+    (sh:class qudt:Unit) for lack of a type. The units of knowledge_model/units.yaml are declared qudt:Unit here, as
+    QUDT declares them; a unit outside that file still fails."""
     if id(km.graph) not in _NAMED:
         _NAMED.clear()
-        _NAMED[id(km.graph)] = _name_shapes(km.graph)
+        g = _name_shapes(km.graph)
+        for uid in load_units()["quantity"]:
+            g.add((UNIT[uid.split(":", 1)[1]], RDF.type, QUDT.Unit))
+        _NAMED[id(km.graph)] = g
     return _NAMED[id(km.graph)]
 
 
