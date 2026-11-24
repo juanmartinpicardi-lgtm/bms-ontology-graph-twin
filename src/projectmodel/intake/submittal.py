@@ -2,9 +2,11 @@
 schedule checked against the floor plans, and the contractor's RFIs.
 
 Rules:
-1. Riser rows: address, device, controller, device instance, location, under a "FC-n" trunk heading.
+1. Riser rows: address, device, controller, device instance, location, under a "FC-n" trunk heading (the heading's
+   text names the trunk: "FC-1 - Plant, AHU, exhaust, gateways").
 2. Point rows end with a Metasys reference NAE/FC-n.DEVICE.POINT. A reference with "FC-x" is a typical: it is
-   applied to every device of the same tag prefix on the riser.
+   applied to every device of the same tag prefix on the riser. A row's units, BACnet object type and instance are
+   kept as written (a typical row often gives no object: the BMS export does).
 3. A device is linked to scheduled equipment when their tags are the same tag (VAVE-07 = VAVE07). A device that
    matches nothing is asked about, with the nearest candidates.
 4. A point's class comes from its description through the knowledge model's name rules (the same matcher the BMS
@@ -20,7 +22,7 @@ from pathlib import Path
 
 from . import pdfdoc, tags
 
-TRUNK = re.compile(r"^(FC-\d+)\s+-\s+")
+TRUNK = re.compile(r"^(FC-\d+)\s+-\s+(.*)$")
 RISER = re.compile(r"^(?P<addr>\d{1,3}) (?P<dev>[A-Z][A-Z0-9-]+) (?P<ctrl>.+?) (?P<inst>\d{4,7}) (?P<loc>.+)$")
 IO = r"AI|AO|BI|BO|AV|BV|MV|BN"
 POINT = re.compile(rf"^(?P<pt>\S+) (?P<desc>.+?) (?P<io>{IO})(?: (?P<units>\S+))? (?P<term>(?:UI|AO|BI|BO)\d+|software|BACnet)"
@@ -77,6 +79,7 @@ def read(paths: list[tuple[Path, str]], equipment: list[dict], placements: list[
     riser, points, typicals, rooms, rfis, unread = [], [], [], [], [], []
     for path, name in paths:
         trunk, trunk_sheet = None, None  # a riser table may run onto the next page of the same sheet
+        trunk_name = None
         for page in range(pdfdoc.page_count(path)):
             ws = pdfdoc.words(path, page)
             src = {"file": name, "page": page, "sheet": _sheet(ws)}
@@ -86,14 +89,15 @@ def read(paths: list[tuple[Path, str]], equipment: list[dict], placements: list[
             for l in pdfdoc.lines(ws, gap=1e9):
                 t = l.text.strip()
                 if m := TRUNK.match(t):
-                    trunk, trunk_sheet = m.group(1), src["sheet"]
+                    trunk, trunk_sheet, trunk_name = m.group(1), src["sheet"], m.group(2).strip()
                 elif (m := POINT.match(t)):
                     row = m.groupdict() | {"src": src | {"bbox": l.bbox}}
                     (typicals if ".FC-x." in row["ref"] or "/FC-x." in row["ref"] else points).append(row)
                 elif (m := ROOM_ROW.match(t)):
                     rooms.append(m.groupdict() | {"src": src | {"bbox": l.bbox}})
                 elif trunk and (m := RISER.match(t)):
-                    riser.append(m.groupdict() | {"trunk": trunk, "src": src | {"bbox": l.bbox}})
+                    riser.append(m.groupdict() | {"trunk": trunk, "trunk_name": trunk_name,
+                                                  "src": src | {"bbox": l.bbox}})
                 elif (m := RFI.match(t)):
                     rfis.append({"id": m.group(1), "text": m.group(2), "src": src | {"bbox": l.bbox}})
                 elif REF_LIKE.search(t):
@@ -146,7 +150,8 @@ def _devices(riser, equipment, log) -> list[dict]:
     for r in riser:
         norm = tags.normal(r["dev"])
         eq = by_normal.get(norm) if norm else None
-        data = {"device": r["dev"], "controller": r["ctrl"], "trunk": r["trunk"], "address": int(r["addr"]),
+        data = {"device": r["dev"], "controller": r["ctrl"], "trunk": r["trunk"], "trunk_name": r.get("trunk_name"),
+                "address": int(r["addr"]),
                 "instance": int(r["inst"]), "location": r["loc"], "equip": eq["data"]["normal"] if eq else None}
         conf, ask = 0.95, None
         if eq and eq["data"]["tag"] != r["dev"]:
@@ -193,6 +198,7 @@ def _points(points, typicals, riser, log) -> list[dict]:
         out.append({"id": f"pt:{r['ref']}", "kind": "point", "label": f"{device}.{r['pt']}",
                     "data": {"ref": r["ref"], "device": device, "short": r["pt"], "description": r["desc"],
                              "io": r["io"], "units": r.get("units") or "", "object": r.get("obj") or "",
+                             "object_instance": int(r["inst"]) if r.get("inst") else None,
                              "class": cls, "class_conf": c, "typical": r.get("typical"),
                              **({"term": True} if term else {})},
                     "src": r["src"], "method": "rule", "conf": conf, "step": "submittal", "ask": None})

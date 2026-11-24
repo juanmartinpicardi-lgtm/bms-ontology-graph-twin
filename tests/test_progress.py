@@ -49,6 +49,9 @@ def _docs_project(tmp_path) -> Store:
                                              n("room:102", "location", "102", "Room")],
                        [e("floor:L1", "hasPart", "room:101"), e("floor:L1", "hasPart", "room:102"),
                         e("unit:VAV1", "serves", "room:101")])
+    store.write_source(P, "setup:project", 1, [n("site", "location", "1 Main St", "Site"),
+                                               n("building", "location", "Tiny", "Building")],
+                       [e("site", "hasPart", "building"), e("building", "hasPart", "floor:L1")])
     store.write_source(P, "setup:submittal", 1, claims=[c("unit:AHU1"), c("unit:VAV1"),
                                                         c("unit:AHU1", "feeds", "unit:VAV1"),
                                                         c("unit:VAV1", "serves", "room:101")])
@@ -66,7 +69,7 @@ def test_documents_project_measures_spaces_nameplate_and_agreement(tmp_path):
     assert not r["demo"]
     assert [lay["id"] for lay in r["layers"]] == [lay["id"] for lay in LAYERS]
     assert next(lay for lay in r["layers"] if lay["id"] == "spaces")["pct"] == 100.0
-    assert all(n["fact"] not in ("spaces", "serves", "nameplate", "agreement") for n in r["next"])
+    assert all(n["fact"] not in ("spaces", "serves", "site", "nameplate", "agreement") for n in r["next"])
 
 
 @needs_db
