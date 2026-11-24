@@ -37,5 +37,5 @@ def test_cards_count_what_they_say(tmp_path):
 
 def test_an_empty_project_has_zero_cards_and_no_twin_card_without_a_payload(tmp_path):
     cards = completeness(Store(tmp_path / "kg.sqlite"), "none")
-    assert [c.key for c in cards] == ["trusted", "grouped", "classed", "linked"]
+    assert [c.key for c in cards] == ["trusted", "grouped", "classed", "linked", "controlled", "units", "site"]
     assert all(c.share == 0 and c.tone == "bad" for c in cards)

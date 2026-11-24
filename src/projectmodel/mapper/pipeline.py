@@ -12,7 +12,8 @@ Conventions (km.conventions, see conventions.py) take part as rules: a class hin
 before anything else and is not refined by templates (method=rule); abbreviations and equipment patterns
 feed steps 2-3; ignore rules flag points for review. Whatever a convention decided or contributed is
 recorded in attrs.convention, e.g. ["site/alpha:abbreviations.cc"].
-Nothing is written back to any source.
+A point's units, when its record has them, are kept as written with their QUDT id (units.py); they do not take part
+in classification. Nothing is written back to any source.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from ..calibration import calibrate_points
 from ..db.store import Edge, Node, Store
 from ..knowledge_model import KnowledgeModel, Template
 from ..records import RawRecord
+from ..units import point_unit
 from .classify import ClassGuess, ClassMatcher
 from .llm import LLMProvider, LLMRequest, NoLLM
 
@@ -335,6 +337,7 @@ class Mapper:
                 attrs["convention"] = used
             if rule := self.ignore_rule(r.name):
                 attrs["ignore"] = {"reason": rule.reason, "convention": rule.origin}
+            attrs.update(point_unit(r.units))  # {} when the export carries none (Alpha's blind exports)
             nodes.append(Node(pid, "point", r.name, cls, source_file, str(r.source_row), method, conf, attrs,
                               aliases=_point_aliases(r)))
             if pid in member:

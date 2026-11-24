@@ -43,13 +43,16 @@ from pathlib import Path
 METHODS = ("parsed", "rule", "template", "llm", "human", "document")
 STATUSES = ("proposed", "confirmed", "rejected")
 CONFIRMED_BY = ("human", "agreement", "auto")
-KINDS = ("point", "equipment", "location")  # location: a floor or room of a building added from its documents
+# location: a site, building, floor, zone or room of a building added from its documents; controller and network: the
+# BACnet devices and trunks of a controls riser or a BMS export (ba:Field_Controller, ba:Field_Network)
+KINDS = ("point", "equipment", "location", "controller", "network")
 REVIEW = "review"  # the source of rows a person decided in the app (review.py): no source run replaces them
 ALIAS_SCHEMES = ("schedule_tag", "bms_name", "bms_path", "device_object", "bacnet_device", "submittal_ref",
                  "haystack_id", "export_id")
 # Relations where a second, different answer from another source is a conflict, keyed by the end that has one answer:
-# a point is on one equipment, a unit is in one place and serves one room here, a unit has one feeder per medium.
-FUNCTIONAL = {"hasPoint": "dst", "hasLocation": "src", "serves": "src", "feeds": "dst"}
+# a point is on one equipment and lives in one controller, a unit is in one place and serves one room here, a unit has
+# one feeder per medium.
+FUNCTIONAL = {"hasPoint": "dst", "hasLocation": "src", "serves": "src", "feeds": "dst", "isHostedBy": "src"}
 
 SCHEMA = f"""
 CREATE TABLE IF NOT EXISTS nodes (

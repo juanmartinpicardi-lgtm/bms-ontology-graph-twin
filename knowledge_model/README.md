@@ -9,10 +9,11 @@ The definitions that are the same for every project. Loaded and validated by
 | `ba_extension.ttl` | Building-automation classes Brick lacks (controllers, field networks, unit heater, software/diagnostic/cost points, schedules, trend logs, alarm definitions) and 10 relations (3 hardware links, 6 control relations, `serves`). |
 | `templates/*.yaml` | Equipment templates (AHU, VAV, FCU, chiller, boiler, pump): point slots, name patterns, expected feeds. See `templates/README.md`. |
 | `name_rules/abbreviations.yaml` | Tokenizer settings, phrase rules, controlled vocabulary, abbreviations (with alternatives for ambiguous ones), worked examples. |
+| `units.yaml` | Engineering units as sources spell them (°F, cfm, in.wc...) → QUDT unit ids (`unit:DEG_F`), the units Brick uses; what each measures, checked against the point's class. Read by `src/projectmodel/units.py`. |
 
 Validation fails the load if: a class is missing or deprecated in Brick 1.4.4, an equipment/point class
 is listed under the wrong kind, an extension class clashes with Brick or has an unknown parent, a
-template references an unknown class/template/relation or has a bad regex, a tag prefix proposes a class that is not an equipment class of the model, a relation the app writes (`WRITTEN_RELATIONS` in the loader: the six control relations and `serves`) is declared nowhere, an extension relation has no label and comment or a parent relation Brick lacks, an abbreviation expands to a
+template references an unknown class/template/relation or has a bad regex, a tag prefix proposes a class that is not an equipment class of the model, a relation the app writes (`WRITTEN_RELATIONS` in the loader: the six control relations, `serves`, and the riser's `isHostedBy`, `isOnNetwork`, `controls`) is declared nowhere, an extension relation has no label and comment or a parent relation Brick lacks, an abbreviation expands to a
 word outside the vocabulary or can never be produced by the tokenizer, or a worked example parses differently.
 
 Tuning rule: change these files based on the Alpha dev set only, never a test set.
@@ -54,3 +55,18 @@ template slots), and `tests/test_intake.py` checks the terms a published Troop D
 - **Point classes** from the Troop D answer key that the subset lacked (16, all real Brick 1.4.4 classes), and the
   part and tank classes it and the schedule reader use, were added. Brick parents are implicit: the loader reads
   them from Brick.
+
+### Nodes from what we already read (W4, 2026-11-24)
+
+- **Controllers and networks** from a controls riser (and the BMS export's device columns): `ba:Field_Controller`,
+  one node per BACnet device instance (`ctrl:3104`; a gateway serving three mini-splits is one controller), on its
+  trunk `ba:Field_Network` (`net:<supervisor>/FC-1`). The supervisory controller the point references start with
+  (`TROOPD-NAE01/FC-1...`) is a `ba:Supervisory_Controller` on each trunk. Relations: controller `ba:isOnNetwork`
+  trunk, controller `ba:controls` unit (only where the riser or the same tag says which unit), point `ba:isHostedBy`
+  controller. In the store they are node kinds `controller` and `network`, not `equipment`, so equipment counts,
+  the tree and the twin are unchanged.
+- **Units** stay as the source wrote them (`units`) with the QUDT id (`unit`) where the spelling names one unit
+  (`units.yaml`). An ambiguous spelling ("F") gets none.
+- **Site and building** come from the project record (`rec:Site`, `rec:Building`); floors are `hasPart` of the
+  building. **HVAC zones** only where a source states one (a zone fact, or a schedule's `zone` column): none is
+  inferred.
