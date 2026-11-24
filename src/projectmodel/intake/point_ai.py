@@ -151,7 +151,7 @@ def _apply(f: dict, q: Question, cached: bool) -> str:
         return "error" if a.get("error") else "none"
     agreed = a["class"] == d.get("class")
     # The model's own number, calibrated for this job and model (calibration.py), then capped below auto-accept.
-    calibrated = calibrate_model(JOB, a["confidence"], a.get("model"))
+    calibrated = calibrate_model(JOB, a["confidence"], a.get("model"), "intake")
     d["ai"]["calibrated"] = calibrated
     model_conf = min(calibrated, AI_CAP)
     d["class"] = a["class"]

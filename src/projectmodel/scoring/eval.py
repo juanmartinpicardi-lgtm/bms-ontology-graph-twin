@@ -305,6 +305,7 @@ def point_class_items(source: str, model: str, router, store, log=print, max_que
     items, cost = [], {"items": 0, "points": 0, "questions": len(qs), "calls": 0, "usd": 0.0, "seconds": 0.0,
                        "asked": 0, "cached": 0, "failed": 0, "none": 0}
     answers = _ask_all(qs, model, router, store, log, source)
+    caller = "intake" if source == "troop_d" else "mapper"
     for n, (q, a) in enumerate(zip(qs, answers), 1):
         if a.get("not_enabled"):
             return [], {**cost, "skipped": f"{model}: not enabled on this GCP project ({a['error'][:120]})"}
@@ -319,7 +320,10 @@ def point_class_items(source: str, model: str, router, store, log=print, max_que
         for group, true, rule_cls, fid in q["items"]:
             cls = a.get("class") or rule_cls  # "none of these" or a failure keeps the rules' guess
             raw = a.get("confidence", 0.0) if a.get("class") else 0.0
-            items.append(_item(raw, cls, true, (model,), group, id=fid, rule_cls=rule_cls, set=source, model=model,
+            # One answer is one observation of the model, whatever number of typicals it is applied to: the folds
+            # split by question, so copies of one answer never sit on both sides.
+            items.append(_item(raw, cls, true, cal.model_keys(model, caller), f"{source}:{q['key']}", unit=group,
+                               id=fid, rule_cls=rule_cls, set=source, model=model,
                                answered=bool(a.get("class")), reachable=true in q["candidates"], fixed=False))
     _save_answers()
     cost["items"] = cost["points"] = len(items)
@@ -376,6 +380,18 @@ def _auto(items: list[dict], heldout: list[float], threshold: float) -> dict:
     return {"threshold": threshold, "raw": at([i["raw"] for i in items]), "calibrated": at(heldout)}
 
 
+def by_question(items: list[dict]) -> list[dict]:
+    """One item per question (`group`): its points' share right as `ok`, a fraction PAV takes as it is."""
+    out: dict[str, dict] = {}
+    for i in items:
+        q = out.setdefault(i["group"], dict(i, ok=0.0, n_points=0))
+        q["ok"] += i["ok"]
+        q["n_points"] += 1
+    for q in out.values():
+        q["ok"] /= q["n_points"]
+    return list(out.values())
+
+
 def _heldout(job: str, items: list[dict]) -> list[float]:
     """Held-out calibrated confidence per item; fixed items (a person's statement) keep theirs."""
     fit_items = [i for i in items if not i["fixed"]]
@@ -430,25 +446,31 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
                     out["skipped"].append({"model": m, "why": skipped})
                     log(f"point_class: {skipped}")
                     continue
-                answered = [i for its, _ in per_set.values() for i in its if i["answered"]]
-                held = dict(zip(map(id, answered), _heldout(job, answered)))
+                # A model's calibration is measured per answer: one question is one judgment, however many typicals
+                # it is applied to (Troop D asks once for 100+ boxes). Points get their question's calibrated value.
+                questions = by_question([i for its, _ in per_set.values() for i in its if i["answered"]])
+                held = dict(zip((q["group"] for q in questions), _heldout(job, questions)))
                 for s, (its, cost) in per_set.items():
                     ans = [i for i in its if i["answered"]]
-                    row = _row(f"{s} · {m}", its, [held.get(id(i), 0.0) for i in its], cost, "model")
-                    row["set"], row["model"] = s, m
-                    # Calibration is judged on the answers the model gave (a "none" keeps the rules' guess).
-                    row["calibrated"] = cal.band_table([held[id(i)] for i in ans], [i["ok"] for i in ans])
-                    row["raw"] = cal.band_table([i["raw"] for i in ans], [i["ok"] for i in ans])
+                    qs = [q for q in questions if q["set"] == s]
+                    row = _row(f"{s} · {m}", its, [held.get(i["group"], 0.0) for i in its], cost, "model")
+                    row["set"], row["model"], row["answered"], row["questions_answered"] = s, m, len(ans), len(qs)
+                    # Calibration is judged on the answers the model gave (a "none" keeps the rules' guess): per
+                    # answer (the verdict's table), and per point for reference.
+                    row["calibrated"] = cal.band_table([held[q["group"]] for q in qs], [q["ok"] for q in qs])
+                    row["raw"] = cal.band_table([q["raw"] for q in qs], [q["ok"] for q in qs])
+                    row["calibrated_by_point"] = cal.band_table([held[i["group"]] for i in ans], [i["ok"] for i in ans])
+                    row["raw_by_point"] = cal.band_table([i["raw"] for i in ans], [i["ok"] for i in ans])
                     row["raw_worst_gap"], row["calibrated_worst_gap"] = (cal.worst_gap(row["raw"]),
                                                                          cal.worst_gap(row["calibrated"]))
-                    row["answered"] = len(ans)
+                    row["calibrated_by_point_worst_gap"] = cal.worst_gap(row["calibrated_by_point"])
                     row["reachable_pct"] = _pct(sum(i["reachable"] for i in its), len(its))
                     row["rules_exact_pct"] = _pct(sum(i["rule_cls"] == i["true"] for i in its), len(its))
                     row["verdict"] = cal.verdict(metric=row["exact_pct"], rules_metric=row["rules_exact_pct"],
                                                  table=row["calibrated"], usd_per_1000=row["usd_per_1000"],
                                                  budget=budget)
                     out["rows"].append(row)
-                fit_items += answered
+                fit_items += questions
     else:
         raise KeyError(f"no eval for job {job!r}; known: {sorted(SETS)}")
 
@@ -486,6 +508,9 @@ def print_report(r: dict, out=print) -> None:
             out(f"    auto-accepted   at {a['threshold']}: raw {a['raw']['n']} ({_fmt(a['raw']['pct'], '%')}), "
                 f"{a['raw']['wrong']} wrong; calibrated {a['calibrated']['n']} ({_fmt(a['calibrated']['pct'], '%')}), "
                 f"{a['calibrated']['wrong']} wrong")
+        if row["kind"] == "model":
+            out(f"    calibration     per answer ({row['questions_answered']} questions); per point, calibrated worst "
+                f"gap {_fmt(row['calibrated_by_point_worst_gap'])} pts")
         out(f"    calibration     {'band':9}{'raw: n':>8} {'conf':>6} {'right':>6}   {'calibrated, held-out: n':>24} "
             f"{'conf':>6} {'right':>6}")
         for a, b in zip(row["raw"], row["calibrated"]):

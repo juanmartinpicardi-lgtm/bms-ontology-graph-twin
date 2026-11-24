@@ -234,9 +234,17 @@ def intake_keys(cls: str | None, step: str) -> tuple[str, ...]:
     return (f"{step}|{fn}", fn)
 
 
-def calibrate_model(job: str, raw: float, model: str | None) -> float:
-    """A model's own confidence, calibrated per job and model (an uncalibrated model keeps its number)."""
-    return load(job).apply(raw, (model,) if model else ())
+def model_keys(model: str | None, caller: str | None) -> tuple[str, ...]:
+    """Model strata: the model as one caller uses it, then the model. The same model's answers are right far more often
+    on a submittal's point descriptions (the setup, `intake`) than on terse BMS names (the mapper, `mapper`)."""
+    if not model:
+        return ()
+    return ((f"{model}|{caller}",) if caller else ()) + (model,)
+
+
+def calibrate_model(job: str, raw: float, model: str | None, caller: str | None = None) -> float:
+    """A model's own confidence, calibrated per job, model and caller (an uncalibrated model keeps its number)."""
+    return load(job).apply(raw, model_keys(model, caller))
 
 
 # measuring ---------------------------------------------------------------------------------------------------------

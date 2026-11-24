@@ -120,13 +120,13 @@
    ],
    "calls_per_1000": 0.0,
    "usd_per_1000": 0.0,
-   "seconds_per_1000": 0.74,
+   "seconds_per_1000": 0.65,
    "cost": {
     "items": 1682,
     "points": 1842,
     "calls": 0,
     "usd": 0.0,
-    "seconds": 1.3602
+    "seconds": 1.1978
    },
    "raw_worst_gap": 49.3,
    "calibrated_worst_gap": 1.9,
@@ -258,13 +258,13 @@
    ],
    "calls_per_1000": 0.0,
    "usd_per_1000": 0.0,
-   "seconds_per_1000": 0.11,
+   "seconds_per_1000": 0.1,
    "cost": {
     "items": 1682,
     "points": 1842,
     "calls": 0,
     "usd": 0.0,
-    "seconds": 0.1948
+    "seconds": 0.1754
    },
    "raw_worst_gap": 57.3,
    "calibrated_worst_gap": 1.3,
@@ -287,5 +287,6 @@
    }
   }
  ],
- "skipped": []
+ "skipped": [],
+ "calibration_after": "mapper@1"
 }

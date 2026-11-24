@@ -108,7 +108,7 @@ class JobClassifier:
 
         out = res.output
         # The model's own number stays in llm_calls; the mapper gets it calibrated for this job and model.
-        return LLMAnswer(out["class"], calibrate_model("point_class", float(out["confidence"]), res.model),
+        return LLMAnswer(out["class"], calibrate_model("point_class", float(out["confidence"]), res.model, "mapper"),
                          json.dumps(out), res.cost_usd, res.latency_s, res.model)
 
 

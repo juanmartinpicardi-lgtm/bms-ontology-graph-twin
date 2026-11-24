@@ -119,13 +119,13 @@
    ],
    "calls_per_1000": 0.0,
    "usd_per_1000": 0.0,
-   "seconds_per_1000": 11.14,
+   "seconds_per_1000": 10.47,
    "cost": {
     "items": 847,
     "points": 847,
     "calls": 0,
     "usd": 0.0,
-    "seconds": 9.4379
+    "seconds": 8.8696
    },
    "raw_worst_gap": 41.9,
    "calibrated_worst_gap": 15.0,
@@ -148,5 +148,6 @@
    }
   }
  ],
- "skipped": []
+ "skipped": [],
+ "calibration_after": "intake@1"
 }
