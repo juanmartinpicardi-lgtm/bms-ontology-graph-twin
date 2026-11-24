@@ -34,7 +34,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CAL_DIR = ROOT / "knowledge_model/calibration"
-MIN_N = 30  # items a stratum needs to get its own curve; also the bake-off's band size (§6.4)
+BAND_N = 30  # a band counts toward the bake-off's calibration rule from this many items (§6.4)
+# Items a stratum needs to get its own curve. Chosen by held-out folds on the dev sets: at 25+, the 28 Alpha points the
+# rules put in a BA-extension class (all wrong against a Brick answer key) fall back to the pooled curve, which calls
+# them 75% right; at 20 they get their own. Slightly optimistic for that reason (picked on the same folds).
+MIN_N = 20
 TOLERANCE = 5.0  # points: a band's mean confidence must be this close to its measured accuracy (§6.4)
 BANDS = ((0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0))
 FUNCTIONS = ("Sensor", "Setpoint", "Command", "Status", "Alarm")
@@ -209,23 +213,27 @@ def function_of(cls: str | None) -> str:
     return next((f for f in FUNCTIONS if cls == f or cls.endswith("_" + f)), "other")
 
 
-def mapper_keys(cls: str | None, method: str) -> tuple[str, ...]:
-    """Mapper strata: the point's function as the rules (`rule`) or a template (`template`) decided it, then the
-    function alone. On Alpha the function is what separates a trustworthy 1.0 (a temperature sensor) from an
-    untrustworthy one (a "status" the answer key calls a command), and the method separates names alone from names
-    a template confirmed."""
+def mapper_keys(cls: str | None, method: str, path: bool | None = None) -> tuple[str, ...]:
+    """Mapper strata: the point's function as the rules (`rule`) or a template (`template`) decided it, and whether
+    the point came with an equipment folder path; then without the path; then the function alone. On Alpha the
+    function is what separates a trustworthy 1.0 (a temperature sensor) from an untrustworthy one (a "status" the
+    answer key calls a command), the method separates names alone from names a template confirmed, and the path
+    separates a name the folder explains ("DA flow" under an AHU) from the same name alone."""
     fn = function_of(cls)
-    return (f"{method}|{fn}", fn)
+    where = () if path is None else (f"{method}|{fn}|{'path' if path else 'name'}",)
+    return (*where, f"{method}|{fn}", fn)
 
 
-def calibrate_points(final: dict, guesses: dict) -> dict:
+def calibrate_points(final: dict, guesses: dict, records=()) -> dict:
     """The mapper's hook: calibrate rule and template confidences of points, `final` pid -> (class, conf, method).
-    A convention's class hint is a person's statement about the site's names and stays as it is."""
+    `records`: the raw records, for whether each point has a folder path. A convention's class hint is a person's
+    statement about the site's names and stays as it is."""
     cal = load("mapper")
     if not cal:
         return final
-    return {pid: (c, conf if guesses[pid].hint or m not in ("rule", "template") else cal.apply(conf, mapper_keys(c, m)),
-                  m) for pid, (c, conf, m) in final.items()}
+    path = {f"pt:{r.source_id}": bool(r.path) for r in records}
+    return {pid: (c, conf if guesses[pid].hint or m not in ("rule", "template")
+                  else cal.apply(conf, mapper_keys(c, m, path.get(pid))), m) for pid, (c, conf, m) in final.items()}
 
 
 def intake_keys(cls: str | None, step: str) -> tuple[str, ...]:
@@ -263,13 +271,13 @@ def band_table(conf: list[float], ok: list[bool], bands=BANDS) -> list[dict]:
     return out
 
 
-def worst_gap(table: list[dict], min_n: int = MIN_N) -> float | None:
+def worst_gap(table: list[dict], min_n: int = BAND_N) -> float | None:
     """The largest gap among bands holding at least `min_n` items (None when no band is that big)."""
     gaps = [b["gap"] for b in table if b["n"] >= min_n]
     return max(gaps) if gaps else None
 
 
-def calibrated(table: list[dict], min_n: int = MIN_N, tol: float = TOLERANCE) -> bool:
+def calibrated(table: list[dict], min_n: int = BAND_N, tol: float = TOLERANCE) -> bool:
     g = worst_gap(table, min_n)
     return g is not None and g <= tol
 
@@ -279,7 +287,7 @@ def verdict(*, metric: float | None, rules_metric: float | None, table: list[dic
     """The bake-off rule (§6.4): beats rules alone, calibrated within 5 points per band of 30+, under the budget."""
     checks = {
         "beats rules alone": None if metric is None or rules_metric is None else metric > rules_metric,
-        f"calibrated within {TOLERANCE:g} points (bands of {MIN_N}+)": calibrated(table),
+        f"calibrated within {TOLERANCE:g} points (bands of {BAND_N}+)": calibrated(table),
         "under the cost budget": None if budget is None or usd_per_1000 is None else usd_per_1000 <= budget,
     }
     failed = [k if v is False else f"{k}: unknown" for k, v in checks.items() if v is not True]

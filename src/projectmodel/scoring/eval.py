@@ -94,6 +94,7 @@ def mapper_items(project: str) -> tuple[list[dict], dict]:
     run = _cache(("mapper", project), lambda: mapper_run(project))
     gt = _cache(("gt", run["site"]), lambda: load_ground_truth(run["site"]))
     items = []
+    has_path = {f"pt:{r.source_id}": bool(r.path) for r in run["records"]}
     for n in run["store"].nodes(project, "point"):
         a = json.loads(n["attrs"])
         p = gt.points[gt.key[a["source_id"]]["point_id"]]
@@ -101,7 +102,7 @@ def mapper_items(project: str) -> tuple[list[dict], dict]:
             continue
         g = run["guesses"][n["id"]]
         items.append(_item(n["confidence"], n["class"], p["brick_class"],
-                           cal.mapper_keys(n["class"], n["method"]), p["equip_id"] or n["id"],
+                           cal.mapper_keys(n["class"], n["method"], has_path.get(n["id"])), p["equip_id"] or n["id"],
                            id=n["id"], name=n["label"], method=n["method"], hint=bool(g.hint), set=project,
                            # calibration leaves a convention's class hint as it is
                            fixed=bool(g.hint) or n["method"] not in ("rule", "template")))
@@ -214,8 +215,6 @@ def point_class_questions(source: str) -> list[dict]:
                             f["id"]) for f in q.facts if f["data"]["ref"] in gt and gt[f["data"]["ref"]]["brick_class"]]}
                 for q in qs]
     from ..mapper.llm import class_definition
-    from .score import DEFAULT_ACCEPT
-
     items, _ = mapper_items(source)
     run = _CACHE[("mapper", source)]
     rec = {f"pt:{r.source_id}": r for r in run["records"]}
@@ -224,10 +223,11 @@ def point_class_questions(source: str) -> list[dict]:
     for g in groups.values():
         m.type_equipment(g, run["guesses"])
     mapper_cal = cal.load("mapper")
+    accept = auto_accept()
     out: dict[str, dict] = {}
     for i in items:
         conf = i["raw"] if i["fixed"] else mapper_cal.apply(i["raw"], tuple(i["keys"]))
-        if conf >= DEFAULT_ACCEPT:
+        if conf >= accept:
             continue
         r, guess = rec[i["id"]], run["guesses"][i["id"]]
         eq = groups.get(member.get(i["id"], ""))
@@ -397,19 +397,15 @@ def _row(label: str, items: list[dict], heldout: list[float], cost: dict, kind: 
     return row
 
 
-def _accept() -> dict[str, float]:
-    from ..intake.state import AUTO_ACCEPT
-    from .score import DEFAULT_ACCEPT
-    return {"mapper": DEFAULT_ACCEPT, "intake": AUTO_ACCEPT}
+def auto_accept() -> float:
+    """The confidence at or above which a machine row is confirmed with no person: the store's own rule
+    (`db.store.AutoAccept`, PM_AUTO_ACCEPT, 0.9 by default), the one `settle()` applies to the mapper's and the
+    setup's rows. The setup's in-session `intake.state.AUTO_ACCEPT` is the same 0.9. `scoring.score.DEFAULT_ACCEPT`
+    (0.8) is not a confirm rule: it is the H2 cut `scripts/score.py` reports. PM_AUTO_ACCEPT=off: nothing is."""
+    from ..db.store import AutoAccept
 
-
-class _Accept(dict):
-    def __missing__(self, job):
-        self.update(_accept())
-        return self[job]
-
-
-ACCEPT = _Accept()  # each job's auto-accept threshold, as its pipeline uses it
+    t = AutoAccept.from_env().threshold
+    return float("inf") if t is None else t
 
 
 def _auto(items: list[dict], heldout: list[float], threshold: float) -> dict:
@@ -447,7 +443,8 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
     sets = sets or SETS[job]
     if any(s.split("/")[0] in HELD_OUT for s in sets):
         raise ValueError(f"held-out sets are never evaluated here: {sets}")
-    out = {"job": job, "sets": sets, "k_folds": K_FOLDS, "min_n": cal.MIN_N, "tolerance": cal.TOLERANCE,
+    out = {"job": job, "sets": sets, "k_folds": K_FOLDS, "min_n": cal.MIN_N, "band_n": cal.BAND_N,
+           "tolerance": cal.TOLERANCE,
            "budget_usd_per_1000": budget, "calibration_before": cal.load(job).ref or "none", "rows": [], "skipped": []}
     fit_items: list[dict] = []
     if job in ("mapper", "intake"):
@@ -458,7 +455,7 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
             row = _row(f"{s} · rules", its, [held[id(i)] for i in its], cost, "rules")
             row["set"], row["verdict"] = s, {
                 "says": "rules: calibrated" if cal.calibrated(row["calibrated"]) else "rules: not calibrated yet"}
-            row["auto_accept"] = _auto(its, [held[id(i)] for i in its], ACCEPT[job])
+            row["auto_accept"] = _auto(its, [held[id(i)] for i in its], auto_accept())
             out["rows"].append(row)
         fit_items = [i for i in allitems if not i["fixed"]]
     elif job == "point_class":
@@ -558,7 +555,7 @@ def print_report(r: dict, out=print) -> None:
                 continue
             out(f"                    {a['band']:9}{a['n']:>8} {_fmt(a['mean_conf_pct']):>6} {_fmt(a['accuracy_pct']):>6}"
                 f"   {b['n']:>24} {_fmt(b['mean_conf_pct']):>6} {_fmt(b['accuracy_pct']):>6}")
-        out(f"    worst gap (bands of {cal.MIN_N}+): raw {_fmt(row['raw_worst_gap'])} pts, calibrated "
+        out(f"    worst gap (bands of {cal.BAND_N}+): raw {_fmt(row['raw_worst_gap'])} pts, calibrated "
             f"{_fmt(row['calibrated_worst_gap'])} pts (target ≤ {cal.TOLERANCE:g})")
         out(f"    verdict         {row['verdict']['says']}")
 
