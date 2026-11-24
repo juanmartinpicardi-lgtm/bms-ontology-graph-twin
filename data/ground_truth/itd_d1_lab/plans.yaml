@@ -1,0 +1,101 @@
+# Hand answer key for the floor-plan reader (W6), Idaho DOT District 1 Testing Laboratory (dev set).
+#
+# Made by hand on 24 Nov 2026, BEFORE any prompt for the plan_meaning job was written or tuned, from the text layer
+# and rendered images of "ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf", pages 3-6 (M1.0 HVAC floor
+# plan, M1.1 exhaust plan, M1.2 hydronic plan, M2.0 roof plan). A one-storey building: every room is on L1.
+# The readers never read this file. It is only used by scoring/eval.py (job plan_meaning) after the fact.
+#
+# Tags: the supply air valves (SAV) and their reheat coils (HC) serve the zone whose sensor callout "(SAV-n)" sits
+# in it (keynote 9, combination temperature and humidity sensor). Electric heaters (EH), the ductless fan coil (DFC),
+# the furnace (F) and the water heater (WH) are located in the room their unit symbol is drawn in. Where the sensor
+# sits on a wall between two rooms, both are accepted. Tags whose room this key cannot decide from the drawing are in
+# `unsure` and never scored, as are the exhaust-plan tags of M1.1 (not keyed).
+set: itd_d1_lab
+file: ITD D1 Laboratory Building - Mechanical Bid Set 05-14-24.pdf
+sheets:
+  - page: 3
+    sheet: M1.0
+    floors: [L1]
+    rooms: &rooms
+      "101": LOBBY
+      "102": REST.
+      "103": REST.
+      "104": BREAK RM / CONFERENCE
+      "105": JANITOR
+      "109": LAB STORAGE
+      "110": OPEN OFFICE
+      "112": VESTIBULE
+      "113": OFFICE MECHANICAL
+      "114": OFFICE
+      "115": IT
+      "116": ELECTRICAL
+      "117": ASPHALT LAB
+      "118": MATERIAL LAB
+      "119": CONCRETE
+      "120": LAB MECHANICAL
+      "121": FIRE RISER
+      "123": D-1 LAB
+      "124": ASPHALT LAB
+      "125": GENERAL LAB
+      "126": SOIL/AGGREGATE
+      "127": ENCLOSED MATERIAL STORAGE
+      "128": NUCULAR GAUGE STORAGE
+      "129": COVER OUTDOOR PULIC STORAGE
+      "130": RESIDENCY NOISE ROOM
+      "131": RESIDENCY LAB
+      "135": OFFICE
+  - page: 4
+    sheet: M1.1
+    floors: [L1]
+    rooms: &rooms28
+      <<: *rooms
+      "107": WELLNESS   # labelled on M1.1 and M1.2; its label is hidden on M1.0
+  - page: 5
+    sheet: M1.2
+    floors: [L1]
+    rooms: *rooms28
+  - page: 6
+    sheet: M2.0
+    floors: [RF]
+    rooms: {}
+tags:
+  SAV-1: {floor: L1, rooms: ["131"], rel: serves}
+  HC-1: {floor: L1, rooms: ["131"], rel: serves}
+  SAV-2: {floor: L1, rooms: ["126", "125"], rel: serves}
+  HC-2: {floor: L1, rooms: ["126", "125"], rel: serves}
+  SAV-3: {floor: L1, rooms: ["124"], rel: serves}
+  HC-3: {floor: L1, rooms: ["124"], rel: serves}
+  SAV-4: {floor: L1, rooms: ["123", "125"], rel: serves}
+  HC-4: {floor: L1, rooms: ["123", "125"], rel: serves}
+  SAV-5: {floor: L1, rooms: ["119"], rel: serves}
+  HC-5: {floor: L1, rooms: ["119"], rel: serves}
+  SAV-6: {floor: L1, rooms: ["118"], rel: serves}
+  HC-6: {floor: L1, rooms: ["118"], rel: serves}
+  SAV-7: {floor: L1, rooms: ["117"], rel: serves}
+  HC-7: {floor: L1, rooms: ["117"], rel: serves}
+  SAV-8: {floor: L1, rooms: ["130"], rel: serves}
+  HC-8: {floor: L1, rooms: ["130"], rel: serves}
+  EH-1: {floor: L1, rooms: ["128", "127"], rel: located in}
+  EH-3: {floor: L1, rooms: ["127"], rel: located in}
+  EH-4: {floor: L1, rooms: ["121"], rel: located in}
+  EH-6: {floor: L1, rooms: ["116"], rel: located in}
+  EH-7: {floor: L1, rooms: ["101", "104"], rel: located in}
+  EH-9: {floor: L1, rooms: ["101", "102"], rel: located in}
+  DFC-1: {floor: L1, rooms: ["115"], rel: serves}
+  F-1: {floor: L1, rooms: ["113"], rel: located in}
+  WH-2: {floor: L1, rooms: ["113"], rel: located in}
+  AHU-1: {floor: RF, rooms: [], rel: located in}
+  LEF-1: {floor: RF, rooms: [], rel: located in}
+  EF-5: {floor: RF, rooms: [], rel: located in}
+  EF-6: {floor: RF, rooms: [], rel: located in}
+  EF-7: {floor: RF, rooms: [], rel: located in}
+  CU-1: {floor: RF, rooms: [], rel: located in}
+  DCU-1: {floor: RF, rooms: [], rel: located in}
+unsure:
+  - SAV-9   # its sensor sits on the wall of the duct shaft between 126 and 124
+  - HC-9
+  - EH-2    # between 127 and 128, sensor "(EH-2/EH-3)" on a wall
+  - EH-8    # on the wall between the corridor and 114
+  - DDC-1
+  - PH-1
+  # M1.1 exhaust plan, not keyed: GEV-1..7, SEV-1..5, HEV-1..4, EF-1..3, CH-1..4 (canopy hoods), SN-1..5
