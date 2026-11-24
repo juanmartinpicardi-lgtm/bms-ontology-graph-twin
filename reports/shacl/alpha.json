@@ -1,0 +1,1178 @@
+{
+ "name": "alpha",
+ "project": "alpha/names_paths",
+ "scopes": {
+  "confirmed": {
+   "project": "alpha/names_paths",
+   "scope": "confirmed",
+   "engine": "shifty",
+   "seconds": 5.7,
+   "conforms": false,
+   "engine_conforms": {
+    "building": false,
+    "brick": false
+   },
+   "export": {
+    "project": "alpha/names_paths",
+    "scope": "confirmed",
+    "nodes": 640,
+    "edges": 760,
+    "nodes_by_kind": {
+     "equipment": 167,
+     "point": 473
+    },
+    "nodes_by_status": {
+     "confirmed": 640
+    },
+    "edges_by_relation": {
+     "feeds": 138,
+     "hasPart": 157,
+     "hasPoint": 463,
+     "requires": 2
+    },
+    "edges_by_status": {
+     "confirmed": 760
+    },
+    "edges_left_out": {
+     "drives": 4,
+     "feedback": 7,
+     "hasPart": 8,
+     "hasPoint": 1379,
+     "requires": 1
+    },
+    "with_unit": {},
+    "undeclared": {
+     "classes": [],
+     "relations": []
+    },
+    "triples": {
+     "facts": 2040,
+     "provenance": 15658
+    }
+   },
+   "totals": {
+    "building_rules": 13,
+    "building_rules_failing": 3,
+    "building_failures": 149,
+    "brick_shapes_failing": 3,
+    "brick_violations": 5,
+    "brick_warnings": 0,
+    "outside_project": {
+     "violation": 38
+    }
+   },
+   "rules": [
+    {
+     "id": "shape:ControlBetweenPoints",
+     "origin": "building",
+     "label": "Control relations run between points",
+     "comment": "The control relations from the sequences (ba:drives, feedback, requires, resets, switches) link one point to another: a setpoint drives an output, a sensor feeds back to it. ba:requests ends on equipment instead and is checked on its own.",
+     "severity": "violation",
+     "targets": 2,
+     "failed": 1,
+     "passed": 1,
+     "failing": [
+      {
+       "id": "pt:pt-01266",
+       "label": "OSA Temperature",
+       "class": "brick:Outside_Air_Temperature_Sensor",
+       "messages": [
+        "requires ends on something that is not a point. [ba:requires]"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "shape:ControllerOnNetwork",
+     "origin": "building",
+     "label": "A field controller is on a network",
+     "comment": "Every field controller of a riser talks on a trunk (ba:isOnNetwork to a ba:Field_Network). One with none can't be reached, or the riser was misread.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:ControlsEquipment",
+     "origin": "building",
+     "label": "controls runs from a controller to equipment",
+     "comment": "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:EquipmentHasPoints",
+     "origin": "building",
+     "label": "Controlled HVAC equipment has points",
+     "comment": "An air handler, terminal unit, chiller, boiler or pump the BAS runs must show at least one point; with none, the unit is in the graph but invisible to monitoring.",
+     "severity": "violation",
+     "targets": 154,
+     "failed": 0,
+     "passed": 154,
+     "failing": []
+    },
+    {
+     "id": "shape:FeedsBetweenEquipment",
+     "origin": "building",
+     "label": "feeds runs between equipment",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "severity": "violation",
+     "targets": 4,
+     "failed": 0,
+     "passed": 4,
+     "failing": []
+    },
+    {
+     "id": "shape:HasLocationIsLocation",
+     "origin": "building",
+     "label": "hasLocation points at a location",
+     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:HasPointFromEquipment",
+     "origin": "building",
+     "label": "hasPoint runs from equipment to a point",
+     "comment": "brick:hasPoint is only meaningful from a unit (or system, or location) to a point: anything else is a misread grouping.",
+     "severity": "violation",
+     "targets": 463,
+     "failed": 0,
+     "passed": 463,
+     "failing": []
+    },
+    {
+     "id": "shape:HostedByController",
+     "origin": "building",
+     "label": "isHostedBy points at one controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller), and only one: a BACnet object lives in one device.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:NodeHasClass",
+     "origin": "building",
+     "label": "Every node has a class",
+     "comment": "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it.",
+     "severity": "violation",
+     "targets": 640,
+     "failed": 0,
+     "passed": 640,
+     "failing": []
+    },
+    {
+     "id": "shape:PointOnOneEquipment",
+     "origin": "building",
+     "label": "A point belongs to exactly one equipment",
+     "comment": "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself.",
+     "severity": "violation",
+     "targets": 473,
+     "failed": 10,
+     "passed": 463,
+     "failing": [
+      {
+       "id": "pt:pt-00621",
+       "label": "Frequency",
+       "class": "brick:Frequency_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-00849",
+       "label": "Power",
+       "class": "brick:Power_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-00938",
+       "label": "Energy",
+       "class": "brick:Energy_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-00991",
+       "label": "Energy",
+       "class": "brick:Energy_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-01015",
+       "label": "Power",
+       "class": "brick:Power_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-01085",
+       "label": "Energy",
+       "class": "brick:Energy_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-01594",
+       "label": "HW System DP",
+       "class": "brick:Hot_Water_Differential_Pressure_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-01659",
+       "label": "Energy",
+       "class": "brick:Energy_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-01763",
+       "label": "Frequency",
+       "class": "brick:Frequency_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      },
+      {
+       "id": "pt:pt-01792",
+       "label": "Energy",
+       "class": "brick:Energy_Sensor",
+       "messages": [
+        "The point is not on exactly one equipment."
+       ]
+      }
+     ]
+    },
+    {
+     "id": "shape:ServesLocation",
+     "origin": "building",
+     "label": "serves runs from equipment to a location",
+     "comment": "ba:serves says a terminal unit's thermostat is in this room or zone (see ba_extension.ttl): equipment on one end, a location on the other.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:TemperatureUnit",
+     "origin": "building",
+     "label": "A temperature point has a temperature unit",
+     "comment": "Where a temperature sensor or setpoint has a unit (brick:hasUnit, a QUDT unit), it must be a temperature: °F, °C or K. A pressure or flow unit means the class or the unit was misread. A point with no unit is not checked here.",
+     "severity": "violation",
+     "targets": 174,
+     "failed": 0,
+     "passed": 174,
+     "failing": []
+    },
+    {
+     "id": "shape:VAVHasZoneTemperature",
+     "origin": "building",
+     "label": "A VAV has a zone temperature sensor",
+     "comment": "A VAV box controls to its zone's temperature: without a zone air temperature sensor among its points, its loop can't be monitored or diagnosed. Applies to every VAV subclass (RVAV).",
+     "severity": "violation",
+     "targets": 138,
+     "failed": 138,
+     "passed": 0,
+     "failing": [
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-1",
+       "label": "VAV 1-2-1",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-10",
+       "label": "VAV 1-2-10",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-11",
+       "label": "VAV 1-2-11",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-12",
+       "label": "VAV 1-2-12",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-13",
+       "label": "VAV 1-2-13",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-14",
+       "label": "VAV 1-2-14",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-15",
+       "label": "VAV 1-2-15",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-16",
+       "label": "VAV 1-2-16",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-17",
+       "label": "VAV 1-2-17",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-18",
+       "label": "VAV 1-2-18",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-19",
+       "label": "VAV 1-2-19",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-20",
+       "label": "VAV 1-2-20",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-21",
+       "label": "VAV 1-2-21",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-22",
+       "label": "VAV 1-2-22",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-23",
+       "label": "VAV 1-2-23",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-25",
+       "label": "VAV 1-2-25",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-26",
+       "label": "VAV 1-2-26",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-27",
+       "label": "VAV 1-2-27",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-28",
+       "label": "VAV 1-2-28",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-29",
+       "label": "VAV 1-2-29",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-3",
+       "label": "VAV 1-2-3",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-30",
+       "label": "VAV 1-2-30",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-31",
+       "label": "VAV 1-2-31",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-32",
+       "label": "VAV 1-2-32",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      },
+      {
+       "id": "eq:Airside AHU-2/VAV 1-2-33",
+       "label": "VAV 1-2-33",
+       "class": "brick:VAV",
+       "messages": [
+        "The VAV has no zone air temperature sensor. [brick:hasPoint]"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "brick:Collection",
+     "origin": "brick",
+     "label": "Brick shape on brick:Collection",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 3,
+     "failed": 1,
+     "passed": 2,
+     "failing": [
+      {
+       "id": "eq:Waterside Chilled Water Plant",
+       "label": "Waterside Chilled Water Plant",
+       "class": "brick:Chilled_Water_System",
+       "messages": [
+        "Value eq:Waterside Chilled Water Plant does not conform to shape (an anonymous shape)"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "brick:Equipment",
+     "origin": "brick",
+     "label": "Brick shape on brick:Equipment",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 164,
+     "failed": 1,
+     "passed": 163,
+     "failing": [
+      {
+       "id": "eq:Utility Bills Water Meter 1",
+       "label": "Utility Bills Water Meter 1",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 1 conforms to a shape it must not"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "brick:Point",
+     "origin": "brick",
+     "label": "Brick shape on brick:Point",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 475,
+     "failed": 3,
+     "passed": 472,
+     "failing": [
+      {
+       "id": "eq:Utility Bills Water Meter 1",
+       "label": "Utility Bills Water Meter 1",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 1 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Waterside Chilled Water Plant",
+       "label": "Waterside Chilled Water Plant",
+       "class": "brick:Chilled_Water_System",
+       "messages": [
+        "Value eq:Waterside Chilled Water Plant conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "pt:pt-01266",
+       "label": "OSA Temperature",
+       "class": "brick:Outside_Air_Temperature_Sensor",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      }
+     ]
+    }
+   ],
+   "name": "alpha",
+   "export_seconds": 0.78,
+   "roundtrip": {
+    "ok": true,
+    "nodes": 640,
+    "edges": 760,
+    "statements_without_fact": 0
+   },
+   "generated": "2026-11-24 15:24",
+   "turtle": "data/export/alpha.confirmed.ttl"
+  },
+  "with_proposed": {
+   "project": "alpha/names_paths",
+   "scope": "confirmed + proposed",
+   "engine": "shifty",
+   "seconds": 7.16,
+   "conforms": false,
+   "engine_conforms": {
+    "building": false,
+    "brick": false
+   },
+   "export": {
+    "project": "alpha/names_paths",
+    "scope": "confirmed + proposed",
+    "nodes": 2026,
+    "edges": 2300,
+    "nodes_by_kind": {
+     "equipment": 184,
+     "point": 1842
+    },
+    "nodes_by_status": {
+     "confirmed": 640,
+     "proposed": 1386
+    },
+    "edges_by_relation": {
+     "drives": 14,
+     "feedback": 14,
+     "feeds": 247,
+     "hasPart": 165,
+     "hasPoint": 1842,
+     "requests": 3,
+     "requires": 11,
+     "resets": 2,
+     "switches": 2
+    },
+    "edges_by_status": {
+     "confirmed": 2159,
+     "proposed": 141
+    },
+    "edges_left_out": {},
+    "with_unit": {},
+    "undeclared": {
+     "classes": [],
+     "relations": []
+    },
+    "triples": {
+     "facts": 6352,
+     "provenance": 46580
+    }
+   },
+   "totals": {
+    "building_rules": 13,
+    "building_rules_failing": 1,
+    "building_failures": 3,
+    "brick_shapes_failing": 3,
+    "brick_violations": 39,
+    "brick_warnings": 0,
+    "outside_project": {
+     "violation": 38
+    }
+   },
+   "rules": [
+    {
+     "id": "shape:ControlBetweenPoints",
+     "origin": "building",
+     "label": "Control relations run between points",
+     "comment": "The control relations from the sequences (ba:drives, feedback, requires, resets, switches) link one point to another: a setpoint drives an output, a sensor feeds back to it. ba:requests ends on equipment instead and is checked on its own.",
+     "severity": "violation",
+     "targets": 35,
+     "failed": 3,
+     "passed": 32,
+     "failing": [
+      {
+       "id": "pt:pt-01266",
+       "label": "OSA Temperature",
+       "class": "brick:Outside_Air_Temperature_Sensor",
+       "messages": [
+        "requires ends on something that is not a point. [ba:requires]"
+       ]
+      },
+      {
+       "id": "pt:pt-01377",
+       "label": "Htg_Valve_Cmd",
+       "class": "brick:Valve_Command",
+       "messages": [
+        "requests ends on something that is not equipment. [ba:requests]"
+       ]
+      },
+      {
+       "id": "pt:pt-01811",
+       "label": "Clg_Valve_Cmd",
+       "class": "brick:Valve_Command",
+       "messages": [
+        "requests ends on something that is not equipment. [ba:requests]"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "shape:ControllerOnNetwork",
+     "origin": "building",
+     "label": "A field controller is on a network",
+     "comment": "Every field controller of a riser talks on a trunk (ba:isOnNetwork to a ba:Field_Network). One with none can't be reached, or the riser was misread.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:ControlsEquipment",
+     "origin": "building",
+     "label": "controls runs from a controller to equipment",
+     "comment": "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:EquipmentHasPoints",
+     "origin": "building",
+     "label": "Controlled HVAC equipment has points",
+     "comment": "An air handler, terminal unit, chiller, boiler or pump the BAS runs must show at least one point; with none, the unit is in the graph but invisible to monitoring.",
+     "severity": "violation",
+     "targets": 156,
+     "failed": 0,
+     "passed": 156,
+     "failing": []
+    },
+    {
+     "id": "shape:FeedsBetweenEquipment",
+     "origin": "building",
+     "label": "feeds runs between equipment",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "severity": "violation",
+     "targets": 6,
+     "failed": 0,
+     "passed": 6,
+     "failing": []
+    },
+    {
+     "id": "shape:HasLocationIsLocation",
+     "origin": "building",
+     "label": "hasLocation points at a location",
+     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:HasPointFromEquipment",
+     "origin": "building",
+     "label": "hasPoint runs from equipment to a point",
+     "comment": "brick:hasPoint is only meaningful from a unit (or system, or location) to a point: anything else is a misread grouping.",
+     "severity": "violation",
+     "targets": 1842,
+     "failed": 0,
+     "passed": 1842,
+     "failing": []
+    },
+    {
+     "id": "shape:HostedByController",
+     "origin": "building",
+     "label": "isHostedBy points at one controller",
+     "comment": "ba:isHostedBy says which controller a point or schedule lives in. Its end must be a controller (brick:Controller, ba:Field_Controller, ba:Supervisory_Controller), and only one: a BACnet object lives in one device.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:NodeHasClass",
+     "origin": "building",
+     "label": "Every node has a class",
+     "comment": "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it.",
+     "severity": "violation",
+     "targets": 2026,
+     "failed": 0,
+     "passed": 2026,
+     "failing": []
+    },
+    {
+     "id": "shape:PointOnOneEquipment",
+     "origin": "building",
+     "label": "A point belongs to exactly one equipment",
+     "comment": "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself.",
+     "severity": "violation",
+     "targets": 1842,
+     "failed": 0,
+     "passed": 1842,
+     "failing": []
+    },
+    {
+     "id": "shape:ServesLocation",
+     "origin": "building",
+     "label": "serves runs from equipment to a location",
+     "comment": "ba:serves says a terminal unit's thermostat is in this room or zone (see ba_extension.ttl): equipment on one end, a location on the other.",
+     "severity": "violation",
+     "targets": 0,
+     "failed": 0,
+     "passed": 0,
+     "failing": []
+    },
+    {
+     "id": "shape:TemperatureUnit",
+     "origin": "building",
+     "label": "A temperature point has a temperature unit",
+     "comment": "Where a temperature sensor or setpoint has a unit (brick:hasUnit, a QUDT unit), it must be a temperature: °F, °C or K. A pressure or flow unit means the class or the unit was misread. A point with no unit is not checked here.",
+     "severity": "violation",
+     "targets": 883,
+     "failed": 0,
+     "passed": 883,
+     "failing": []
+    },
+    {
+     "id": "shape:VAVHasZoneTemperature",
+     "origin": "building",
+     "label": "A VAV has a zone temperature sensor",
+     "comment": "A VAV box controls to its zone's temperature: without a zone air temperature sensor among its points, its loop can't be monitored or diagnosed. Applies to every VAV subclass (RVAV).",
+     "severity": "violation",
+     "targets": 138,
+     "failed": 0,
+     "passed": 138,
+     "failing": []
+    },
+    {
+     "id": "brick:Collection",
+     "origin": "brick",
+     "label": "Brick shape on brick:Collection",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 4,
+     "failed": 2,
+     "passed": 2,
+     "failing": [
+      {
+       "id": "eq:Waterside Chilled Water Plant",
+       "label": "Waterside Chilled Water Plant",
+       "class": "brick:Chilled_Water_System",
+       "messages": [
+        "Value eq:Waterside Chilled Water Plant does not conform to shape (an anonymous shape)"
+       ]
+      },
+      {
+       "id": "eq:Waterside Hot Water Plant",
+       "label": "Waterside Hot Water Plant",
+       "class": "brick:Hot_Water_System",
+       "messages": [
+        "Value eq:Waterside Hot Water Plant does not conform to shape (an anonymous shape)"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "brick:Equipment",
+     "origin": "brick",
+     "label": "Brick shape on brick:Equipment",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 182,
+     "failed": 13,
+     "passed": 169,
+     "failing": [
+      {
+       "id": "eq:Utility Bills Gas Meter 1",
+       "label": "Utility Bills Gas Meter 1",
+       "class": "brick:Gas_Meter",
+       "messages": [
+        "Value eq:Utility Bills Gas Meter 1 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Gas Meter 2",
+       "label": "Utility Bills Gas Meter 2",
+       "class": "brick:Gas_Meter",
+       "messages": [
+        "Value eq:Utility Bills Gas Meter 2 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Gas Meter 3",
+       "label": "Utility Bills Gas Meter 3",
+       "class": "brick:Gas_Meter",
+       "messages": [
+        "Value eq:Utility Bills Gas Meter 3 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 1",
+       "label": "Utility Bills Water Meter 1",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 1 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 2",
+       "label": "Utility Bills Water Meter 2",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 2 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 3",
+       "label": "Utility Bills Water Meter 3",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 3 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 4",
+       "label": "Utility Bills Water Meter 4",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 4 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 5",
+       "label": "Utility Bills Water Meter 5",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 5 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 6",
+       "label": "Utility Bills Water Meter 6",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 6 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 7",
+       "label": "Utility Bills Water Meter 7",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 7 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 8",
+       "label": "Utility Bills Water Meter 8",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 8 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Waterside Chilled Water Plant",
+       "label": "Waterside Chilled Water Plant",
+       "class": "brick:Chilled_Water_System",
+       "messages": [
+        "Value eq:Waterside Chilled Water Plant conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Waterside Hot Water Plant",
+       "label": "Waterside Hot Water Plant",
+       "class": "brick:Hot_Water_System",
+       "messages": [
+        "A piece of Equipment's parts should be always other Equipment. [brick:hasPart]",
+        "Value eq:Waterside Hot Water Plant conforms to a shape it must not"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "brick:Point",
+     "origin": "brick",
+     "label": "Brick shape on brick:Point",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 1854,
+     "failed": 24,
+     "passed": 1830,
+     "failing": [
+      {
+       "id": "eq:Utility Bills Gas Meter 1",
+       "label": "Utility Bills Gas Meter 1",
+       "class": "brick:Gas_Meter",
+       "messages": [
+        "Value eq:Utility Bills Gas Meter 1 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Gas Meter 2",
+       "label": "Utility Bills Gas Meter 2",
+       "class": "brick:Gas_Meter",
+       "messages": [
+        "Value eq:Utility Bills Gas Meter 2 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Gas Meter 3",
+       "label": "Utility Bills Gas Meter 3",
+       "class": "brick:Gas_Meter",
+       "messages": [
+        "Value eq:Utility Bills Gas Meter 3 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 1",
+       "label": "Utility Bills Water Meter 1",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 1 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 2",
+       "label": "Utility Bills Water Meter 2",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 2 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 3",
+       "label": "Utility Bills Water Meter 3",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 3 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 4",
+       "label": "Utility Bills Water Meter 4",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 4 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 5",
+       "label": "Utility Bills Water Meter 5",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 5 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 6",
+       "label": "Utility Bills Water Meter 6",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 6 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 7",
+       "label": "Utility Bills Water Meter 7",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 7 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Utility Bills Water Meter 8",
+       "label": "Utility Bills Water Meter 8",
+       "class": "brick:Chilled_Water_Meter",
+       "messages": [
+        "Value eq:Utility Bills Water Meter 8 conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "eq:Waterside Chilled Water Plant",
+       "label": "Waterside Chilled Water Plant",
+       "class": "brick:Chilled_Water_System",
+       "messages": [
+        "Value eq:Waterside Chilled Water Plant conforms to a shape it must not"
+       ]
+      },
+      {
+       "id": "pt:pt-00075",
+       "label": "Steam Valve Control Signal",
+       "class": "brick:Valve_Command",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-00654",
+       "label": "HW Supply Temp",
+       "class": "brick:Entering_Hot_Water_Temperature_Sensor",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01094",
+       "label": "HW Supply Temp",
+       "class": "brick:Entering_Hot_Water_Temperature_Sensor",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01260",
+       "label": "HW Return Temp",
+       "class": "brick:Entering_Hot_Water_Temperature_Sensor",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01271",
+       "label": "HW Supply Temp SP",
+       "class": "brick:Leaving_Hot_Water_Temperature_Setpoint",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01318",
+       "label": "HW Sys DP SP",
+       "class": "brick:Hot_Water_Differential_Pressure_Setpoint",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01427",
+       "label": "2nd Floor HW Pump DP",
+       "class": "brick:Hot_Water_Differential_Pressure_Sensor",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01594",
+       "label": "HW System DP",
+       "class": "brick:Hot_Water_Differential_Pressure_Sensor",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01623",
+       "label": "HW Supply Temp SP",
+       "class": "brick:Leaving_Hot_Water_Temperature_Setpoint",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01705",
+       "label": "HW Sys DP SP",
+       "class": "brick:Hot_Water_Differential_Pressure_Setpoint",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01746",
+       "label": "HW Pump Status",
+       "class": "brick:Status",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      },
+      {
+       "id": "pt:pt-01799",
+       "label": "HW Return Temp",
+       "class": "brick:Entering_Hot_Water_Temperature_Sensor",
+       "messages": [
+        "A Point can be a Point of Equipment, Location or Space. [brick:isPointOf]"
+       ]
+      }
+     ]
+    }
+   ],
+   "name": "alpha",
+   "export_seconds": 1.96,
+   "roundtrip": {
+    "ok": true,
+    "nodes": 2026,
+    "edges": 2300,
+    "statements_without_fact": 0
+   },
+   "generated": "2026-11-24 15:24",
+   "turtle": "data/export/alpha.with_proposed.ttl"
+  }
+ }
+}
