@@ -10,6 +10,8 @@ Jobs:
   intake       the guided setup's readers on Troop D (submittal and BMS points); rules only
   point_class  the AI job, model by model: Troop D's points the readers leave below auto-accept, and Alpha's points
                the mapper leaves below its threshold. One question per distinct point, as the setup asks it
+  plan_meaning the AI plan reader, model by model, on the keyed plan sheets of the real dev sets (msu_mbb,
+               itd_d1_lab; data/ground_truth/<set>/plans.yaml): rooms and tag placements, rules alone vs rules + model
 Dev sets only. The held-out real set (liberty_boe) is never read here.
 """
 
@@ -28,6 +30,7 @@ SETS = {
     "mapper": ["alpha/names_paths", "alpha/names_only"],
     "intake": ["troop_d"],
     "point_class": ["troop_d", "alpha/names_paths", "alpha/names_only"],
+    "plan_meaning": ["msu_mbb", "itd_d1_lab"],
 }
 HELD_OUT = {"liberty_boe"}
 
@@ -507,6 +510,10 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
                                                  budget=budget)
                     out["rows"].append(row)
                 fit_items += questions
+    elif job == "plan_meaning":
+        rows, fit_items, skipped = plan_meaning_rows(sets, models, router=router, store=store, budget=budget, log=log)
+        out["rows"] += rows
+        out["skipped"] += skipped
     else:
         raise KeyError(f"no eval for job {job!r}; known: {sorted(SETS)}")
 
@@ -533,6 +540,9 @@ def print_report(r: dict, out=print) -> None:
         out(f"  skipped {s['model']}: {s['why']}")
     for row in r["rows"]:
         out(f"\n  {row['label']}")
+        if row["kind"] == "plan":
+            print_plan_row(row, out)
+            continue
         acc = (f"    accuracy        exact {_fmt(row['exact_pct'], '%')}, right or broader "
                f"{_fmt(row['right_or_broader_pct'], '%')} (n {row['n']})")
         if row["kind"] == "model":
@@ -566,6 +576,266 @@ def write_report(r: dict, reports: Path = ROOT / "reports/eval") -> Path:
     return p
 
 
+# plan_meaning ------------------------------------------------------------------------------------------------------
+# The AI plan reader (intake/plan_ai.py) on the keyed plan sheets of the real dev sets. The answer key
+# (data/ground_truth/<set>/plans.yaml) was written by hand before the prompt. Scored per building:
+#   room       a keyed room number read on the right floor with the right name
+#   placement  a keyed tag placed on the right floor, in one of the key's rooms (or in none, for a roof unit)
+#   false room a room read on a keyed sheet whose number is not a room there
+# The headline is right / (keyed rooms + keyed tags + false rooms), for the rules alone and for rules + model.
+# Calibration items are the model's own answers (one per room and per placement on each sheet), after plan_ai's checks.
+
+PLAN_ANSWERS = ROOT / "data/eval/plan_meaning_answers.json"  # answers already paid for (not in the repo)
+
+
+def plan_key(site: str) -> dict:
+    import yaml
+    if site in HELD_OUT:
+        raise ValueError(f"{site} is held out")
+    return yaml.safe_load((ROOT / "data/ground_truth" / site / "plans.yaml").read_text())
+
+
+def plan_pdf(site: str) -> Path:
+    """The keyed sheets of the set's drawing PDF, in key order, as one PDF (page i = key sheet i)."""
+    import pypdfium2 as pdfium
+    key = plan_key(site)
+    out = ROOT / "data/eval" / f"plans_{site}.pdf"
+    if not out.exists():
+        src = pdfium.PdfDocument(ROOT / "data/raw" / site / key["file"])
+        doc = pdfium.PdfDocument.new()
+        doc.import_pages(src, [s["page"] - 1 for s in key["sheets"]])
+        out.parent.mkdir(parents=True, exist_ok=True)
+        doc.save(out)
+    return out
+
+
+def _norm_name(t: str | None) -> str:
+    import re
+    return re.sub(r"[^A-Z0-9]", "", (t or "").upper())
+
+
+def plan_rules_facts(site: str) -> list[dict]:
+    """The floor-plan rules alone on the keyed sheets (raw confidences)."""
+    import copy
+
+    from ..intake import floorplans
+
+    def run():
+        with cal.disabled():
+            return floorplans.read(plan_pdf(site), plan_pdf(site).name, lambda m: None)
+    return copy.deepcopy(_cache(("plan_rules", site), run))
+
+
+def plan_score(site: str, facts: list[dict]) -> dict:
+    """Rooms and placements in `facts` against the key: counts and the headline percentage."""
+    from ..intake.plan_ai import normal_of
+
+    key = plan_key(site)
+    rooms: dict[str, tuple[str, str]] = {}  # number -> (floor, name)
+    for s in key["sheets"]:
+        fl = next((f for f in s["floors"] if f != "RF"), s["floors"][0])
+        for num, name in (s["rooms"] or {}).items():
+            rooms.setdefault(str(num), (fl, name))
+    got = {}
+    for f in facts:
+        if f["kind"] == "room":
+            got.setdefault(f["data"]["number"], f)
+    place = {f["data"]["normal"]: f for f in facts if f["kind"] == "placement"}
+    r = {"rooms": len(rooms), "rooms_found": 0, "rooms_floor": 0, "rooms_named": 0, "rooms_ok": 0,
+         "false_rooms": sorted(n for n in got if n not in rooms), "tags": 0, "placed": 0, "placements_ok": 0,
+         "wrong": []}
+    for num, (fl, name) in rooms.items():
+        f = got.get(num)
+        if not f:
+            continue
+        r["rooms_found"] += 1
+        floor_ok = f["data"].get("floor") == fl
+        name_ok = _norm_name(f["data"].get("name")) == _norm_name(name)
+        r["rooms_floor"] += floor_ok
+        r["rooms_named"] += name_ok
+        r["rooms_ok"] += floor_ok and name_ok
+    for tag, k in key["tags"].items():
+        r["tags"] += 1
+        f = place.get(normal_of(tag))
+        if not f:
+            continue
+        r["placed"] += 1
+        room, fl = f["data"].get("room"), f["data"].get("floor")
+        ok = fl == k["floor"] and (room in [str(x) for x in k["rooms"]] if k["rooms"] else room is None)
+        r["placements_ok"] += ok
+        if not ok:
+            r["wrong"].append(f"{tag}: {fl}/{room} (key {k['floor']}/{'|'.join(map(str, k['rooms'])) or '-'})")
+    r["n"] = r["rooms"] + r["tags"] + len(r["false_rooms"])
+    r["right"] = r["rooms_ok"] + r["placements_ok"]
+    r["pct"] = _pct(r["right"], r["n"])
+    return r
+
+
+def _plan_answers() -> dict:
+    return _cache("plan_answers", lambda: json.loads(PLAN_ANSWERS.read_text()) if PLAN_ANSWERS.exists() else {})
+
+
+def plan_model_run(site: str, model: str, router, store, log=print) -> dict:
+    """Rules + the model on the keyed sheets: the merged facts, the checked answers per page, the cost."""
+    from ..intake import plan_ai
+
+    pdf = plan_pdf(site)
+    facts = plan_rules_facts(site)
+    cache = _plan_answers()
+    with cal.disabled():
+        results = plan_ai.read_pages(pdf, pdf.name, list(range(len(plan_key(site)["sheets"]))), router=router,
+                                     store=store, project="eval:plan_meaning", cache=cache, model=model,
+                                     log=lambda m: log(f"   {m}"))
+        PLAN_ANSWERS.parent.mkdir(parents=True, exist_ok=True)
+        PLAN_ANSWERS.write_text(json.dumps(cache, indent=0, sort_keys=True, default=str))
+        plan_ai.merge(facts, results, pdf.name, lambda m: None)
+    answered = [r for r in results if r["answer"] and not r["answer"].get("error")]
+    failed = [r for r in results if r["answer"] and r["answer"].get("error")]
+    cost = {"sheets": len(results), "answered": len(answered), "failed": len(failed),
+            "usd": round(sum(r["answer"].get("cost_usd", 0.0) for r in answered), 5),
+            "seconds": round(sum(r["answer"].get("latency_s", 0.0) for r in answered), 1),
+            "calls": sum(len(r["answer"].get("calls", [])) for r in answered),
+            "cached": sum(bool(r["answer"].get("cached")) for r in answered)}
+    if failed and any("not enabled" in r["answer"]["error"].lower() or "404" in r["answer"]["error"]
+                      for r in failed):
+        cost["skipped"] = f"{model}: not enabled on this GCP project ({failed[0]['answer']['error'][:120]})"
+    return {"facts": facts, "results": results, "cost": cost}
+
+
+def plan_items(site: str, run: dict, model: str) -> list[dict]:
+    """One item per answer the model gave (a room or a placement on one sheet), scored against the key."""
+    from ..intake.plan_ai import normal_of
+
+    key = plan_key(site)
+    key_tags = {normal_of(t): k for t, k in key["tags"].items()}
+    items = []
+    for r in run["results"]:
+        ch = r["checked"]
+        if not ch:
+            continue
+        sheet = key["sheets"][r["page"]]
+        fl = next((f for f in sheet["floors"] if f != "RF"), sheet["floors"][0])
+        rooms = {str(k): v for k, v in (sheet["rooms"] or {}).items()}
+        for x in ch["rooms"]:
+            ok = x["number"] in rooms and x["floor"] == fl and _norm_name(x["name"]) == _norm_name(rooms[x["number"]])
+            items.append({"raw": x["raw"], "ok": bool(ok), "keys": list(cal.model_keys(model, "room")),
+                          "group": f"{site}:{r['page']}:R{x['number']}", "set": site, "kind": "room",
+                          "fixed": False, "cls": None, "true": None, "broad": bool(ok)})
+        for p in ch["placements"]:
+            k = key_tags.get(p["normal"])
+            if k is None:
+                continue  # unsure or not keyed: not scored
+            ok = p["floor"] == k["floor"] and (p["room"] in [str(v) for v in k["rooms"]] if k["rooms"]
+                                               else p["room"] is None)
+            items.append({"raw": p["raw"], "ok": bool(ok), "keys": list(cal.model_keys(model, "placement")),
+                          "group": f"{site}:{r['page']}:T{p['normal']}", "set": site, "kind": "placement",
+                          "fixed": False, "cls": None, "true": None, "broad": bool(ok)})
+    return items
+
+
+def plan_meaning_rows(sets: list[str], models: list[str] | None, *, router=None, store=None, budget=None,
+                      log=print) -> tuple[list[dict], list[dict], list[dict]]:
+    from ..ai.calls import Router
+    from ..ai.jobs import get_job
+
+    rows, fit_items, skipped = [], [], []
+    rules = {s: plan_score(s, plan_rules_facts(s)) for s in sets}
+    for s in sets:
+        rows.append({"label": f"{s} · rules", "kind": "plan", "set": s, "score": rules[s], "n": rules[s]["n"],
+                     "exact_pct": rules[s]["pct"], "raw": [], "calibrated": [], "calibrated_worst_gap": None,
+                     "raw_worst_gap": None, "verdict": {"says": "rules alone"}})
+    job = get_job("plan_meaning")
+    models = models or list(dict.fromkeys([*job.chain, *job.contender]))
+    router = router or Router()
+    if not router.ready:
+        skipped = [{"model": m, "why": router.why_not_ready() or "model calls are off"} for m in models]
+        log(f"plan_meaning: model rows skipped ({skipped[0]['why']})")
+        return rows, fit_items, skipped
+    if store is None:
+        from ..db.store import Store
+        store = Store(ROOT / "data/kg.sqlite")
+    if not router.learnt:
+        router.learn(store)
+    for m in models:
+        if m in router.not_enabled:
+            skipped.append({"model": m, "why": f"{m}: not enabled on this GCP project"})
+            continue
+        runs, why = {}, None
+        for s in sets:
+            log(f"plan_meaning · {m} · {s}")
+            run = plan_model_run(s, m, router, store, log)
+            if run["cost"].get("skipped"):
+                why = run["cost"]["skipped"]
+                break
+            runs[s] = run
+        if why:
+            skipped.append({"model": m, "why": why})
+            log(f"plan_meaning: {why}")
+            continue
+        per_set = {s: plan_items(s, runs[s], m) for s in sets}
+        allitems = [i for its in per_set.values() for i in its]
+        held = dict(zip(map(id, allitems), _heldout("plan_meaning", allitems)))
+        for s in sets:
+            its, run = per_set[s], runs[s]
+            sc = plan_score(s, run["facts"])
+            c = run["cost"]
+            heldout = [held[id(i)] for i in its]
+            row = {"label": f"{s} · {m}", "kind": "plan", "set": s, "model": m, "score": sc, "rules": rules[s],
+                   "n": sc["n"], "exact_pct": sc["pct"], "rules_exact_pct": rules[s]["pct"], "answers": len(its),
+                   "answers_right_pct": _pct(sum(i["ok"] for i in its), len(its)),
+                   "raw": cal.band_table([i["raw"] for i in its], [i["ok"] for i in its]),
+                   "calibrated": cal.band_table(heldout, [i["ok"] for i in its]),
+                   "cost": c, "usd_per_sheet": round(c["usd"] / c["answered"], 4) if c["answered"] else None,
+                   "usd_per_1000": round(1000 * c["usd"] / len(its), 4) if its else None,
+                   "seconds_per_sheet": round(c["seconds"] / c["answered"], 1) if c["answered"] else None,
+                   "verdict": {"says": "see the all-dev-sets row"}}
+            row["raw_worst_gap"], row["calibrated_worst_gap"] = (cal.worst_gap(row["raw"]),
+                                                                 cal.worst_gap(row["calibrated"]))
+            rows.append(row)
+        # The bake-off verdict is judged on both dev sets together: calibration needs bands of 30+ answers.
+        mine = [r for r in rows if r.get("model") == m]
+        both = cal.band_table([held[id(i)] for i in allitems], [i["ok"] for i in allitems])
+        usd = sum(runs[s]["cost"]["usd"] for s in sets)
+        sheets = sum(runs[s]["cost"]["answered"] for s in sets)
+        total = {"label": f"all dev sets · {m}", "kind": "plan", "set": "+".join(sets), "model": m,
+                 "n": sum(r["score"]["n"] for r in mine),
+                 "exact_pct": _pct(sum(r["score"]["right"] for r in mine), sum(r["score"]["n"] for r in mine)),
+                 "rules_exact_pct": _pct(sum(rules[s]["right"] for s in sets), sum(rules[s]["n"] for s in sets)),
+                 "answers": len(allitems), "answers_right_pct": _pct(sum(i["ok"] for i in allitems), len(allitems)),
+                 "raw": cal.band_table([i["raw"] for i in allitems], [i["ok"] for i in allitems]),
+                 "calibrated": both, "cost": {"usd": round(usd, 5), "sheets": sheets},
+                 "usd_per_sheet": round(usd / sheets, 4) if sheets else None,
+                 "usd_per_1000": round(1000 * usd / len(allitems), 4) if allitems else None}
+        total["raw_worst_gap"], total["calibrated_worst_gap"] = cal.worst_gap(total["raw"]), cal.worst_gap(both)
+        total["verdict"] = cal.verdict(metric=total["exact_pct"], rules_metric=total["rules_exact_pct"], table=both,
+                                       usd_per_1000=total["usd_per_1000"], budget=budget)
+        rows.append(total)
+        fit_items += allitems
+    return rows, fit_items, skipped
+
+
+def print_plan_row(row: dict, out=print) -> None:
+    sc = row.get("score")
+    if sc:
+        out(f"    rooms           {sc['rooms_ok']}/{sc['rooms']} right (found {sc['rooms_found']}, floor right "
+            f"{sc['rooms_floor']}, name right {sc['rooms_named']}); {len(sc['false_rooms'])} false rooms")
+        out(f"    placements      {sc['placements_ok']}/{sc['tags']} right ({sc['placed']} placed)")
+    out(f"    headline        {_fmt(row['exact_pct'], '%')} right of {row['n']} (keyed rooms + tags + false rooms)"
+        + (f"; rules alone {_fmt(row['rules_exact_pct'], '%')}" if row.get("rules_exact_pct") is not None else ""))
+    if row.get("model"):
+        out(f"    answers         {row['answers']} ({_fmt(row['answers_right_pct'], '%')} right); "
+            f"${row['cost']['usd']} for {row['cost'].get('sheets')} sheets = ${row['usd_per_sheet']} per sheet, "
+            f"${row['usd_per_1000']} per 1,000 answers")
+        out(f"    calibration     {'band':9}{'raw: n':>8} {'conf':>6} {'right':>6}   {'calibrated, held-out: n':>24} "
+            f"{'conf':>6} {'right':>6}")
+        for a, b in zip(row["raw"], row["calibrated"]):
+            if a["n"] or b["n"]:
+                out(f"                    {a['band']:9}{a['n']:>8} {_fmt(a['mean_conf_pct']):>6} "
+                    f"{_fmt(a['accuracy_pct']):>6}   {b['n']:>24} {_fmt(b['mean_conf_pct']):>6} "
+                    f"{_fmt(b['accuracy_pct']):>6}")
+        out(f"    worst gap (bands of {cal.BAND_N}+): raw {_fmt(row['raw_worst_gap'])} pts, calibrated "
+            f"{_fmt(row['calibrated_worst_gap'])} pts (target ≤ {cal.TOLERANCE:g})")
+    out(f"    verdict         {row['verdict']['says']}")
 # sequence_read (W8) ------------------------------------------------------------------------------------------------
 # The sequences of operation as control logic, scored per relation against the hand-built key
 # (data/ground_truth/<site>/sequences.yaml, scoring/sequences.py). Rows: the rules alone, each model alone, each model

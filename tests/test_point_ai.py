@@ -10,7 +10,7 @@ import pytest
 from projectmodel.ai import JobResult, ModelError, Router, Scripted, jobs
 from projectmodel.ai.config import AIConfig
 from projectmodel.db.store import Store
-from projectmodel.intake import point_ai, steps
+from projectmodel.intake import plan_ai, point_ai, steps
 from projectmodel.intake.state import AUTO_ACCEPT, Intake
 from projectmodel.intake.submittal import _matcher
 
@@ -193,9 +193,12 @@ def test_guided_setup_shows_ai_proposals(monkeypatch, tmp_path):
     if not steps.TEST_PACKAGE.exists():
         pytest.skip("test package missing: run scripts/build_troop_d.py")
     monkeypatch.setattr(point_ai, "DB", tmp_path / "kg.sqlite")
+    monkeypatch.setattr(plan_ai, "DB", tmp_path / "kg.sqlite")
     asked = []
 
     def fake_run_job(job_id, values, **_):
+        if job_id != "point_class":  # the plans step's AI plan reader: it fails, the plans keep the rules' reading
+            raise ModelError("not this test's job")
         asked.append(values["name"])
         return JobResult(job_id, {"class": values["candidate_list"][0], "confidence": 0.97, "why": "test"}, "argon",
                          attempts=[{"model": "argon", "call": 1, "problem": None}], cost_usd=0.002, latency_s=0.5)

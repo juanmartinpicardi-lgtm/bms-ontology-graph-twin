@@ -63,6 +63,9 @@ SCENARIOS = {
     "plans + submittal: 4-digit room numbers": {"words": {"plans": per_word(lambda t: ROOM.sub(r"1\1\2", t)),
                                                          "submittal": per_word(lambda t: ROOM.sub(r"1\1\2", t))}},
     "plans: room number above its name": {"words": {"plans": label_above}},
+    "plans: room names and titles in Title Case": {"words": {"plans": per_word(caps_to_title)}},
+    "plans: view titles in Title Case": {"words": {"plans": per_word(
+        lambda t: t.title() if t in ("MECHANICAL", "PLAN", "LEVEL", "ROOF", "HVAC", "FLOOR") else t)}},
     "all PDFs: tags with floor (VAVE-1-07)": {"words": {k: per_word(lambda t: TAG.sub(r"\1-1-\2\3", t))
                                                        for k in ("plans", "schedules", "sequences", "submittal")}},
     "schedules: whole 27-sheet drawing set uploaded": {"upload": {"schedules": BID}},

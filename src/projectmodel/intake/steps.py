@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import bms, coverage, floorplans, knowledge, point_ai, schedules, sequence_text, submittal
+from . import bms, coverage, floorplans, knowledge, plan_ai, point_ai, schedules, sequence_text, submittal
 from .state import Intake
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -78,7 +78,11 @@ def run(it: Intake, step_id: str, log) -> int:
         facts = []
         for path, name in files:
             say(f"Reading {name}…")
-            facts += floorplans.read(path, name, say)
+            read = floorplans.read(path, name, say)
+            # the AI plan reader (plan_meaning) checks and adds to the rules' reading; nothing when PM_AI=off
+            plan_ai.refine(path, name, read, say, project=f"intake:{it.slug}",
+                           cache=it.s.setdefault("ai_plan_meaning", {}))
+            facts += read
     elif step_id == "schedules":
         plan = {p["data"]["normal"]: p for p in live("placement")}
         facts = schedules.read(files, plan, say)

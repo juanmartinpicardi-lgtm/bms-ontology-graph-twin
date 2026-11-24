@@ -19,8 +19,9 @@ from pathlib import Path
 
 from . import pdfdoc, tags
 
-LEVEL = [  # LEVEL, FLOOR and FLR: the words title blocks use for a numbered level
-    (re.compile(r"PLAN\s*-\s*(?:LEVEL|FLOOR|FLR\.?)\s*(\d+)|(?:LEVEL|FLOOR|FLR\.?)\s*(\d+)\s+(?:\w+\s+)?PLAN"), None),
+LEVEL = [  # LEVEL, FLOOR and FLR: the words title blocks use for a numbered level, in any case ("Level 1 - HVAC PLAN")
+    (re.compile(r"PLAN\s*-\s*(?:LEVEL|FLOOR|FLR\.?)\s*(\d+)|(?:LEVEL|FLOOR|FLR\.?)\s*(\d+)\s*[-–&]?\s*"
+                r"(?:[\w&]+[\s-]+){0,3}?PLANS?\b"), None),
     (re.compile(r"(FIRST|SECOND|THIRD|FOURTH|FIFTH)\s+FLOOR\s+(?:\w+\s+)?PLAN"), None),
     (re.compile(r"\bROOF\s+PLAN\b"), "RF"),
     (re.compile(r"\bBASEMENT\b.*\bPLAN\b"), "B1"),
@@ -28,12 +29,19 @@ LEVEL = [  # LEVEL, FLOOR and FLR: the words title blocks use for a numbered lev
 ORDINAL = {"FIRST": 1, "SECOND": 2, "THIRD": 3, "FOURTH": 4, "FIFTH": 5}
 ROOM_NO = re.compile(r"^[A-Z]?\d{3,4}[A-Z]?$")  # 109, 109A, 1109 (larger buildings), A109 (a wing letter)
 NAME_WORD = re.compile(r"^[A-Z0-9][A-Z0-9'/&.\-]*$")
+NAME_ANY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9'/&.\-]*[A-Za-z0-9.]$")  # a regular-weight name word, any case
+AIR_DEVICE = re.compile(r"^[A-Z]{1,2}-\d{1,2}$")  # S-1, R-2, E-1, D-4: diffuser and grille types
 UNITS = {"CFM", "GPM", "MBH", "KW", "HP", "LBS", "SF", "X", "TONS"}
 
 
 def floor_of(page_text: str) -> tuple[str, str] | None:
+    """The floor a sheet's title names. Only title-like lines count, in any case: a note that points to another
+    sheet ("SEE MECHANICAL ROOF PLAN FOR CONTINUATION") names no floor of this one."""
+    from .pages import NOT_TITLE
+    titles = "\n".join(t for line in page_text.upper().splitlines()
+                        if (t := line.strip()) and len(t.split()) <= 9 and not NOT_TITLE.search(t))
     for rx, fixed in LEVEL:
-        m = rx.search(page_text)
+        m = rx.search(titles)
         if not m:
             continue
         if fixed:
@@ -44,15 +52,34 @@ def floor_of(page_text: str) -> tuple[str, str] | None:
     return None
 
 
+PLAN_TITLE = re.compile(r"^(?:[\w&/]+\s+){0,3}PLANS?$")
+
+
+def plan_title(page_text: str) -> str:
+    """A title-like line that calls the sheet a plan ("HVAC PLAN", "EXHAUST PLAN"), not a roof, site, key or
+    demolition plan."""
+    from .pages import NOT_TITLE
+    for line in page_text.upper().splitlines():
+        t = line.strip(" .:-")
+        if PLAN_TITLE.match(t) and not NOT_TITLE.search(t) and not re.search(r"\b(ROOF|SITE|KEY|DEMO\w*)\b", t):
+            return t
+    return ""
+
+
 def read(path: Path, file_name: str, log) -> list[dict]:
     facts: list[dict] = []
     per_floor = []
     n_pages = pdfdoc.page_count(path)
+    texts = [pdfdoc.text(path, page) for page in range(n_pages)]
+    named = [floor_of(t) for t in texts]
+    # One storey: no sheet names a level, but sheets are titled as plans ("HVAC PLAN"). Read them as Level 1, asked.
+    one_storey = not any(f and f[0].startswith("L") for f in named)
     for page in range(n_pages):
         ws = pdfdoc.words(path, page)
-        text = pdfdoc.text(path, page)
-        sheet = pdfdoc.sheet_number(ws)
-        fl = floor_of(text)
+        sheet = pdfdoc.sheet_id(ws)
+        fl, guessed = named[page], False
+        if not fl and one_storey and plan_title(texts[page]):
+            fl, guessed = ("L1", "Level 1"), True
         if not fl:
             log(f"Page {page + 1} ({sheet or 'no sheet number'}): no floor named in the title, skipped")
             continue
@@ -63,7 +90,13 @@ def read(path: Path, file_name: str, log) -> list[dict]:
         src = {"file": file_name, "page": page, "sheet": sheet}
         facts.append({"id": f"floor:{floor_id}", "kind": "floor", "label": floor_name,
                       "data": {"floor": floor_id, "name": floor_name, "crop": crop, "rooms": len(rooms)},
-                      "src": src | {"bbox": None}, "method": "rule", "conf": 0.97, "step": "plans", "ask": None})
+                      "src": src | {"bbox": None}, "method": "rule", "conf": 0.6 if guessed else 0.97, "step": "plans",
+                      "ask": None if not guessed else {
+                          "q": f"{sheet or f'Page {page + 1}'} is titled {plan_title(texts[page])!r} and no sheet names "
+                               "a level. Is it the ground floor (Level 1) of a one-storey building?",
+                          "field": None, "options": []}})
+        if any(f["id"] == f"floor:{floor_id}" for f in facts[:-1]):  # a second sheet of the same floor
+            facts.pop()
         log(f"Page {page + 1} · {sheet}: {floor_name} — {len(rooms)} rooms, {len(seen)} equipment tags")
         for r in rooms:
             facts.append(_room_fact(r, floor_id, src))
@@ -85,37 +118,67 @@ def _rooms(ws, floor_id: str) -> list[dict]:
         right = [v for v in ws if abs(v.top - w.top) < 3 and 0 < v.x0 - w.x1 < 25]
         if any(v.text.upper().strip(".") in UNITS for v in right):
             continue
-        name, name_bbox = _name_above(ws, w)
+        name, name_bbox = _name_near(ws, w)
+        if any(AIR_DEVICE.match(v.text) and v.text not in name.split() for v in ws
+               if -16 < v.top - w.top < 0 and abs(v.cx - w.cx) < 25):
+            continue  # an airflow under a diffuser or grille type (S-1 / 325), not a room ("D-1 LAB" / 123 is)
         (named if name else bare).append({"number": w.text, "name": name, "word": w, "name_bbox": name_bbox})
     sizes = Counter((r["word"].font, r["word"].size) for r in named)
     usual = {k for k, n in sizes.items() if n >= max(2, len(named) * 0.1)}
     bare = [r for r in bare if (r["word"].font, r["word"].size) in usual]
+    # a named label in a one-off font is the title block or a note (an address, a phone number), not a room
+    named = [r for r in named if (r["word"].font, r["word"].size) in usual or len(named) < 5]
     rooms: dict[str, dict] = {}
     for r in named + bare:  # a number labelled twice: keep the named one
         if r["number"] not in rooms:
             w = r["word"]
-            box = w.bbox if not r["name_bbox"] else [min(w.x0, r["name_bbox"][0]), r["name_bbox"][1],
-                                                     max(w.x1, r["name_bbox"][2]), w.bottom]
+            nb = r["name_bbox"]
+            box = w.bbox if not nb else [min(w.x0, nb[0]), min(w.top, nb[1]), max(w.x1, nb[2]), max(w.bottom, nb[3])]
             rooms[r["number"]] = r | {"bbox": [round(v, 1) for v in box], "anchor": (w.cx, w.top - 6)}
     return sorted(rooms.values(), key=lambda r: r["number"])
 
 
-def _name_above(ws, num) -> tuple[str, list | None]:
-    cands = [v for v in ws if v.bold and NAME_WORD.match(v.text) and not tags.parse(v.text)
-             and -36 <= v.top - num.top <= -3 and abs(v.cx - num.cx) < 110]
-    rows = sorted(_group_rows(cands), key=lambda r: -r[0].top)  # nearest line first
+def _name_near(ws, num) -> tuple[str, list | None]:
+    """The room's name: bold capitals above the number (CONFERENCE / 109), else bold capitals below it (a number
+    drawn above its name), else regular-weight words of the number's size above it, in any case (MSU's grey
+    OFFICE / 155, ITD's Title Case Residency Lab / 131)."""
+    for below, bold in ((False, True), (True, True), (False, False)):
+        name, bbox = _name_at(ws, num, below, bold)
+        if name:
+            return name, bbox
+    return "", None
+
+
+def _name_ok_word(v, num, bold: bool) -> bool:
+    if bold:
+        return v.bold and bool(NAME_ANY.match(v.text) or NAME_WORD.match(v.text)) and not tags.parse(v.text)
+    return (not v.bold and bool(NAME_ANY.match(v.text)) and not tags.parse(v.text) and not ROOM_NO.match(v.text)
+            and not re.fullmatch(r"[A-Z]{1,2}-\d{1,2}", v.text) and 0.8 * num.size <= v.size <= 1.25 * num.size)
+
+
+def _name_at(ws, num, below: bool, bold: bool) -> tuple[str, list | None]:
+    sign = 1 if below else -1
+    cands = [v for v in ws if v is not num and 3 <= sign * (v.top - num.top) <= 36 and abs(v.cx - num.cx) < 110
+             and _name_ok_word(v, num, bold)]
+    rows = sorted(_group_rows(cands), key=lambda r: sign * r[0].top)  # nearest line first
     picked, last_top = [], num.top
     for row in rows:
-        if last_top - row[0].top > 14:
+        if abs(last_top - row[0].top) > 14:
             break
         chain = _chain(row, num.cx)
         if not chain or abs((chain[0].x0 + chain[-1].x1) / 2 - num.cx) > 60:
             break
-        picked.insert(0, chain)
+        if below:
+            picked.append(chain)
+        else:
+            picked.insert(0, chain)
         last_top = row[0].top
         if len(picked) == 3:
             break
-    if not picked or not any(re.search(r"[A-Z]", w.text) for row in picked for w in row):
+    letters = sum(len(re.findall(r"[A-Za-z]", w.text)) for row in picked for w in row)
+    if not picked or letters < (1 if bold else 2):
+        return "", None
+    if not bold and any(len(row) > 4 for row in picked):  # a note's line, not a room name
         return "", None
     words = [w for row in picked for w in row]
     bbox = [min(w.x0 for w in words), min(w.top for w in words), max(w.x1 for w in words), max(w.bottom for w in words)]

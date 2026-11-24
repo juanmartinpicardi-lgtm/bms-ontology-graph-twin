@@ -1,0 +1,105 @@
+# Hand answer key for the floor-plan reader (W6), Montana State University MBB (dev set).
+#
+# Made by hand on 24 Nov 2026, BEFORE any prompt for the plan_meaning job was written or tuned, from:
+#   - the text layer and rendered images of 22-0045 Plans.pdf, pages 22-24 (M201, M202, M203);
+#   - for the fan coils, the designer's own "EXISTING ERV UNIT BALANCING SCHEDULE" on M102 (page 21), whose
+#     "ROOM/S SERVED" column names the room(s) each fan coil serves. Where it names two rooms, both are accepted
+#     (the thermostat sits in one of them). "LAB 120" for FC-2.5 is read as the schedule's typo for LAB 220.
+# The readers never read this file. It is only used by scoring/eval.py (job plan_meaning) after the fact.
+#
+# rooms: room number -> name, per sheet, for every room label printed on that sheet's plan views (the renovated
+#        wings only: the rest of the building is not labelled).
+# tags:  one entry per equipment tag drawn on these sheets. floor: where the unit is (RF: on the roof).
+#        rooms: accepted rooms (any one is right); [] means "on the roof / in no room".
+#        rel: serves (terminal unit, by its thermostat or the schedule) or located in.
+# unsure: tags drawn on the sheets whose room this key does not decide; never scored.
+set: msu_mbb
+file: 22-0045 Plans.pdf
+sheets:
+  - page: 22
+    sheet: M201
+    floors: [L1]
+    rooms:
+      "133": MDF CLOSET
+      "152": OFFICE
+      "153": BIO SAFETY
+      "154": LAB
+      "155": OFFICE
+      "156": LAB
+      "157": OFFICE
+      "158": OFFICE
+      "159": BIO SAFETY
+      "160": LAB
+      "162": BIO SAFETY
+      "163": OFFICE
+  - page: 23
+    sheet: M202
+    floors: [L2]
+    rooms:
+      "218": DATA CLOSET
+      "220": LAB
+      "221": BIO SAFETY RM
+      "222": OFFICE
+      "223": LAB
+      "224": OFFICE
+      "225": OFFICE
+      "226": OFFICE
+      "227": LAB
+      "228": OFFICE
+      "229": OFFICE
+      "230": OFFICE
+      "231": LAB
+      "232": BIO SAFETY ROOM
+      "233": OFFICE
+      "234": LAB
+      "235": SHARED OFFICE
+      "236": OFFICE
+      "237": COOLER
+      "238": HOT ROOM
+      "239": STAIR
+      "240": OFFICE
+      "241": OFFICE
+  - page: 24
+    sheet: M203
+    floors: [L3, RF]   # two views: the roof plan above, the level 3 mechanical room below
+    rooms:
+      "302": MECHANICAL
+tags:
+  FC-1.16: {floor: L1, rooms: ["154", "153"], rel: serves}
+  FC-1.17: {floor: L1, rooms: ["155"], rel: serves}
+  FC-1.18: {floor: L1, rooms: ["160"], rel: serves}
+  FC-1.19: {floor: L1, rooms: ["160", "162"], rel: serves}
+  FC-1.20: {floor: L1, rooms: ["156", "157"], rel: serves}
+  FC-1.21: {floor: L1, rooms: ["156", "159"], rel: serves}
+  FC-1.22: {floor: L1, rooms: ["163"], rel: serves}
+  SS-1: {floor: L1, rooms: ["133"], rel: serves}       # wall unit in the MDF room (enlarged view on M201)
+  FC-2.5: {floor: L2, rooms: ["220", "221"], rel: serves}
+  FC-2.6: {floor: L2, rooms: ["222"], rel: serves}
+  FC-2.7: {floor: L2, rooms: ["223", "225"], rel: serves}
+  FC-2.8: {floor: L2, rooms: ["224"], rel: serves}
+  FC-2.9: {floor: L2, rooms: ["226"], rel: serves}
+  FC-2.10: {floor: L2, rooms: ["227"], rel: serves}
+  FC-2.11: {floor: L2, rooms: ["231"], rel: serves}
+  FC-2.12: {floor: L2, rooms: ["229"], rel: serves}
+  FC-2.13: {floor: L2, rooms: ["233"], rel: serves}
+  FC-2.14: {floor: L2, rooms: ["234", "232"], rel: serves}
+  FC-2.15: {floor: L2, rooms: ["234"], rel: serves}
+  FC-2.16: {floor: L2, rooms: ["241"], rel: serves}
+  FC-2.17: {floor: L2, rooms: ["235"], rel: serves}
+  SS-2: {floor: L2, rooms: ["218"], rel: serves}       # wall unit in the data closet
+  B-1: {floor: L3, rooms: ["302"], rel: located in}
+  B-2: {floor: L3, rooms: ["302"], rel: located in}
+  B-3: {floor: L3, rooms: ["302"], rel: located in}
+  FC-3.1: {floor: L3, rooms: ["302"], rel: located in}
+  CH-1: {floor: RF, rooms: [], rel: located in}
+  ERV-1: {floor: RF, rooms: [], rel: located in}
+  ERV-2: {floor: RF, rooms: [], rel: located in}
+  ERV-3: {floor: RF, rooms: [], rel: located in}
+  MAU-1: {floor: RF, rooms: [], rel: located in}
+  MAU-2: {floor: RF, rooms: [], rel: located in}
+  MAU-3: {floor: RF, rooms: [], rel: located in}
+  DOAS-1: {floor: RF, rooms: [], rel: located in}
+  AC-1: {floor: RF, rooms: [], rel: located in}
+unsure:
+  - FC-2.18   # existing unit, schedule names LAB 242 / OFFICE 240; 242 is not labelled on M202
+  - FC-2.28   # existing unit, not in any schedule

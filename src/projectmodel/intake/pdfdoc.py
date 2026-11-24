@@ -149,3 +149,82 @@ def render(path: Path, page: int, width: int = 1400, boxes: list[dict] | None = 
 def _rgb(hex_color: str) -> tuple[int, int, int]:
     h = hex_color.lstrip("#")
     return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+# ---------------------------------------------------------------- sheet numbers in any style
+
+# M-101 (Troop D), M201 and M.201 (MSU), M1.0 and M5.2 (ITD), FP-1, E-2.1: a discipline letter or two, then a number
+SHEET_ANY = re.compile(r"^[A-Z]{1,2}[-.]?\d{1,3}(?:\.\d{1,2})?[A-Z]?$")
+
+
+def sheet_id(ws) -> str:
+    """The sheet number in the title block, in any of the usual styles (M-101, M201, M.201, M1.0): the largest text
+    that looks like one. The strict M-101 style wins when the page has one (`sheet_number`, as before)."""
+    if strict := sheet_number(ws):
+        return strict
+    cands = [w for w in ws if SHEET_ANY.match(w.text) and w.size >= 14]
+    return max(cands, key=lambda w: (w.size, w.x0)).text if cands else ""
+
+
+# ---------------------------------------------------------------- vision input (plan-workflow-ai §6.3)
+
+@dataclass(frozen=True)
+class PageImage:
+    """A page rendered for a vision model, with the mapping back to `words` coordinates (PDF points from the page's
+    top-left corner). A point (x, y) on the page is pixel ((x - crop[0]) * scale, (y - crop[1]) * scale)."""
+    image: Image.Image
+    dpi: float
+    crop: tuple[float, float, float, float]  # the region shown, in PDF points
+
+    @property
+    def scale(self) -> float:
+        return self.dpi / 72.0
+
+    def to_px(self, x: float, y: float) -> tuple[float, float]:
+        return (x - self.crop[0]) * self.scale, (y - self.crop[1]) * self.scale
+
+    def to_pt(self, px: float, py: float) -> tuple[float, float]:
+        return px / self.scale + self.crop[0], py / self.scale + self.crop[1]
+
+    def png(self) -> bytes:
+        import io
+        buf = io.BytesIO()
+        self.image.save(buf, "PNG", optimize=True)
+        return buf.getvalue()
+
+    def block(self) -> dict:
+        """The image as an Anthropic-shape content block (the Gemini provider converts it)."""
+        import base64
+        return {"type": "image", "source": {"type": "base64", "media_type": "image/png",
+                                            "data": base64.b64encode(self.png()).decode()}}
+
+
+def page_image(path: Path, page: int, dpi: float = 72.0, crop: list[float] | None = None,
+               labels: list[dict] | None = None, max_px: int = 3200, gray: bool = True) -> PageImage:
+    """The page (or `crop` of it, PDF points) rendered at `dpi` (lowered so the longer side is at most `max_px`),
+    optionally with candidate ids drawn on it: `labels` = [{"id": "R12", "bbox": [x0, top, x1, bottom],
+    "color": "#hex"}], each a thin box with its id beside it, so a model can answer "R12" for what it sees there."""
+    pw, ph = page_size(path, page)
+    region = tuple(crop) if crop else (0.0, 0.0, pw, ph)
+    w_pt, h_pt = region[2] - region[0], region[3] - region[1]
+    dpi = min(dpi, max_px * 72.0 / max(w_pt, h_pt))
+    scale = dpi / 72.0
+    pdf_page = pdfium.PdfDocument(path)[page]
+    full = pdf_page.render(scale=scale, grayscale=gray).to_pil().convert("RGB")
+    img = full.crop([round(region[0] * scale), round(region[1] * scale), round(region[2] * scale),
+                     round(region[3] * scale)])
+    pim = PageImage(img, dpi, region)
+    if labels:
+        from PIL import ImageFont
+        draw = ImageDraw.Draw(img)
+        font = ImageFont.load_default(size=max(9, round(7 * scale)))
+        for lab in labels:
+            x0, y0 = pim.to_px(lab["bbox"][0], lab["bbox"][1])
+            x1, y1 = pim.to_px(lab["bbox"][2], lab["bbox"][3])
+            color = _rgb(lab.get("color", "#D02020"))
+            draw.rectangle([x0 - 2, y0 - 2, x1 + 2, y1 + 2], outline=color, width=1)
+            tx, ty = x1 + 3, y0 - 2
+            tw = draw.textlength(lab["id"], font=font)
+            draw.rectangle([tx - 1, ty, tx + tw + 1, ty + font.size + 1], fill=(255, 255, 255))
+            draw.text((tx, ty), lab["id"], fill=color, font=font)
+    return pim
