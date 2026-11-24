@@ -1,25 +1,23 @@
 """The completeness cards on top of the twin (completeness.py)."""
 
 from projectmodel.completeness import completeness
-from projectmodel.db.store import Store
+from projectmodel.db.store import Edge, Node, Store
 
 
 def node(store, id, kind, cls=None, conf=1.0, method="rule"):
-    store.conn.execute("INSERT INTO nodes (project, id, kind, label, class, source_file, source_ref, method, confidence,"
-                       " status, revision) VALUES ('p', ?, ?, ?, ?, 'f', 'r', ?, ?, 'confirmed', 1)",
-                       (id, kind, id, cls, method, conf))
+    status = "confirmed" if method == "human" else None  # a person's decision; else the store decides
+    store.write_source("p", f"t:{id}", 1, [Node(id, kind, id, cls, "f", "r", method, conf, status=status)])
 
 
 def edge(store, src, rel, dst):
-    store.conn.execute("INSERT INTO edges (project, src, rel, dst, source_file, source_ref, method, confidence, status,"
-                       " revision) VALUES ('p', ?, ?, ?, 'f', 'r', 'rule', 1, 'confirmed', 1)", (src, rel, dst))
+    store.write_source("p", f"t:{src}-{rel}-{dst}", 1, edges=[Edge(src, rel, dst, "f", "r", "rule", 1.0)])
 
 
 def test_cards_count_what_they_say(tmp_path):
     s = Store(tmp_path / "kg.sqlite")
     node(s, "ahu", "equipment", "AHU")
     node(s, "vav", "equipment", "VAV")
-    node(s, "x", "equipment", "Equipment", conf=0.5)            # not classed, not linked, not trusted
+    node(s, "x", "equipment", "Equipment", conf=0.5)            # not classed, not linked, proposed: not trusted
     node(s, "t1", "point", "Temp_Sensor")
     node(s, "t2", "point", "Temp_Sensor", conf=0.4, method="human")  # a person decided: trusted
     node(s, "t3", "point", None, conf=0.3)                      # on no equipment, to review

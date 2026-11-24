@@ -4,7 +4,8 @@
 
 Each card is a share (0-1) with what it counts, read from the graph (nodes, edges) and the twin's payload:
 
-  Graph trusted       points and equipment at confidence >= TRUSTED, or decided by a person
+  Graph trusted       points and equipment confirmed: by a person, by two agreeing sources, or by the auto-accept
+                      rule (db/store.py); the rest are proposed, in the review queue
   Points on equipment points with a hasPoint link from an equipment
   Equipment classed   equipment with a specific class (not empty, not plain "Equipment")
   Equipment linked    equipment in at least one feeds or hasPart link
@@ -16,8 +17,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .db.store import Store
-
-TRUSTED = 0.8  # as the project cards (views/projects.py)
 
 
 @dataclass
@@ -39,10 +38,10 @@ def _pct(n: int, total: int) -> float:
 
 def completeness(store: Store, project: str, payload: dict | None = None) -> list[Card]:
     q = store.conn.execute
-    nodes = q("SELECT kind, COUNT(*) n, SUM(confidence >= ? OR method = 'human') ok, AVG(confidence) avg,"
-              " SUM(confidence < ? AND method != 'human') low FROM nodes"
+    nodes = q("SELECT kind, COUNT(*) n, SUM(status = 'confirmed') ok, AVG(confidence) avg,"
+              " SUM(status = 'proposed') low FROM nodes"
               " WHERE project = ? AND status != 'rejected' AND kind IN ('point', 'equipment') GROUP BY kind",
-              (TRUSTED, TRUSTED, project)).fetchall()
+              (project,)).fetchall()
     by = {r["kind"]: r for r in nodes}
     total = sum(r["n"] for r in nodes)
     trusted = sum(r["ok"] or 0 for r in nodes)

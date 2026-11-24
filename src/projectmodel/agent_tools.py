@@ -10,6 +10,7 @@ An agent should not read SQLite or guess node ids. It calls:
 
 Every fact comes back with `trust`, so the agent can tell a checked fact from a guess:
   verified  a person decided it (method human)
+  agreed    two or more independent sources state it (confirmed_by agreement)
   stated    a project document says so (method document): intent, not confirmed as built
   likely    the mapper decided it with confidence >= LIKELY
   unsure    the mapper decided it with lower confidence
@@ -35,6 +36,8 @@ LIKELY = 0.8  # the score report's confidence threshold
 def trust(prov: dict) -> str:
     if prov.get("method") == "human":
         return "verified"
+    if prov.get("confirmed_by") == "agreement":
+        return "agreed"
     if prov.get("method") == "document":
         return "stated"
     return "likely" if (prov.get("confidence") or 0) >= LIKELY else "unsure"
