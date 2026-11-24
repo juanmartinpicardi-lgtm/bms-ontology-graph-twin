@@ -35,6 +35,13 @@ ba:Field_Network a owl:Class ;
     rdfs:label "Field network" ;
     skos:definition "A communication trunk (BACnet MS/TP, BACnet/IP, Modbus, LON) grouping the devices on it." .
 
+# --- Equipment Brick lacks ---------------------------------------------------------------------
+
+ba:Unit_Heater a owl:Class ;
+    rdfs:subClassOf brick:Space_Heater ;
+    rdfs:label "Unit heater" ;
+    skos:definition "A self-contained heater with its own fan, hung in or on a space (electric, hot water or gas). Brick has Space_Heater but no unit heater." .
+
 # --- Point kinds that are about the BA system, not the building ----------------------------
 
 ba:Software_Point a owl:Class ;
@@ -58,20 +65,27 @@ ba:Utility_Cost_Point a owl:Class ;
     skos:definition "A monetary value from utility billing or tariff calculation, e.g. monthly gas cost." .
 
 # --- Objects that attach to points ----------------------------------------------------------
+# Not points themselves: under brick:Entity, the root of every Brick class. Under brick:Point they would
+# become candidates whenever a point is classified.
 
 ba:Schedule a owl:Class ;
+    rdfs:subClassOf brick:Entity ;
     rdfs:label "Schedule" ;
     skos:definition "A time-based schedule object (e.g. BACnet Schedule) that drives occupancy or enable commands." .
 
 ba:Trend_Log a owl:Class ;
+    rdfs:subClassOf brick:Entity ;
     rdfs:label "Trend log" ;
     skos:definition "A history collection attached to a point (e.g. Niagara history extension, BACnet Trend Log)." .
 
 ba:Alarm_Definition a owl:Class ;
+    rdfs:subClassOf brick:Entity ;
     rdfs:label "Alarm definition" ;
     skos:definition "Alarm limits and routing configured on a point (e.g. Niagara alarm extension), as opposed to an alarm point." .
 
 # --- Relations ------------------------------------------------------------------------------
+# Brick has no relation for control logic, so the control relations below are ours. They are written by the
+# sequences loader (src/projectmodel/sequences.py, CONTROL); the loader checks that each one is declared.
 
 ba:isHostedBy a owl:ObjectProperty ;
     rdfs:label "is hosted by" ;
@@ -89,3 +103,56 @@ ba:controls a owl:ObjectProperty ;
     skos:definition "Controller runs the control logic for this equipment." ;
     rdfs:domain brick:Controller ;
     rdfs:range brick:Equipment .
+
+# --- Control relations (from sequences of operation) -----------------------------------------
+# Brick has no relation for control logic. All six run between points (ba:requests ends on equipment).
+# Each edge is an intent read from a document, never the as-built program.
+
+ba:drives a owl:ObjectProperty ;
+    rdfs:label "drives" ;
+    rdfs:comment "The source point sets the target point in a control loop (a setpoint drives an output command)." ;
+    rdfs:domain brick:Point ;
+    rdfs:range brick:Point .
+
+ba:feedback a owl:ObjectProperty ;
+    rdfs:label "feedback" ;
+    rdfs:comment "The source point is the measured value that closes the loop on the target point (a sensor feeds back to the output it controls)." ;
+    rdfs:domain brick:Point ;
+    rdfs:range brick:Point .
+
+ba:requires a owl:ObjectProperty ;
+    rdfs:label "requires" ;
+    rdfs:comment "The source point must be true before the target point may act: a proof, an interlock or a start-up order (supply fan status requires the fan command)." ;
+    rdfs:domain brick:Point ;
+    rdfs:range brick:Point .
+
+ba:resets a owl:ObjectProperty ;
+    rdfs:label "resets" ;
+    rdfs:comment "The source point moves the target setpoint (trim and respond: terminal damper position resets the air handler supply air temperature setpoint)." ;
+    rdfs:domain brick:Point ;
+    rdfs:range brick:Setpoint .
+
+ba:requests a owl:ObjectProperty ;
+    rdfs:label "requests" ;
+    rdfs:comment "The source point asks the target equipment to run (a cooling valve above 95 % open requests the chilled water plant)." ;
+    rdfs:domain brick:Point ;
+    rdfs:range brick:Equipment .
+
+ba:switches a owl:ObjectProperty ;
+    rdfs:label "switches" ;
+    rdfs:comment "The source point (a mode or occupancy state) switches the target point between modes of operation." ;
+    rdfs:domain brick:Point ;
+    rdfs:range brick:Point .
+
+# --- Spatial relation from the floor plans ----------------------------------------------------
+# Brick has feeds (a medium flows from equipment to a zone) and hasLocation (equipment is in a place). Neither says
+# "this terminal unit serves this room", which is what the thermostat on a plan tells us: the room is the place the
+# unit's thermostat sits in, not a zone the unit feeds. ba:serves is a sub-property of brick:feeds, so a reader of
+# plain Brick still sees the VAV feeding that space.
+
+ba:serves a owl:ObjectProperty ;
+    rdfs:subPropertyOf brick:feeds ;
+    rdfs:label "serves" ;
+    rdfs:comment "A terminal unit serves this room or zone: its thermostat is there. Equipment that only sits in a room uses brick:hasLocation instead." ;
+    rdfs:domain brick:Equipment ;
+    rdfs:range brick:Location .

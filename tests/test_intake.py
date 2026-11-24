@@ -23,13 +23,11 @@ def test_tag_prefers_longer_prefix_and_ignores_words():
     assert tags.normal("BOILER ROOM") is None  # one-letter prefix B only with a separator or two digits
 
 
-def test_tag_classes_exist_in_brick():
-    brickschema = pytest.importorskip("brickschema")
-    from rdflib import OWL, RDF, Namespace
-    brick = Namespace("https://brickschema.org/schema/Brick#")
-    classes = set(brickschema.Graph(load_brick=True).subjects(RDF.type, OWL.Class))
-    missing = {r["class"] for r in tags.rules()["prefixes"].values() if brick[r["class"]] not in classes}
-    assert not missing
+def test_tag_classes_exist_in_the_model():
+    """A tag proposes a class the knowledge model declares (Brick, or our ba: extension where Brick has none)."""
+    from projectmodel.knowledge_model import load_knowledge_model
+    classes = load_knowledge_model().classes
+    assert not {r["class"] for r in tags.rules()["prefixes"].values()} - set(classes)
 
 
 @pytest.fixture(scope="module")
@@ -266,3 +264,17 @@ def test_reset_and_delete(tmp_path):
     assert not (it.dir / "uploads").exists()
     again.delete()
     assert not it.dir.exists()
+
+
+def test_every_term_the_setup_publishes_is_declared(intake):
+    """Every class and relation the guided setup writes into the graph is in the knowledge model (W1)."""
+    from projectmodel.db.store import Store
+    from projectmodel.intake.publish import publish
+    from projectmodel.knowledge_model import load_knowledge_model
+    km = load_knowledge_model()
+    store = Store(":memory:")
+    project = publish(intake, store)
+    classes = {r[0] for r in store.conn.execute("SELECT DISTINCT class FROM nodes WHERE project = ?", (project,))}
+    rels = {r[0] for r in store.conn.execute("SELECT DISTINCT rel FROM edges WHERE project = ?", (project,))}
+    assert not {c for c in classes if c and c not in km.classes}, classes - set(km.classes)
+    assert not rels - (set(km.relations) | set(km.ba_relations)), rels

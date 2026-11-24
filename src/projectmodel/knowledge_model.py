@@ -25,6 +25,13 @@ KM_DIR = ROOT / "knowledge_model"
 BRICK_VERSION = "1.4"
 BRICK = rdflib.Namespace("https://brickschema.org/schema/Brick#")
 BA = rdflib.Namespace("urn:projectmodel:ba#")
+REC = rdflib.Namespace("https://w3id.org/rec#")  # RealEstateCore, which replaces Brick 1.4's location classes
+
+# Relations the app writes that are not Brick's own. The sequences loader writes the control relations
+# (sequences.py reads CONTROL from here) and the guided setup writes `serves` (floor plans). The loader fails
+# unless every one is declared in ba_extension.ttl or listed in the Brick subset.
+CONTROL_RELATIONS = ("drives", "feedback", "requires", "resets", "requests", "switches")
+WRITTEN_RELATIONS = (*CONTROL_RELATIONS, "serves")
 
 
 class KnowledgeModelError(ValueError):
@@ -142,10 +149,11 @@ class IgnoreRule:
 @dataclass
 class ClassInfo:
     name: str
-    kind: str  # "equipment" | "point" | "system" | "other"
+    kind: str  # "equipment" | "point" | "system" | "location" | "other"
     group: str  # section in brick_subset.yaml, or "ba_extension"
     source: str  # "brick" | "ba"
     subset_parent: str | None = None  # nearest ancestor that is also in the model
+    replaced_by: str = ""  # a deprecated Brick class kept on purpose: the rec: class that replaces it, e.g. "rec:Level"
 
 
 @dataclass
@@ -262,6 +270,27 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
                     if uri != root and not _is_subclass(g, uri, root):
                         problems.append(f"brick_subset: {name} is listed under {kind} but is not a {root.split('#')[1]}")
                     classes[name] = ClassInfo(name, class_kind, group, "brick")
+    # Locations: Brick 1.4 deprecated these in favour of RealEstateCore. They are accepted here, and only here,
+    # while Brick still names the rec: class the file says replaces them.
+    for group, entries in (subset.get("locations") or {}).items():
+        for name, replacement in entries.items():
+            uri = BRICK[name]
+            if name in classes:
+                problems.append(f"brick_subset: {name} listed twice")
+            elif not brick_has(uri, OWL.Class):
+                problems.append(f"brick_subset: location {name} is not a Brick {version} class")
+            elif not str(replacement).startswith("rec:"):
+                problems.append(f"brick_subset: location {name} must name the rec: class that replaces it, "
+                                f"got {replacement!r}")
+            else:
+                if not _is_subclass(g, uri, BRICK.Location):
+                    problems.append(f"brick_subset: {name} is listed under locations but is not a Location")
+                if deprecated(uri):
+                    said = g.value(uri, BRICK.isReplacedBy)
+                    if said != REC[str(replacement)[4:]]:
+                        problems.append(f"brick_subset: {name} is replaced by {said} in Brick {version}, "
+                                        f"not {replacement}: update brick_subset.yaml")
+                classes[name] = ClassInfo(name, "location", group, "brick", replaced_by=str(replacement))
     relations = list(subset.get("relations", []))
     for rel in relations:
         if not any(g.triples((BRICK[rel], RDF.type, None))):
@@ -293,6 +322,16 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
         classes[name] = ClassInfo(name, "other", "ba_extension", "ba")
     for p in sorted(ext.subjects(RDF.type, OWL.ObjectProperty)):
         ba_relations.append(str(p).split("#")[-1])
+        rname = ba_relations[-1]
+        if not str(p).startswith(str(BA)):
+            problems.append(f"ba_extension: relation {p} is outside the ba: namespace")
+        if any(g.triples((BRICK[rname], RDF.type, None))):
+            problems.append(f"ba_extension: relation {rname} clashes with Brick relation of the same name")
+        if not ext.value(p, RDFS.label) or not (ext.value(p, RDFS.comment) or ext.value(p, SKOS.definition)):
+            problems.append(f"ba_extension: relation {rname} needs rdfs:label and rdfs:comment")
+        for sup in ext.objects(p, RDFS.subPropertyOf):
+            if not (any(g.triples((sup, RDF.type, OWL.ObjectProperty))) or (sup, RDF.type, OWL.ObjectProperty) in ext):
+                problems.append(f"ba_extension: parent relation {sup} of {rname} is unknown")
         for rng in list(ext.objects(p, RDFS.range)) + list(ext.objects(p, RDFS.domain)):
             if not ((rng, RDF.type, OWL.Class) in ext or brick_has(rng, OWL.Class)):
                 problems.append(f"ba_extension: domain/range {rng} of {p} is unknown")
@@ -311,6 +350,19 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
         # nearest = the ancestor that is a subclass of every other ancestor
         nearest = [a for a in ancestors if all(a == b or _is_subclass(merged, km_uri(a), km_uri(b)) for b in ancestors)]
         info.subset_parent = nearest[0] if nearest else None
+
+    # Terms the app writes must be declared (see WRITTEN_RELATIONS), so none is silently "off-standard".
+    for rel in WRITTEN_RELATIONS:
+        if rel not in ba_relations and rel not in relations:
+            problems.append(f"the app writes relation {rel!r}, which is neither in brick_subset.yaml nor declared "
+                            f"in ba_extension.ttl")
+    tags_path = km_dir / "name_rules" / "equipment_tags.yaml"
+    if tags_path.exists():
+        for prefix, tag in (yaml.safe_load(tags_path.read_text()).get("prefixes") or {}).items():
+            cls = tag.get("class")
+            if cls and classes.get(cls, ClassInfo("", "", "", "")).kind != "equipment":
+                problems.append(f"name_rules/equipment_tags.yaml: prefix {prefix} proposes class {cls!r}, "
+                                f"which is not an equipment class in the model")
 
     # Templates
     templates: dict[str, Template] = {}

@@ -64,7 +64,11 @@ if __name__ == "__main__":
     print(f"Knowledge model OK (Brick {km.brick_version})")
     print(f"  Brick subset: {kinds[('brick', 'equipment')]} equipment + {kinds[('brick', 'point')]} point + "
           f"{kinds[('brick', 'system')]} system classes, {len(km.relations)} relations")
+    print(f"  Locations (deprecated in Brick 1.4, kept on purpose): {kinds[('brick', 'location')]} "
+          f"({', '.join(f'{c} -> {i.replaced_by}' for c, i in km.classes.items() if i.kind == 'location')})")
     print(f"  BA extension: {sum(v for (s, _), v in kinds.items() if s == 'ba')} classes, {len(km.ba_relations)} relations")
+    from projectmodel.knowledge_model import WRITTEN_RELATIONS
+    print(f"  Relations the app writes, all declared: {', '.join(WRITTEN_RELATIONS)}")
     print(f"  Templates: {', '.join(sorted(km.templates))}")
     print(f"  Name rules: {len(km.name_rules.vocabulary)} words, {len(km.name_rules.abbreviations)} abbreviations, "
           f"{len(km.name_rules.examples)} examples pass")

@@ -161,3 +161,11 @@ def test_llm_only_for_leftovers_and_logged(km):
     assert logged[0] == summary["llm_calls"] == len(fake.requests)
     nodes = {n["label"]: n for n in store.nodes("t", "point")}
     assert nodes["Zork"]["method"] != "llm"  # no candidates, so the answer is ignored
+
+
+def test_component_word_in_the_name_beats_a_class_without_it():
+    """Heating_Command and Valve_Command both match "Heating Valve Signal" on two words; the name says valve."""
+    from projectmodel.knowledge_model import load_knowledge_model
+    from projectmodel.mapper.classify import ClassMatcher
+    g = ClassMatcher(load_knowledge_model(), "point").classify("Heating Valve Signal")
+    assert g.cls == "Valve_Command"
