@@ -232,7 +232,7 @@ dependencies are merged.
 | W11 | Agent tools | W2, W8, W9 | Open source page, read sequence, show graphic, run a check | "Does AHU-1 run as designed?" answered with cited steps on Troop D | M |
 | W12 | Tool adapters | access | Niagara (station export), CPO Studio; merge on device id | When internal access exists | L |
 
-Status, 24 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmodel/roadmap.py`):
+Status, 24 Nov 2026 (evening) (the app's Roadmap page shows it live, from `src/projectmodel/roadmap.py`):
 - **First wave done** (W0, W1, W3, W5; PRs #26 to #32).
   - **W0:** coverage and partial-read checks in every step. The stress suite is a test: of 17 variations, 10 read,
     7 ask, and 0 are quiet or silent. AI point classes in the setup take Troop D from 51% to 74% exact. Three real
@@ -246,7 +246,22 @@ Status, 24 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
   - **W5:** `scripts/eval.py` scores the mapper, the setup readers and `point_class`. Isotonic calibration runs per
     job. Every band of 30+ items is within 5 points (Alpha's 0.9–1.0 band went from 50% to 99% right). The bake-off
     rule is code. The budget is provisional at $1 per 1,000 items until §8.4 is set.
-- **Second wave in progress:** W2, W4, W6 and W8, each in its own session and PR.
+- **Second wave done** (W2, W4, W6, W8; PRs #34 to #37).
+  - **W2:** `scripts/export_brick.py` writes Brick Turtle with provenance (reified), round-trip checked, and runs 13
+    building SHACL rules plus Brick 1.4's shapes. Troop D passes 12 of 13 with proposed facts. Findings: 19 points
+    on no equipment (W7), sequence relations ending on plants (W8), `ba:Field_Network` members not listed with
+    `rec:includes`, and `ba:serves`'s range (`brick:Location` vs `rec:Room`). Not yet run on every import.
+  - **W4:** Troop D's riser becomes 67 field controllers, 1 supervisory controller and 4 networks, each confirmed by
+    the BMS export. 847 of 847 points are on the right controller; 66 of 69 `controls` links are right, none wrong.
+    Units on every point (QUDT where clear); site and building nodes. Troop D's graph standard: 57 → 67.
+  - **W6:** page rendering and page sorting; the `plan_meaning` job places tags in rooms. On keyed sheets of the real
+    dev sets: 1.5% (rules on main) → 49% (rules on the branch) → 83% (Hydrogen + rules). Calibrated within 1 point,
+    about $0.04 per sheet.
+  - **W8:** a hand-built Troop D key (5 sequences, 86 relations, written before the prompt). Relations found: 18%
+    (rules alone) → 87% (Hydrogen + rules), 88% precision. Gaps become asks. About $0.03 per sequence.
+  - W6 and W8 pass accuracy and calibration in the §6.4 bake-off and fail only the provisional $1 per 1,000 budget
+    (about $0.15–0.20 per building each). §8.4 decides.
+- **Third wave in progress:** W7 (riser and point binding with AI) and W10 (learning loop). W9 and W11 follow.
 - §8.5 (auto-accept on agreement) is on by default and switched by `PM_AUTO_AGREE`. It is still to be agreed.
 
 Suggested first wave (parallel): **W0**, **W1**, **W3**, **W5**. Second wave: **W2**, **W4**, **W6**, **W8**. Then

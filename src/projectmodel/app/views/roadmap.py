@@ -350,8 +350,12 @@ story([
                                                              "declared (W1), facts proposed until two sources agree "
                                                              "(W3), and calibrated confidence: 90% sure is right 9 "
                                                              "times in 10 (W5)."),
-                        ("pending", "Now:", "W2 Brick export and SHACL, W4 controllers and networks as nodes, W6 the "
-                                            "AI plan reader, W8 sequences with AI.")]),
+                        ("check_circle", "Second wave done:", "Brick export checked by SHACL (W2), controllers, "
+                                                              "networks and units from the riser (W4), an AI plan "
+                                                              "reader: 49% → 83% on real sets (W6), and sequences "
+                                                              "read as control logic: 18% → 87% (W8)."),
+                        ("pending", "Now:", "W7 point binding with AI and W10 the learning loop. Then W9 graphics "
+                                            "and W11 agent tools.")]),
             waves),
     Section("Your projects", "monitoring", "How complete each project is, and what to do next.",
             p("Each project is measured against the same standard as the Complete graph page: six layers, from "
