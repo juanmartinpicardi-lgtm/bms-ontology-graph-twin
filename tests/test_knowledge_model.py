@@ -99,3 +99,91 @@ def test_extension_clash_is_caught(km_copy, brick):
     ttl = km_copy / "ba_extension.ttl"
     ttl.write_text(ttl.read_text() + '\nba:AHU a owl:Class ; rdfs:label "x" ; skos:definition "x" .\n')
     assert "clashes with Brick" in _problems(km_copy, brick)
+
+
+# --- W1: every term the app writes is a declared, valid term ------------------------------------
+
+def test_written_relations_and_classes_resolve(km):
+    from projectmodel.knowledge_model import CONTROL_RELATIONS, WRITTEN_RELATIONS
+    from projectmodel.sequences import CONTROL
+    assert CONTROL is CONTROL_RELATIONS  # one list, not two that can drift
+    declared = set(km.relations) | set(km.ba_relations)
+    assert set(WRITTEN_RELATIONS) <= declared and "serves" in WRITTEN_RELATIONS
+    tags = yaml.safe_load((KM_DIR / "name_rules" / "equipment_tags.yaml").read_text())["prefixes"]
+    assert {t["class"] for t in tags.values() if t.get("class")} <= set(km.classes)
+    assert {"Floor", "Room", "HVAC_Zone", "Building", "Site", "RVAV", "Unit_Heater"} <= set(km.classes)
+
+
+def test_locations_are_kept_on_purpose(km):
+    assert {km.classes[c].replaced_by for c in ("Floor", "Room", "HVAC_Zone", "Building", "Site")} == {
+        "rec:Level", "rec:Room", "rec:HVACZone", "rec:Building", "rec:Site"}
+    assert km.classes["Room"].kind == "location" and km.is_a("Room", "Location")
+    assert km.classes["Unit_Heater"].source == "ba" and km.is_a("Unit_Heater", "Space_Heater")
+    assert km.is_a("Unit_Heater", "Equipment") and km.classes["Unit_Heater"].kind == "equipment"
+    assert km.is_a("RVAV", "VAV")
+
+
+def test_attached_objects_have_a_brick_parent(km):
+    for c in ("Schedule", "Trend_Log", "Alarm_Definition"):
+        assert km.is_a(c, "Entity") and km.classes[c].kind == "other"  # not points: they stay out of point candidates
+
+
+def test_serves_maps_to_brick_feeds(km):
+    from projectmodel.knowledge_model import BA, BRICK
+    assert (BA.serves, rdflib_subproperty(), BRICK.feeds) in km.graph
+
+
+def rdflib_subproperty():
+    from rdflib.namespace import RDFS
+    return RDFS.subPropertyOf
+
+
+def test_answer_key_classes_are_in_the_model(km):
+    """The Troop D answer key (a dev set) names only classes and relations the model declares."""
+    import csv
+    key = KM_DIR.parent / "data/ground_truth/troop_d"
+    if not key.exists():
+        pytest.skip("answer key missing")
+    points = {r["brick_class"] for r in csv.DictReader((key / "points.csv").open()) if r["brick_class"]}
+    equip = {r["brick_class"] for r in csv.DictReader((key / "equipment.csv").open()) if r["brick_class"]}
+    rels = {r["rel"] for r in csv.DictReader((key / "relations.csv").open())}
+    assert not points - set(km.classes)
+    assert not equip - set(km.classes)
+    assert not rels - (set(km.relations) | set(km.ba_relations))
+
+
+@pytest.mark.parametrize("edit, expected", [
+    (lambda d: d["locations"]["spaces"].update(Room="rec:Space"), "is replaced by"),
+    (lambda d: d["locations"]["spaces"].update(Room="Room"), "must name the rec: class"),
+    (lambda d: d["locations"]["spaces"].update(Zork="rec:Zork"), "location Zork is not a Brick"),
+    (lambda d: d["locations"]["spaces"].update(Floor_Fan_Coil_Unit="rec:Level"), "is not a Location"),
+    (lambda d: d["points"]["generic"].append("Room"), "deprecated"),  # deprecated classes stay out of every other group
+])
+def test_location_errors_are_caught(km_copy, brick, edit, expected):
+    _edit_yaml(km_copy / "brick_subset.yaml", edit)
+    assert expected in _problems(km_copy, brick)
+
+
+@pytest.mark.parametrize("rel", ["drives", "feedback", "requires", "resets", "requests", "switches", "serves"])
+def test_undeclared_written_relation_fails_loading(km_copy, brick, rel):
+    import re
+    ttl = km_copy / "ba_extension.ttl"
+    text = ttl.read_text()
+    assert re.search(rf"^ba:{rel} a owl:ObjectProperty", text, re.M)
+    ttl.write_text(re.sub(rf"^ba:{rel} a owl:ObjectProperty ;.*?\.\n", "", text, flags=re.M | re.S, count=1))
+    assert f"the app writes relation '{rel}'" in _problems(km_copy, brick)
+
+
+def test_unknown_tag_class_fails_loading(km_copy, brick):
+    _edit_yaml(km_copy / "name_rules" / "equipment_tags.yaml", lambda d: d["prefixes"]["AHU"].update({"class": "Air_Thing"}))
+    problems = _problems(km_copy, brick)
+    assert "prefix AHU proposes class 'Air_Thing'" in problems
+
+
+def test_relation_needs_a_comment_and_a_known_parent(km_copy, brick):
+    ttl = km_copy / "ba_extension.ttl"
+    ttl.write_text(ttl.read_text() + '\nba:zork a owl:ObjectProperty ; rdfs:subPropertyOf brick:nothing .\n'
+                   '\nba:feeds a owl:ObjectProperty ; rdfs:label "x" ; rdfs:comment "x" .\n')
+    problems = _problems(km_copy, brick)
+    assert "relation zork needs rdfs:label and rdfs:comment" in problems
+    assert "parent relation" in problems and "ba_extension: relation feeds clashes with Brick" in problems

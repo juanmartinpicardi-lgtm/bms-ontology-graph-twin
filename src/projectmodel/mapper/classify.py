@@ -17,6 +17,7 @@ MISSING_PENALTY = 0.5
 IMPLIED_PENALTY = 0.1
 IMPLIED_WORDS = {"air"}
 COMPONENT_PENALTY = 1.0  # a class naming a component the name never mentions ("Building DP" is not a filter point)
+NAME_COMPONENT_PENALTY = 0.25  # the name says "valve" but the class does not ("Heating Valve Signal" is not Heating_Command)
 ALT_PENALTY = 1.0  # per token read with a less likely abbreviation meaning
 REDUNDANT_READING = 2.0  # extra, in ALT_PENALTY units, when that meaning adds no word the name doesn't already say
 MAX_INTERPRETATIONS = 16
@@ -114,8 +115,10 @@ class ClassMatcher:
         # A class naming another function than the one the name states ("Static_SP" read as a setpoint is not a
         # sensor) is as wrong as one naming a component the name never mentions.
         said = bool(words & self.functions)
-        return matched - sum(IMPLIED_PENALTY if w in IMPLIED_WORDS else COMPONENT_PENALTY if w in EQUIPMENT_WORDS
-                             or (said and w in self.functions) else MISSING_PENALTY for w in missing)
+        unmatched = len((words & EQUIPMENT_WORDS) - cls_words)  # a component the name has and the class lacks
+        return matched - NAME_COMPONENT_PENALTY * unmatched - sum(
+            IMPLIED_PENALTY if w in IMPLIED_WORDS else COMPONENT_PENALTY if w in EQUIPMENT_WORDS
+            or (said and w in self.functions) else MISSING_PENALTY for w in missing)
 
     def _fallback(self, words: list[str]) -> str | None:
         """Best guess when no class name matches: the generic class of the point's function

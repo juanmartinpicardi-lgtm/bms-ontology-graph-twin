@@ -15,10 +15,12 @@ relations: [hasPoint, isPointOf, hasPart, isPartOf, feeds, isFedBy, hasLocation,
 
 equipment:
   generic: [Equipment, HVAC_Equipment]
-  air_side: [AHU, RTU, Terminal_Unit, VAV, FCU, Thermostat]
+  air_side: [AHU, RTU, Terminal_Unit, VAV, RVAV, FCU, Thermostat, Space_Heater, Humidifier]
   fans: [Fan, Supply_Fan, Return_Fan, Exhaust_Fan, Relief_Fan]
-  water_side: [Chiller, Boiler, Cooling_Tower, Heat_Exchanger, Pump, Chilled_Water_Pump, Hot_Water_Pump, Condenser_Water_Pump]
-  components: [Damper, Valve, Variable_Frequency_Drive]
+  water_side: [Chiller, Boiler, Cooling_Tower, Heat_Exchanger, Chilled_Water_Storage_Tank,
+                Chilled_Water_Thermal_Expansion_Tank, Pump, Chilled_Water_Pump, Hot_Water_Pump, Condenser_Water_Pump]
+  components: [Damper, Valve, Variable_Frequency_Drive, Economizer_Damper, Outside_Damper, Return_Damper, Exhaust_Damper,
+               Chilled_Water_Valve]
   meters: [Meter, Electrical_Meter, Gas_Meter, Chilled_Water_Meter, Hot_Water_Meter]
 
 points:
@@ -48,9 +50,22 @@ points:
               Valve_Command, Valve_Position_Command, Valve_Position_Sensor,
               Fan_Command, Fan_Speed_Command, Fan_Status, Pump_Command,
               Enable_Command, Run_Enable_Command, Start_Stop_Command, Run_Status, On_Off_Status, Mode_Command, Mode_Status]
+  # Classes of the Troop D answer key (a dev set) that the subset lacked. Every one is a Brick 1.4.4 class.
+  adjust: [Temperature_Adjust_Sensor]
+  heating: [Heating_Command, Heating_Enable_Command, Preheat_Command, Humidify_Command, Speed_Command, Lead_Lag_Command]
+  faults: [Fault_Status, Freeze_Status, Communication_Loss_Alarm, Smoke_Detection_Alarm, Leak_Alarm]
+  more_air: [Exhaust_Air_Flow_Sensor, Exhaust_Air_Static_Pressure_Sensor, Building_Air_Static_Pressure_Setpoint,
+             Mixed_Air_Temperature_Setpoint]
   electrical: [Speed_Sensor, Frequency_Sensor, Power_Sensor, Energy_Sensor, Current_Sensor, Run_Time_Sensor]
 
 # Systems: a plant or loop that groups equipment (a "Hot Water Plant" folder). In Brick these are
 # brick:System, not equipment. Equipment nodes in the graph may take one of these classes.
 systems:
   water: [Water_System, Chilled_Water_System, Hot_Water_System, Condenser_Water_System]
+
+# Locations. Brick 1.4 deprecated its location classes in favour of RealEstateCore (rec:), but the app writes these
+# five for floors, rooms, zones, buildings and sites, and the Troop D answer key already names their rec: classes.
+# The loader accepts a deprecated class only here, and only while Brick still says it is replaced by the rec: class
+# given. Export (W2) writes the rec: class. See README.md, "Locations".
+locations:
+  spaces: {Site: "rec:Site", Building: "rec:Building", Floor: "rec:Level", HVAC_Zone: "rec:HVACZone", Room: "rec:Room"}
