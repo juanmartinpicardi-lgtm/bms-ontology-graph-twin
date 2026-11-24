@@ -54,3 +54,13 @@ def test_variations_the_rules_now_read(results):
     assert _run(results, "bms: Niagara export columns")["read"]["devices linked"] == base["devices linked"]
     linked, total = map(int, _run(results, "bms: devices named by instance")["read"]["devices linked"].split("/"))
     assert linked >= 60, "devices named DEV3104 should join the riser by device instance"
+
+
+def test_plan_variations_another_firm_draws(results):
+    """W6: plans in Title Case and room numbers drawn above their names read as the baseline does (or close)."""
+    base = _run(results, "baseline")["score"]
+    for name in ("plans: room names and titles in Title Case", "plans: view titles in Title Case"):
+        r = _run(results, name)["score"]
+        assert r["Rooms found"] == base["Rooms found"] and r["Room names right"] == base["Room names right"], name
+    above = _run(results, "plans: room number above its name")["score"]
+    assert above["Rooms found"][0] >= 78 and above["Room names right"][0] >= 40

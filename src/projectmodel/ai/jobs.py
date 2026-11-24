@@ -64,8 +64,51 @@ def _check_point_class(out: Any, values: dict) -> str | None:
     return None
 
 
+FLOOR_ID = r"^(L\d{1,2}|B\d|RF)$"
+PLAN_MEANING_SCHEMA = _obj({
+    "page_kind": {"type": "string", "enum": ["plan", "schedule", "sequence", "riser", "submittal", "other"]},
+    "views": {"type": "array", "items": _obj({"floor": {"type": "string", "pattern": FLOOR_ID},
+                                             "title": {"type": "string"}})},
+    "rooms": {"type": "array", "items": _obj({
+        "id": {"type": "string", "description": "A room label candidate id (R…)."},
+        "name": {"type": "string", "description": "Copied from the words given with the candidate, or \"\"."},
+        "floor": {"type": "string", "pattern": FLOOR_ID},
+        "box": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 4, "maxItems": 4,
+                "description": "[x0, top, x1, bottom] in PDF points, or null."},
+        "confidence": {"type": "number"},
+    })},
+    "placements": {"type": "array", "items": _obj({
+        "tag": {"type": "string", "description": "A tag candidate id (T…)."},
+        "room": {"type": ["string", "null"], "description": "A room id from `rooms`, or null."},
+        "floor": {"type": "string", "pattern": FLOOR_ID},
+        "rel": {"type": "string", "enum": ["serves", "located_in"]},
+        "confidence": {"type": "number"},
+        "why": {"type": "string"},
+    })},
+})
+
+
+def _check_plan_meaning(out: Any, values: dict) -> str | None:
+    """Candidates in, ids out: an answer that names ids we never gave (beyond a stray one, which plan_ai drops and
+    counts), or confidences outside 0..1, fails and escalates."""
+    rooms, tags = set(values.get("room_ids", ())), set(values.get("tag_ids", ()))
+    given = [r["id"] for r in out["rooms"]] + [p["tag"] for p in out["placements"]]
+    unknown = [i for i in given if i not in rooms | tags]
+    if given and len(unknown) > max(2, 0.1 * len(given)):
+        return f"{len(unknown)} ids that are not candidates (e.g. {unknown[:3]})"
+    if any(not 0 <= x["confidence"] <= 1 for x in [*out["rooms"], *out["placements"]]):
+        return "confidence must be between 0 and 1"
+    if out["page_kind"] == "plan" and (out["rooms"] or out["placements"]) and not out["views"]:
+        return "a plan with rooms or placements needs at least one view and its floor"
+    return None
+
+
 JOBS: dict[str, Job] = {j.id: j for j in [
-    Job("plan_meaning", "Floor plans: meaning", "hydrogen", ("sonnet",), ("opus",), people="Answer asks"),
+    # Gemini reads the page image with our candidates (intake/plan_ai.py). Contender: Argon stands in while Claude is
+    # not enabled on the project (Sonnet, the spec's contender, answers 404 there in Nov 2026).
+    Job("plan_meaning", "Floor plans: meaning", "hydrogen", ("argon", "sonnet"), ("opus",), prompt="plan_meaning",
+        schema=PLAN_MEANING_SCHEMA, check=_check_plan_meaning, max_tokens=16000, effort="low", status="built",
+        people="Answer asks"),
     Job("schedule_layout", "Schedules: draft a layout per firm", "opus", ("argon",), ("fable",),
         people="Approve the layout"),
     Job("sequence_read", "Sequences", "sonnet", ("hydrogen",), ("opus",), people="Confirm the logic"),

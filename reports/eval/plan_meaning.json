@@ -1,0 +1,1059 @@
+{
+ "job": "plan_meaning",
+ "sets": [
+  "msu_mbb",
+  "itd_d1_lab"
+ ],
+ "k_folds": 5,
+ "min_n": 20,
+ "band_n": 30,
+ "tolerance": 5.0,
+ "budget_usd_per_1000": 1.0,
+ "calibration_before": "none",
+ "rows": [
+  {
+   "label": "msu_mbb \u00b7 rules",
+   "kind": "plan",
+   "set": "msu_mbb",
+   "score": {
+    "rooms": 36,
+    "rooms_found": 36,
+    "rooms_floor": 36,
+    "rooms_named": 36,
+    "rooms_ok": 36,
+    "false_rooms": [
+     "100",
+     "180",
+     "2021",
+     "300",
+     "425"
+    ],
+    "tags": 35,
+    "placed": 4,
+    "placements_ok": 3,
+    "wrong": [
+     "CH-1: L3/302 (key RF/-)"
+    ],
+    "n": 76,
+    "right": 39,
+    "pct": 51.3
+   },
+   "n": 76,
+   "exact_pct": 51.3,
+   "raw": [],
+   "calibrated": [],
+   "calibrated_worst_gap": null,
+   "raw_worst_gap": null,
+   "verdict": {
+    "says": "rules alone"
+   }
+  },
+  {
+   "label": "itd_d1_lab \u00b7 rules",
+   "kind": "plan",
+   "set": "itd_d1_lab",
+   "score": {
+    "rooms": 28,
+    "rooms_found": 28,
+    "rooms_floor": 28,
+    "rooms_named": 28,
+    "rooms_ok": 28,
+    "false_rooms": [
+     "006",
+     "802"
+    ],
+    "tags": 32,
+    "placed": 1,
+    "placements_ok": 0,
+    "wrong": [
+     "EF-5: L1/116 (key RF/-)"
+    ],
+    "n": 62,
+    "right": 28,
+    "pct": 45.2
+   },
+   "n": 62,
+   "exact_pct": 45.2,
+   "raw": [],
+   "calibrated": [],
+   "calibrated_worst_gap": null,
+   "raw_worst_gap": null,
+   "verdict": {
+    "says": "rules alone"
+   }
+  },
+  {
+   "label": "msu_mbb \u00b7 hydrogen",
+   "kind": "plan",
+   "set": "msu_mbb",
+   "model": "hydrogen",
+   "score": {
+    "rooms": 36,
+    "rooms_found": 36,
+    "rooms_floor": 36,
+    "rooms_named": 35,
+    "rooms_ok": 35,
+    "false_rooms": [
+     "100",
+     "180",
+     "2021",
+     "300",
+     "425"
+    ],
+    "tags": 35,
+    "placed": 35,
+    "placements_ok": 27,
+    "wrong": [
+     "FC-1.20: L1/None (key L1/156|157)",
+     "FC-1.22: L1/162 (key L1/163)",
+     "FC-2.10: L2/226 (key L2/227)",
+     "FC-2.11: L2/229 (key L2/231)",
+     "FC-2.12: L2/None (key L2/229)",
+     "FC-2.15: L2/None (key L2/234)",
+     "FC-2.16: L2/None (key L2/241)",
+     "FC-2.17: L2/None (key L2/235)"
+    ],
+    "n": 76,
+    "right": 62,
+    "pct": 81.6
+   },
+   "rules": {
+    "rooms": 36,
+    "rooms_found": 36,
+    "rooms_floor": 36,
+    "rooms_named": 36,
+    "rooms_ok": 36,
+    "false_rooms": [
+     "100",
+     "180",
+     "2021",
+     "300",
+     "425"
+    ],
+    "tags": 35,
+    "placed": 4,
+    "placements_ok": 3,
+    "wrong": [
+     "CH-1: L3/302 (key RF/-)"
+    ],
+    "n": 76,
+    "right": 39,
+    "pct": 51.3
+   },
+   "n": 76,
+   "exact_pct": 81.6,
+   "rules_exact_pct": 51.3,
+   "answers": 74,
+   "answers_right_pct": 85.1,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 1,
+     "mean_conf_pct": 38.2,
+     "accuracy_pct": 100.0,
+     "gap": 61.8
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 1,
+     "mean_conf_pct": 59.5,
+     "accuracy_pct": 0.0,
+     "gap": 59.5
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 2,
+     "mean_conf_pct": 76.5,
+     "accuracy_pct": 100.0,
+     "gap": 23.5
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 7,
+     "mean_conf_pct": 84.1,
+     "accuracy_pct": 28.6,
+     "gap": 55.6
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 63,
+     "mean_conf_pct": 96.4,
+     "accuracy_pct": 92.1,
+     "gap": 4.4
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 7,
+     "mean_conf_pct": 46.0,
+     "accuracy_pct": 57.1,
+     "gap": 11.2
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 5,
+     "mean_conf_pct": 61.1,
+     "accuracy_pct": 20.0,
+     "gap": 41.1
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 13,
+     "mean_conf_pct": 86.8,
+     "accuracy_pct": 92.3,
+     "gap": 5.6
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 49,
+     "mean_conf_pct": 97.7,
+     "accuracy_pct": 93.9,
+     "gap": 3.8
+    }
+   ],
+   "cost": {
+    "sheets": 3,
+    "answered": 3,
+    "failed": 0,
+    "usd": 0.11982,
+    "seconds": 87.3,
+    "calls": 3,
+    "cached": 3
+   },
+   "usd_per_sheet": 0.0399,
+   "usd_per_1000": 1.6192,
+   "seconds_per_sheet": 29.1,
+   "verdict": {
+    "says": "see the all-dev-sets row"
+   },
+   "raw_worst_gap": 4.4,
+   "calibrated_worst_gap": 3.8
+  },
+  {
+   "label": "itd_d1_lab \u00b7 hydrogen",
+   "kind": "plan",
+   "set": "itd_d1_lab",
+   "model": "hydrogen",
+   "score": {
+    "rooms": 28,
+    "rooms_found": 28,
+    "rooms_floor": 28,
+    "rooms_named": 28,
+    "rooms_ok": 28,
+    "false_rooms": [
+     "006",
+     "802"
+    ],
+    "tags": 32,
+    "placed": 32,
+    "placements_ok": 25,
+    "wrong": [
+     "SAV-4: L1/124 (key L1/123|125)",
+     "HC-5: L1/123 (key L1/119)",
+     "HC-6: L1/123 (key L1/118)",
+     "HC-7: L1/123 (key L1/117)",
+     "EH-9: L1/104 (key L1/101|102)",
+     "DFC-1: L1/113 (key L1/115)",
+     "WH-2: L1/112 (key L1/113)"
+    ],
+    "n": 62,
+    "right": 53,
+    "pct": 85.5
+   },
+   "rules": {
+    "rooms": 28,
+    "rooms_found": 28,
+    "rooms_floor": 28,
+    "rooms_named": 28,
+    "rooms_ok": 28,
+    "false_rooms": [
+     "006",
+     "802"
+    ],
+    "tags": 32,
+    "placed": 1,
+    "placements_ok": 0,
+    "wrong": [
+     "EF-5: L1/116 (key RF/-)"
+    ],
+    "n": 62,
+    "right": 28,
+    "pct": 45.2
+   },
+   "n": 62,
+   "exact_pct": 85.5,
+   "rules_exact_pct": 45.2,
+   "answers": 123,
+   "answers_right_pct": 92.7,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 8,
+     "mean_conf_pct": 75.4,
+     "accuracy_pct": 87.5,
+     "gap": 12.1
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 115,
+     "mean_conf_pct": 94.9,
+     "accuracy_pct": 93.0,
+     "gap": 1.9
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 2,
+     "mean_conf_pct": 35.8,
+     "accuracy_pct": 100.0,
+     "gap": 64.2
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 8,
+     "mean_conf_pct": 45.0,
+     "accuracy_pct": 75.0,
+     "gap": 30.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 7,
+     "mean_conf_pct": 62.2,
+     "accuracy_pct": 57.1,
+     "gap": 5.0
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 23,
+     "mean_conf_pct": 85.4,
+     "accuracy_pct": 82.6,
+     "gap": 2.8
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 83,
+     "mean_conf_pct": 99.2,
+     "accuracy_pct": 100.0,
+     "gap": 0.8
+    }
+   ],
+   "cost": {
+    "sheets": 4,
+    "answered": 4,
+    "failed": 0,
+    "usd": 0.19133,
+    "seconds": 135.0,
+    "calls": 4,
+    "cached": 4
+   },
+   "usd_per_sheet": 0.0478,
+   "usd_per_1000": 1.5555,
+   "seconds_per_sheet": 33.8,
+   "verdict": {
+    "says": "see the all-dev-sets row"
+   },
+   "raw_worst_gap": 1.9,
+   "calibrated_worst_gap": 0.8
+  },
+  {
+   "label": "all dev sets \u00b7 hydrogen",
+   "kind": "plan",
+   "set": "msu_mbb+itd_d1_lab",
+   "model": "hydrogen",
+   "n": 138,
+   "exact_pct": 83.3,
+   "rules_exact_pct": 48.6,
+   "answers": 197,
+   "answers_right_pct": 89.8,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 1,
+     "mean_conf_pct": 38.2,
+     "accuracy_pct": 100.0,
+     "gap": 61.8
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 1,
+     "mean_conf_pct": 59.5,
+     "accuracy_pct": 0.0,
+     "gap": 59.5
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 10,
+     "mean_conf_pct": 75.7,
+     "accuracy_pct": 90.0,
+     "gap": 14.3
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 7,
+     "mean_conf_pct": 84.1,
+     "accuracy_pct": 28.6,
+     "gap": 55.6
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 178,
+     "mean_conf_pct": 95.5,
+     "accuracy_pct": 92.7,
+     "gap": 2.8
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 2,
+     "mean_conf_pct": 35.8,
+     "accuracy_pct": 100.0,
+     "gap": 64.2
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 15,
+     "mean_conf_pct": 45.4,
+     "accuracy_pct": 66.7,
+     "gap": 21.2
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 12,
+     "mean_conf_pct": 61.7,
+     "accuracy_pct": 41.7,
+     "gap": 20.1
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 36,
+     "mean_conf_pct": 85.9,
+     "accuracy_pct": 86.1,
+     "gap": 0.2
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 132,
+     "mean_conf_pct": 98.6,
+     "accuracy_pct": 97.7,
+     "gap": 0.9
+    }
+   ],
+   "cost": {
+    "usd": 0.31115,
+    "sheets": 7
+   },
+   "usd_per_sheet": 0.0444,
+   "usd_per_1000": 1.5794,
+   "raw_worst_gap": 2.8,
+   "calibrated_worst_gap": 0.9,
+   "verdict": {
+    "default_ok": false,
+    "checks": {
+     "beats rules alone": true,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": false
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "not the default (fails: under the cost budget)"
+   }
+  },
+  {
+   "label": "msu_mbb \u00b7 argon",
+   "kind": "plan",
+   "set": "msu_mbb",
+   "model": "argon",
+   "score": {
+    "rooms": 36,
+    "rooms_found": 36,
+    "rooms_floor": 36,
+    "rooms_named": 35,
+    "rooms_ok": 35,
+    "false_rooms": [
+     "100",
+     "180",
+     "2021",
+     "300",
+     "425"
+    ],
+    "tags": 35,
+    "placed": 35,
+    "placements_ok": 32,
+    "wrong": [
+     "FC-2.9: L2/None (key L2/226)",
+     "FC-2.11: L2/229 (key L2/231)",
+     "FC-2.12: L2/230 (key L2/229)"
+    ],
+    "n": 76,
+    "right": 67,
+    "pct": 88.2
+   },
+   "rules": {
+    "rooms": 36,
+    "rooms_found": 36,
+    "rooms_floor": 36,
+    "rooms_named": 36,
+    "rooms_ok": 36,
+    "false_rooms": [
+     "100",
+     "180",
+     "2021",
+     "300",
+     "425"
+    ],
+    "tags": 35,
+    "placed": 4,
+    "placements_ok": 3,
+    "wrong": [
+     "CH-1: L3/302 (key RF/-)"
+    ],
+    "n": 76,
+    "right": 39,
+    "pct": 51.3
+   },
+   "n": 76,
+   "exact_pct": 88.2,
+   "rules_exact_pct": 51.3,
+   "answers": 74,
+   "answers_right_pct": 91.9,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 2,
+     "mean_conf_pct": 76.5,
+     "accuracy_pct": 100.0,
+     "gap": 23.5
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 3,
+     "mean_conf_pct": 82.2,
+     "accuracy_pct": 66.7,
+     "gap": 15.5
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 69,
+     "mean_conf_pct": 95.6,
+     "accuracy_pct": 92.8,
+     "gap": 2.9
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 4,
+     "mean_conf_pct": 68.3,
+     "accuracy_pct": 100.0,
+     "gap": 31.7
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 3,
+     "mean_conf_pct": 77.3,
+     "accuracy_pct": 33.3,
+     "gap": 44.0
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 67,
+     "mean_conf_pct": 96.6,
+     "accuracy_pct": 94.0,
+     "gap": 2.5
+    }
+   ],
+   "cost": {
+    "sheets": 3,
+    "answered": 3,
+    "failed": 0,
+    "usd": 0.11877,
+    "seconds": 123.6,
+    "calls": 3,
+    "cached": 3
+   },
+   "usd_per_sheet": 0.0396,
+   "usd_per_1000": 1.605,
+   "seconds_per_sheet": 41.2,
+   "verdict": {
+    "says": "see the all-dev-sets row"
+   },
+   "raw_worst_gap": 2.9,
+   "calibrated_worst_gap": 2.5
+  },
+  {
+   "label": "itd_d1_lab \u00b7 argon",
+   "kind": "plan",
+   "set": "itd_d1_lab",
+   "model": "argon",
+   "score": {
+    "rooms": 28,
+    "rooms_found": 28,
+    "rooms_floor": 28,
+    "rooms_named": 28,
+    "rooms_ok": 28,
+    "false_rooms": [
+     "006",
+     "802"
+    ],
+    "tags": 32,
+    "placed": 32,
+    "placements_ok": 29,
+    "wrong": [
+     "SAV-4: L1/124 (key L1/123|125)",
+     "HC-5: L1/123 (key L1/119)",
+     "WH-2: L1/112 (key L1/113)"
+    ],
+    "n": 62,
+    "right": 57,
+    "pct": 91.9
+   },
+   "rules": {
+    "rooms": 28,
+    "rooms_found": 28,
+    "rooms_floor": 28,
+    "rooms_named": 28,
+    "rooms_ok": 28,
+    "false_rooms": [
+     "006",
+     "802"
+    ],
+    "tags": 32,
+    "placed": 1,
+    "placements_ok": 0,
+    "wrong": [
+     "EF-5: L1/116 (key RF/-)"
+    ],
+    "n": 62,
+    "right": 28,
+    "pct": 45.2
+   },
+   "n": 62,
+   "exact_pct": 91.9,
+   "rules_exact_pct": 45.2,
+   "answers": 123,
+   "answers_right_pct": 96.7,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 4,
+     "mean_conf_pct": 73.3,
+     "accuracy_pct": 75.0,
+     "gap": 1.7
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 7,
+     "mean_conf_pct": 81.4,
+     "accuracy_pct": 85.7,
+     "gap": 4.4
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 112,
+     "mean_conf_pct": 95.8,
+     "accuracy_pct": 98.2,
+     "gap": 2.4
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 8,
+     "mean_conf_pct": 68.5,
+     "accuracy_pct": 87.5,
+     "gap": 19.0
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 4,
+     "mean_conf_pct": 77.5,
+     "accuracy_pct": 50.0,
+     "gap": 27.5
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 111,
+     "mean_conf_pct": 97.9,
+     "accuracy_pct": 99.1,
+     "gap": 1.2
+    }
+   ],
+   "cost": {
+    "sheets": 4,
+    "answered": 4,
+    "failed": 0,
+    "usd": 0.23469,
+    "seconds": 176.1,
+    "calls": 4,
+    "cached": 4
+   },
+   "usd_per_sheet": 0.0587,
+   "usd_per_1000": 1.908,
+   "seconds_per_sheet": 44.0,
+   "verdict": {
+    "says": "see the all-dev-sets row"
+   },
+   "raw_worst_gap": 2.4,
+   "calibrated_worst_gap": 1.2
+  },
+  {
+   "label": "all dev sets \u00b7 argon",
+   "kind": "plan",
+   "set": "msu_mbb+itd_d1_lab",
+   "model": "argon",
+   "n": 138,
+   "exact_pct": 89.9,
+   "rules_exact_pct": 48.6,
+   "answers": 197,
+   "answers_right_pct": 94.9,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 6,
+     "mean_conf_pct": 74.4,
+     "accuracy_pct": 83.3,
+     "gap": 9.0
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 10,
+     "mean_conf_pct": 81.6,
+     "accuracy_pct": 80.0,
+     "gap": 1.6
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 181,
+     "mean_conf_pct": 95.7,
+     "accuracy_pct": 96.1,
+     "gap": 0.4
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 12,
+     "mean_conf_pct": 68.5,
+     "accuracy_pct": 91.7,
+     "gap": 23.2
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 7,
+     "mean_conf_pct": 77.4,
+     "accuracy_pct": 42.9,
+     "gap": 34.5
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 178,
+     "mean_conf_pct": 97.4,
+     "accuracy_pct": 97.2,
+     "gap": 0.2
+    }
+   ],
+   "cost": {
+    "usd": 0.35346,
+    "sheets": 7
+   },
+   "usd_per_sheet": 0.0505,
+   "usd_per_1000": 1.7942,
+   "raw_worst_gap": 0.4,
+   "calibrated_worst_gap": 0.2,
+   "verdict": {
+    "default_ok": false,
+    "checks": {
+     "beats rules alone": true,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": false
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "not the default (fails: under the cost budget)"
+   }
+  }
+ ],
+ "skipped": [],
+ "calibration_after": "plan_meaning@1"
+}
