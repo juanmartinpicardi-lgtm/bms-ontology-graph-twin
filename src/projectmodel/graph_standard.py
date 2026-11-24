@@ -352,8 +352,6 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
     served = {e["src"] for e in by_rel["serves"]}
     eq_attrs = {n["id"]: json.loads(n["attrs"] or "{}") for n in real_equip}
     scheduled = [i for i, a in eq_attrs.items() if a.get("schedule")]
-    two_docs = sum(1 for i in scheduled if eq_attrs[i].get("controller"))  # on a schedule and on the riser
-    room_agree = sum(1 for n in terminals if eq_attrs[n["id"]].get("room_source") == "plan + submittal agree")
 
     def spaces_fact():
         if not rooms:
@@ -376,12 +374,16 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
                     "capacity). Serial numbers come from the site.")
 
     def agreement_fact():
-        if not scheduled:
-            return fact(0, "One source today (the BMS export), so nothing is confirmed by a second one.")
-        key = len(real_equip) + len(terminals)
-        return fact(_pct(two_docs + room_agree, key),
-                    f"{two_docs} of {len(real_equip)} equipment are on both the schedule and the controls riser; "
-                    f"{room_agree} of {len(terminals)} terminal rooms agree between the plans and the submittal.")
+        # Read from the store's claims: every source states its facts, and settle() records who agrees. Key facts:
+        # equipment and points, and the feeds, hasPoint and serves links.
+        a = store.agreement(project, kinds=("equipment", "point"), rels=("feeds", "hasPoint", "serves"))
+        if not a["stated_twice"]:
+            return fact(0, f"{len(a['sources'])} source{'s' if len(a['sources']) != 1 else ''} today, and no key fact is "
+                           "stated by two of them, so nothing is confirmed by a second one.")
+        return fact(_pct(a["stated_twice"], a["facts"]),
+                    f"{a['stated_twice']:,} of {a['facts']:,} key facts are stated by two or more of {len(a['sources'])} "
+                    f"sources; {a['agreed']:,} are confirmed by that agreement, {a['conflicts']:,} disagree and wait "
+                    "for review.")
 
     specific_pts = sum(1 for n in points if n["class"] and n["class"] not in GENERIC)
     specific_eq = sum(1 for n in real_equip if n["class"] and n["class"] not in GENERIC)
