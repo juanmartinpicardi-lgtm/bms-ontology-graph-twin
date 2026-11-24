@@ -232,18 +232,22 @@ dependencies are merged.
 | W11 | Agent tools | W2, W8, W9 | Open source page, read sequence, show graphic, run a check | "Does AHU-1 run as designed?" answered with cited steps on Troop D | M |
 | W12 | Tool adapters | access | Niagara (station export), CPO Studio; merge on device id | When internal access exists | L |
 
-Status, 23 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmodel/roadmap.py`):
-- **W0 in progress.**
-  - Done: coverage checks after every step (`intake/coverage.py`); the stress suite as a test
-    (`tests/test_stress_intake.py`); rule fixes for FLR titles, Niagara export columns, the device instance join,
-    4-digit rooms, and unread point rows in the submittal.
-  - Also done: partial-read checks in every step, and numbered sequence sections. Over 17 variations, 10 read
-    correctly, 7 say what they missed and ask, and 0 are quiet or silent.
-  - AI point classification in the setup (`intake/point_ai.py`): Troop D point class exact went from 51% to 74%, for
-    $0.34 per 1,000 points (§3).
-  - Left: 3 real document sets (in its own session and PR).
-- **Per-project completeness** (`progress.py`) measures every project against the graph standard and names the next
-  step. It is shown on the Roadmap and All projects pages. Alpha stays the demo set, unchanged.
+Status, 24 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmodel/roadmap.py`):
+- **First wave done** (W0, W1, W3, W5; PRs #26 to #32).
+  - **W0:** coverage and partial-read checks in every step. The stress suite is a test: of 17 variations, 10 read,
+    7 ask, and 0 are quiet or silent. AI point classes in the setup take Troop D from 51% to 74% exact. Three real
+    document sets, with `liberty_boe` held out.
+  - **W1:** every term the app writes is declared. Control relations and `ba:serves` are in the extension, and the
+    locations are `rec:` classes. `RVAV`, `ba:Unit_Heater` and the missing point classes are added. The loader
+    refuses an undeclared term. Troop D rules alone go from 51% to 61% exact.
+  - **W3:** rows are written `proposed`. They are confirmed by agreement between 2 sources, by a calibrated score of
+    0.9 or more, or by a person. A `claims` table and an `aliases` table hold the evidence, and each source replaces
+    only its own rows. Troop D: 828 of 828 point links agree between the submittal and the BMS export.
+  - **W5:** `scripts/eval.py` scores the mapper, the setup readers and `point_class`. Isotonic calibration runs per
+    job. Every band of 30+ items is within 5 points (Alpha's 0.9–1.0 band went from 50% to 99% right). The bake-off
+    rule is code. The budget is provisional at $1 per 1,000 items until §8.4 is set.
+- **Second wave in progress:** W2, W4, W6 and W8, each in its own session and PR.
+- §8.5 (auto-accept on agreement) is on by default and switched by `PM_AUTO_AGREE`. It is still to be agreed.
 
 Suggested first wave (parallel): **W0**, **W1**, **W3**, **W5**. Second wave: **W2**, **W4**, **W6**, **W8**. Then
 W7, W9, W10, W11.

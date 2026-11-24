@@ -160,9 +160,9 @@ layers = STYLE + '<div class="rm-lays">' + "".join(
          f"Provenance on every fact, {len(km.templates)} equipment templates, "
          f"{len(km.name_rules.abbreviations)} naming abbreviations, conventions and notes. What makes the graph "
          "trustworthy and reusable."),
-        ("bad", "Still to declare",
-         "Control links from sequences (drives, resets, requires…), serves, Floor and Room: in use, waiting for "
-         "their place (package W1)."),
+        ("ai", "Declared in W1",
+         "Control links from sequences (drives, resets, requires…) and serves in the extension; Floor, Room and "
+         "Zone as RealEstateCore locations. The loader refuses any term the app writes that is not declared."),
     ]) + "</div>"
 
 
@@ -346,10 +346,12 @@ story([
               "a data model for many sources, and a scorer for every AI job.",
               "The second wave brings AI into the readers, plans first. Graphics, binding and the learning loop "
               "follow. Each package lands only when it beats rules alone on a measured test.")
-            + features([("check_circle", "W0 done:", "coverage and partial-read checks, the stress suite as a "
-                                                     "test, AI point classes in the setup (51% → 74% exact), three "
-                                                     "real document sets."),
-                        ("pending", "Next:", "W1 ontology fixes, W3 data model, W5 scoring and calibration.")]),
+            + features([("check_circle", "First wave done:", "guardrails and real test sets (W0), every term "
+                                                             "declared (W1), facts proposed until two sources agree "
+                                                             "(W3), and calibrated confidence: 90% sure is right 9 "
+                                                             "times in 10 (W5)."),
+                        ("pending", "Now:", "W2 Brick export and SHACL, W4 controllers and networks as nodes, W6 the "
+                                            "AI plan reader, W8 sequences with AI.")]),
             waves),
     Section("Your projects", "monitoring", "How complete each project is, and what to do next.",
             p("Each project is measured against the same standard as the Complete graph page: six layers, from "
