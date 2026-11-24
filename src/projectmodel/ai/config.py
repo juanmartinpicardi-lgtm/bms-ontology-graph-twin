@@ -122,6 +122,16 @@ def _adc_project() -> str | None:
 
 
 _ENV = ("PM_AI", "PM_GCP_PROJECT", "GOOGLE_CLOUD_PROJECT", "PM_VERTEX_REGION", "PM_VERTEX_REGION_GEMINI")
+DEFAULT_TIMEOUT_S = 120.0
+
+
+def request_timeout_s() -> float:
+    """Seconds a model request may wait for the next bytes before it fails (`PM_AI_TIMEOUT_S`). Streaming answers keep
+    arriving, so this bounds a stalled connection (a dropped socket, a laptop that slept), not a long answer."""
+    try:
+        return float(os.environ.get("PM_AI_TIMEOUT_S") or DEFAULT_TIMEOUT_S)
+    except ValueError:
+        return DEFAULT_TIMEOUT_S
 
 
 def load_config() -> AIConfig:

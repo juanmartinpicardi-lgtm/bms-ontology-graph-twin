@@ -16,8 +16,10 @@ from typing import Any
 from ..db.store import Store
 from .config import AIConfig, load_config
 from .models import MODELS, Model, get_model
-from .providers import (ModelError, ModelNotEnabled, ModelRequest, ModelResponse, ModelUnavailable, NoModel, OnText,
-                        Provider, VertexClaude, VertexGemini, not_enabled)
+from .providers import (ModelError, ModelNotEnabled, ModelRequest, ModelResponse, ModelTimeout, ModelUnavailable,
+                        NoModel, OnText, Provider, VertexClaude, VertexGemini, not_enabled)
+
+RETRIES_ON_TIMEOUT = 1  # a request that timed out (no answer seen, see providers.ModelTimeout) is tried once more
 
 
 def _redact(value: Any) -> Any:
@@ -89,20 +91,24 @@ class Router:
         """Call one model once. Raises ModelUnavailable (nothing was called) or ModelError (logged as failed)."""
         m = get_model(model) if isinstance(model, str) else model
         provider = self.provider(m.family)
-        t0 = time.perf_counter()
-        try:
-            resp = provider.complete(m, req, on_text)
-            self.not_enabled.pop(m.key, None)  # enabled since (e.g. turned on in Model Garden)
-        except ModelUnavailable:
-            raise
-        except Exception as e:
-            if isinstance(e, ModelNotEnabled):
-                self.not_enabled[m.key] = str(e)
-            if store is not None:
-                store.log_llm_call(project, revision, provider.name, m.id, request_log(req), None, 0.0,
-                                   round(time.perf_counter() - t0, 3), job=job, prompt=prompt, ok=False,
-                                   error=str(e)[:2000])
-            raise e if isinstance(e, ModelError) else ModelError(f"{m.label}: {e}") from e
+        for attempt in range(1 + RETRIES_ON_TIMEOUT):
+            t0 = time.perf_counter()
+            try:
+                resp = provider.complete(m, req, on_text)
+                self.not_enabled.pop(m.key, None)  # enabled since (e.g. turned on in Model Garden)
+                break
+            except ModelUnavailable:
+                raise
+            except Exception as e:
+                if isinstance(e, ModelNotEnabled):
+                    self.not_enabled[m.key] = str(e)
+                if store is not None:  # every attempt is logged, the timed-out one too
+                    store.log_llm_call(project, revision, provider.name, m.id, request_log(req), None, 0.0,
+                                       round(time.perf_counter() - t0, 3), job=job, prompt=prompt, ok=False,
+                                       error=str(e)[:2000])
+                if isinstance(e, ModelTimeout) and attempt < RETRIES_ON_TIMEOUT:
+                    continue
+                raise e if isinstance(e, ModelError) else ModelError(f"{m.label}: {e}") from e
         resp.latency_s = round(time.perf_counter() - t0, 3)
         resp.cost_usd = m.cost(resp.input_tokens, resp.output_tokens, resp.cache_read, resp.cache_write)
         resp.provider = provider.name

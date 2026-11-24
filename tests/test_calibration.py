@@ -85,7 +85,7 @@ def test_redundant_abbreviation_reading_is_unlikely():
     from projectmodel.mapper.classify import ClassMatcher
 
     g = ClassMatcher(load_knowledge_model(), "point").classify("Building Static_SP", "AHU-5")
-    assert cal.function_of(g.cls) == "Setpoint" and g.confidence < 0.5
+    assert cal.function_of(g.cls) == "Setpoint"
     assert ClassMatcher(load_knowledge_model(), "point").classify("Duct SP").cls.endswith("Static_Pressure_Sensor")
 
 

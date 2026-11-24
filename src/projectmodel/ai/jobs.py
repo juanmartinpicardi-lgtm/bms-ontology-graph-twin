@@ -108,6 +108,30 @@ class JobResult:
         return len(self.attempts) > 1
 
 
+def job_request(job_id: str, values: dict, user_content: list | None = None):
+    """The request a job sends for these values, and its prompt (the same for every model in the chain)."""
+    job = get_job(job_id)
+    if job.status != "built" or not job.prompt:
+        raise ModelError(f"job {job_id!r} is planned, not built yet")
+    prompt = load_prompt(job.prompt)
+    system, user = prompt.render(**{k: v for k, v in values.items() if isinstance(v, (str, int, float))})
+    content: Any = user if not user_content else [{"type": "text", "text": user}, *user_content]
+    req = ModelRequest(system=system, messages=[{"role": "user", "content": content}], max_tokens=job.max_tokens,
+                       json_schema=job.schema, effort=job.effort)
+    return req, prompt
+
+
+def check_output(job_id: str, out: Any, values: dict) -> str | None:
+    """Why this output fails the job's schema or check, or None when it passes."""
+    job = get_job(job_id)
+    if job.schema:
+        try:
+            jsonschema.validate(out, job.schema)
+        except jsonschema.ValidationError as e:
+            return f"schema: {e.message}"
+    return job.check(out, values) if job.check else None
+
+
 def run_job(job_id: str, values: dict, *, router: Router | None = None, store: Store | None = None,
             project: str = "", revision: int = 0, model: str | None = None, user_content: list | None = None
             ) -> JobResult:
@@ -117,14 +141,8 @@ def run_job(job_id: str, values: dict, *, router: Router | None = None, store: S
     is sent as the user message's content blocks (images, PDFs) after the rendered user text.
     Raises ModelUnavailable when no model can be called, ModelError when every model in the chain failed."""
     job = get_job(job_id)
-    if job.status != "built" or not job.prompt:
-        raise ModelError(f"job {job_id!r} is planned, not built yet")
     router = router or default_router()
-    prompt = load_prompt(job.prompt)
-    system, user = prompt.render(**{k: v for k, v in values.items() if isinstance(v, (str, int, float))})
-    content: Any = user if not user_content else [{"type": "text", "text": user}, *user_content]
-    req = ModelRequest(system=system, messages=[{"role": "user", "content": content}], max_tokens=job.max_tokens,
-                       json_schema=job.schema, effort=job.effort)
+    req, prompt = job_request(job_id, values, user_content)
     result = JobResult(job_id, None, "")
     for key in ([model] if model else job.chain + list(job.contender)):
         if not model and key in router.not_enabled:
@@ -143,13 +161,7 @@ def run_job(job_id: str, values: dict, *, router: Router | None = None, store: S
         result.cost_usd += resp.cost_usd
         result.latency_s += resp.latency_s
         out = resp.json if job.schema else resp.text
-        if job.schema:
-            try:
-                jsonschema.validate(out, job.schema)
-            except jsonschema.ValidationError as e:
-                problem = f"schema: {e.message}"
-        if problem is None and job.check:
-            problem = job.check(out, values)
+        problem = check_output(job_id, out, values)
         result.attempts.append({"model": key, "call": resp.call_id, "problem": problem})
         if problem is None:
             result.output, result.model = out, key

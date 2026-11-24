@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import tempfile
+import threading
 import time
 from pathlib import Path
 
@@ -173,6 +174,7 @@ def intake_items(site: str = "troop_d") -> tuple[list[dict], dict]:
 # point_class -------------------------------------------------------------------------------------------------------
 
 ANSWERS = ROOT / "data/eval/point_class_answers.json"  # answers already paid for, by model and question (git-ignored)
+_LOCK = threading.Lock()  # the answers dict is filled from several threads
 
 
 def _answers() -> dict:
@@ -181,7 +183,11 @@ def _answers() -> dict:
 
 def _save_answers() -> None:
     ANSWERS.parent.mkdir(parents=True, exist_ok=True)
-    ANSWERS.write_text(json.dumps(_answers(), indent=0, sort_keys=True))
+    with _LOCK:
+        text = json.dumps(_answers(), indent=0, sort_keys=True)
+    tmp = ANSWERS.with_suffix(".tmp")
+    tmp.write_text(text)
+    tmp.replace(ANSWERS)
 
 
 def point_class_questions(source: str) -> list[dict]:
@@ -239,8 +245,35 @@ def point_class_questions(source: str) -> list[dict]:
     return list(out.values())
 
 
+def logged_answer(store, model: str, values: dict) -> dict | None:
+    """A point_class answer already paid for: the latest successful call in the call log with this exact request,
+    model and prompt version, whose output still passes the job's checks. So a run that was stopped, or a fresh
+    answers file, never pays for the same call twice."""
+    from ..ai.calls import parse_json, request_log
+    from ..ai.jobs import check_output, job_request
+    from ..ai.models import get_model
+    from ..ai.providers import ModelError
+
+    if store is None:
+        return None
+    req, prompt = job_request("point_class", values)
+    rows = store.conn.execute(
+        "SELECT output, cost_usd, latency_s FROM llm_calls WHERE job = 'point_class' AND ok = 1 AND model = ?"
+        " AND prompt = ? AND input = ? ORDER BY id DESC", (get_model(model).id, prompt.ref, request_log(req))).fetchall()
+    for r in rows:
+        try:
+            blocks = json.loads(r["output"] or "[]")
+            out = parse_json("".join(b.get("text", "") for b in blocks if b.get("type") == "text"))
+        except (ModelError, ValueError, AttributeError):
+            continue
+        if check_output("point_class", out, values) is None:
+            return {"class": out["class"], "confidence": float(out["confidence"]), "cost_usd": r["cost_usd"],
+                    "latency_s": r["latency_s"], "calls": 1}
+    return None
+
+
 def ask(q: dict, model: str, router, store) -> dict:
-    """The model's answer to one question (from the saved answers when already asked)."""
+    """The model's answer to one question: from the saved answers, else from the call log, else asked now."""
     from ..ai.jobs import run_job
     from ..ai.prompts import load_prompt
     from ..ai.providers import ModelError
@@ -250,6 +283,10 @@ def ask(q: dict, model: str, router, store) -> dict:
     saved = _answers().get(akey)
     if saved is not None:
         return dict(saved, cached=True)
+    if (a := logged_answer(store, model, q["values"])) is not None:
+        with _LOCK:
+            _answers()[akey] = a
+        return dict(a, cached=True)
     try:
         res = run_job("point_class", q["values"], router=router, store=store, project="eval:point_class", model=model)
         a = {"class": res.output["class"], "confidence": float(res.output["confidence"]), "cost_usd": res.cost_usd,
@@ -259,14 +296,14 @@ def ask(q: dict, model: str, router, store) -> dict:
         if "not enabled" in str(e).lower() or "404" in str(e) or "403" in str(e):
             a["not_enabled"] = True
             return a  # not saved: asked again once the model is enabled
-    _answers()[akey] = a
+    with _LOCK:
+        _answers()[akey] = a
     return a
 
 
 def _ask_all(qs: list[dict], model: str, router, store, log, source: str, batch: int = 8) -> list[dict]:
     """Every question's answer: the first alone (a model that is not enabled stops there), then `batch` at a time,
     one store connection per thread."""
-    import threading
     from concurrent.futures import ThreadPoolExecutor
 
     if not qs:
@@ -285,9 +322,12 @@ def _ask_all(qs: list[dict], model: str, router, store, log, source: str, batch:
                 local.store = Store(store.path)
             st = local.store
         a = ask(q, model, router, st)
-        done[0] += 1
-        if done[0] % 25 == 0:
-            log(f"   {model} on {source}: {done[0] + 1}/{len(qs)} questions")
+        with _LOCK:
+            done[0] += 1
+            n = done[0]
+        if n % 25 == 0:
+            _save_answers()  # a stopped run keeps what it paid for
+            log(f"   {model} on {source}: {n + 1}/{len(qs)} questions")
         return a
 
     workers = 1 if store is not None and store.path == ":memory:" else batch
