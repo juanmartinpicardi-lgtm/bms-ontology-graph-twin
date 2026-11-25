@@ -28,6 +28,7 @@ Then open http://localhost:8521.
 |---|---|
 | **Overview → Roadmap** | Waves 1–3 marked done, with each package's parts. AI now runs in the plans, sequences, BMS points, binding, tribal knowledge and agent stages. |
 | **Overview → Ontology** | No term marked off-standard (W1). |
+| **Overview → Answer keys** | The page where an engineer writes independent answer keys for the plan and sequence readers (§5, item 3). Blind; saves to `*.human.yaml`; makes no model call. |
 | **Overview → Complete graph** | The new **SHACL check of the export** section: pick a project and a scope, see pass and fail per building rule, and the failing nodes (W2). |
 | **All projects** | A completeness ring and the next step on each card. Alpha's overall dropped from 69% to 60% because controllers, networks and site are now measured, and a BMS export has none of them. |
 | **Add a building** | The guided setup. Each step reads, or says what it missed and asks. With AI on, the plans step places tags in rooms (W6), the sequences step proposes control relations and gaps (W8), and the BMS step binds renamed points (W7). |
@@ -85,8 +86,8 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
 
   The model doesn't yet remove the false rooms the rules read.
 - **W8 sequences.** The key has only one building (Troop D), and the agent that built the reader also wrote it, before
-  writing the prompt. On the real dev sets the rules find no candidates yet, because their headings name no equipment
-  family.
+  writing the prompt (a person can now write an independent one: §5, item 3). On the real dev sets the rules find no
+  candidates yet, because their headings name no equipment family.
 - **W7 binding.** Its scenarios are synthetic renamings of Troop D, so the calibration check is weak. Two known issues:
   - 2 wrong auto-binds when the BMS drops objects;
   - `unit:CHWPLANT` is a system and fails Brick's Equipment shape.
@@ -113,10 +114,26 @@ no longer fails a job on cost. So the plan reader (W6) and the sequence reader (
 2. **Real test data.** Troop D's drawings are real, but its controls submittal and BMS point list were made up by us to
    match those drawings. The point-matching and point-class numbers are only as good as that made-up data. Needed: one
    real controls submittal plus the BMS point export from the same past job, which can stay anonymised.
-3. **Answer keys written by a person.** To score an AI reader, someone writes down the right answers for a building
-   first. For plans and sequences, the AI agent that built each reader also wrote its answer key (before building it,
-   but still). Needed: about 1–2 hours of an engineer's time marking up one more building's plan sheets and sequence
-   of operations. Otherwise those scores stay "promising, not proven".
+3. **Answer keys written by a person.** To score an AI reader, someone writes down the right answers first. For plans
+   and sequences, the AI agent that built each reader also wrote its answer key (before building it, but still). The
+   tool for fixing this now exists. It needs about 1–2 hours of an engineer, and no code:
+
+   - **Start it:** run the app (§1), open **Overview → Answer keys**, pick a job and a set. The documents must be in
+     `data/raw/` (`.venv/bin/python scripts/run_real_sets.py --fetch`). Troop D's sequences come with the repo.
+   - **What it asks:** a fixed, seeded sample (about 100 minutes in all): 17 plan tags on `msu_mbb` and 21 on
+     `itd_d1_lab` (which room each is in or serves), and 17 sections of Troop D's sequences (which control relations
+     each states). The page shows the source, takes the answer from dropdowns built from the documents, saves any time,
+     and resumes later. It is blind: the reader's answer stays hidden until an item is done, and showing it is
+     recorded and locks the item.
+   - **What it writes:** new files, `data/ground_truth/<set>/plans.human.yaml` and `sequences.human.yaml`. The agent
+     keys are never touched.
+   - **What it does to the scores:** `scripts/eval.py plan_meaning` and `sequence_read` use the person's answers on the
+     items they cover, and report the reader against the human key and against the agent key on the same items, plus
+     how often the two keys agree. Without a key file, the output is unchanged.
+   - **Held out:** `liberty_boe` is never offered.
+
+   The guide for the engineer is [`answer-key-guide.md`](answer-key-guide.md). Until a person has filled it in, those
+   scores stay "promising, not proven".
 
 **Done (25 Nov 2026).** The two small ontology corrections: rooms are now typed the same way in our extension and
 in the export, and each network lists its controllers the way Brick expects (§4, W1).
