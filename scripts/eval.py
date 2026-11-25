@@ -18,6 +18,10 @@ then stores the curve fitted on all dev items in knowledge_model/calibration/<jo
 changed), which the mapper and the setup load at run time. Fit in order (`all` does): the point_class questions are
 the points the mapper's and the readers' calibrated confidences leave below auto-accept.
 
+Answer keys written by a person (Overview → Answer keys in the app, docs/answer-key-guide.md) are used by plan_meaning
+and sequence_read where they exist: their answers replace the agent key's on the items they cover, and each report adds
+"vs human key", "vs agent key" and how often the two keys agree. With no human key the output is unchanged.
+
 Dev sets only (Alpha, Troop D; msu_mbb and itd_d1_lab for plan_meaning). The held-out set (liberty_boe) is refused.
 With PM_AI=off or no credentials the model rows are skipped and say so. Model answers are saved in data/eval/
 (git-ignored) so a refit doesn't pay twice; every call is logged to llm_calls in --db.
