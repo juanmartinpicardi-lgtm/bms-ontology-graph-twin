@@ -1,7 +1,7 @@
 id: ahu
 brick_class: AHU
 description: Air handling unit. Conditions and moves air to terminal units or directly to zones.
-name_patterns: ['\bAHU\b', '\bAH[-_ ]?\d', '\bRTU\b', '\bMAU\b', '\bDOAS\b']
+name_patterns: ['\bAHU\b', '\bAH[-_ ]?\d', '\bMAU\b', '\bDOAS\b']
 point_count: [8, 60]
 points:
   - {role: supply_temp, classes: [Discharge_Air_Temperature_Sensor, Supply_Air_Temperature_Sensor], required: true}

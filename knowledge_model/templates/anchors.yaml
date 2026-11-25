@@ -1,5 +1,6 @@
 # Anchor map: where each template slot role sits on the 3D model of its equipment type
-# (docs/spec-equipment-3d.md §3.2). Per type, not per project.
+# (docs/spec-equipment-3d.md §3.2), and on its 2D graphic (src/projectmodel/graphics/layouts.py names the same
+# parts). Per type, not per project. Every template has a section.
 #
 #   parts:          named objects the geometry code builds; every anchor part must be one of them
 #   sub_equipment:  class of an untemplated part (e.g. "SF VFD" typed Supply_Fan) -> the part its points attach to.
@@ -120,3 +121,130 @@ pump:
     dp_sp:              {part: discharge_pipe, at: 0.75}
     power:              {part: motor}
     iso_valve:          {part: discharge_pipe.valve}
+
+# --- W9: every template the graph writes has anchors, drawn in 3D (app/equipment3d/*.js) and 2D (graphics/) ----
+
+rvav:
+  parts: [inlet_duct, damper, flow_cross, box, reheat_coil, reheat_coil.valve, reheat_coil.scr, fan,
+          discharge_duct, zone_sensor, controller]
+  sub_equipment: {}
+  anchors:
+    zone_temp:          {part: zone_sensor}
+    airflow:            {part: flow_cross}
+    airflow_sp:         {part: flow_cross}
+    damper:             {part: damper}
+    discharge_temp:     {part: discharge_duct, at: 0.5}
+    reheat_cmd:         {part: reheat_coil.scr}
+    reheat_enable:      {part: reheat_coil.scr}
+    reheat_valve:       {part: reheat_coil.valve}
+    occ_cooling_sp:     {part: zone_sensor}
+    unocc_cooling_sp:   {part: zone_sensor}
+    occ_heating_sp:     {part: zone_sensor}
+    unocc_heating_sp:   {part: zone_sensor}
+    setpoint_adjust:    {part: zone_sensor}
+    occupancy:          {part: zone_sensor}
+    fan_cmd:            {part: fan}
+    fan_status:         {part: fan}
+
+rtu:
+  parts: [casing, outside_air_hood, economizer, economizer.oa_damper, return_duct, filter, evaporator_coil,
+          compressor, condenser_coil, condenser_fan, heat_section, supply_fan, supply_fan.vfd, supply_duct,
+          zone_sensor, controller]
+  sub_equipment:
+    Supply_Fan: supply_fan
+  anchors:
+    supply_temp:        {part: supply_duct, at: 0.45, label_side: up}
+    supply_temp_sp:     {part: supply_duct, at: 0.45, label_side: up}
+    return_temp:        {part: return_duct, at: 0.5}
+    mixed_temp:         {part: economizer}
+    outside_temp:       {part: outside_air_hood}
+    zone_temp:          {part: zone_sensor}
+    zone_sp:            {part: zone_sensor}
+    static_pressure:    {part: supply_duct, at: 0.85}
+    economizer_damper:  {part: economizer.oa_damper}
+    supply_fan_cmd:     {part: supply_fan}
+    supply_fan_speed:   {part: supply_fan.vfd}
+    supply_fan_status:  {part: supply_fan}
+    cooling_stage:      {part: compressor}
+    heating_stage:      {part: heat_section}
+    filter_status:      {part: filter}
+    occupancy:          {part: controller}
+    alarm:              {part: controller}
+
+exhaust_fan:
+  parts: [curb, housing, fan, fan.vfd, damper, duct, controller]
+  sub_equipment: {}
+  anchors:
+    status:             {part: fan}
+    cmd:                {part: fan}
+    speed:              {part: fan.vfd}
+    frequency:          {part: fan.vfd}
+    power:              {part: fan.vfd}
+    flow:               {part: duct, at: 0.55}
+    static_pressure:    {part: duct, at: 0.25}
+    damper:             {part: damper}
+    alarm:              {part: controller}
+
+unit_heater:
+  parts: [casing, heater, heater.valve, fan, louvers, thermostat, controller]
+  sub_equipment: {}
+  anchors:
+    zone_temp:          {part: thermostat}
+    heat_cmd:           {part: heater}
+    heat_enable:        {part: heater}
+    heating_valve:      {part: heater.valve}
+    fan_cmd:            {part: fan}
+    fan_status:         {part: fan}
+    heating_sp:         {part: thermostat}
+    discharge_temp:     {part: louvers}
+    alarm:              {part: controller}
+
+split_system:
+  parts: [indoor_unit, indoor_unit.fan, outdoor_unit, outdoor_unit.compressor, refrigerant_lines, gateway,
+          zone_sensor]
+  sub_equipment: {}
+  anchors:
+    zone_temp:          {part: zone_sensor}
+    zone_sp:            {part: zone_sensor}
+    status:             {part: indoor_unit.fan}
+    enable:             {part: indoor_unit}
+    mode:               {part: indoor_unit}
+    fan_speed:          {part: indoor_unit.fan}
+    fault:              {part: outdoor_unit}
+
+cooling_tower:
+  parts: [casing, fill, basin, fan, fan.vfd, cw_entering_pipe, cw_leaving_pipe, cw_entering_pipe.valve,
+          control_panel]
+  sub_equipment: {}
+  anchors:
+    cmd:                {part: fan}
+    status:             {part: fan}
+    fan_speed:          {part: fan.vfd}
+    fan_freq:           {part: fan.vfd}
+    power:              {part: fan.vfd}
+    cw_leaving_temp:    {part: cw_leaving_pipe, at: 0.5, label_side: up}
+    cw_sp:              {part: cw_leaving_pipe, at: 0.5, label_side: up}
+    cw_entering_temp:   {part: cw_entering_pipe, at: 0.6}
+    iso_valve:          {part: cw_entering_pipe.valve}
+
+heat_exchanger:
+  parts: [shell, primary_in_pipe, primary_out_pipe, primary_in_pipe.valve, hw_leaving_pipe, hw_entering_pipe,
+          control_panel]
+  sub_equipment: {}
+  anchors:
+    control_valve:      {part: primary_in_pipe.valve}
+    hw_leaving_temp:    {part: hw_leaving_pipe, at: 0.5, label_side: up}
+    hw_leaving_sp:      {part: hw_leaving_pipe, at: 0.5, label_side: up}
+    hw_entering_temp:   {part: hw_entering_pipe, at: 0.5}
+    hw_flow:            {part: hw_leaving_pipe, at: 0.85}
+    enable:             {part: control_panel}
+    status:             {part: control_panel}
+
+meter:
+  parts: [meter_body, display, line]
+  sub_equipment: {}
+  anchors:
+    energy:             {part: display}
+    power:              {part: display}
+    flow:               {part: line, at: 0.5}
+    cost:               {part: display}

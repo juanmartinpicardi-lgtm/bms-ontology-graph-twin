@@ -1,0 +1,17 @@
+id: unit_heater
+brick_class: Unit_Heater
+description: Unit heater hung in a space (electric, hot water or gas), with its own fan; often on a line-voltage thermostat with no BMS points at all.
+name_patterns: ['\bUH[-_ ]?\d', '\bUNIT[-_ ]?HEATER\b']
+point_count: [1, 10]
+points:
+  - {role: zone_temp, classes: [Zone_Air_Temperature_Sensor], required: true}
+  - {role: heat_cmd, classes: [Heating_Command], required: false}
+  - {role: heat_enable, classes: [Heating_Enable_Command, Enable_Command, Run_Enable_Command, Start_Stop_Command], required: false}
+  - {role: heating_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water}
+  - {role: fan_cmd, classes: [Fan_Command], required: false}
+  - {role: fan_status, classes: [Fan_Status, Run_Status, On_Off_Status, Status], required: false}
+  - {role: heating_sp, classes: [Occupied_Heating_Zone_Air_Temperature_Setpoint, Target_Zone_Air_Temperature_Setpoint, Unoccupied_Heating_Zone_Air_Temperature_Setpoint], required: false}
+  - {role: discharge_temp, classes: [Discharge_Air_Temperature_Sensor], required: false}
+  - {role: alarm, classes: [Fault_Status, Alarm], required: false}
+relations:
+  - {rel: isFedBy, target: boiler, medium: hot_water, required: false, system: Hot_Water_System}

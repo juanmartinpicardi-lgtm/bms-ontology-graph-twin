@@ -1,0 +1,14 @@
+id: split_system
+brick_class: Split_System
+description: Ductless split or VRF system. Indoor fan-coil head in the zone, outdoor condensing unit, read over the vendor's BACnet gateway.
+name_patterns: ['\bMS[-_ ]?\d', '\bMINI[-_ ]?SPLIT\b', '\bDSS[-_ ]?\d', '\bVRF\b']
+point_count: [1, 15]
+points:
+  - {role: zone_temp, classes: [Zone_Air_Temperature_Sensor], required: true}
+  - {role: zone_sp, classes: [Target_Zone_Air_Temperature_Setpoint, Occupied_Cooling_Zone_Air_Temperature_Setpoint, Occupied_Heating_Zone_Air_Temperature_Setpoint, Temperature_Setpoint], required: false}
+  - {role: status, classes: [Run_Status, On_Off_Status, Fan_Status, Status], required: false}
+  - {role: enable, classes: [Start_Stop_Command, Run_Enable_Command, Enable_Command], required: false}
+  - {role: mode, classes: [Mode_Command, Mode_Status], required: false}
+  - {role: fan_speed, classes: [Fan_Speed_Command], required: false}
+  - {role: fault, classes: [Fault_Status, Alarm], required: false}
+relations: []

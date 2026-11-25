@@ -68,8 +68,10 @@ def test_boiler_without_leaving_temp_is_a_ghost(payloads):
 def test_plant_links_to_its_plant_and_neighbours(payloads):
     rel = payloads[f"{CHW}/CH-1"]["relations"]
     assert rel["part_of"]["label"] == "Waterside Chilled Water Plant"
-    assert [r["label"] for r in rel["with"]] == ["CH-2", "CH-3", "CWP-1", "CWP-2", "PCHWP-1A", "PCHWP-1B"]
-    assert [r["label"] for r in payloads["eq:Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-1"]["relations"]["with"]] == ["HHWP-2"]
+    # the cooling towers have a model too (W9), so they are neighbours
+    assert [r["label"] for r in rel["with"]] == ["CH-2", "CH-3", "CT-1", "CT-2", "CWP-1", "CWP-2", "PCHWP-1A",
+                                                 "PCHWP-1B"]
+    assert [r["label"] for r in payloads["eq:Waterside Hot Water Plant/Boiler Room HW Sys/HHWP-1"]["relations"]["with"]] == ["HHWP-2", "HX-3"]
 
 
 def test_fcu_two_and_four_pipe(payloads):

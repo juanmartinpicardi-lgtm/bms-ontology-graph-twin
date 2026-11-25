@@ -86,6 +86,7 @@ this_project = [  # the twin first: a project opens on it
     st.Page(APP / "views/graph_3d.py", title="Graph 3D", icon=":material/bubble_chart:", url_path="Graph_3D"),
     st.Page(APP / "views/equipment_3d.py", title="Equipment 3D", icon=":material/view_in_ar:",
             url_path="Equipment_3D"),
+    st.Page(APP / "views/graphics.py", title="Graphics", icon=":material/schema:", url_path="graphics"),
     st.Page(APP / "views/sequences.py", title="Sequences", icon=":material/sync_alt:", url_path="sequences"),
     st.Page(APP / "views/data_tables.py", title="Data tables", icon=":material/table:", url_path="data"),
     st.Page(APP / "views/notes.py", title="Notes", icon=":material/sticky_note_2:", url_path="Notes"),
