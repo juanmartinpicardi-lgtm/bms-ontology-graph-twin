@@ -48,8 +48,8 @@ def main() -> int:
                          "contender)")
     ap.add_argument("--fit", action="store_true", help="store the calibration fitted on all dev items")
     ap.add_argument("--budget", type=float, default=None,
-                    help=f"bake-off budget, USD per 1,000 items (default: PM_BUDGET_USD_PER_1000, else the "
-                         f"provisional {cal.DEFAULT_BUDGET_USD_PER_1000})")
+                    help="bake-off budget, USD per 1,000 items (default: PM_BUDGET_USD_PER_1000, else no limit; "
+                         "cost is always reported)")
     ap.add_argument("--max-questions", type=int, help="point_class: ask at most this many questions per set")
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"), help="where model calls are logged")
     args = ap.parse_args()

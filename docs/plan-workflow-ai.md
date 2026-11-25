@@ -207,7 +207,8 @@ Model names are our Vertex lineup (`ai/models.py`, prices as of Nov 2026). The b
 A model job becomes a default only when, on the dev set:
 - it beats rules alone on its metric;
 - its calibrated confidence is within 5 points of measured accuracy in each band holding 30 or more items;
-- its cost per building is under the §8 budget.
+- its cost per building is under the §8 budget, when one is set. Decided 25 Nov 2026: no budget limit while calls are
+  billed to our GCP project; cost is still reported.
 
 Never tune on a test set.
 
@@ -259,8 +260,8 @@ Status, 25 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
     about $0.04 per sheet.
   - **W8:** a hand-built Troop D key (5 sequences, 86 relations, written before the prompt). Relations found: 18%
     (rules alone) → 87% (Hydrogen + rules), 88% precision. Gaps become asks. About $0.03 per sequence.
-  - W6 and W8 pass accuracy and calibration in the §6.4 bake-off and fail only the provisional $1 per 1,000 budget
-    (about $0.15–0.20 per building each). §8.4 decides.
+  - W6 and W8 pass accuracy and calibration in the §6.4 bake-off. They failed only the provisional $1 per 1,000
+    budget (about $0.15–0.20 per building each), which was dropped on 25 Nov (§8.4), so they now pass.
 - **Third wave done** (W7, W9, W10, W11; PRs #39 to #42).
   - **W7:** rules bind on reference, tag, device and object, and template role; `point_bind` picks from a short list
     when names don't line up. On a renamed export (names only), recall goes from 84.5% to 99.6%, and all 93 model
@@ -275,7 +276,7 @@ Status, 25 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
   - **W11:** read-only tools (source page, sequence, checks, graphic) and a "runs as designed" recipe. Rules gather
     the evidence and the model writes the answer, citing only ids the tools returned. On 10 Troop D questions,
     answers and citations are 100% right, at $0.06 per question.
-- **Left:** W12 (tool adapters) waits for access. Open decisions: §8.2 (a real submittal and BMS pair), §8.4 (budget),
+- **Left:** W12 (tool adapters) waits for access. Open decisions: §8.2 (a real submittal and BMS pair) and
   §8.5 (auto-accept on agreement). How to test everything: `docs/testing-guide.md`.
 - §8.5 (auto-accept on agreement) is on by default and switched by `PM_AUTO_AGREE`. It is still to be agreed.
 
@@ -293,7 +294,8 @@ models are measured on buildings the rules have never seen.
 2. **Test data.** Is Troop D (real drawings, synthetic submittal and BMS) enough to start W6 to W9? Or do we first need
    a real submittal plus BMS pair? No accuracy number is trustworthy until one exists.
 3. **Data policy.** Vertex AI only, or may a job call a model outside GCP?
-4. **Budget per building.** A target such as $X for a 1,000-point, 10-sheet building, all stages included.
+4. **Budget per building.** Decided 25 Nov 2026: no limit while model calls are billed to our GCP project (Vertex AI).
+   Cost is still measured per job.
 5. **Auto-accept.** May a fact that two sources agree on be confirmed without a person?
 6. **Model access.** Which models are enabled on our GCP project today? Claude has been off at times: point
    classification falls back to Argon.
