@@ -69,7 +69,12 @@ def test_bands_and_the_bake_off_verdict():
     v = cal.verdict(metric=80, rules_metric=60, table=table, usd_per_1000=0.4, budget=1.0)
     assert v["default_ok"] and v["says"] == "may be the default"
     v = cal.verdict(metric=50, rules_metric=60, table=table, usd_per_1000=2.0, budget=None)
-    assert not v["default_ok"] and "beats rules alone" in v["says"] and "budget: unknown" in v["says"]
+    assert not v["default_ok"] and "beats rules alone" in v["says"] and "budget" not in v["says"]
+    v = cal.verdict(metric=80, rules_metric=60, table=table, usd_per_1000=2.0, budget=None)  # no limit: cost reported
+    assert v["default_ok"] and "under the cost budget" not in v["checks"]
+    v = cal.verdict(metric=80, rules_metric=60, table=table, usd_per_1000=2.0, budget=1.0)
+    assert not v["default_ok"] and "under the cost budget" in v["says"]
+    assert cal.budget_usd_per_1000() is None or "PM_BUDGET_USD_PER_1000" in __import__("os").environ
     off = cal.band_table([0.95] * 40, [False] * 40)
     assert not cal.verdict(metric=80, rules_metric=60, table=off, usd_per_1000=0.1, budget=1.0)["default_ok"]
 

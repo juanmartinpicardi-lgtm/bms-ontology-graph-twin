@@ -94,14 +94,25 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
   the 8 chilled-water meters, the 3 boilers and 2 pumps (Graphics → Coverage lists why). All values are simulated.
 - **W12 tool adapters.** Waits for Niagara and CPO Studio access.
 
-## 5. Decisions waiting for you (plan §8)
+## 5. Decisions
 
-1. **Budget per building (§8.4).** W6 and W8 pass accuracy and calibration, and fail only the provisional $1 per 1,000
-   items. That's about $0.15–0.20 per building each. W7 passes at $0.13 per 1,000. Set `PM_BUDGET_USD_PER_1000` or
-   give a per-building figure.
-2. **Auto-accept on agreement (§8.5).** It's on today. `PM_AUTO_AGREE=0` turns it off.
-3. **A real submittal + BMS pair (§8.2).** Every binding and point-class number rests on Troop D's synthetic submittal
-   and BMS export.
-4. **Second keys.** A person, rather than the agent that built the reader, should key one more building for plans and
-   sequences.
-5. **The two knowledge-model fixes** from W2's findings (§4, W1).
+**Decided (25 Nov 2026).** No cost limit on AI jobs, as long as calls are billed to our GCP project. The app's model
+calls all go to Vertex AI on GCP: about $6 so far across every package. The bake-off still reports cost per job, but
+no longer fails a job on cost. So the plan reader (W6) and the sequence reader (W8) now pass.
+
+**Still open, in plain words:**
+
+1. **Should two documents agreeing be enough to confirm a fact?** Today, when two sources say the same thing (for
+   example, the controls submittal and the BMS export both put point X on VAV-2-14), the app marks the fact confirmed
+   without a person looking. Anything only one source says waits for a person. Recommended: keep it on. Turn it off
+   with `PM_AUTO_AGREE=0` if every fact must be checked by a person.
+2. **Real test data.** Troop D's drawings are real, but its controls submittal and BMS point list were made up by us to
+   match those drawings. The point-matching and point-class numbers are only as good as that made-up data. Needed: one
+   real controls submittal plus the BMS point export from the same past job, which can stay anonymised.
+3. **Answer keys written by a person.** To score an AI reader, someone writes down the right answers for a building
+   first. For plans and sequences, the AI agent that built each reader also wrote its answer key (before building it,
+   but still). Needed: about 1–2 hours of an engineer's time marking up one more building's plan sheets and sequence
+   of operations. Otherwise those scores stay "promising, not proven".
+4. **Two small ontology corrections.** These are technical and low-risk, so I can make them without your input:
+   - a room is typed one way in our extension and another way in the export;
+   - a network doesn't list its controllers the way Brick expects.

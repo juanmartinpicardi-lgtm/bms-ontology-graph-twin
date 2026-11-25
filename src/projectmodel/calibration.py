@@ -42,9 +42,10 @@ MIN_N = 20
 TOLERANCE = 5.0  # points: a band's mean confidence must be this close to its measured accuracy (§6.4)
 BANDS = ((0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0))
 FUNCTIONS = ("Sensor", "Setpoint", "Command", "Status", "Alarm")
-# Provisional cost budget for the bake-off, USD per 1,000 items: §8.4 (budget per building) is still undecided.
-# Override with PM_BUDGET_USD_PER_1000 or `scripts/eval.py --budget`.
-DEFAULT_BUDGET_USD_PER_1000 = 1.0
+# Cost budget for the bake-off, USD per 1,000 items. §8.4, decided 25 Nov 2026: no budget limit while model calls
+# are billed to our GCP project (Vertex AI). Cost is still measured and reported for every job. Set a limit with
+# PM_BUDGET_USD_PER_1000 or `scripts/eval.py --budget`.
+DEFAULT_BUDGET_USD_PER_1000: float | None = None
 
 
 # isotonic regression ---------------------------------------------------------------------------------------------
@@ -284,19 +285,21 @@ def calibrated(table: list[dict], min_n: int = BAND_N, tol: float = TOLERANCE) -
 
 def verdict(*, metric: float | None, rules_metric: float | None, table: list[dict], usd_per_1000: float | None,
             budget: float | None) -> dict:
-    """The bake-off rule (§6.4): beats rules alone, calibrated within 5 points per band of 30+, under the budget."""
+    """The bake-off rule (§6.4): beats rules alone, calibrated within 5 points per band of 30+, and under the budget
+    when one is set (budget None: no limit, cost is reported only)."""
     checks = {
         "beats rules alone": None if metric is None or rules_metric is None else metric > rules_metric,
         f"calibrated within {TOLERANCE:g} points (bands of {BAND_N}+)": calibrated(table),
-        "under the cost budget": None if budget is None or usd_per_1000 is None else usd_per_1000 <= budget,
     }
+    if budget is not None:
+        checks["under the cost budget"] = None if usd_per_1000 is None else usd_per_1000 <= budget
     failed = [k if v is False else f"{k}: unknown" for k, v in checks.items() if v is not True]
     return {"default_ok": not failed, "checks": checks, "budget_usd_per_1000": budget,
             "says": "may be the default" if not failed else "not the default (fails: " + "; ".join(failed) + ")"}
 
 
 def budget_usd_per_1000() -> float | None:
-    """The bake-off budget: PM_BUDGET_USD_PER_1000 ("none": no budget yet), else the provisional default."""
+    """The bake-off budget: PM_BUDGET_USD_PER_1000 ("none": no limit), else the default (no limit)."""
     v = os.environ.get("PM_BUDGET_USD_PER_1000")
     if v is None:
         return DEFAULT_BUDGET_USD_PER_1000
