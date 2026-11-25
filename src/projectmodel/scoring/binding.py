@@ -304,7 +304,7 @@ def pairs(facts: list[dict]) -> dict[str, dict]:
         if f["kind"] == "bms_object" and d.get("matched") and d.get("point"):
             b = d.get("bind", {})
             out[d["point"][3:]] = {"bms": d["ref"], "rule": b.get("rule", "reference"), "raw": b.get("raw", f["conf"]),
-                                   "model": b.get("model"), "device": d["device"]}
+                                   "model": b.get("model"), "device": d["device"], "calls": b.get("calls") or []}
     return out
 
 
@@ -319,8 +319,10 @@ def items(scenario: str, got: dict[str, dict]) -> list[dict]:
     for sub, g in got.items():
         model = g.get("model")
         keys = cal.model_keys(model, CALLER) if model else (f"rule|{g['rule']}",)
+        # one model answer is one judgment, however many typicals it binds: its points share a fold
+        group = f"answer:{g['calls'][0]}" if model and g.get("calls") else REF.match(sub)["device"]
         out.append({"raw": float(g["raw"]), "ok": k.get(sub) == g["bms"], "keys": list(keys), "rule": g["rule"],
-                    "group": REF.match(sub)["device"], "set": scenario, "model": model, "fixed": False, "id": sub})
+                    "group": group, "set": scenario, "model": model, "fixed": False, "id": sub})
     return out
 
 
@@ -344,7 +346,185 @@ def score(scenario: str, got: dict[str, dict], conf: dict[str, float] | None = N
         r["right"] += want.get(s) == g["bms"]
     if conf is not None:
         auto = [s for s in got if conf.get(s, 0.0) >= threshold]
-        out["auto"] = {"threshold": threshold, "n": len(auto),
-                       "pct": round(100 * len(auto) / len(want), 1) if want else None,
+        out["auto"] = {"threshold": threshold, "n": len(auto),  # share of the scenario's submittal points
+                       "pct": round(100 * len(auto) / len(k), 1) if k else None,
                        "wrong": sum(1 for s in auto if want.get(s) != got[s]["bms"])}
     return out
+
+
+# the eval (scripts/eval.py point_bind) --------------------------------------------------------------------------
+
+VARIATIONS = [s for s in SCENARIOS if s != "baseline"]
+
+
+def _pooled(rows: list[dict]) -> dict:
+    """Precision, recall and F1 over several scenarios' rows (summed counts)."""
+    tp, bound, want = (sum(r[k] for r in rows) for k in ("right", "bound", "key_bindings"))
+    p = round(100 * tp / bound, 1) if bound else None
+    r = round(100 * tp / want, 1) if want else None
+    return {"precision_pct": p, "recall_pct": r, "f1": round(2 * p * r / (p + r), 1) if p and r else 0.0,
+            "right": tp, "bound": bound, "key_bindings": want}
+
+
+def evaluate(sets: list[str] | None = None, models: list[str] | None = None, *, router=None, store=None,
+             fit: bool = False, budget: float | None = None, log=print) -> dict:
+    """Rules alone, then each model plus the rules, on every scenario. Calibration: the rules' bindings (per rule) and
+    each model's answers, held out by k-fold (folds by the submittal's device, a model answer's points together).
+    The §6.4 verdict for each model: model + rules beats rules alone on F1 pooled over the variations; the model's
+    calibrated answers within 5 points per band of 30+; $ per 1,000 points under the budget."""
+    from .. import calibration as cal
+    from ..ai.calls import Router
+    from ..ai.jobs import get_job
+    from ..ai.prompts import load_prompt
+    from ..intake.binding import AI, JOB
+    from .eval import K_FOLDS, _heldout, auto_accept, by_question
+
+    sets = sets or list(SCENARIOS)
+    unknown = [s for s in sets if s not in SCENARIOS]
+    if unknown:
+        raise ValueError(f"unknown binding scenarios {unknown}; known: {list(SCENARIOS)}")
+    out = {"job": JOB, "sets": sets, "k_folds": K_FOLDS, "min_n": cal.MIN_N, "band_n": cal.BAND_N,
+           "tolerance": cal.TOLERANCE, "budget_usd_per_1000": budget, "prompt": load_prompt(JOB).ref,
+           "calibration_before": cal.load(JOB).ref or "none", "rows": [], "skipped": []}
+    threshold = auto_accept()
+    runs: dict[str, dict] = {}  # label -> {scenario: (got, items, summary)}
+    for s in sets:
+        got = pairs(run(s, log=lambda m: None)["facts"])
+        runs.setdefault("rules", {})[s] = (got, items(s, got), {})
+    models_ = models or [*get_job(JOB).chain, *get_job(JOB).contender]
+    router = router or Router()
+    if not router.ready:
+        out["skipped"] = [{"model": m, "why": router.why_not_ready() or "model calls are off"} for m in models_]
+        log(f"{JOB}: model rows skipped ({out['skipped'][0]['why']})")
+        models_ = []
+    elif store is None:
+        from ..db.store import Store
+        store = Store(ROOT / "data/kg.sqlite")
+    for m in models_:
+        cache: dict = {}  # one model's answers, shared by the scenarios that ask the same question
+        per, skipped = {}, None
+        for s in sets:
+            ai = AI(project=f"eval:{JOB}", router=router, store=store, model=m, cache=cache)
+            got = pairs(run(s, ai=ai, log=log)["facts"])
+            summ = ai.summary
+            if summ.get("questions") and summ.get("not_enabled", 0) == summ["questions"]:
+                skipped = f"{m}: not enabled on this GCP project"
+                break
+            per[s] = (got, items(s, got), summ)
+            log(f"   {m} on {s}: {summ.get('questions', 0)} questions, {summ.get('model_bound', 0)} bound, "
+                f"{summ.get('none', 0)} none, {summ.get('error', 0)} failed, ${summ.get('paid_usd', 0.0):.3f}")
+        if skipped:
+            out["skipped"].append({"model": m, "why": skipped})
+            log(f"{JOB}: {skipped}")
+            continue
+        runs[m] = per
+
+    # Calibration items: the rules' bindings once, and each model's answers (one per question).
+    rule_items = [i for _, its, _ in runs["rules"].values() for i in its]
+    model_q = {m: by_question([i for _, its, _ in per.values() for i in its if i["model"]])
+               for m, per in runs.items() if m != "rules"}
+    fit_items = rule_items + [q for qs in model_q.values() for q in qs]
+    held = _heldout(JOB, fit_items) if fit_items else []
+    rule_conf = {(i["set"], i["id"]): c for i, c in zip(fit_items, held) if not i["model"]}
+    answer_conf = {(i["model"], i["group"]): c for i, c in zip(fit_items, held) if i["model"]}
+
+    def conf_of(i):
+        return answer_conf.get((i["model"], i["group"]), 0.0) if i["model"] else rule_conf.get((i["set"], i["id"]), 0.0)
+
+    rules_rows = {}
+    for label, per in runs.items():
+        rows = []
+        for s, (got, its, summ) in per.items():
+            conf = {i["id"]: conf_of(i) for i in its}
+            row = score(s, got, conf, threshold) | {"label": f"{s} · {label if label == 'rules' else label + ' + rules'}",
+                                                     "kind": "rules" if label == "rules" else "model+rules",
+                                                     "set": s, "model": None if label == "rules" else label}
+            if label != "rules":
+                row["cost"] = {k: summ.get(k) for k in ("questions", "asked", "logged", "cached", "calls",
+                                                         "model_bound", "none", "error", "paid_usd")}
+                row["usd_per_1000"] = round(1000 * (summ.get("paid_usd") or 0.0) / max(1, row["points"]), 4)
+                row["rules_f1"] = rules_rows[s]["f1"]
+            else:
+                rules_rows[s] = row
+            rows.append(row)
+        out["rows"] += rows
+        var = [r for r in rows if r["set"] in VARIATIONS]
+        if not var:
+            continue
+        pooled = _pooled(var) | {"label": f"variations · {label if label == 'rules' else label + ' + rules'}",
+                                 "kind": "pooled", "model": None if label == "rules" else label}
+        all_items = [i for s, (_, its, _) in per.items() for i in its]
+        pooled["calibrated_by_point"] = cal.band_table([conf_of(i) for i in all_items], [i["ok"] for i in all_items])
+        pooled["raw_by_point"] = cal.band_table([i["raw"] for i in all_items], [i["ok"] for i in all_items])
+        if label == "rules":
+            out["rules_pooled"] = pooled
+        else:
+            qs = model_q[label]
+            pooled["model_answers"] = len(qs)
+            pooled["raw"] = cal.band_table([q["raw"] for q in qs], [q["ok"] for q in qs])
+            pooled["calibrated"] = cal.band_table([answer_conf[(label, q["group"])] for q in qs], [q["ok"] for q in qs])
+            pooled["raw_worst_gap"], pooled["calibrated_worst_gap"] = (cal.worst_gap(pooled["raw"]),
+                                                                       cal.worst_gap(pooled["calibrated"]))
+            pooled["calibrated_by_point_worst_gap"] = cal.worst_gap(pooled["calibrated_by_point"])
+            points = sum(r["points"] for r in var)
+            pooled["usd_per_1000"] = round(1000 * sum(r["cost"]["paid_usd"] or 0.0 for r in var) / max(1, points), 4)
+            pooled["rules_f1"] = out["rules_pooled"]["f1"]
+            pooled["verdict"] = cal.verdict(metric=pooled["f1"], rules_metric=out["rules_pooled"]["f1"],
+                                            table=pooled["calibrated"], usd_per_1000=pooled["usd_per_1000"],
+                                            budget=budget)
+        out["rows"].append(pooled)
+    out["rules_calibrated_worst_gap"] = cal.worst_gap(cal.band_table([rule_conf[(i["set"], i["id"])] for i in rule_items],
+                                                                     [i["ok"] for i in rule_items]))
+    if fit:
+        if not fit_items:
+            log(f"{JOB}: nothing to fit; the stored calibration is unchanged")
+        else:
+            c = cal.fit(JOB, fit_items)
+            p = cal.save(c, {"sets": sets, "n": len(fit_items), "k_folds": K_FOLDS, "min_n": cal.MIN_N,
+                             "strata": sorted(k for k in c.curves if k != "*"),
+                             "heldout_worst_gap": {r["label"]: r.get("calibrated_worst_gap") for r in out["rows"]
+                                                   if r["kind"] == "pooled" and r.get("model")}})
+            out["calibration_after"] = c.ref
+            log(f"{JOB}: calibration {c.ref} written to {p.relative_to(ROOT)}")
+    return out
+
+
+def print_report(r: dict, out=print) -> None:
+    from .. import calibration as cal
+
+    def f(v, unit=""):
+        return "-" if v is None else f"{v}{unit}"
+
+    out(f"\n=== {r['job']} · scenarios {', '.join(r['sets'])} · prompt {r['prompt']} · calibration "
+        f"{r.get('calibration_after') or r['calibration_before']}")
+    for s in r["skipped"]:
+        out(f"  skipped {s['model']}: {s['why']}")
+    out(f"\n  {'scenario':24} {'run':18} {'P %':>6} {'R %':>6} {'F1':>6} {'bound':>6} {'wrong':>6} {'missed':>6} "
+        f"{'auto %':>7} {'auto wrong':>10} {'$/1000':>8}")
+    for row in r["rows"]:
+        if row["kind"] == "pooled":
+            continue
+        a = row.get("auto", {})
+        out(f"  {row['set']:24} {row['label'].split(' · ', 1)[1]:18} {f(row['precision_pct']):>6} "
+            f"{f(row['recall_pct']):>6} {row['f1']:>6} {row['bound']:>6} {row['wrong']:>6} {row['missed']:>6} "
+            f"{f(a.get('pct')):>7} {a.get('wrong', '-'):>10} {f(row.get('usd_per_1000')):>8}")
+    if r.get("rules_calibrated_worst_gap") is not None:
+        out(f"\n  rules' bindings, calibrated per rule (held out): worst gap {r['rules_calibrated_worst_gap']} pts")
+    for row in r["rows"]:
+        if row["kind"] != "pooled":
+            continue
+        out(f"\n  {row['label']}: precision {f(row['precision_pct'], '%')}, recall {f(row['recall_pct'], '%')}, "
+            f"F1 {row['f1']}" + (f" (rules alone {row['rules_f1']}), ${row['usd_per_1000']} per 1,000 points"
+                                 if row.get("model") else ""))
+        if not row.get("model"):
+            continue
+        out(f"    calibration of the model's {row['model_answers']} answers   {'band':9}{'raw: n':>8} {'conf':>6} "
+            f"{'right':>6}   {'held-out: n':>12} {'conf':>6} {'right':>6}")
+        for a, b in zip(row["raw"], row["calibrated"]):
+            if a["n"] or b["n"]:
+                out(f"{'':40}{a['band']:9}{a['n']:>8} {f(a['mean_conf_pct']):>6} {f(a['accuracy_pct']):>6}   "
+                    f"{b['n']:>12} {f(b['mean_conf_pct']):>6} {f(b['accuracy_pct']):>6}")
+        out(f"    worst gap (bands of {cal.BAND_N}+): raw {f(row['raw_worst_gap'])} pts, calibrated "
+            f"{f(row['calibrated_worst_gap'])} pts; every binding, per point, calibrated "
+            f"{f(row['calibrated_by_point_worst_gap'])} pts (target ≤ {cal.TOLERANCE:g})")
+        out(f"    verdict         {row['verdict']['says']}")

@@ -143,6 +143,55 @@ def _sheet(ws) -> str:
     return cands[-1] if cands else pdfdoc.sheet_number(ws)
 
 
+# A riser device named after a plant rather than a unit: CHW-PLANT, HW_SYS. The medium gives the Brick system and
+# which scheduled units are its parts.
+PLANT = re.compile(r"^(?P<medium>CHW|HHW|HW|CDW|CW)[-_ ]?(?:PLANT|SYS|SYSTEM)$", re.I)
+PLANT_SYSTEM = {"CHW": ("Chilled_Water_System", "chilled water", ("Chiller", "Chilled_Water_Pump")),
+                "HW": ("Hot_Water_System", "hot water", ("Boiler", "Hot_Water_Pump")),
+                "HHW": ("Hot_Water_System", "hot water", ("Boiler", "Hot_Water_Pump")),
+                "CW": ("Condenser_Water_System", "condenser water", ("Cooling_Tower", "Condenser_Water_Pump")),
+                "CDW": ("Condenser_Water_System", "condenser water", ("Cooling_Tower", "Condenser_Water_Pump"))}
+
+
+def _riser_unit(r: dict, by_normal: dict, riser: list[dict]) -> tuple[dict, list[dict]] | None:
+    """Riser topology (W7) for a device that matches no scheduled unit, where the documents support a unit:
+      - a plant (CHW-PLANT): a system of the medium's class, whose parts are the scheduled units of that medium
+        (chillers and chilled water pumps); only when at least one such unit is scheduled;
+      - a numbered unit of a named plan tag (EF-LAB-1, EF-LAB-2 on the riser, EF-LAB on the plans): a unit of its
+        own with the plan unit's class, when the riser numbers two or more of them.
+    Returns (the unit's equipment fact, its hasPart relation facts), or None."""
+    dev = r["dev"]
+    if m := PLANT.match(dev):
+        cls, medium, part_classes = PLANT_SYSTEM[m["medium"].upper()]
+        parts = [e for e in by_normal.values() if e["data"].get("class") in part_classes]
+        if not parts:
+            return None
+        norm = re.sub(r"[^A-Z0-9]", "", dev.upper())
+        why = (f"the riser's {dev} controls the {medium} plant: {', '.join(e['data']['tag'] for e in parts)} "
+               "are its parts")
+        unit = {"tag": dev, "normal": norm, "class": cls, "family": "system", "terminal": False, "schedule": "",
+                "attrs": {"from": "riser", "medium": medium}, "note": why}
+        rels = [{"src": norm, "rel": "hasPart", "dst": e["data"]["normal"], "medium": medium, "why": why}
+                for e in parts]
+        return unit, rels
+    tag = tags.parse(dev)
+    if not tag or not tag.suffix or tag.number:
+        return None
+    base = re.sub(r"\d+$", "", tag.normal)
+    eq = by_normal.get(base)
+    siblings = [x for x in riser if (t := tags.parse(x["dev"])) and re.sub(r"\d+$", "", t.normal) == base
+                and t.normal != base]
+    if not eq or base == tag.normal or len(siblings) < 2:
+        return None
+    n = tag.normal[len(base):]
+    d = eq["data"]
+    why = f"the riser numbers {len(siblings)} {d['tag']} units ({', '.join(x['dev'] for x in siblings)}): {dev} is one"
+    unit = {"tag": f"{d['tag']}{n}", "normal": tag.normal, "class": d.get("class"), "family": d.get("family"),
+            "terminal": bool(d.get("terminal")), "schedule": "", "attrs": {"from": "riser", "numbered_from": d["tag"]},
+            "note": why}
+    return unit, []
+
+
 def _devices(riser, equipment, log) -> list[dict]:
     by_normal = {e["data"]["normal"]: e for e in equipment}
     out = []
@@ -156,7 +205,19 @@ def _devices(riser, equipment, log) -> list[dict]:
         conf, ask = 0.95, None
         if eq and eq["data"]["tag"] != r["dev"]:
             data["note"] = f"named {r['dev']} in the BMS, {eq['data']['tag']} on the drawings: same tag"
-        if not eq:
+        if not eq and (made := _riser_unit(r, by_normal, riser)):
+            unit, rels = made
+            data["equip"], data["note"] = unit["normal"], unit["note"]
+            conf = 0.8  # proposed: the riser alone says so, a person or a second source confirms
+            out.append({"id": f"equip:riser:{unit['normal']}", "kind": "equipment", "label": unit["tag"],
+                        "data": unit, "src": r["src"], "method": "rule", "conf": conf, "step": "submittal",
+                        "ask": None})
+            for rel in rels:
+                out.append({"id": f"rel:{rel['src']}:hasPart:{rel['dst']}", "kind": "relation",
+                            "label": f"{unit['tag']} has part {by_normal[rel['dst']]['data']['tag']}", "data": rel,
+                            "src": r["src"], "method": "rule", "conf": conf, "step": "submittal", "ask": None})
+            log(f"Riser: {unit['note']}")
+        elif not eq:
             unmatched += 1
             conf = 0.5
             stem = (norm or re.sub(r"[^A-Z]", "", r["dev"]))[:4]

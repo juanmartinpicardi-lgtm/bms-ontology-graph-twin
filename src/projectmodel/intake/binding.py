@@ -489,6 +489,7 @@ class AI:
     store: object | None = None
     model: str | None = None
     batch: int = BATCH
+    summary: dict = field(default_factory=dict)  # the last run's counts and cost (set by `bind`)
 
 
 def bind(points: list[Point], objs: list[Obj], devices: dict[str, tuple[str, str]],
@@ -538,11 +539,16 @@ def bind(points: list[Point], objs: list[Obj], devices: dict[str, tuple[str, str
             summary["asked"] += 1
             summary["calls"] += len(a.get("calls", []))
             summary["cost_usd"] += a.get("cost_usd", 0.0)
+        # what this building's answers cost when first paid for, wherever they come from now
+        summary["paid_usd"] = summary.get("paid_usd", 0.0) + (a.get("cost_usd") or a.get("paid_usd") or 0.0)
+        summary["not_enabled"] = summary.get("not_enabled", 0) + bool(
+            a.get("error") and ("404" in a["error"] or "not enabled" in a["error"].lower()))
         if not a.get("error"):
             cache[q.key] = a
     n = apply_answers(qs, bound)
     summary.update(model_bound=n["answered"], none=n["none"], error=n["error"],
-                   cost_usd=round(summary["cost_usd"], 4))
+                   cost_usd=round(summary["cost_usd"], 4), paid_usd=round(summary.get("paid_usd", 0.0), 4))
+    ai.summary = summary
     log(f"AI point binding: {n['answered']} bound by the model, {n['none']} answered none, {n['error']} failed; "
         f"{summary['asked']} asked (${summary['cost_usd']:.3f}), {summary['logged'] + summary['cached']} from earlier "
         "answers.")

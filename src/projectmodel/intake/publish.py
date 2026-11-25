@@ -88,8 +88,8 @@ def _aliases(f: dict | None) -> list[tuple[str, str]]:
     if not f:
         return []
     d = f["data"]
-    if f["kind"] in ("equipment", "placement"):
-        return [("schedule_tag", d.get("tag"))]
+    if f["kind"] in ("equipment", "placement"):  # a unit the riser makes (W7) is named by the submittal
+        return [("submittal_ref" if f.get("step") == "submittal" else "schedule_tag", d.get("tag"))]
     if f["kind"] == "controller":  # the BACnet device instance names the controller, not the unit (controller_id)
         return [("submittal_ref", d.get("device"))]
     if f["kind"] == "alias":
@@ -246,9 +246,9 @@ def statements(it: Intake) -> dict[str, dict[str, list]]:
     for r in b["relations"]:
         d = r["data"]
         s, t = f"unit:{d['src']}", f"unit:{d['dst']}"
-        if d["rel"] == "feeds" and s in units and t in units:
+        if d["rel"] in ("feeds", "hasPart") and s in units and t in units:  # hasPart: a plant the riser names (W7)
             src, ref, method, conf, status = _prov(r)
-            put(r, "edges", Edge(s, "feeds", t, src, ref, method, conf, {"medium": d.get("medium")}, status=status))
+            put(r, "edges", Edge(s, d["rel"], t, src, ref, method, conf, {"medium": d.get("medium")}, status=status))
     return out
 
 
