@@ -404,7 +404,7 @@ def evaluate(sets: list[str] | None = None, models: list[str] | None = None, *, 
         cache: dict = {}  # one model's answers, shared by the scenarios that ask the same question
         per, skipped = {}, None
         for s in sets:
-            ai = AI(project=f"eval:{JOB}", router=router, store=store, model=m, cache=cache)
+            ai = AI(project=f"eval:{JOB}", router=router, store=store, model=m, cache=cache, batch=4)
             got = pairs(run(s, ai=ai, log=log)["facts"])
             summ = ai.summary
             if summ.get("questions") and summ.get("not_enabled", 0) == summ["questions"]:
