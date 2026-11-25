@@ -1,0 +1,150 @@
+{
+ "job": "point_bind",
+ "version": 1,
+ "fitted": "2026-11-25",
+ "sets": [
+  "baseline",
+  "names",
+  "folders",
+  "instances",
+  "missing",
+  "integrator",
+  "integrator_names_only"
+ ],
+ "n": 5609,
+ "k_folds": 5,
+ "min_n": 20,
+ "strata": [
+  "argon",
+  "argon|binding",
+  "hydrogen",
+  "hydrogen|binding",
+  "rule|device object",
+  "rule|reference",
+  "rule|same name",
+  "rule|words"
+ ],
+ "heldout_worst_gap": {
+  "variations \u00b7 argon + rules": 0.0,
+  "variations \u00b7 hydrogen + rules": 0.0
+ },
+ "curves": {
+  "*": {
+   "x": [
+    0.59,
+    0.69,
+    0.6957,
+    0.7328,
+    0.7433,
+    0.75,
+    0.76,
+    0.99
+   ],
+   "y": [
+    0.9535,
+    0.9535,
+    0.9756,
+    0.9756,
+    0.98,
+    0.98,
+    1.0,
+    1.0
+   ],
+   "n": 5609
+  },
+  "argon": {
+   "x": [
+    0.9,
+    0.99
+   ],
+   "y": [
+    1.0,
+    1.0
+   ],
+   "n": 93
+  },
+  "argon|binding": {
+   "x": [
+    0.9,
+    0.99
+   ],
+   "y": [
+    1.0,
+    1.0
+   ],
+   "n": 93
+  },
+  "hydrogen": {
+   "x": [
+    0.9,
+    0.99
+   ],
+   "y": [
+    1.0,
+    1.0
+   ],
+   "n": 93
+  },
+  "hydrogen|binding": {
+   "x": [
+    0.9,
+    0.99
+   ],
+   "y": [
+    1.0,
+    1.0
+   ],
+   "n": 93
+  },
+  "rule|device object": {
+   "x": [
+    0.96
+   ],
+   "y": [
+    1.0
+   ],
+   "n": 237
+  },
+  "rule|reference": {
+   "x": [
+    0.99
+   ],
+   "y": [
+    1.0
+   ],
+   "n": 1568
+  },
+  "rule|same name": {
+   "x": [
+    0.95
+   ],
+   "y": [
+    1.0
+   ],
+   "n": 1581
+  },
+  "rule|words": {
+   "x": [
+    0.59,
+    0.69,
+    0.6957,
+    0.7328,
+    0.7433,
+    0.75,
+    0.76,
+    0.89
+   ],
+   "y": [
+    0.9535,
+    0.9535,
+    0.9756,
+    0.9756,
+    0.98,
+    0.98,
+    1.0,
+    1.0
+   ],
+   "n": 2025
+  }
+ }
+}

@@ -221,6 +221,11 @@ def candidates(b: dict, seq: dict, km=None) -> dict:
         group = dict.fromkeys(own, g)
     else:
         group = {n: type_of(equip[n]["tag"]) for n in own}
+    for r in b["relations"]:  # a plant system the riser made (CHW-PLANT, W7) whose parts are the sequence's own units
+        rd = r["data"]
+        if rd["rel"] == "hasPart" and rd["dst"] in group and rd["src"] in equip and rd["src"] not in group:
+            own.append(rd["src"])
+            group[rd["src"]] = type_of(equip[rd["src"]]["tag"])
     own_types = set(group.values())
     text = " ".join(f"{x['title']}: {x['text']}" for x in d["sections"])
     related: set[str] = set()
