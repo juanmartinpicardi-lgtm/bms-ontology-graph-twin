@@ -65,6 +65,29 @@ def _check_point_class(out: Any, values: dict) -> str | None:
     return None
 
 
+MEMORY_CURATOR_SCHEMA = _obj({"choices": {"type": "array", "items": _obj({
+    "candidate": {"type": "string", "description": "A candidate id (C…)."},
+    "option": {"type": "string", "description": "One of that candidate's option ids, as given (C1.names)."},
+    "title": {"type": "string", "description": "The convention in one plain sentence, at most 140 characters."},
+    "why": {"type": "string", "description": "Why, from the fixes and the dry run, in one or two sentences."},
+})}})
+
+
+def _check_memory_curator(out: Any, values: dict) -> str | None:
+    """Candidates in, ids out (curator.py): the model picks one of the rules' options per candidate and phrases it.
+    It never names a class or writes a pattern, so an unknown id is a failure."""
+    options = values.get("option_ids", {})
+    for c in out["choices"]:
+        if c["candidate"] not in options:
+            return f"{c['candidate']!r} is not a candidate"
+        oid = c["option"].split(".", 1)[-1] if c["option"].startswith(c["candidate"] + ".") else None
+        if oid not in options[c["candidate"]]:
+            return f"{c['option']!r} is not an option of {c['candidate']}"
+        if not c["title"].strip() or len(c["title"]) > 200:
+            return "a title must be one sentence of at most 200 characters"
+    return None
+
+
 FLOOR_ID = r"^(L\d{1,2}|B\d|RF)$"
 PLAN_MEANING_SCHEMA = _obj({
     "page_kind": {"type": "string", "enum": ["plan", "schedule", "sequence", "riser", "submittal", "other"]},
@@ -147,7 +170,11 @@ JOBS: dict[str, Job] = {j.id: j for j in [
         people="Review below the threshold"),
     Job("same_unit", "Same unit across documents", "haiku", people="Confirm"),
     Job("equipment_variant", "Equipment 3D: pick the variant", "haiku", ("hydrogen",)),
-    Job("memory_curator", "Memory curator", "sonnet", ("hydrogen",), ("opus", "fable"), people="Approve"),
+    # The learning loop (curator.py): the rules find repeated fixes and the patterns that cover them; the model only
+    # picks one of those patterns per candidate and phrases the proposal. Hydrogen stands in while Claude is off.
+    Job("memory_curator", "Memory curator", "sonnet", ("hydrogen", "argon"), ("opus", "fable"),
+        prompt="memory_curator", schema=MEMORY_CURATOR_SCHEMA, check=_check_memory_curator, max_tokens=4000,
+        effort="low", status="built", people="Approve"),
     Job("agent_chat", "Agent, text", "sonnet", ("argon",), ("opus",), prompt="agent_chat", max_tokens=16000,
         effort="low", status="built", people="Ask, correct, confirm writes"),
     Job("agent_reason", "Agent, reasoning", "opus", ("argon",), ("fable",), prompt="agent_chat", max_tokens=32000,

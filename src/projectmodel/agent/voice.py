@@ -197,3 +197,20 @@ def voice_turn(agent: Agent, recording: bytes, packet: dict, recent: list[tuple[
 def bytes_of(audio: Any) -> bytes:
     """The bytes of a Streamlit UploadedFile (or bytes)."""
     return audio if isinstance(audio, bytes | bytearray) else audio.getvalue()
+
+
+# Interview mode (W10, interview.py) ----------------------------------------------------------------------------------
+# The dock asks the scripted questions one at a time (it reads them aloud as the agent's turn); each recorded answer
+# goes through voice_turn, and its transcript (`res.heard`) is the answer. The transcripts, in order, become notes and
+# proposed conventions with interview.capture; nothing changes the mapping until a person approves a proposal.
+
+def interview_questions() -> list[tuple[str, str]]:
+    """(question id, what to ask) in the order the interview asks them."""
+    from ..interview import QUESTIONS
+    return [(qid, text) for qid, _, text in QUESTIONS]
+
+
+def interview_answers(heard: list[str]) -> dict[str, str]:
+    """The transcripts of the person's answers, in the order asked, keyed by question id for interview.capture.
+    An empty or missing transcript is a skipped question."""
+    return {qid: text.strip() for (qid, _), text in zip(interview_questions(), heard) if text and text.strip()}

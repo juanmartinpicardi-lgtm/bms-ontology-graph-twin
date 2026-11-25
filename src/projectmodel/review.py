@@ -4,7 +4,13 @@
 confidence. Confirmed rows (by a person, by two agreeing sources, or by the auto-accept rule) are not in it.
 
 Every action turns the row into method=human and source=review (confirmed_by=human), keeps what the machine proposed
-under attrs.review.previous, and records who decided and when. Rows with source review survive every source's rerun.
+under attrs.review.previous (class, method, confidence, status, source), and records who decided and when. Rows with
+source review survive every source's rerun.
+
+Each decision also keeps, under attrs.review.features, what a rule could key on (the learning loop, curator.py): the
+name and its words, the folder, the equipment it sits on with its class and template, the template slot role the
+machine's class filled, the description (setup points) and the source that proposed it. A move keeps the same on the
+new hasPoint edge, with the equipment it left.
 
   accept        - the proposed class is right                   -> status confirmed
   fix_class     - replace the class with a knowledge-model one   -> status confirmed, confidence 1
@@ -16,6 +22,7 @@ under attrs.review.previous, and records who decided and when. Rows with source 
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 
 from .db.store import REVIEW, Store
@@ -26,17 +33,53 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+WORD = re.compile(r"[A-Za-z%]+(?:/[A-Za-z]+)?")  # "Clg Dmpr Pos. %" -> clg dmpr pos %; "S/S" stays one word
+
+
+def name_words(name: str) -> list[str]:
+    """The lowercase words of a name, without numbers: what a convention's pattern can key on."""
+    return [w.lower() for w in WORD.findall(name or "")]
+
+
+def features(store: Store, project: str, row, km: KnowledgeModel | None = None) -> dict:
+    """What a rule could key on for this node, as the machine saw it (see the module docstring)."""
+    attrs = json.loads(row["attrs"] or "{}")
+    out = {"name": row["label"], "words": name_words(row["label"]), "folder": attrs.get("path") or "",
+           "source": row["source"], "kind": row["kind"]}
+    if attrs.get("description"):
+        out["description"] = attrs["description"]
+    if row["kind"] == "point":
+        e = store.conn.execute(
+            "SELECT n.id, n.label, n.class, n.attrs FROM edges e JOIN nodes n ON n.project = e.project AND n.id = e.src"
+            " WHERE e.project = ? AND e.rel = 'hasPoint' AND e.dst = ? AND e.status != 'rejected'"
+            " ORDER BY e.method = 'human' DESC LIMIT 1", (project, row["id"])).fetchone()
+        if e:
+            tid = json.loads(e["attrs"] or "{}").get("template")
+            out |= {"equipment": e["id"], "equipment_label": e["label"], "equipment_class": e["class"],
+                    "template": tid}
+            t = km.templates.get(tid) if km and tid else None
+            prev = (attrs.get("review", {}).get("previous") or {}).get("class", row["class"])
+            if t and prev:
+                out["role"] = next((s.role for s in t.slots if prev in s.classes), None) or next(
+                    (s.role for s in t.slots if any(km.is_a(prev, c) or km.is_a(c, prev) for c in s.classes)), None)
+    return out
+
+
 def _update_nodes(store: Store, project: str, ids: list[str], reviewer: str, action: str,
-                  cls: str | None = None, keep_class: bool = True) -> int:
+                  cls: str | None = None, keep_class: bool = True, km: KnowledgeModel | None = None) -> int:
     rows = store.conn.execute(
         f"SELECT * FROM nodes WHERE project = ? AND id IN ({','.join('?' * len(ids))})", [project, *ids]
     ).fetchall() if ids else []
     with store.conn:
         for r in rows:
             attrs = json.loads(r["attrs"])
-            previous = attrs.get("review", {}).get("previous") or {
-                "class": r["class"], "method": r["method"], "confidence": r["confidence"], "status": r["status"]}
-            attrs["review"] = {"action": action, "by": reviewer, "at": _now(), "previous": previous}
+            before = attrs.get("review", {})
+            previous = before.get("previous") or {
+                "class": r["class"], "method": r["method"], "confidence": r["confidence"], "status": r["status"],
+                "source": r["source"]}
+            feats = before.get("features") or features(store, project, r, km)
+            attrs["review"] = {"action": action, "by": reviewer, "at": _now(), "previous": previous,
+                               "features": feats}
             new_cls = r["class"] if keep_class else cls
             status = "rejected" if action == "reject" else "confirmed"
             confidence = 1.0 if action == "fix" else r["confidence"]
@@ -66,18 +109,25 @@ def fix_class(store: Store, km: KnowledgeModel, project: str, ids: list[str], cl
     for kind in kinds:
         if km.classes[cls].kind not in allowed[kind]:
             raise ValueError(f"{cls} is a {km.classes[cls].kind} class, cannot be given to a {kind}")
-    return _update_nodes(store, project, ids, reviewer, "fix", cls=cls, keep_class=False)
+    return _update_nodes(store, project, ids, reviewer, "fix", cls=cls, keep_class=False, km=km)
 
 
 def move_points(store: Store, project: str, point_ids: list[str], equip_id: str, reviewer: str) -> int:
     if not store.conn.execute("SELECT 1 FROM nodes WHERE project = ? AND id = ? AND kind = 'equipment'",
                               (project, equip_id)).fetchone():
         raise ValueError(f"{equip_id} is not an equipment node in {project}")
-    attrs = json.dumps({"review": {"action": "move", "by": reviewer, "at": _now()}})
+    plain = json.dumps({"review": {"action": "move", "by": reviewer, "at": _now()}})
     with store.conn:
         for pid in point_ids:
             old = store.conn.execute("SELECT * FROM edges WHERE project = ? AND rel = 'hasPoint' AND dst = ? "
                                      "AND status != 'rejected'", (project, pid)).fetchall()
+            point = store.conn.execute("SELECT * FROM nodes WHERE project = ? AND id = ?", (project, pid)).fetchone()
+            attrs = plain if point is None else json.dumps({"review": {
+                "action": "move", "by": reviewer, "at": _now(), "features": features(store, project, point),
+                "previous": {"equipment": [e["src"] for e in old if e["src"] != equip_id],
+                             "method": old[0]["method"] if old else None,
+                             "source": old[0]["source"] if old else None},
+                "equipment": equip_id}})
             for e in old:
                 if e["src"] == equip_id:
                     continue

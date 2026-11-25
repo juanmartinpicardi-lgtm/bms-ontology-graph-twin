@@ -1,0 +1,850 @@
+{
+ "job": "learning",
+ "sets": [
+  "alpha/names_paths"
+ ],
+ "runs": [
+  {
+   "project": "alpha/names_paths",
+   "fixes_per_pattern": 2,
+   "fixed_points": 34,
+   "patterns": [
+    {
+     "before": "Occupancy_Status",
+     "after": "Occupancy_Command",
+     "template": "vav",
+     "names": [
+      "Occupied status"
+     ],
+     "fixed": [
+      "pt:pt-00001",
+      "pt:pt-00010"
+     ],
+     "id": 0,
+     "held_out": 136,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-44e951"
+     ]
+    },
+    {
+     "before": "Damper_Position_Command",
+     "after": "Damper_Command",
+     "template": "vav",
+     "names": [
+      "Clg Dmpr Pos. %"
+     ],
+     "fixed": [
+      "pt:pt-00046",
+      "pt:pt-00107"
+     ],
+     "id": 1,
+     "held_out": 31,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-f19349"
+     ]
+    },
+    {
+     "before": "Utility_Cost_Point",
+     "after": "Sensor",
+     "template": null,
+     "names": [
+      "Cost",
+      "Transport Cost"
+     ],
+     "fixed": [
+      "pt:pt-00049",
+      "pt:pt-00108"
+     ],
+     "id": 2,
+     "held_out": 12,
+     "wrong_after": 1,
+     "conventions": [
+      "lc-6af3a0"
+     ]
+    },
+    {
+     "before": "Fan_Speed_Command",
+     "after": "Fan_Command",
+     "template": "ahu",
+     "names": [
+      "RF VFD S/S",
+      "SF VFD S/S"
+     ],
+     "fixed": [
+      "pt:pt-00081",
+      "pt:pt-00176"
+     ],
+     "id": 3,
+     "held_out": 6,
+     "wrong_after": 4,
+     "conventions": [
+      "lc-8ec654"
+     ]
+    },
+    {
+     "before": "Fan_Status",
+     "after": "Sensor",
+     "template": "ahu",
+     "names": [
+      "RF Status",
+      "SF Status"
+     ],
+     "fixed": [
+      "pt:pt-00251",
+      "pt:pt-00366"
+     ],
+     "id": 4,
+     "held_out": 6,
+     "wrong_after": 4,
+     "conventions": [
+      "lc-2db6fe"
+     ]
+    },
+    {
+     "before": "Run_Status",
+     "after": "Sensor",
+     "template": "pump",
+     "names": [
+      "CWP-1 Status",
+      "CWP-2 Status",
+      "HHWP-2 Status",
+      "HHWP-3 Status",
+      "HHWP-4 Status",
+      "PCHWP-1A Status"
+     ],
+     "fixed": [
+      "pt:pt-00013",
+      "pt:pt-00232"
+     ],
+     "id": 5,
+     "held_out": 5,
+     "wrong_after": 2,
+     "conventions": [
+      "lc-c57c90"
+     ]
+    },
+    {
+     "before": "Fan_Status",
+     "after": "Sensor",
+     "template": null,
+     "names": [
+      "EF-1 Status",
+      "EF-2 Status",
+      "EF-3 Status",
+      "EF-4 Status",
+      "Return Fan Status",
+      "Supply Fan Status"
+     ],
+     "fixed": [
+      "pt:pt-00198",
+      "pt:pt-00516"
+     ],
+     "id": 6,
+     "held_out": 4,
+     "wrong_after": 1,
+     "conventions": [
+      "lc-bbfcda"
+     ]
+    },
+    {
+     "before": "Building_Air_Static_Pressure_Sensor",
+     "after": "Pressure_Sensor",
+     "template": "ahu",
+     "names": [
+      "Building DP",
+      "Building Static Reading",
+      "Building Static Sensor"
+     ],
+     "fixed": [
+      "pt:pt-00235",
+      "pt:pt-00469"
+     ],
+     "id": 7,
+     "held_out": 3,
+     "wrong_after": 3,
+     "conventions": [
+      "lc-39a088"
+     ]
+    },
+    {
+     "before": "Building_Air_Static_Pressure_Setpoint",
+     "after": "Pressure_Setpoint",
+     "template": "ahu",
+     "names": [
+      "Building Static_SP"
+     ],
+     "fixed": [
+      "pt:pt-00941",
+      "pt:pt-01056"
+     ],
+     "id": 8,
+     "held_out": 2,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-90128a"
+     ]
+    },
+    {
+     "before": "Mode_Command",
+     "after": "Occupancy_Command",
+     "template": "ahu",
+     "names": [
+      "Mode_Occ"
+     ],
+     "fixed": [
+      "pt:pt-00050",
+      "pt:pt-00169"
+     ],
+     "id": 9,
+     "held_out": 2,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-bbb532"
+     ]
+    },
+    {
+     "before": "Start_Stop_Command",
+     "after": "Pump_Command",
+     "template": "pump",
+     "names": [
+      "HHWP-1 S/S",
+      "HHWP-2 S/S",
+      "HHWP-3 S/S",
+      "HHWP-4 S/S"
+     ],
+     "fixed": [
+      "pt:pt-00426",
+      "pt:pt-00655"
+     ],
+     "id": 10,
+     "held_out": 2,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-d96f92"
+     ]
+    },
+    {
+     "before": "Supply_Air_Temperature_Sensor",
+     "after": "Air_Temperature_Sensor",
+     "template": "ahu",
+     "names": [
+      "Cold Deck SAT",
+      "Hot Deck SAT"
+     ],
+     "fixed": [
+      "pt:pt-00346",
+      "pt:pt-00736"
+     ],
+     "id": 11,
+     "held_out": 2,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-c0c807"
+     ]
+    },
+    {
+     "before": "Supply_Air_Temperature_Setpoint",
+     "after": "Air_Temperature_Setpoint",
+     "template": "ahu",
+     "names": [
+      "Clg SAT SP",
+      "Htg SAT SP"
+     ],
+     "fixed": [
+      "pt:pt-00708",
+      "pt:pt-00957"
+     ],
+     "id": 12,
+     "held_out": 2,
+     "wrong_after": 2,
+     "conventions": [
+      "lc-946f1e"
+     ]
+    },
+    {
+     "before": "Run_Status",
+     "after": "Run_Time_Sensor",
+     "template": "boiler",
+     "names": [
+      "Boiler 1 Status",
+      "Boiler 2 Status",
+      "Boiler 3 Status"
+     ],
+     "fixed": [
+      "pt:pt-00271",
+      "pt:pt-00306"
+     ],
+     "id": 13,
+     "held_out": 1,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-12c55f"
+     ]
+    },
+    {
+     "before": "Run_Status",
+     "after": "Run_Time_Sensor",
+     "template": "chiller",
+     "names": [
+      "CH-2 Status",
+      "CH-3 Status",
+      "Status (CC)"
+     ],
+     "fixed": [
+      "pt:pt-00434",
+      "pt:pt-00694"
+     ],
+     "id": 14,
+     "held_out": 1,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-7abd95"
+     ]
+    },
+    {
+     "before": "Start_Stop_Command",
+     "after": "Run_Enable_Command",
+     "template": "boiler",
+     "names": [
+      "Boiler 1 S/S",
+      "Boiler 2 S/S",
+      "Boiler 3 S/S"
+     ],
+     "fixed": [
+      "pt:pt-00319",
+      "pt:pt-01306"
+     ],
+     "id": 15,
+     "held_out": 1,
+     "wrong_after": 0,
+     "conventions": [
+      "lc-1740f6"
+     ]
+    },
+    {
+     "before": "Status",
+     "after": "Sensor",
+     "template": null,
+     "names": [
+      "CT-1 Status",
+      "CT-2 Status",
+      "HW Pump Status"
+     ],
+     "fixed": [
+      "pt:pt-00939",
+      "pt:pt-01234"
+     ],
+     "id": 16,
+     "held_out": 1,
+     "wrong_after": 1,
+     "conventions": [
+      "lc-32628b"
+     ]
+    }
+   ],
+   "conventions": [
+    {
+     "id": "lc-39a088",
+     "title": "Points named \u201cBuilding Static Reading\u201d or \u201cBuilding Static Sensor\u201d on AHU equipment are Pressure_Sensor, not Building_Air_Static_Pressure_Sensor",
+     "entry": {
+      "pattern": "(?i)^(?:Building\\ Static\\ Reading|Building\\ Static\\ Sensor)$",
+      "class": "Pressure_Sensor",
+      "template": "ahu",
+      "instead_of": "Building_Air_Static_Pressure_Sensor"
+     },
+     "why": "2 fixes (\u201cBuilding Static Reading\u201d, \u201cBuilding Static Sensor\u201d by simulated reviewer) changed Building_Air_Static_Pressure_Sensor to Pressure_Sensor. Now it would change 0 other points the rules call Building_Air_Static_Pressure_Sensor.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Building Static Reading",
+      "Building Static Sensor"
+     ],
+     "patterns": [
+      7
+     ],
+     "touched": 0,
+     "labelled": 0,
+     "wrong_before": 0,
+     "wrong_after": 0,
+     "examples": []
+    },
+    {
+     "id": "lc-90128a",
+     "title": "Points named \u201cBuilding Static_SP\u201d on AHU equipment are Pressure_Setpoint, not Building_Air_Static_Pressure_Setpoint",
+     "entry": {
+      "pattern": "(?i)^(?:Building\\ Static_SP)$",
+      "class": "Pressure_Setpoint",
+      "template": "ahu",
+      "instead_of": "Building_Air_Static_Pressure_Setpoint"
+     },
+     "why": "2 fixes (\u201cBuilding Static_SP\u201d by simulated reviewer) changed Building_Air_Static_Pressure_Setpoint to Pressure_Setpoint. Now it would change 2 other points the rules call Building_Air_Static_Pressure_Setpoint.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Building Static_SP",
+      "Building Static_SP"
+     ],
+     "patterns": [
+      8
+     ],
+     "touched": 2,
+     "labelled": 2,
+     "wrong_before": 2,
+     "wrong_after": 0,
+     "examples": [
+      "Building Static_SP"
+     ]
+    },
+    {
+     "id": "lc-f19349",
+     "title": "Points named \u201cClg Dmpr Pos. %\u201d on VAV equipment are Damper_Command, not Damper_Position_Command",
+     "entry": {
+      "pattern": "(?i)^(?:Clg\\ Dmpr\\ Pos\\.\\ %)$",
+      "class": "Damper_Command",
+      "template": "vav",
+      "instead_of": "Damper_Position_Command"
+     },
+     "why": "2 fixes (\u201cClg Dmpr Pos. %\u201d by simulated reviewer) changed Damper_Position_Command to Damper_Command. Now it would change 31 other points the rules call Damper_Position_Command.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Clg Dmpr Pos. %",
+      "Clg Dmpr Pos. %"
+     ],
+     "patterns": [
+      1
+     ],
+     "touched": 31,
+     "labelled": 31,
+     "wrong_before": 31,
+     "wrong_after": 0,
+     "examples": [
+      "Clg Dmpr Pos. %"
+     ]
+    },
+    {
+     "id": "lc-8ec654",
+     "title": "Points named \u201cSF VFD S/S\u201d on AHU equipment are Fan_Command, not Fan_Speed_Command",
+     "entry": {
+      "pattern": "(?i)^(?:SF\\ VFD\\ S/S)$",
+      "class": "Fan_Command",
+      "template": "ahu",
+      "instead_of": "Fan_Speed_Command"
+     },
+     "why": "2 fixes (\u201cSF VFD S/S\u201d by simulated reviewer) changed Fan_Speed_Command to Fan_Command. Now it would change 2 other points the rules call Fan_Speed_Command.",
+     "phrased_by": "rules",
+     "fixes": [
+      "SF VFD S/S",
+      "SF VFD S/S"
+     ],
+     "patterns": [
+      3
+     ],
+     "touched": 2,
+     "labelled": 2,
+     "wrong_before": 2,
+     "wrong_after": 0,
+     "examples": [
+      "SF VFD S/S"
+     ]
+    },
+    {
+     "id": "lc-bbfcda",
+     "title": "Points named \u201cEF-2 Status\u201d or \u201cReturn Fan Status\u201d (any number) are Sensor, not Fan_Status",
+     "entry": {
+      "pattern": "(?i)^(?:EF\\-\\d+\\ Status|Return\\ Fan\\ Status)$",
+      "class": "Sensor",
+      "instead_of": "Fan_Status"
+     },
+     "why": "2 fixes (\u201cEF-2 Status\u201d, \u201cReturn Fan Status\u201d by simulated reviewer) changed Fan_Status to Sensor. Now it would change 3 other points the rules call Fan_Status.",
+     "phrased_by": "rules",
+     "fixes": [
+      "EF-2 Status",
+      "Return Fan Status"
+     ],
+     "patterns": [
+      6
+     ],
+     "touched": 3,
+     "labelled": 3,
+     "wrong_before": 3,
+     "wrong_after": 0,
+     "examples": [
+      "EF-1 Status",
+      "EF-3 Status",
+      "EF-4 Status"
+     ]
+    },
+    {
+     "id": "lc-2db6fe",
+     "title": "Points named \u201cRF Status\u201d on AHU equipment are Sensor, not Fan_Status",
+     "entry": {
+      "pattern": "(?i)^(?:RF\\ Status)$",
+      "class": "Sensor",
+      "template": "ahu",
+      "instead_of": "Fan_Status"
+     },
+     "why": "2 fixes (\u201cRF Status\u201d by simulated reviewer) changed Fan_Status to Sensor. Now it would change 2 other points the rules call Fan_Status.",
+     "phrased_by": "rules",
+     "fixes": [
+      "RF Status",
+      "RF Status"
+     ],
+     "patterns": [
+      4
+     ],
+     "touched": 2,
+     "labelled": 2,
+     "wrong_before": 2,
+     "wrong_after": 0,
+     "examples": [
+      "RF Status"
+     ]
+    },
+    {
+     "id": "lc-bbb532",
+     "title": "Points named \u201cMode_Occ\u201d on AHU equipment are Occupancy_Command, not Mode_Command",
+     "entry": {
+      "pattern": "(?i)^(?:Mode_Occ)$",
+      "class": "Occupancy_Command",
+      "template": "ahu",
+      "instead_of": "Mode_Command"
+     },
+     "why": "2 fixes (\u201cMode_Occ\u201d by simulated reviewer) changed Mode_Command to Occupancy_Command. Now it would change 2 other points the rules call Mode_Command.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Mode_Occ",
+      "Mode_Occ"
+     ],
+     "patterns": [
+      9
+     ],
+     "touched": 2,
+     "labelled": 2,
+     "wrong_before": 2,
+     "wrong_after": 0,
+     "examples": [
+      "Mode_Occ"
+     ]
+    },
+    {
+     "id": "lc-44e951",
+     "title": "Points named \u201cOccupied status\u201d on VAV equipment are Occupancy_Command, not Occupancy_Status",
+     "entry": {
+      "pattern": "(?i)^(?:Occupied\\ status)$",
+      "class": "Occupancy_Command",
+      "template": "vav",
+      "instead_of": "Occupancy_Status"
+     },
+     "why": "2 fixes (\u201cOccupied status\u201d by simulated reviewer) changed Occupancy_Status to Occupancy_Command. Now it would change 136 other points the rules call Occupancy_Status.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Occupied status",
+      "Occupied status"
+     ],
+     "patterns": [
+      0
+     ],
+     "touched": 136,
+     "labelled": 136,
+     "wrong_before": 136,
+     "wrong_after": 0,
+     "examples": [
+      "Occupied status"
+     ]
+    },
+    {
+     "id": "lc-12c55f",
+     "title": "Points named \u201cBoiler 2 Status\u201d or \u201cBoiler 3 Status\u201d (any number) on BOILER equipment are Run_Time_Sensor, not Run_Status",
+     "entry": {
+      "pattern": "(?i)^(?:Boiler\\ \\d+\\ Status|Boiler\\ \\d+\\ Status)$",
+      "class": "Run_Time_Sensor",
+      "template": "boiler",
+      "instead_of": "Run_Status"
+     },
+     "why": "2 fixes (\u201cBoiler 2 Status\u201d, \u201cBoiler 3 Status\u201d by simulated reviewer) changed Run_Status to Run_Time_Sensor. Now it would change 1 other point the rules call Run_Status.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Boiler 2 Status",
+      "Boiler 3 Status"
+     ],
+     "patterns": [
+      13
+     ],
+     "touched": 1,
+     "labelled": 1,
+     "wrong_before": 1,
+     "wrong_after": 0,
+     "examples": [
+      "Boiler 1 Status"
+     ]
+    },
+    {
+     "id": "lc-7abd95",
+     "title": "Points named \u201cCH-2 Status\u201d or \u201cStatus (CC)\u201d (any number) on CHILLER equipment are Run_Time_Sensor, not Run_Status",
+     "entry": {
+      "pattern": "(?i)^(?:CH\\-\\d+\\ Status|Status\\ \\(CC\\))$",
+      "class": "Run_Time_Sensor",
+      "template": "chiller",
+      "instead_of": "Run_Status"
+     },
+     "why": "2 fixes (\u201cCH-2 Status\u201d, \u201cStatus (CC)\u201d by simulated reviewer) changed Run_Status to Run_Time_Sensor. Now it would change 1 other point the rules call Run_Status.",
+     "phrased_by": "rules",
+     "fixes": [
+      "CH-2 Status",
+      "Status (CC)"
+     ],
+     "patterns": [
+      14
+     ],
+     "touched": 1,
+     "labelled": 1,
+     "wrong_before": 1,
+     "wrong_after": 0,
+     "examples": [
+      "CH-3 Status"
+     ]
+    },
+    {
+     "id": "lc-c57c90",
+     "title": "Points named \u201cCWP-1 Status\u201d or \u201cHHWP-3 Status\u201d (any number) on PUMP equipment are Sensor, not Run_Status",
+     "entry": {
+      "pattern": "(?i)^(?:CWP\\-\\d+\\ Status|HHWP\\-\\d+\\ Status)$",
+      "class": "Sensor",
+      "template": "pump",
+      "instead_of": "Run_Status"
+     },
+     "why": "2 fixes (\u201cCWP-1 Status\u201d, \u201cHHWP-3 Status\u201d by simulated reviewer) changed Run_Status to Sensor. Now it would change 3 other points the rules call Run_Status.",
+     "phrased_by": "rules",
+     "fixes": [
+      "CWP-1 Status",
+      "HHWP-3 Status"
+     ],
+     "patterns": [
+      5
+     ],
+     "touched": 3,
+     "labelled": 3,
+     "wrong_before": 3,
+     "wrong_after": 0,
+     "examples": [
+      "CWP-2 Status",
+      "HHWP-2 Status",
+      "HHWP-4 Status"
+     ]
+    },
+    {
+     "id": "lc-d96f92",
+     "title": "Points named \u201cHHWP-2 S/S\u201d or \u201cHHWP-3 S/S\u201d (any number) on PUMP equipment are Pump_Command, not Start_Stop_Command",
+     "entry": {
+      "pattern": "(?i)^(?:HHWP\\-\\d+\\ S/S|HHWP\\-\\d+\\ S/S)$",
+      "class": "Pump_Command",
+      "template": "pump",
+      "instead_of": "Start_Stop_Command"
+     },
+     "why": "2 fixes (\u201cHHWP-2 S/S\u201d, \u201cHHWP-3 S/S\u201d by simulated reviewer) changed Start_Stop_Command to Pump_Command. Now it would change 2 other points the rules call Start_Stop_Command.",
+     "phrased_by": "rules",
+     "fixes": [
+      "HHWP-2 S/S",
+      "HHWP-3 S/S"
+     ],
+     "patterns": [
+      10
+     ],
+     "touched": 2,
+     "labelled": 2,
+     "wrong_before": 2,
+     "wrong_after": 0,
+     "examples": [
+      "HHWP-1 S/S",
+      "HHWP-4 S/S"
+     ]
+    },
+    {
+     "id": "lc-1740f6",
+     "title": "Points named \u201cBoiler 1 S/S\u201d or \u201cBoiler 2 S/S\u201d (any number) on BOILER equipment are Run_Enable_Command, not Start_Stop_Command",
+     "entry": {
+      "pattern": "(?i)^(?:Boiler\\ \\d+\\ S/S|Boiler\\ \\d+\\ S/S)$",
+      "class": "Run_Enable_Command",
+      "template": "boiler",
+      "instead_of": "Start_Stop_Command"
+     },
+     "why": "2 fixes (\u201cBoiler 1 S/S\u201d, \u201cBoiler 2 S/S\u201d by simulated reviewer) changed Start_Stop_Command to Run_Enable_Command. Now it would change 1 other point the rules call Start_Stop_Command.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Boiler 1 S/S",
+      "Boiler 2 S/S"
+     ],
+     "patterns": [
+      15
+     ],
+     "touched": 1,
+     "labelled": 1,
+     "wrong_before": 1,
+     "wrong_after": 0,
+     "examples": [
+      "Boiler 3 S/S"
+     ]
+    },
+    {
+     "id": "lc-32628b",
+     "title": "Points named \u201cCT-1 Status\u201d or \u201cCT-2 Status\u201d (any number) are Sensor, not Status",
+     "entry": {
+      "pattern": "(?i)^(?:CT\\-\\d+\\ Status|CT\\-\\d+\\ Status)$",
+      "class": "Sensor",
+      "instead_of": "Status"
+     },
+     "why": "2 fixes (\u201cCT-1 Status\u201d, \u201cCT-2 Status\u201d by simulated reviewer) changed Status to Sensor. Now it would change 0 other points the rules call Status.",
+     "phrased_by": "rules",
+     "fixes": [
+      "CT-1 Status",
+      "CT-2 Status"
+     ],
+     "patterns": [
+      16
+     ],
+     "touched": 0,
+     "labelled": 0,
+     "wrong_before": 0,
+     "wrong_after": 0,
+     "examples": []
+    },
+    {
+     "id": "lc-c0c807",
+     "title": "Points named \u201cCold Deck SAT\u201d or \u201cHot Deck SAT\u201d on AHU equipment are Air_Temperature_Sensor, not Supply_Air_Temperature_Sensor",
+     "entry": {
+      "pattern": "(?i)^(?:Cold\\ Deck\\ SAT|Hot\\ Deck\\ SAT)$",
+      "class": "Air_Temperature_Sensor",
+      "template": "ahu",
+      "instead_of": "Supply_Air_Temperature_Sensor"
+     },
+     "why": "2 fixes (\u201cCold Deck SAT\u201d, \u201cHot Deck SAT\u201d by simulated reviewer) changed Supply_Air_Temperature_Sensor to Air_Temperature_Sensor. Now it would change 2 other points the rules call Supply_Air_Temperature_Sensor.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Cold Deck SAT",
+      "Hot Deck SAT"
+     ],
+     "patterns": [
+      11
+     ],
+     "touched": 2,
+     "labelled": 2,
+     "wrong_before": 2,
+     "wrong_after": 0,
+     "examples": [
+      "Cold Deck SAT",
+      "Hot Deck SAT"
+     ]
+    },
+    {
+     "id": "lc-946f1e",
+     "title": "Points named \u201cClg SAT SP\u201d on AHU equipment are Air_Temperature_Setpoint, not Supply_Air_Temperature_Setpoint",
+     "entry": {
+      "pattern": "(?i)^(?:Clg\\ SAT\\ SP)$",
+      "class": "Air_Temperature_Setpoint",
+      "template": "ahu",
+      "instead_of": "Supply_Air_Temperature_Setpoint"
+     },
+     "why": "2 fixes (\u201cClg SAT SP\u201d by simulated reviewer) changed Supply_Air_Temperature_Setpoint to Air_Temperature_Setpoint. Now it would change 0 other points the rules call Supply_Air_Temperature_Setpoint.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Clg SAT SP",
+      "Clg SAT SP"
+     ],
+     "patterns": [
+      12
+     ],
+     "touched": 0,
+     "labelled": 0,
+     "wrong_before": 0,
+     "wrong_after": 0,
+     "examples": []
+    },
+    {
+     "id": "lc-6af3a0",
+     "title": "Points named \u201cCost\u201d are Sensor, not Utility_Cost_Point",
+     "entry": {
+      "pattern": "(?i)^(?:Cost)$",
+      "class": "Sensor",
+      "instead_of": "Utility_Cost_Point"
+     },
+     "why": "2 fixes (\u201cCost\u201d by simulated reviewer) changed Utility_Cost_Point to Sensor. Now it would change 11 other points the rules call Utility_Cost_Point.",
+     "phrased_by": "rules",
+     "fixes": [
+      "Cost",
+      "Cost"
+     ],
+     "patterns": [
+      2
+     ],
+     "touched": 11,
+     "labelled": 11,
+     "wrong_before": 11,
+     "wrong_after": 0,
+     "examples": [
+      "Cost"
+     ]
+    }
+   ],
+   "overall": {
+    "before": {
+     "n": 1648,
+     "exact": 1405,
+     "pct": 85.3
+    },
+    "after": {
+     "n": 1648,
+     "exact": 1604,
+     "pct": 97.3
+    },
+    "above_threshold_before": {
+     "n": 1434,
+     "exact": 1377,
+     "pct": 96.0
+    },
+    "above_threshold_after": {
+     "n": 1595,
+     "exact": 1576,
+     "pct": 98.8
+    },
+    "score_before": {
+     "H2_exact_pct": 83.5,
+     "H2_auto_accepted_exact_pct": 95.1,
+     "review_pct": 13.5,
+     "human_decided": 0
+    },
+    "score_after": {
+     "H2_exact_pct": 97.4,
+     "H2_auto_accepted_exact_pct": 98.8,
+     "review_pct": 3.7,
+     "human_decided": 34
+    },
+    "conventions_after": [
+     "site/alpha",
+     "site/alpha/learned-conventions-alpha"
+    ]
+   },
+   "also": [
+    {
+     "project": "alpha/names_only",
+     "before": {
+      "n": 1682,
+      "exact": 1195,
+      "pct": 71.0
+     },
+     "after": {
+      "n": 1682,
+      "exact": 1232,
+      "pct": 73.2
+     },
+     "changed": 37,
+     "changed_right_after": 37,
+     "changed_right_before": 0
+    }
+   ],
+   "model": {
+    "calls": 0,
+    "cost_usd": 0
+   }
+  }
+ ]
+}
