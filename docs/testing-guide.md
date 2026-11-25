@@ -115,7 +115,12 @@ no longer fails a job on cost. So the plan reader (W6) and the sequence reader (
 
 1. **Real test data.** Troop D's drawings are real, but its controls submittal and BMS point list were made up by us to
    match those drawings. The point-matching and point-class numbers are only as good as that made-up data. Needed: one
-   real controls submittal plus the BMS point export from the same past job, which can stay anonymised.
+   real controls submittal plus the BMS point export from the same past job, which can stay anonymised. A search of
+   public sources (25 Nov 2026: bid and addenda sites in 8 states, commissioning reports, open datasets such as LBNL
+   Building 59 and Mortar) found no such pair: real submittals and BMS exports are almost never posted. Nearest
+   misses: a public dataset of real BMS point names from about 92 anonymised buildings (no drawings), and city permit
+   archives with design-stage point lists (the same kind of data as Troop D). The way left is a public-records request
+   to one building owner for the controls O&M volume and a BMS point export.
 2. **Answer keys written by a person.** To score an AI reader, someone writes down the right answers first. For plans
    and sequences, the AI agent that built each reader also wrote its answer key (before building it, but still). The
    tool for fixing this now exists. It needs about 1–2 hours of an engineer, and no code:
