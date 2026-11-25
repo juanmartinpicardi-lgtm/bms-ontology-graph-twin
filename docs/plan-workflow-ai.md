@@ -280,7 +280,8 @@ Status, 25 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
     the evidence and the model writes the answer, citing only ids the tools returned. On 10 Troop D questions,
     answers and citations are 100% right, at $0.06 per question.
 - **Left:** W12 (tool adapters) waits for access. Open decision: §8.2 (a real submittal and BMS pair: none
-  available to us, so a public one is being searched for). §8.5 is decided: agreement goes to the expert, with a note
+  available to us, and a public search on 25 Nov 2026 found none; the way left is a public-records request to one
+  owner for the O&M controls volume and a BMS point export). §8.5 is decided: agreement goes to the expert, with a note
   and a combined confidence. How to test everything: `docs/testing-guide.md`.
 
 Suggested first wave (parallel): **W0**, **W1**, **W3**, **W5**. Second wave: **W2**, **W4**, **W6**, **W8**. Then
