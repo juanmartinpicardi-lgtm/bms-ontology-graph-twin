@@ -19,6 +19,7 @@ import time
 
 import yaml
 
+from ..conventions import learned_terms
 from ..notes import TOPICS
 from . import submittal, tags
 from .state import Intake
@@ -38,7 +39,8 @@ def apply(it: Intake) -> None:
     k = get(it)
     tags.use({t["prefix"]: {"class": t["class"], "family": t["family"], "terminal": t.get("terminal", False)}
               for t in k["tags"]})
-    submittal.use_terms([(t["phrase"], t["class"]) for t in k["terms"]])
+    # The building's own terms, then the approved learned conventions of its scopes (curator.py, W10).
+    submittal.use_terms([(t["phrase"], t["class"]) for t in k["terms"]] + learned_terms(f"{it.slug}/documents"))
 
 
 def _stamp(it: Intake, rule: bool) -> None:

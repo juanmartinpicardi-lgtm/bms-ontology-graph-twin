@@ -239,6 +239,7 @@ def convention_entries(km: KnowledgeModel, store: Store, project: str, layers) -
                     and (e["kind"] != "equipment_patterns" or x["key"] == e["key"])]
             idx = same.index(e)
             origin = (f"{layer.scope}:equipment_patterns.{e['key']}[{idx}]" if e["kind"] == "equipment_patterns"
+                      else f"{layer.scope}:{e['convention']}" if e.get("convention")  # a learned convention's id
                       else f"{layer.scope}:{e['kind']}[{idx}]")
             n = used[origin]
         rows.append({"layer": layer.scope, "kind": e["kind"], "entry": e["key"], "value": str(e["value"]),

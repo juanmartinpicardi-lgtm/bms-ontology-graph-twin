@@ -136,7 +136,15 @@ class Template:
 class ClassHint:
     pattern: re.Pattern  # matched against the whole point name
     cls: str
-    origin: str  # e.g. "site/alpha:class_hints[0]"
+    origin: str  # e.g. "site/alpha:class_hints[0]", or "site/alpha:lc-3f2a1b" for a learned convention
+    # Optional scope (learned conventions, curator.py): only on equipment of this template, and only where the rules
+    # would otherwise say `instead_of`. A hint with either is applied after the templates (Mapper.scoped_hints).
+    template: str | None = None
+    instead_of: str | None = None
+
+    @property
+    def scoped(self) -> bool:
+        return bool(self.template or self.instead_of)
 
 
 @dataclass(frozen=True)

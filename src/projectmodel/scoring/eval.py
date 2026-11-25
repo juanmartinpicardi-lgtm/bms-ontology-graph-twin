@@ -31,6 +31,7 @@ SETS = {
     "intake": ["troop_d"],
     "point_class": ["troop_d", "alpha/names_paths", "alpha/names_only"],
     "plan_meaning": ["msu_mbb", "itd_d1_lab"],
+    "learning": ["alpha/names_paths"],  # the learning loop (W10): its own module, scoring/learning.py
 }
 HELD_OUT = {"liberty_boe"}
 
@@ -445,6 +446,9 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
     sets = sets or SETS[job]
     if any(s.split("/")[0] in HELD_OUT for s in sets):
         raise ValueError(f"held-out sets are never evaluated here: {sets}")
+    if job == "learning":
+        from . import learning
+        return {"job": job, "sets": sets, "runs": [learning.simulate(s, router=router, log=log) for s in sets]}
     out = {"job": job, "sets": sets, "k_folds": K_FOLDS, "min_n": cal.MIN_N, "band_n": cal.BAND_N,
            "tolerance": cal.TOLERANCE,
            "budget_usd_per_1000": budget, "calibration_before": cal.load(job).ref or "none", "rows": [], "skipped": []}
@@ -1057,4 +1061,9 @@ def print_report(r: dict, out=print) -> None:  # noqa: F811
     if r["job"] == "point_bind":
         from . import binding
         return binding.print_report(r, out)
+    if r["job"] == "learning":
+        from . import learning
+        for x in r["runs"]:
+            learning.print_report(x, out)
+        return None
     return _print_jobs(r, out)
