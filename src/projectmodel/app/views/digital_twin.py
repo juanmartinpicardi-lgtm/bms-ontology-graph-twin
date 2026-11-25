@@ -36,10 +36,11 @@ payload = twin_payload(store, project, site_of(project).name)
 if not any(e["type"].startswith("VAV") for e in payload["equip"]):
     st.info("This input has no zones grouped under their equipment yet, so there is little to place on floors. "
             "The twin is most useful on a Names + folders input.", icon=":material/info:")
+MODELLED = ("AHU", "VAV", "VAV (dual duct)", "VAV (fan powered)", "Chiller", "Boiler", "Pump", "Fan coil",
+            "Unit heater", "Mini-split", "Exhaust fan", "Cooling tower", "Heat exchanger", "Meter")
 # Equipment with a 3D model opens on the Equipment 3D page (the top window, not inside the iframe).
 payload["links"] = {e["id"]: "/Equipment_3D?" + urlencode({"project": project, "equip": e["id"]})
-                    for e in payload["equip"] if e["type"] in ("AHU", "VAV", "VAV (dual duct)", "Chiller", "Boiler",
-                                                               "Pump")}
+                    for e in payload["equip"] if e["type"] in MODELLED}
 # On top: how complete the graph and the twin are (completeness.py), one card per measure.
 c = THEME[theme()]
 HUE = {"trusted": "#3BA7FF", "grouped": "#C77DFF", "classed": "#E8A33D", "linked": c["good"], "twin": "#E05FA8"}

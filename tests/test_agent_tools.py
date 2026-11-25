@@ -147,6 +147,10 @@ def test_show_graphic(td):
     g = td.show_graphic(P + "DA-T")  # a point shows its unit's graphic
     assert g["cite"] == "graphic:unit:AHU1" and g["available"] and g["query"]["equip"] == AHU1
     assert td.resolve("graphic:unit:AHU1")["kind"] == "graphic"
+    assert g["kind"] == "equipment_graphic" and g["template"] == "ahu" and g["qa"] in ("pass", "warn")  # W9
+    assert g["points_on_model"] > 0 and g["page"] == "Equipment_3D"
+    plant = td.show_graphic("unit:CHWPLANT")  # a system: its own points are on the water-side system graphic
+    assert plant["kind"] == "system_graphic" and plant["page"] == "graphics" and plant["points_on_graphic"] == 7
 
 
 def test_diagnose_ahu1(td):

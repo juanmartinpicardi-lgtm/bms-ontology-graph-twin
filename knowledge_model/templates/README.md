@@ -38,4 +38,11 @@ Where each slot role sits on the 3D model of its equipment type (`docs/spec-equi
 `parts` (the named objects the geometry code builds), `sub_equipment` (class of an untemplated part such as
 `SF VFD` → the part its points attach to) and `anchors` (role → `{part, at}`, `at` is 0–1 along a duct).
 `scripts/validate_km.py` checks that every slot role of a drawn type has an anchor, every anchor names a real role,
-and every part is declared. Types without a section (FCU, chiller, boiler, pump) are not drawn yet.
+and every part is declared. Every template has a section: the 3D builders (`app/equipment3d/`) and the 2D graphics
+(`src/projectmodel/graphics/layouts.py`) draw the same named parts, so a point lands on the same part in both.
+
+Which template an equipment gets is resolved from the graph (`equipment_view.template_for`): the template of the most
+specific class it is (an RVAV is a VAV, so `rvav` wins over `vav`); else, for a generic class (a mini-split typed
+`HVAC_Equipment`), the template whose name pattern matches and whose class is a subclass of it; else the template the
+mapper wrote on the node. `meter.yaml` has no name patterns on purpose: a meter's class from its name is more
+specific than `Meter`, and matching by name would overwrite it.

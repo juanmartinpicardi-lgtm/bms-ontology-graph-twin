@@ -1,0 +1,14 @@
+id: heat_exchanger
+brick_class: Heat_Exchanger
+description: Plate or shell-and-tube heat exchanger (steam or water to hot water), with a control valve on the primary side.
+name_patterns: ['\bHX[-_ ]?\d', '\bHEAT[-_ ]?EXCHANGER\b']
+point_count: [1, 15]
+points:
+  - {role: control_valve, classes: [Valve_Command, Valve_Position_Command], required: true}
+  - {role: hw_leaving_temp, classes: [Leaving_Hot_Water_Temperature_Sensor], required: false}
+  - {role: hw_leaving_sp, classes: [Leaving_Hot_Water_Temperature_Setpoint], required: false}
+  - {role: hw_entering_temp, classes: [Entering_Hot_Water_Temperature_Sensor], required: false}
+  - {role: hw_flow, classes: [Hot_Water_Flow_Sensor], required: false}
+  - {role: enable, classes: [Enable_Command, Run_Enable_Command, Start_Stop_Command], required: false}
+  - {role: status, classes: [Status, Run_Status], required: false}
+relations: []

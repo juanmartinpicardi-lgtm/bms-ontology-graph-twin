@@ -57,7 +57,7 @@ const Sim = (() => {
       hod, occ, run, load, oat, rat, mat, sat, cool, heat, oa, ra: run ? 100 - oa : 100, relief: run ? clamp(oa - 15) : 0,
       fan: { supply: { run, speed, freq: speed * 0.6, power: 15 * (speed / 100) ** 3 },
              return: { run, speed: rspeed, freq: rspeed * 0.6, power: 7 * (rspeed / 100) ** 3 },
-             exhaust: { run, speed: run ? 100 : 0 } },
+             exhaust: { run, speed: run ? 100 : 0, freq: run ? 60 : 0, power: run ? 1.6 : 0 } },
       static: run ? 0.3 + 1.25 * (speed / 100) ** 2 : 0,
       building: run ? 0.03 + 0.01 * noise(seed + 5, h * 4) : 0,
       filterDp: run ? 0.05 + 0.55 * (speed / 100) ** 2 : 0,
@@ -105,6 +105,21 @@ const Sim = (() => {
              fan: { terminal: { run, speed: run ? 100 : 0 } } };
   }
 
+  // A zone unit with its own controls (unit heater, mini-split): it heats when the space is cold, a split also cools.
+  // A vestibule or storage room with a unit heater runs colder than the offices and follows the outdoor air.
+  function unitState(seed, a, sc, h, t) {
+    const k = rnd(seed, 1), n = (sd, f) => noise(seed + sd, h * f);
+    if (t === "unit_heater") {
+      const zone = clamp(58 + (a.oat - 60) * 0.25 + 1.5 * n(1, 2), 40, 80), sp = 60;
+      const heat = zone < sp + 1 ? clamp((sp + 1 - zone) * 45 + 10 * k) : 0, run = heat > 0;
+      return { run, heat, zone, dat: run ? zone + 25 + 0.4 * heat : zone, mode: 0, fan: { terminal: { run, speed: run ? 100 : 0 } } };
+    }
+    const run = a.run || a.oat > 80, cool = a.oat > 65;
+    const zone = (run ? 72.5 + 0.8 * n(1, 3) : 75 + (a.oat - 66) * 0.1);
+    return { run, heat: run && !cool ? 40 : 0, zone, dat: run ? (cool ? 56 : 92) : zone, mode: cool ? 1 : 0,
+             fan: { terminal: { run, speed: run ? 55 + 30 * clamp(a.load, 0, 1) : 0 } } };
+  }
+
   // Plant: a site load (from the same outdoor day) staged across units by their number. CH-1 / B-1 lead, the next
   // starts as the load grows; pumps are duty/standby pairs (1 and A duty), the standby joins at high load.
   const rank = label => {
@@ -131,6 +146,21 @@ const Sim = (() => {
       const hwS = run ? 160 + 0.6 * n(1, 4) - (firing >= 100 ? 4 : 0) : 112 + 2 * n(1, 1);
       return { run, plr, load: heat, firing, hwS, hwR: run ? hwS - 8 - 14 * plr : hwS - 1, power: 0 };
     }
+    if (eq.template === "cooling_tower") {  // runs with the chillers; the fan holds the condenser water supply
+      const run = cool > k * 0.5, cwS = clamp(70 + (a.oat - 66) * 0.45, 65, 88) + 0.3 * n(2, 3);
+      const speed = run ? clamp(30 + 70 * cool + 3 * n(1, 3)) : 0;
+      return { run, load: cool, cwS, cwR: run ? cwS + 2 + 8 * cool : cwS + 0.2, speed, freq: speed * 0.6,
+               power: run ? 25 * (speed / 100) ** 3 : 0 };
+    }
+    if (eq.template === "heat_exchanger") {  // like a boiler, its valve is the firing rate
+      const run = heat > k * 0.35, firing = run ? clamp(15 + 85 * heat + 4 * n(3, 4)) : 0;
+      const hwS = run ? 140 + 0.6 * n(1, 4) : 105 + 2 * n(1, 1);
+      return { run, load: heat, firing, hwS, hwR: run ? hwS - 10 - 12 * heat : hwS - 1, flow: run ? 60 + 140 * heat : 0, power: 0 };
+    }
+    if (eq.template === "meter") {  // site energy: a counter that grows with the load, and the demand now
+      const kw = 60 + 320 * (a.run ? a.load : 0.05) + 6 * n(1, 3);
+      return { run: true, load: a.load, kw, kwh: 125000 + 1000 * rnd(seed, 5) + 230 * h };
+    }
     // pump: what it moves sets which load it follows
     const load = v.medium === "hot_water" ? heat : cool, duty = k % 2 === 0;
     const run = duty ? load > 0 : load > 0.85;
@@ -141,7 +171,7 @@ const Sim = (() => {
 
   // Per point: the driver's signal, plus a little sensor noise seeded by the point id.
   function pointValue(id, sp, s, h) {
-    const a = s.ahu, v = s.vav || s.fcu, n = (scale) => scale * noise(hash(id), h * 4), pl = s.plant;
+    const a = s.ahu, v = s.vav || s.fcu || s.unit, n = (scale) => scale * noise(hash(id), h * 4), pl = s.plant;
     const deck = sp.deck && s.vav?.deck[sp.deck];
     const fan = (v?.fan[sp.fan] || a.fan[sp.fan] || a.fan.supply);
     switch (sp.driver) {
@@ -185,6 +215,20 @@ const Sim = (() => {
       case "oa_flow": return a.oaFlow;
       case "occupancy": return a.occ ? 1 : 0;
       case "filter_status": return 0;
+      case "alarm": return 0;
+      case "reheat_on": return v && v.reheat > 0 ? 1 : 0;
+      case "dx_stage": return a.cool > 5 ? 1 : 0;
+      case "uh_heat": return v ? v.heat : 0;
+      case "uh_run": return v?.run ? 1 : 0;
+      case "uh_zone": return (v ? v.zone : a.rat) + n(0.05);
+      case "uh_discharge": return (v ? v.dat : a.sat) + n(0.2);
+      case "split_mode": return v ? v.mode : 1;
+      case "tower_fan": return pl?.speed ?? 0;
+      case "tower_freq": return pl?.freq ?? 0;
+      case "hw_flow": return pl?.flow ?? 0;
+      case "meter_energy": return pl?.kwh ?? sp.base;
+      case "meter_power": return pl?.kw ?? sp.base;
+      case "ef_flow": return a.fan.exhaust.run ? sp.base * (0.97 + 0.03 * noise(hash(id), h * 5)) : 0;
       default: {  // generic: slow random walk around the spec's typical value
         const [lo, hi] = sp.range;
         return Math.min(hi, Math.max(lo, sp.base + (hi - lo) * 0.12 * noise(hash(id) + 11, h * 0.7)));
@@ -192,11 +236,12 @@ const Sim = (() => {
     }
   }
 
-  const DECIMALS = { "°F": 1, "inH₂O": 2, "Hz": 1, "kW": 1, "psi": 1 };
+  const DECIMALS = { "°F": 1, "inH₂O": 2, "Hz": 1, "kW": 1, "psi": 1, kWh: 0, $: 0 };
   function format(sp, x) {
     if (sp.kind === "binary") {
       const t = sp.states[x ? 1 : 0];
-      return { text: t, state: ["RUN", "ON", "OCC", "OPEN"].includes(t) ? "ok" : t === "DIRTY" ? "warn" : "off" };
+      return { text: t, state: ["RUN", "ON", "OCC", "OPEN", "COOL", "HEAT"].includes(t) ? "ok"
+                              : t === "DIRTY" || t === "ALARM" ? "warn" : "off" };
     }
     const d = DECIMALS[sp.unit] ?? (sp.unit ? 0 : 1);
     return { text: sp.unit ? `${x.toFixed(d)} ${sp.unit}` : x.toFixed(d) };
@@ -207,9 +252,10 @@ const Sim = (() => {
   // a plant stage together across their pages.
   // `offset` (seconds) continues a running demo across pages: the app passes how long the scenario has been running.
   function create(data, { seed = null, scenario = "normal", hour = null, offset = 0 } = {}) {
-    const eq = data.equipment, t = eq.template, isVav = t === "vav", v = data.variant || {};
+    const eq = data.equipment, t = eq.template, isVav = t === "vav" || t === "rvav", v = data.variant || {};
     const site = { id: `site|${data.project}` };
-    const ahu = isVav ? (data.relations?.fed_by || []).find(r => r.template === "ahu") : t === "ahu" ? eq : site;
+    const ahu = isVav ? (data.relations?.fed_by || []).find(r => r.template === "ahu" || r.template === "rtu")
+                      : t === "ahu" || t === "rtu" ? eq : site;
     const aSeed = seed != null ? hash(`${seed}|${(ahu || eq).id}`) : hash((ahu || eq).id);
     const vSeed = seed != null ? hash(`${seed}|${eq.id}`) : hash(eq.id);
     let sc = SCENARIOS[scenario] || SCENARIOS.normal;
@@ -218,7 +264,9 @@ const Sim = (() => {
       const elapsed = h - sc.start, a = ahuState(aSeed, sc, h);
       const s = { h, ahu: a, vav: isVav ? vavState(vSeed, a, sc, h, elapsed, v) : null,
                   fcu: t === "fcu" ? fcuState(vSeed, a, sc, h, v) : null,
-                  plant: ["chiller", "boiler", "pump"].includes(t) ? plantState(vSeed, a, sc, eq, v, h) : null };
+                  unit: ["unit_heater", "split_system"].includes(t) ? unitState(vSeed, a, sc, h, t) : null,
+                  plant: ["chiller", "boiler", "pump", "cooling_tower", "heat_exchanger", "meter"].includes(t)
+                    ? plantState(vSeed, a, sc, eq, v, h) : null };
       s.values = {};
       for (const id of ids) {
         const sp = data.points[id].sim;

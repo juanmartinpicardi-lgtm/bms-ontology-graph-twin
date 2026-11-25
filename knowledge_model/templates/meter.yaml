@@ -1,0 +1,11 @@
+id: meter
+brick_class: Meter
+description: Utility or submeter (electricity, gas, water, thermal); reads energy, demand, volume and cost.
+name_patterns: []  # never by name: the mapper's name guess (Gas_Meter...) is more specific; the template follows the class
+point_count: [1, 12]
+points:
+  - {role: energy, classes: [Energy_Sensor], required: true}
+  - {role: power, classes: [Power_Sensor, Current_Sensor], required: false}
+  - {role: flow, classes: [Flow_Sensor, Chilled_Water_Flow_Sensor, Hot_Water_Flow_Sensor], required: false}
+  - {role: cost, classes: [Utility_Cost_Point], required: false}
+relations: []

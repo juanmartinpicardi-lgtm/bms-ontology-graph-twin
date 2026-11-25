@@ -3,7 +3,8 @@
 Usage:
   .venv/bin/python scripts/export_equipment3d.py alpha/names_paths --equip "eq:Airside AHU-2"
   .venv/bin/python scripts/export_equipment3d.py alpha/names_paths --all-ahus
-  .venv/bin/python scripts/export_equipment3d.py alpha/names_paths --all      (AHUs and VAVs)
+  .venv/bin/python scripts/export_equipment3d.py alpha/names_paths --all      (every equipment with a 3D model)
+  .venv/bin/python scripts/export_equipment3d.py troop-d/documents --one-per-type
 The page embeds the data and follows the system theme; it loads three.js from jsdelivr, so it needs a network
 connection.
 """
@@ -18,8 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.db.store import Store  # noqa: E402
-from projectmodel.equipment_view import equipment_payload, load_anchors, render_html  # noqa: E402
+from projectmodel.equipment_view import equipment_payload, load_anchors, node_template, render_html  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
+from projectmodel.tree import build_tree  # noqa: E402
 
 
 def main():
@@ -28,13 +30,21 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--equip", help='equipment id, e.g. "eq:Airside AHU-2"')
     g.add_argument("--all-ahus", action="store_true")
-    g.add_argument("--all", action="store_true", help="every equipment with a 3D model (AHU, VAV, FCU, chiller, boiler, pump)")
+    g.add_argument("--all", action="store_true", help="every equipment with a 3D model (every template in anchors.yaml)")
+    g.add_argument("--one-per-type", action="store_true", help="the first equipment of each template (and variant)")
     ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
     args = ap.parse_args()
     store, km, anchors = Store(args.db), load_knowledge_model(), load_anchors()
-    models = {r["id"]: json.loads(r["attrs"]).get("template") for r in store.nodes(args.project, "equipment")}
+    tree = build_tree(store, args.project)
+    models = {n.id: getattr(node_template(n, km), "id", None) for n in tree.by_id.values() if n.kind == "equipment"}
     models = {i: t for i, t in models.items() if t in anchors}
-    ids = [args.equip] if args.equip else sorted(i for i, t in models.items() if args.all or t == "ahu")
+    if args.one_per_type:  # first of each template, and of each family within it (VAV vs FVAV)
+        firsts = {}
+        for i in sorted(models):
+            firsts.setdefault((models[i], tree.by_id[i].attrs.get("family")), i)
+        ids = sorted(firsts.values())
+    else:
+        ids = [args.equip] if args.equip else sorted(i for i, t in models.items() if args.all or t == "ahu")
     if not ids:
         sys.exit(f"project {args.project!r} has no equipment with a 3D model; run the mapper first")
     out_dir = ROOT / "reports/equipment3d"
@@ -44,7 +54,7 @@ def main():
     name = lambda i: f"{args.project.replace('/', '_')}__{re.sub(r'[^A-Za-z0-9]+', '-', i.removeprefix('eq:')).strip('-')}.html"  # noqa: E731
     links = {i: name(i) for i in models if i in ids or (out_dir / name(i)).exists()}
     for eid in ids:
-        payload = equipment_payload(store, args.project, eid, km, anchors)
+        payload = equipment_payload(store, args.project, eid, km, anchors, tree)
         payload["links"] = {k: v for k, v in links.items() if k != eid}
         out = out_dir / name(eid)
         out.write_text(render_html(payload))
