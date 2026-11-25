@@ -20,6 +20,7 @@ writes the files: changes arrive through the Memory page (M2) and the curator's 
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
 from datetime import date
@@ -30,6 +31,14 @@ import yaml
 from .knowledge_model import ROOT, KnowledgeModel, KnowledgeModelError
 
 KNOWLEDGE_DIR = ROOT / "knowledge"
+
+
+def knowledge_dir() -> Path:
+    """The knowledge/ folder in use: `PM_KNOWLEDGE_DIR` when set (a copy, e.g. for the learning-loop simulation, so
+    approving a convention there never changes the repo's files), else the repo's own."""
+    return Path(os.environ.get("PM_KNOWLEDGE_DIR") or KNOWLEDGE_DIR)
+
+
 LAYERS = ("global", "designer", "contractor", "customer", "site")
 CAPS = {"global": 4000, "designer": 2500, "contractor": 2500, "customer": 2500, "site": 2500, "person": 1200}
 ENTRY_KINDS = ("principle", "fact", "preference", "warning")
@@ -331,11 +340,11 @@ def _projects(conv_dir: Path) -> dict[str, list[str]]:
     return {k: list(v or []) for k, v in (data or {}).items()}
 
 
-def load_knowledge(root: Path = KNOWLEDGE_DIR, km: KnowledgeModel | None = None,
+def load_knowledge(root: Path | None = None, km: KnowledgeModel | None = None,
                    conv_dir: Path = ROOT / "conventions") -> Knowledge:
-    """Load and check every memory file, profile and skill under `root`. With `km`, skill rules are checked against
-    the knowledge model too. Raises KnowledgeError listing every problem found."""
-    root = Path(root)
+    """Load and check every memory file, profile and skill under `root` (default: knowledge_dir()). With `km`, skill
+    rules are checked against the knowledge model too. Raises KnowledgeError listing every problem found."""
+    root = Path(root) if root is not None else knowledge_dir()
     problems: list[str] = []
     memory: dict[str, MemoryFile] = {}
     mem_dir = root / "memory"

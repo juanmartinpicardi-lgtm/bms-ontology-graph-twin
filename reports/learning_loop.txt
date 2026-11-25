@@ -1,0 +1,50 @@
+alpha/names_paths: 17 error patterns with more than 2 points
+curator: 17 proposals from 34 fixes
+
+Learning loop on alpha/names_paths: 2 fixes per pattern, 34 points fixed by the simulated reviewer (never counted below)
+
+Per convention (approved, then the mapper re-run): points it decided, fixed points left out
+  id         touched  keyed  wrong before  wrong after  convention
+  lc-39a088        0      0             0            0  Points named “Building Static Reading” or “Building Static Sensor” on AHU equipment are Pressure_Sensor, not Building_Air_Static_Pressure_Sensor
+  lc-90128a        2      2             2            0  Points named “Building Static_SP” on AHU equipment are Pressure_Setpoint, not Building_Air_Static_Pressure_Setpoint
+  lc-f19349       31     31            31            0  Points named “Clg Dmpr Pos. %” on VAV equipment are Damper_Command, not Damper_Position_Command
+  lc-8ec654        2      2             2            0  Points named “SF VFD S/S” on AHU equipment are Fan_Command, not Fan_Speed_Command
+  lc-bbfcda        3      3             3            0  Points named “EF-2 Status” or “Return Fan Status” (any number) are Sensor, not Fan_Status
+  lc-2db6fe        2      2             2            0  Points named “RF Status” on AHU equipment are Sensor, not Fan_Status
+  lc-bbb532        2      2             2            0  Points named “Mode_Occ” on AHU equipment are Occupancy_Command, not Mode_Command
+  lc-44e951      136    136           136            0  Points named “Occupied status” on VAV equipment are Occupancy_Command, not Occupancy_Status
+  lc-12c55f        1      1             1            0  Points named “Boiler 2 Status” or “Boiler 3 Status” (any number) on BOILER equipment are Run_Time_Sensor, not Run_Status
+  lc-7abd95        1      1             1            0  Points named “CH-2 Status” or “Status (CC)” (any number) on CHILLER equipment are Run_Time_Sensor, not Run_Status
+  lc-dfa38a        5      5             5            0  Points whose name has the word “status” on PUMP equipment are Sensor, not Run_Status
+  lc-d96f92        2      2             2            0  Points named “HHWP-2 S/S” or “HHWP-3 S/S” (any number) on PUMP equipment are Pump_Command, not Start_Stop_Command
+  lc-1740f6        1      1             1            0  Points named “Boiler 1 S/S” or “Boiler 2 S/S” (any number) on BOILER equipment are Run_Enable_Command, not Start_Stop_Command
+  lc-32628b        0      0             0            0  Points named “CT-1 Status” or “CT-2 Status” (any number) are Sensor, not Status
+  lc-c0c807        2      2             2            0  Points named “Cold Deck SAT” or “Hot Deck SAT” on AHU equipment are Air_Temperature_Sensor, not Supply_Air_Temperature_Sensor
+  lc-946f1e        0      0             0            0  Points named “Clg SAT SP” on AHU equipment are Air_Temperature_Setpoint, not Supply_Air_Temperature_Setpoint
+  lc-6af3a0       11     11            11            0  Points named “Cost” are Sensor, not Utility_Cost_Point
+
+Per error pattern (machine -> key, on template): its points that were not fixed
+  #    held out  wrong before  wrong after  pattern; convention
+  0         136           136            0  Occupancy_Status -> Occupancy_Command on vav (Occupied status); lc-44e951
+  1          31            31            0  Damper_Position_Command -> Damper_Command on vav (Clg Dmpr Pos. %); lc-f19349
+  2          12            12            1  Utility_Cost_Point -> Sensor on any (Cost, Transport Cost); lc-6af3a0
+  3           6             6            4  Fan_Speed_Command -> Fan_Command on ahu (RF VFD S/S, SF VFD S/S); lc-8ec654
+  4           6             6            4  Fan_Status -> Sensor on ahu (RF Status, SF Status); lc-2db6fe
+  5           5             5            0  Run_Status -> Sensor on pump (CWP-1 Status, CWP-2 Status, HHWP-2 Status); lc-dfa38a
+  6           4             4            1  Fan_Status -> Sensor on any (EF-1 Status, EF-2 Status, EF-3 Status); lc-bbfcda
+  7           3             3            3  Building_Air_Static_Pressure_Sensor -> Pressure_Sensor on ahu (Building DP, Building Static Reading, Building Static Sensor); lc-39a088
+  8           2             2            0  Building_Air_Static_Pressure_Setpoint -> Pressure_Setpoint on ahu (Building Static_SP); lc-90128a
+  9           2             2            0  Mode_Command -> Occupancy_Command on ahu (Mode_Occ); lc-bbb532
+  10          2             2            0  Start_Stop_Command -> Pump_Command on pump (HHWP-1 S/S, HHWP-2 S/S, HHWP-3 S/S); lc-d96f92
+  11          2             2            0  Supply_Air_Temperature_Sensor -> Air_Temperature_Sensor on ahu (Cold Deck SAT, Hot Deck SAT); lc-c0c807
+  12          2             2            2  Supply_Air_Temperature_Setpoint -> Air_Temperature_Setpoint on ahu (Clg SAT SP, Htg SAT SP); lc-946f1e
+  13          1             1            0  Run_Status -> Run_Time_Sensor on boiler (Boiler 1 Status, Boiler 2 Status, Boiler 3 Status); lc-12c55f
+  14          1             1            0  Run_Status -> Run_Time_Sensor on chiller (CH-2 Status, CH-3 Status, Status (CC)); lc-7abd95
+  15          1             1            0  Start_Stop_Command -> Run_Enable_Command on boiler (Boiler 1 S/S, Boiler 2 S/S, Boiler 3 S/S); lc-1740f6
+  16          1             1            1  Status -> Sensor on any (CT-1 Status, CT-2 Status, HW Pump Status); lc-32628b
+
+Class exact, every keyed point except the fixed ones: 1405/1648 (85.3%) -> 1606/1648 (97.5%)
+  above the threshold: 1377/1434 (96.0%) -> 1578/1597 (98.8%)
+scripts/score.py H2 exact (all points, fixes included): 83.5% -> 97.5%; conventions after: site/alpha, site/alpha/learned-conventions-alpha
+alpha/names_only (same site, no fix made there): 1195/1682 (71.0%) -> 1234/1682 (73.4%); 39 points changed, 0 right before, 39 after
+memory_curator calls: 4, $0.0207

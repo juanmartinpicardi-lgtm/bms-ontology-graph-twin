@@ -10,8 +10,9 @@ Order (CLAUDE.md section 3):
                    confidence is capped at `llm_cap`, below the auto-accept threshold, so a person reviews it
 Conventions (km.conventions, see conventions.py) take part as rules: a class hint decides a point's class
 before anything else and is not refined by templates (method=rule); abbreviations and equipment patterns
-feed steps 2-3; ignore rules flag points for review. Whatever a convention decided or contributed is
-recorded in attrs.convention, e.g. ["site/alpha:abbreviations.cc"].
+feed steps 2-3; ignore rules flag points for review. A scoped class hint (a learned convention: only on one
+template's equipment, only instead of one class) decides after step 3. Whatever a convention decided or contributed
+is recorded in attrs.convention, e.g. ["site/alpha:abbreviations.cc"] or ["site/alpha:lc-3f2a1b"].
 A point's units, when its record has them, are kept as written with their QUDT id (units.py); they do not take part
 in classification. Nothing is written back to any source.
 """
@@ -118,11 +119,30 @@ class Mapper:
         out = {}
         for r in records:
             guess = self.points.classify(r.name, r.path.split("/")[-1] if r.path else self._equipment_id_in_name(r.name))
-            hint = next((h for h in self.km.class_hints if h.pattern.search(r.name)), None)
+            hint = next((h for h in self.km.class_hints if not h.scoped and h.pattern.search(r.name)), None)
             if hint:
                 guess.hint = hint.origin
                 guess.cls, guess.confidence = hint.cls, HINT_CONFIDENCE
             out[f"pt:{r.source_id}"] = guess
+        return out
+
+    def scoped_hints(self, records: list[RawRecord], groups: dict[str, EquipGroup], member: dict[str, str],
+                     final: dict, guesses: dict[str, ClassGuess]) -> dict[str, tuple[str, float, str]]:
+        """Class hints with a scope (learned conventions, curator.py), applied once the templates have spoken: a
+        hint's `template` must be the point's equipment template, and its `instead_of` the class the rules gave.
+        Such a hint decides like any other (method rule, HINT_CONFIDENCE) and is recorded in the point's
+        provenance. A person's decision is not touched: review rows are never replaced by a run (db/store.py)."""
+        out = {}
+        scoped = [h for h in self.km.class_hints if h.scoped]
+        for r in records if scoped else ():
+            pid = f"pt:{r.source_id}"
+            g = groups.get(member.get(pid, ""))
+            tid = g.template.id if g and g.template else None
+            h = next((h for h in scoped if (h.template is None or h.template == tid)
+                      and (h.instead_of is None or h.instead_of == final[pid][0]) and h.pattern.search(r.name)), None)
+            if h and not guesses[pid].hint:
+                guesses[pid].hint = h.origin
+                out[pid] = (h.cls, HINT_CONFIDENCE, "rule")
         return out
 
     def point_conventions(self, r: RawRecord, guess: ClassGuess) -> list[str]:
@@ -291,6 +311,7 @@ class Mapper:
         for g in groups.values():
             self.type_equipment(g, guesses)
             final.update(self.refine_points(g, guesses))
+        final.update(self.scoped_hints(records, groups, member, final, guesses))  # learned conventions (W10)
         final = calibrate_points(final, guesses, records)  # W5: raw rule/template confidence -> measured accuracy
 
         rec_by_pid = {f"pt:{r.source_id}": r for r in records}
