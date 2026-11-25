@@ -6,7 +6,7 @@
    "project": "troop-d/documents",
    "scope": "confirmed",
    "engine": "shifty",
-   "seconds": 4.35,
+   "seconds": 5.65,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -42,7 +42,7 @@
     },
     "edges_left_out": {
      "hasLocation": 1,
-     "hasPoint": 757,
+     "hasPoint": 776,
      "isHostedBy": 774
     },
     "with_unit": {},
@@ -1083,21 +1083,21 @@
     }
    ],
    "name": "troop_d",
-   "export_seconds": 0.62,
+   "export_seconds": 0.3,
    "roundtrip": {
     "ok": true,
     "nodes": 306,
     "edges": 512,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 15:23",
+   "generated": "2026-11-25 08:40",
    "turtle": "data/export/troop_d.confirmed.ttl"
   },
   "with_proposed": {
    "project": "troop-d/documents",
    "scope": "confirmed + proposed",
    "engine": "shifty",
-   "seconds": 6.22,
+   "seconds": 6.37,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -1106,32 +1106,32 @@
    "export": {
     "project": "troop-d/documents",
     "scope": "confirmed + proposed",
-    "nodes": 1082,
-    "edges": 2098,
+    "nodes": 1085,
+    "edges": 2124,
     "nodes_by_kind": {
      "controller": 68,
-     "equipment": 77,
+     "equipment": 80,
      "location": 86,
      "network": 4,
      "point": 847
     },
     "nodes_by_status": {
      "confirmed": 306,
-     "proposed": 776
+     "proposed": 779
     },
     "edges_by_relation": {
-     "controls": 66,
+     "controls": 69,
      "feeds": 62,
      "hasLocation": 83,
-     "hasPart": 85,
-     "hasPoint": 828,
+     "hasPart": 89,
+     "hasPoint": 847,
      "isHostedBy": 847,
      "isOnNetwork": 71,
      "serves": 56
     },
     "edges_by_status": {
-     "confirmed": 2044,
-     "proposed": 54
+     "confirmed": 2063,
+     "proposed": 61
     },
     "edges_left_out": {},
     "with_unit": {
@@ -1142,16 +1142,16 @@
      "relations": []
     },
     "triples": {
-     "facts": 4920,
-     "provenance": 35886
+     "facts": 4952,
+     "provenance": 36222
     }
    },
    "totals": {
     "building_rules": 13,
     "building_rules_failing": 1,
-    "building_failures": 19,
-    "brick_shapes_failing": 3,
-    "brick_violations": 29,
+    "building_failures": 1,
+    "brick_shapes_failing": 4,
+    "brick_violations": 31,
     "brick_warnings": 49,
     "outside_project": {
      "violation": 38
@@ -1186,10 +1186,19 @@
      "label": "controls runs from a controller to equipment",
      "comment": "ba:controls says which unit a controller runs the logic for: a controller on one end, equipment on the other.",
      "severity": "violation",
-     "targets": 64,
-     "failed": 0,
-     "passed": 64,
-     "failing": []
+     "targets": 67,
+     "failed": 1,
+     "passed": 66,
+     "failing": [
+      {
+       "id": "ctrl:3105",
+       "label": "CHW-PLANT · FAC2611",
+       "class": "ba:Field_Controller",
+       "messages": [
+        "controls ends on something that is not equipment. [ba:controls]"
+       ]
+      }
+     ]
     },
     {
      "id": "shape:EquipmentHasPoints",
@@ -1230,9 +1239,9 @@
      "label": "hasPoint runs from equipment to a point",
      "comment": "brick:hasPoint is only meaningful from a unit (or system, or location) to a point: anything else is a misread grouping.",
      "severity": "violation",
-     "targets": 828,
+     "targets": 847,
      "failed": 0,
-     "passed": 828,
+     "passed": 847,
      "failing": []
     },
     {
@@ -1252,9 +1261,9 @@
      "label": "Every node has a class",
      "comment": "A node the graph holds must say what it is (a Brick, BA or rec: class). Without one, no rule, view or agent can use it.",
      "severity": "violation",
-     "targets": 1082,
+     "targets": 1085,
      "failed": 0,
-     "passed": 1082,
+     "passed": 1085,
      "failing": []
     },
     {
@@ -1264,162 +1273,9 @@
      "comment": "Every point is read from one piece of equipment (or system). None: the point is orphaned and can't be found from its unit. Two: the grouping disagrees with itself.",
      "severity": "violation",
      "targets": 847,
-     "failed": 19,
-     "passed": 828,
-     "failing": [
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CH-LEAD",
-       "label": "CH-LEAD",
-       "class": "brick:Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CW-F",
-       "label": "CW-F",
-       "class": "brick:Chilled_Water_Flow_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CWP-LEAD",
-       "label": "CWP-LEAD",
-       "class": "brick:Pump_Command",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CWR-T",
-       "label": "CWR-T",
-       "class": "brick:Entering_Chilled_Water_Temperature_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.CWS-T",
-       "label": "CWS-T",
-       "class": "brick:Entering_Chilled_Water_Temperature_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.LAG-OFF-SP",
-       "label": "LAG-OFF-SP",
-       "class": "brick:Flow_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.CHW-PLANT.LAG-ON-SP",
-       "label": "LAG-ON-SP",
-       "class": "brick:Enable_Command",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-BYP-O",
-       "label": "EF-LAB-1-BYP-O",
-       "class": "brick:Damper_Command",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-C",
-       "label": "EF-LAB-1-C",
-       "class": "brick:Fan_Command",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-F",
-       "label": "EF-LAB-1-F",
-       "class": "brick:Exhaust_Air_Flow_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-P",
-       "label": "EF-LAB-1-P",
-       "class": "brick:Exhaust_Air_Static_Pressure_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-S",
-       "label": "EF-LAB-1-S",
-       "class": "brick:Fan_Status",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD",
-       "label": "EF-LAB-1-SPD",
-       "class": "brick:Speed_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-BYP-O",
-       "label": "EF-LAB-2-BYP-O",
-       "class": "brick:Damper_Command",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-C",
-       "label": "EF-LAB-2-C",
-       "class": "brick:Fan_Command",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-F",
-       "label": "EF-LAB-2-F",
-       "class": "brick:Exhaust_Air_Flow_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-P",
-       "label": "EF-LAB-2-P",
-       "class": "brick:Exhaust_Air_Static_Pressure_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-S",
-       "label": "EF-LAB-2-S",
-       "class": "brick:Fan_Status",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      },
-      {
-       "id": "pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-SPD",
-       "label": "EF-LAB-2-SPD",
-       "class": "brick:Speed_Sensor",
-       "messages": [
-        "The point is not on exactly one equipment."
-       ]
-      }
-     ]
+     "failed": 0,
+     "passed": 847,
+     "failing": []
     },
     {
      "id": "shape:ServesLocation",
@@ -1460,8 +1316,8 @@
      "label": "Brick shape on brick:Collection",
      "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
      "severity": "violation",
-     "targets": 4,
-     "failed": 4,
+     "targets": 5,
+     "failed": 5,
      "passed": 0,
      "failing": [
       {
@@ -1495,6 +1351,14 @@
        "messages": [
         "Fewer than 1 values on path rec:includes [rec:includes]"
        ]
+      },
+      {
+       "id": "unit:CHWPLANT",
+       "label": "CHW-PLANT",
+       "class": "brick:Chilled_Water_System",
+       "messages": [
+        "Value unit:CHWPLANT does not conform to shape (an anonymous shape)"
+       ]
       }
      ]
     },
@@ -1504,9 +1368,9 @@
      "label": "Brick shape on brick:Entity",
      "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
      "severity": "violation",
-     "targets": 996,
+     "targets": 999,
      "failed": 25,
-     "passed": 971,
+     "passed": 974,
      "failing": [
       {
        "id": "ctrl:3104",
@@ -1711,14 +1575,34 @@
      ]
     },
     {
+     "id": "brick:Equipment",
+     "origin": "brick",
+     "label": "Brick shape on brick:Equipment",
+     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
+     "severity": "violation",
+     "targets": 148,
+     "failed": 1,
+     "passed": 147,
+     "failing": [
+      {
+       "id": "unit:CHWPLANT",
+       "label": "CHW-PLANT",
+       "class": "brick:Chilled_Water_System",
+       "messages": [
+        "Value unit:CHWPLANT conforms to a shape it must not"
+       ]
+      }
+     ]
+    },
+    {
      "id": "bsh:DeprecationRuleForInstances",
      "origin": "brick",
      "label": "Brick shape on bsh:DeprecationRuleForInstances",
      "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
      "severity": "warning",
-     "targets": 1045,
+     "targets": 1048,
      "failed": 49,
-     "passed": 996,
+     "passed": 999,
      "failing": [
       {
        "id": "room:101",
@@ -1924,14 +1808,14 @@
     }
    ],
    "name": "troop_d",
-   "export_seconds": 2.17,
+   "export_seconds": 1.75,
    "roundtrip": {
     "ok": true,
-    "nodes": 1082,
-    "edges": 2098,
+    "nodes": 1085,
+    "edges": 2124,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 15:24",
+   "generated": "2026-11-25 08:40",
    "turtle": "data/export/troop_d.with_proposed.ttl"
   }
  }

@@ -65,6 +65,22 @@ def _check_point_class(out: Any, values: dict) -> str | None:
     return None
 
 
+POINT_BIND_SCHEMA = _obj({
+    "pick": {"type": ["string", "null"], "description": "The id of the candidate BMS object (B1, B2...), or null."},
+    "confidence": {"type": "number", "description": "Probability the answer is right, 0 to 1."},
+    "why": {"type": "string"},
+})
+
+
+def _check_point_bind(out: Any, values: dict) -> str | None:
+    """Candidates in, ids out (intake/binding.py): the pick is one of the ids given, or null."""
+    if out["pick"] is not None and out["pick"] not in values["candidate_list"]:
+        return f"pick {out['pick']!r} is not one of the candidates"
+    if not 0 <= out["confidence"] <= 1:
+        return "confidence must be between 0 and 1"
+    return None
+
+
 MEMORY_CURATOR_SCHEMA = _obj({"choices": {"type": "array", "items": _obj({
     "candidate": {"type": "string", "description": "A candidate id (C…)."},
     "option": {"type": "string", "description": "One of that candidate's option ids, as given (C1.names)."},
@@ -169,6 +185,11 @@ JOBS: dict[str, Job] = {j.id: j for j in [
         check=_check_point_class, max_tokens=1000, effort="low", status="built",
         people="Review below the threshold"),
     Job("same_unit", "Same unit across documents", "haiku", people="Confirm"),
+    # W7: for a submittal point the rules could not bind, pick its BMS object from the device's free objects
+    # (intake/binding.py). Contenders stand in while Claude is not enabled on our project (Haiku and Sonnet 404).
+    Job("point_bind", "Point binding: submittal point to BMS object", "haiku", ("argon", "hydrogen"), ("sonnet",),
+        prompt="point_bind", schema=POINT_BIND_SCHEMA, check=_check_point_bind, max_tokens=1000, effort="low",
+        status="built", people="Confirm below the threshold"),
     Job("equipment_variant", "Equipment 3D: pick the variant", "haiku", ("hydrogen",)),
     # The learning loop (curator.py): the rules find repeated fixes and the patterns that cover them; the model only
     # picks one of those patterns per candidate and phrases the proposal. Hydrogen stands in while Claude is off.

@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import bms, coverage, floorplans, knowledge, plan_ai, point_ai, schedules, sequence_text, submittal
+from . import binding, bms, coverage, floorplans, knowledge, plan_ai, point_ai, schedules, sequence_text, submittal
 from .state import Intake
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -93,7 +93,9 @@ def run(it: Intake, step_id: str, log) -> int:
     elif step_id == "bms":
         facts = []
         for path, name in files:
-            facts += bms.read(path, name, live("equipment"), live("controller"), live("point"), say)
+            # the BMS objects the rules cannot bind go to the point_bind job; nothing when PM_AI=off
+            facts += bms.read(path, name, live("equipment"), live("controller"), live("point"), say,
+                              ai=binding.AI(project=f"intake:{it.slug}", cache=it.s.setdefault("ai_point_bind", {})))
     else:
         facts = []
     if step_id in ("submittal", "bms"):  # points the rules leave unsure: the point_class job proposes a class
