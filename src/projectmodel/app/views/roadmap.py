@@ -354,8 +354,13 @@ story([
                                                               "networks and units from the riser (W4), an AI plan "
                                                               "reader: 49% → 83% on real sets (W6), and sequences "
                                                               "read as control logic: 18% → 87% (W8)."),
-                        ("pending", "Now:", "W7 point binding with AI and W10 the learning loop. Then W9 graphics "
-                                            "and W11 agent tools.")]),
+                        ("check_circle", "Third wave done:", "points bound across renamed exports (W7), graphics "
+                                                             "from the graph with points on anchors (W9), a fix "
+                                                             "made twice becomes a convention (W10), and the agent "
+                                                             "answers \"does it run as designed?\" with citations "
+                                                             "(W11)."),
+                        ("pending", "Next:", "W12 Niagara and CPO Studio adapters, when access exists. A real "
+                                             "submittal and BMS pair to measure on.")]),
             waves),
     Section("Your projects", "monitoring", "How complete each project is, and what to do next.",
             p("Each project is measured against the same standard as the Complete graph page: six layers, from "

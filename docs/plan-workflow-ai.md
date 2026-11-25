@@ -232,7 +232,7 @@ dependencies are merged.
 | W11 | Agent tools | W2, W8, W9 | Open source page, read sequence, show graphic, run a check | "Does AHU-1 run as designed?" answered with cited steps on Troop D | M |
 | W12 | Tool adapters | access | Niagara (station export), CPO Studio; merge on device id | When internal access exists | L |
 
-Status, 24 Nov 2026 (evening) (the app's Roadmap page shows it live, from `src/projectmodel/roadmap.py`):
+Status, 25 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmodel/roadmap.py`):
 - **First wave done** (W0, W1, W3, W5; PRs #26 to #32).
   - **W0:** coverage and partial-read checks in every step. The stress suite is a test: of 17 variations, 10 read,
     7 ask, and 0 are quiet or silent. AI point classes in the setup take Troop D from 51% to 74% exact. Three real
@@ -261,7 +261,22 @@ Status, 24 Nov 2026 (evening) (the app's Roadmap page shows it live, from `src/p
     (rules alone) → 87% (Hydrogen + rules), 88% precision. Gaps become asks. About $0.03 per sequence.
   - W6 and W8 pass accuracy and calibration in the §6.4 bake-off and fail only the provisional $1 per 1,000 budget
     (about $0.15–0.20 per building each). §8.4 decides.
-- **Third wave in progress:** W7 (riser and point binding with AI) and W10 (learning loop). W9 and W11 follow.
+- **Third wave done** (W7, W9, W10, W11; PRs #39 to #42).
+  - **W7:** rules bind on reference, tag, device and object, and template role; `point_bind` picks from a short list
+    when names don't line up. On a renamed export (names only), recall goes from 84.5% to 99.6%, and all 93 model
+    picks are right, at $0.13 per 1,000 points. The 19 orphan points are placed: a CHW plant system and two lab
+    exhaust fans.
+  - **W9:** templates and anchors for 14 equipment types; new 3D builders; 2D equipment, floor and system graphics.
+    Every Troop D type with points has a graphic, 694 of 847 points sit on an anchor, the rest are listed, and QA
+    runs on each. The agent's `show_graphic` opens them.
+  - **W10:** every review fix is captured; repeated fixes become proposed conventions (the rules find them, a model
+    only phrases them); once approved they are applied on the next run. On Alpha, measured on points nobody fixed,
+    class exact goes from 85.3% to 97.5%. Interview mode turns a site person's answers into notes and proposals.
+  - **W11:** read-only tools (source page, sequence, checks, graphic) and a "runs as designed" recipe. Rules gather
+    the evidence and the model writes the answer, citing only ids the tools returned. On 10 Troop D questions,
+    answers and citations are 100% right, at $0.06 per question.
+- **Left:** W12 (tool adapters) waits for access. Open decisions: §8.2 (a real submittal and BMS pair), §8.4 (budget),
+  §8.5 (auto-accept on agreement). How to test everything: `docs/testing-guide.md`.
 - §8.5 (auto-accept on agreement) is on by default and switched by `PM_AUTO_AGREE`. It is still to be agreed.
 
 Suggested first wave (parallel): **W0**, **W1**, **W3**, **W5**. Second wave: **W2**, **W4**, **W6**, **W8**. Then

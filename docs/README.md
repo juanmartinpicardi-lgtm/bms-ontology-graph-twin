@@ -17,4 +17,5 @@ Feature specs (post Phase 0):
 Plans:
 
 - [`plan-workflow-ai.md`](plan-workflow-ai.md) — every workflow stage today vs the ontology framework, what is missing, AI per stage, and the work packages to execute (draft for agreement). In plain words in the app: Overview → Roadmap
+- [`testing-guide.md`](testing-guide.md) — how to try what waves 1–3 built: the app tour, one command per package with the numbers to expect, known gaps, decisions waiting
 - [`assessment-rules-vs-ai.md`](assessment-rules-vs-ai.md) — stress test of the guided setup against realistic variations from other firms and vendors; where AI is needed (document understanding) and where rules stay
