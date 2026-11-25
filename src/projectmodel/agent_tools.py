@@ -417,8 +417,11 @@ class GraphTools:
         eq, ids = self._unit_and_ids(node_id)
         tag, title = _norm(eq.attrs.get("tag") or eq.label), (eq.attrs.get("sequence") or "").lower()
         rels = [self._relation(e) for e in self.control_edges if e["src"] in ids or e["dst"] in ids]
+        # a system (CHW-PLANT) follows the sequence that names every one of its parts (chillers, pumps)
+        parts = {_norm(c.attrs.get("tag") or c.label) for c in eq.children if c.kind == "equipment"}
         mine = [s for s in self.docs.sequences()
-                if tag in {_norm(t) for t in s.applies_to} or (title and s.title.lower() == title)]
+                if tag in (names := {_norm(t) for t in s.applies_to}) or (title and s.title.lower() == title)
+                or (parts and parts <= names)]
         related_ids = {r["section_cite"].split("/")[0][4:] for r in rels if r.get("section_cite")} - {s.id for s in mine}
         related = [s for s in self.docs.sequences() if s.id in related_ids]
         seqs = []

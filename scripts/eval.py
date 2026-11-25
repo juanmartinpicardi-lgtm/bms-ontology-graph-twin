@@ -9,6 +9,7 @@ and the bake-off verdict (§6.4). Results go to reports/eval/<job>.json.
     .venv/bin/python scripts/eval.py all --fit               # recompute every job's calibration, in order
     .venv/bin/python scripts/eval.py learning                # the learning loop on Alpha (scripts/learning_loop.py)
     .venv/bin/python scripts/eval.py sequence_read --models argon hydrogen --fit   # sequences vs the hand-built key
+    .venv/bin/python scripts/eval.py point_bind --models argon hydrogen --fit      # binding on Troop D's variations
     .venv/bin/python scripts/eval.py agent --models argon    # the agent's question set on Troop D (scoring/agent.py)
 
 Accuracy is exact and right-or-broader (the true class or a parent). Calibration is shown raw and calibrated; the
@@ -34,7 +35,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from projectmodel import calibration as cal  # noqa: E402
 from projectmodel.scoring import eval as ev  # noqa: E402
 
-ORDER = ["mapper", "intake", "point_class", "plan_meaning", "sequence_read"]
+ORDER = ["mapper", "intake", "point_class", "plan_meaning", "sequence_read", "point_bind"]
 EXTRA = ["learning", "agent"]  # not in `all`, not calibrated jobs: the learning loop (W10), the agent (W11)
 
 
@@ -55,7 +56,7 @@ def main() -> int:
 
     budget = args.budget if args.budget is not None else cal.budget_usd_per_1000()
     store = None
-    if args.job in ("point_class", "plan_meaning", "sequence_read", "agent", "all"):
+    if args.job in ("point_class", "plan_meaning", "sequence_read", "point_bind", "agent", "all"):
         from projectmodel.db.store import Store
         store = Store(args.db)
     for job in ORDER if args.job == "all" else [args.job]:

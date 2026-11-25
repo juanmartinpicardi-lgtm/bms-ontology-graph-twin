@@ -5,6 +5,10 @@
 # (agent/projects.py: the rules-only setup plus W8's frozen sequence_read answers). Scoring only (scoring/agent.py):
 # never shown to the agent.
 #
+# Revised once, for the graph only: W7 (PR #40, point binding) moved the EF-LAB and CHW-PLANT points from no equipment
+# onto unit:EFLAB1/EFLAB2 and unit:CHWPLANT, so the two facts that said those points were loose (eflab-checks,
+# chw-plant-as-designed) now say where they are. No model answer was seen when making that change.
+#
 # Each question lists the facts a right answer states. A fact is
 #   answer   regexes (case-insensitive) that must ALL match the answer text for the fact to count as stated
 #   cite     citation ids, any one of which the answer must cite for the fact (fnmatch patterns: * and ?)
@@ -151,12 +155,22 @@ questions:
 
   - id: eflab-checks
     question: Which checks fail on the lab exhaust fan EF-LAB?
-    rules: [{tool: run_check, args: {node_id: unit:EFLAB}}]
+    rules: [{tool: run_check, args: {node_id: unit:EFLAB}}, {tool: run_check, args: {node_id: unit:EFLAB1}},
+            {tool: run_check, args: {node_id: unit:EFLAB2}}]
     facts:
-      - id: orphan-points
-        text: Its BMS points (EF-LAB-1-S, EF-LAB-1-C, ...) are not on the EF-LAB unit or on any equipment
-        answer: ['EF-LAB-\d|point', 'not on|no equipment|orphan|unattached|not (linked|attached)|any equipment|one equipment']
-        cite: ['check:binding|*', 'check:shacl.PointOnOneEquipment|*', 'pt:TROOPD-NAE01/FC-1.EF-LAB-*']
+      - id: two-fans
+        text: The BMS has two lab exhaust fans, EF-LAB-1 and EF-LAB-2, each with its own points
+        answer: ['EF-LAB-?1', 'EF-LAB-?2']
+        cite: ['unit:EFLAB1', 'unit:EFLAB2', 'check:*|unit:EFLAB?', 'check:*|pt:TROOPD-NAE01/FC-1.EF-LAB-*']
+      - id: speed-output
+        text: Each fan's speed output (EF-LAB-n-SPD, a BO) is classed as a speed sensor
+        answer: ['SPD|speed', 'output|sensor|class']
+        cite: ['check:class|pt:TROOPD-NAE01/FC-1.EF-LAB-*']
+      - id: roof-location
+        text: The EF-LAB unit from the drawings fails the Brick location shape (floor:RF is not a Location)
+        answer: ['RF|roof|location']
+        cite: ['check:shacl.Entity|unit:EFLAB']
+        optional: true
       - id: static-gap
         text: The lab exhaust duct static pressure loop has no setpoint point
         answer: ['static pressure', 'setpoint']
@@ -202,7 +216,7 @@ questions:
 
   - id: chw-plant-as-designed
     question: Does the chilled water plant run as designed?
-    rules: [{tool: diagnose, args: {node_id: unit:CH1A}}]
+    rules: [{tool: diagnose, args: {node_id: unit:CH1A}}, {tool: diagnose, args: {node_id: unit:CHWPLANT}}]
     facts:
       - id: sequence
         text: The plant follows the Chilled Water System sequence (lead/lag chillers, duty/standby pumps)
@@ -212,10 +226,10 @@ questions:
         text: The pumps (and chillers) are requested when AHU-1's chilled water valve opens
         answer: ['valve|CHWV-O|AHU']
         cite: ['rel:pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O|requests|*', 'seq:chilled-water-system/A', 'seq:chilled-water-system/B']
-      - id: plant-points-loose
-        text: The plant controller's points (CHW-PLANT lead/lag, flow, return temperature) are not on any equipment
-        answer: ['CHW-PLANT|plant controller|plant points?|lead|flow', 'not on|no equipment|orphan|unattached|not (linked|attached)|any equipment|unbound']
-        cite: ['check:binding|*', 'pt:TROOPD-NAE01/FC-1.CHW-PLANT.*']
+      - id: plant-controller
+        text: The plant controller CHW-PLANT holds the plant's own points (lead/lag, flow, return temperature)
+        answer: ['CHW-PLANT|plant controller|chilled water system']
+        cite: ['unit:CHWPLANT', 'pt:TROOPD-NAE01/FC-1.CHW-PLANT.*', 'check:*|unit:CHWPLANT']
         optional: true
       - id: live-unknown
         text: Actual operation is unknown without live values

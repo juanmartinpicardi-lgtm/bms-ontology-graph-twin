@@ -1,0 +1,1582 @@
+{
+ "job": "point_bind",
+ "sets": [
+  "baseline",
+  "names",
+  "folders",
+  "instances",
+  "missing",
+  "integrator",
+  "integrator_names_only"
+ ],
+ "k_folds": 5,
+ "min_n": 20,
+ "band_n": 30,
+ "tolerance": 5.0,
+ "budget_usd_per_1000": 1.0,
+ "prompt": "point_bind@1",
+ "calibration_before": "none",
+ "rows": [
+  {
+   "scenario": "baseline",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "reference": {
+     "n": 847,
+     "right": 847
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "baseline \u00b7 rules",
+   "kind": "rules",
+   "set": "baseline",
+   "model": null
+  },
+  {
+   "scenario": "names",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "device object": {
+     "n": 116,
+     "right": 116
+    },
+    "reference": {
+     "n": 5,
+     "right": 5
+    },
+    "words": {
+     "n": 726,
+     "right": 726
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "names \u00b7 rules",
+   "kind": "rules",
+   "set": "names",
+   "model": null
+  },
+  {
+   "scenario": "folders",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "device object": {
+     "n": 121,
+     "right": 121
+    },
+    "same name": {
+     "n": 726,
+     "right": 726
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "folders \u00b7 rules",
+   "kind": "rules",
+   "set": "folders",
+   "model": null
+  },
+  {
+   "scenario": "instances",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "same name": {
+     "n": 847,
+     "right": 847
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "instances \u00b7 rules",
+   "kind": "rules",
+   "set": "instances",
+   "model": null
+  },
+  {
+   "scenario": "missing",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 718,
+   "right": 716,
+   "wrong": 2,
+   "missed": 0,
+   "precision_pct": 99.7,
+   "recall_pct": 100.0,
+   "f1": 99.8,
+   "by_rule": {
+    "reference": {
+     "n": 716,
+     "right": 716
+    },
+    "words": {
+     "n": 2,
+     "right": 0
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 718,
+    "pct": 92.6,
+    "wrong": 2
+   },
+   "label": "missing \u00b7 rules",
+   "kind": "rules",
+   "set": "missing",
+   "model": null
+  },
+  {
+   "scenario": "integrator",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 710,
+   "right": 708,
+   "wrong": 2,
+   "missed": 8,
+   "precision_pct": 99.7,
+   "recall_pct": 98.9,
+   "f1": 99.3,
+   "by_rule": {
+    "words": {
+     "n": 694,
+     "right": 692
+    },
+    "same description": {
+     "n": 12,
+     "right": 12
+    },
+    "same name": {
+     "n": 4,
+     "right": 4
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 710,
+    "pct": 91.6,
+    "wrong": 2
+   },
+   "label": "integrator \u00b7 rules",
+   "kind": "rules",
+   "set": "integrator",
+   "model": null
+  },
+  {
+   "scenario": "integrator_names_only",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 607,
+   "right": 605,
+   "wrong": 2,
+   "missed": 111,
+   "precision_pct": 99.7,
+   "recall_pct": 84.5,
+   "f1": 91.5,
+   "by_rule": {
+    "words": {
+     "n": 603,
+     "right": 601
+    },
+    "same name": {
+     "n": 4,
+     "right": 4
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 607,
+    "pct": 78.3,
+    "wrong": 2
+   },
+   "label": "integrator_names_only \u00b7 rules",
+   "kind": "rules",
+   "set": "integrator_names_only",
+   "model": null
+  },
+  {
+   "precision_pct": 99.9,
+   "recall_pct": 97.5,
+   "f1": 98.7,
+   "right": 4570,
+   "bound": 4576,
+   "key_bindings": 4689,
+   "label": "variations \u00b7 rules",
+   "kind": "pooled",
+   "model": null,
+   "calibrated_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 5423,
+     "mean_conf_pct": 99.9,
+     "accuracy_pct": 99.9,
+     "gap": 0.0
+    }
+   ],
+   "raw_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 2,
+     "mean_conf_pct": 59.0,
+     "accuracy_pct": 100.0,
+     "gap": 41.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 45,
+     "mean_conf_pct": 66.3,
+     "accuracy_pct": 95.6,
+     "gap": 29.2
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 304,
+     "mean_conf_pct": 75.1,
+     "accuracy_pct": 98.7,
+     "gap": 23.6
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 1674,
+     "mean_conf_pct": 86.3,
+     "accuracy_pct": 100.0,
+     "gap": 13.7
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 3398,
+     "mean_conf_pct": 96.9,
+     "accuracy_pct": 100.0,
+     "gap": 3.1
+    }
+   ]
+  },
+  {
+   "scenario": "baseline",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "reference": {
+     "n": 847,
+     "right": 847
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "baseline \u00b7 argon + rules",
+   "kind": "model+rules",
+   "set": "baseline",
+   "model": "argon",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "names",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "device object": {
+     "n": 116,
+     "right": 116
+    },
+    "reference": {
+     "n": 5,
+     "right": 5
+    },
+    "words": {
+     "n": 726,
+     "right": 726
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "names \u00b7 argon + rules",
+   "kind": "model+rules",
+   "set": "names",
+   "model": "argon",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "folders",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "device object": {
+     "n": 121,
+     "right": 121
+    },
+    "same name": {
+     "n": 726,
+     "right": 726
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "folders \u00b7 argon + rules",
+   "kind": "model+rules",
+   "set": "folders",
+   "model": "argon",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "instances",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "same name": {
+     "n": 847,
+     "right": 847
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "instances \u00b7 argon + rules",
+   "kind": "model+rules",
+   "set": "instances",
+   "model": "argon",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "missing",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 718,
+   "right": 716,
+   "wrong": 2,
+   "missed": 0,
+   "precision_pct": 99.7,
+   "recall_pct": 100.0,
+   "f1": 99.8,
+   "by_rule": {
+    "reference": {
+     "n": 716,
+     "right": 716
+    },
+    "words": {
+     "n": 2,
+     "right": 0
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 718,
+    "pct": 92.6,
+    "wrong": 2
+   },
+   "label": "missing \u00b7 argon + rules",
+   "kind": "model+rules",
+   "set": "missing",
+   "model": "argon",
+   "cost": {
+    "questions": 34,
+    "asked": 0,
+    "logged": 34,
+    "cached": 0,
+    "calls": 0,
+    "model_bound": 0,
+    "none": 34,
+    "error": 0,
+    "paid_usd": 0.0974
+   },
+   "usd_per_1000": 0.1257,
+   "rules_f1": 99.8
+  },
+  {
+   "scenario": "integrator",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 718,
+   "right": 716,
+   "wrong": 2,
+   "missed": 0,
+   "precision_pct": 99.7,
+   "recall_pct": 100.0,
+   "f1": 99.8,
+   "by_rule": {
+    "words": {
+     "n": 694,
+     "right": 692
+    },
+    "model": {
+     "n": 8,
+     "right": 8
+    },
+    "same description": {
+     "n": 12,
+     "right": 12
+    },
+    "same name": {
+     "n": 4,
+     "right": 4
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 718,
+    "pct": 92.6,
+    "wrong": 2
+   },
+   "label": "integrator \u00b7 argon + rules",
+   "kind": "model+rules",
+   "set": "integrator",
+   "model": "argon",
+   "cost": {
+    "questions": 42,
+    "asked": 0,
+    "logged": 42,
+    "cached": 0,
+    "calls": 0,
+    "model_bound": 8,
+    "none": 34,
+    "error": 0,
+    "paid_usd": 0.1263
+   },
+   "usd_per_1000": 0.163,
+   "rules_f1": 99.3
+  },
+  {
+   "scenario": "integrator_names_only",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 715,
+   "right": 713,
+   "wrong": 2,
+   "missed": 3,
+   "precision_pct": 99.7,
+   "recall_pct": 99.6,
+   "f1": 99.6,
+   "by_rule": {
+    "model": {
+     "n": 108,
+     "right": 108
+    },
+    "words": {
+     "n": 603,
+     "right": 601
+    },
+    "same name": {
+     "n": 4,
+     "right": 4
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 715,
+    "pct": 92.3,
+    "wrong": 2
+   },
+   "label": "integrator_names_only \u00b7 argon + rules",
+   "kind": "model+rules",
+   "set": "integrator_names_only",
+   "model": "argon",
+   "cost": {
+    "questions": 134,
+    "asked": 0,
+    "logged": 134,
+    "cached": 0,
+    "calls": 0,
+    "model_bound": 108,
+    "none": 55,
+    "error": 0,
+    "paid_usd": 0.4067
+   },
+   "usd_per_1000": 0.5248,
+   "rules_f1": 91.5
+  },
+  {
+   "precision_pct": 99.9,
+   "recall_pct": 99.9,
+   "f1": 99.9,
+   "right": 4686,
+   "bound": 4692,
+   "key_bindings": 4689,
+   "label": "variations \u00b7 argon + rules",
+   "kind": "pooled",
+   "model": "argon",
+   "calibrated_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 5539,
+     "mean_conf_pct": 99.9,
+     "accuracy_pct": 99.9,
+     "gap": 0.0
+    }
+   ],
+   "raw_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 2,
+     "mean_conf_pct": 59.0,
+     "accuracy_pct": 100.0,
+     "gap": 41.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 45,
+     "mean_conf_pct": 66.3,
+     "accuracy_pct": 95.6,
+     "gap": 29.2
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 304,
+     "mean_conf_pct": 75.1,
+     "accuracy_pct": 98.7,
+     "gap": 23.6
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 1674,
+     "mean_conf_pct": 86.3,
+     "accuracy_pct": 100.0,
+     "gap": 13.7
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 3514,
+     "mean_conf_pct": 97.0,
+     "accuracy_pct": 100.0,
+     "gap": 3.0
+    }
+   ],
+   "model_answers": 93,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 93,
+     "mean_conf_pct": 98.2,
+     "accuracy_pct": 100.0,
+     "gap": 1.8
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 93,
+     "mean_conf_pct": 100.0,
+     "accuracy_pct": 100.0,
+     "gap": 0.0
+    }
+   ],
+   "raw_worst_gap": 1.8,
+   "calibrated_worst_gap": 0.0,
+   "calibrated_by_point_worst_gap": 0.0,
+   "usd_per_1000": 0.1296,
+   "rules_f1": 98.7,
+   "verdict": {
+    "default_ok": true,
+    "checks": {
+     "beats rules alone": true,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": true
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "may be the default"
+   }
+  },
+  {
+   "scenario": "baseline",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "reference": {
+     "n": 847,
+     "right": 847
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "baseline \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "set": "baseline",
+   "model": "hydrogen",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "names",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "device object": {
+     "n": 116,
+     "right": 116
+    },
+    "reference": {
+     "n": 5,
+     "right": 5
+    },
+    "words": {
+     "n": 726,
+     "right": 726
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "names \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "set": "names",
+   "model": "hydrogen",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "folders",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "device object": {
+     "n": 121,
+     "right": 121
+    },
+    "same name": {
+     "n": 726,
+     "right": 726
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "folders \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "set": "folders",
+   "model": "hydrogen",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "instances",
+   "points": 847,
+   "key_bindings": 847,
+   "bound": 847,
+   "right": 847,
+   "wrong": 0,
+   "missed": 0,
+   "precision_pct": 100.0,
+   "recall_pct": 100.0,
+   "f1": 100.0,
+   "by_rule": {
+    "same name": {
+     "n": 847,
+     "right": 847
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 847,
+    "pct": 100.0,
+    "wrong": 0
+   },
+   "label": "instances \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "set": "instances",
+   "model": "hydrogen",
+   "cost": {
+    "questions": null,
+    "asked": null,
+    "logged": null,
+    "cached": null,
+    "calls": null,
+    "model_bound": null,
+    "none": null,
+    "error": null,
+    "paid_usd": null
+   },
+   "usd_per_1000": 0.0,
+   "rules_f1": 100.0
+  },
+  {
+   "scenario": "missing",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 718,
+   "right": 716,
+   "wrong": 2,
+   "missed": 0,
+   "precision_pct": 99.7,
+   "recall_pct": 100.0,
+   "f1": 99.8,
+   "by_rule": {
+    "reference": {
+     "n": 716,
+     "right": 716
+    },
+    "words": {
+     "n": 2,
+     "right": 0
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 718,
+    "pct": 92.6,
+    "wrong": 2
+   },
+   "label": "missing \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "set": "missing",
+   "model": "hydrogen",
+   "cost": {
+    "questions": 34,
+    "asked": 0,
+    "logged": 34,
+    "cached": 0,
+    "calls": 0,
+    "model_bound": 0,
+    "none": 34,
+    "error": 0,
+    "paid_usd": 0.0957
+   },
+   "usd_per_1000": 0.1235,
+   "rules_f1": 99.8
+  },
+  {
+   "scenario": "integrator",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 718,
+   "right": 716,
+   "wrong": 2,
+   "missed": 0,
+   "precision_pct": 99.7,
+   "recall_pct": 100.0,
+   "f1": 99.8,
+   "by_rule": {
+    "words": {
+     "n": 694,
+     "right": 692
+    },
+    "model": {
+     "n": 8,
+     "right": 8
+    },
+    "same description": {
+     "n": 12,
+     "right": 12
+    },
+    "same name": {
+     "n": 4,
+     "right": 4
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 718,
+    "pct": 92.6,
+    "wrong": 2
+   },
+   "label": "integrator \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "set": "integrator",
+   "model": "hydrogen",
+   "cost": {
+    "questions": 42,
+    "asked": 0,
+    "logged": 42,
+    "cached": 0,
+    "calls": 0,
+    "model_bound": 8,
+    "none": 34,
+    "error": 0,
+    "paid_usd": 0.1312
+   },
+   "usd_per_1000": 0.1693,
+   "rules_f1": 99.3
+  },
+  {
+   "scenario": "integrator_names_only",
+   "points": 775,
+   "key_bindings": 716,
+   "bound": 715,
+   "right": 713,
+   "wrong": 2,
+   "missed": 3,
+   "precision_pct": 99.7,
+   "recall_pct": 99.6,
+   "f1": 99.6,
+   "by_rule": {
+    "model": {
+     "n": 108,
+     "right": 108
+    },
+    "words": {
+     "n": 603,
+     "right": 601
+    },
+    "same name": {
+     "n": 4,
+     "right": 4
+    }
+   },
+   "auto": {
+    "threshold": 0.9,
+    "n": 715,
+    "pct": 92.3,
+    "wrong": 2
+   },
+   "label": "integrator_names_only \u00b7 hydrogen + rules",
+   "kind": "model+rules",
+   "set": "integrator_names_only",
+   "model": "hydrogen",
+   "cost": {
+    "questions": 134,
+    "asked": 0,
+    "logged": 134,
+    "cached": 0,
+    "calls": 0,
+    "model_bound": 108,
+    "none": 55,
+    "error": 0,
+    "paid_usd": 0.428
+   },
+   "usd_per_1000": 0.5523,
+   "rules_f1": 91.5
+  },
+  {
+   "precision_pct": 99.9,
+   "recall_pct": 99.9,
+   "f1": 99.9,
+   "right": 4686,
+   "bound": 4692,
+   "key_bindings": 4689,
+   "label": "variations \u00b7 hydrogen + rules",
+   "kind": "pooled",
+   "model": "hydrogen",
+   "calibrated_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 5539,
+     "mean_conf_pct": 99.9,
+     "accuracy_pct": 99.9,
+     "gap": 0.0
+    }
+   ],
+   "raw_by_point": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 2,
+     "mean_conf_pct": 59.0,
+     "accuracy_pct": 100.0,
+     "gap": 41.0
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 45,
+     "mean_conf_pct": 66.3,
+     "accuracy_pct": 95.6,
+     "gap": 29.2
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 304,
+     "mean_conf_pct": 75.1,
+     "accuracy_pct": 98.7,
+     "gap": 23.6
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 1674,
+     "mean_conf_pct": 86.3,
+     "accuracy_pct": 100.0,
+     "gap": 13.7
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 3514,
+     "mean_conf_pct": 96.9,
+     "accuracy_pct": 100.0,
+     "gap": 3.1
+    }
+   ],
+   "model_answers": 93,
+   "raw": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 93,
+     "mean_conf_pct": 98.1,
+     "accuracy_pct": 100.0,
+     "gap": 1.9
+    }
+   ],
+   "calibrated": [
+    {
+     "band": "0.0-0.2",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.2-0.4",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.4-0.6",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.6-0.7",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.7-0.8",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.8-0.9",
+     "n": 0,
+     "mean_conf_pct": null,
+     "accuracy_pct": null,
+     "gap": null
+    },
+    {
+     "band": "0.9-1.0",
+     "n": 93,
+     "mean_conf_pct": 100.0,
+     "accuracy_pct": 100.0,
+     "gap": 0.0
+    }
+   ],
+   "raw_worst_gap": 1.9,
+   "calibrated_worst_gap": 0.0,
+   "calibrated_by_point_worst_gap": 0.0,
+   "usd_per_1000": 0.1346,
+   "rules_f1": 98.7,
+   "verdict": {
+    "default_ok": true,
+    "checks": {
+     "beats rules alone": true,
+     "calibrated within 5 points (bands of 30+)": true,
+     "under the cost budget": true
+    },
+    "budget_usd_per_1000": 1.0,
+    "says": "may be the default"
+   }
+  }
+ ],
+ "skipped": [],
+ "rules_pooled": {
+  "precision_pct": 99.9,
+  "recall_pct": 97.5,
+  "f1": 98.7,
+  "right": 4570,
+  "bound": 4576,
+  "key_bindings": 4689,
+  "label": "variations \u00b7 rules",
+  "kind": "pooled",
+  "model": null,
+  "calibrated_by_point": [
+   {
+    "band": "0.0-0.2",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.2-0.4",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.4-0.6",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.6-0.7",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.7-0.8",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.8-0.9",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.9-1.0",
+    "n": 5423,
+    "mean_conf_pct": 99.9,
+    "accuracy_pct": 99.9,
+    "gap": 0.0
+   }
+  ],
+  "raw_by_point": [
+   {
+    "band": "0.0-0.2",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.2-0.4",
+    "n": 0,
+    "mean_conf_pct": null,
+    "accuracy_pct": null,
+    "gap": null
+   },
+   {
+    "band": "0.4-0.6",
+    "n": 2,
+    "mean_conf_pct": 59.0,
+    "accuracy_pct": 100.0,
+    "gap": 41.0
+   },
+   {
+    "band": "0.6-0.7",
+    "n": 45,
+    "mean_conf_pct": 66.3,
+    "accuracy_pct": 95.6,
+    "gap": 29.2
+   },
+   {
+    "band": "0.7-0.8",
+    "n": 304,
+    "mean_conf_pct": 75.1,
+    "accuracy_pct": 98.7,
+    "gap": 23.6
+   },
+   {
+    "band": "0.8-0.9",
+    "n": 1674,
+    "mean_conf_pct": 86.3,
+    "accuracy_pct": 100.0,
+    "gap": 13.7
+   },
+   {
+    "band": "0.9-1.0",
+    "n": 3398,
+    "mean_conf_pct": 96.9,
+    "accuracy_pct": 100.0,
+    "gap": 3.1
+   }
+  ]
+ },
+ "rules_calibrated_worst_gap": 0.0,
+ "calibration_after": "point_bind@1"
+}

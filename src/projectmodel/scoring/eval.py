@@ -1051,6 +1051,9 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
     if job == "agent":  # the agent's question set (W11): its own module, scoring/agent.py
         from . import agent
         return agent.evaluate(sets, models, router=router, store=store, log=log)
+    if job == "point_bind":  # W7: scoring/binding.py
+        from . import binding
+        return binding.evaluate(sets, models, router=router, store=store, fit=fit, budget=budget, log=log)
     return _evaluate_jobs(job, sets, models, router=router, store=store, fit=fit, budget=budget,
                           max_questions=max_questions, log=log)
 
@@ -1061,6 +1064,9 @@ def print_report(r: dict, out=print) -> None:  # noqa: F811
     if r["job"] == "agent":
         from . import agent
         return agent.print_report(r, out)
+    if r["job"] == "point_bind":
+        from . import binding
+        return binding.print_report(r, out)
     if r["job"] == "learning":
         from . import learning
         for x in r["runs"]:

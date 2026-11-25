@@ -26,7 +26,7 @@ STORE = ROOT / "data" / "kg.sqlite"
 EVAL_DIR = ROOT / "data" / "eval" / "agent"
 SEQUENCE_ANSWERS = ROOT / "tests" / "fixtures" / "troop_d_sequence_read.json"
 TROOP_D = "troop_d"
-BUILD_VERSION = 1  # bump when the build changes, so a stale cached build is rebuilt
+BUILD_VERSION = 2  # bump when the build changes, so a stale cached build is rebuilt
 
 
 class _AnswersOnly:
