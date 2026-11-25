@@ -6,7 +6,7 @@
    "project": "troop-d/documents",
    "scope": "confirmed",
    "engine": "shifty",
-   "seconds": 5.65,
+   "seconds": 4.17,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -51,7 +51,7 @@
      "relations": []
     },
     "triples": {
-     "facts": 1124,
+     "facts": 1195,
      "provenance": 9262
     }
    },
@@ -59,9 +59,9 @@
     "building_rules": 13,
     "building_rules_failing": 3,
     "building_failures": 81,
-    "brick_shapes_failing": 3,
-    "brick_violations": 35,
-    "brick_warnings": 26,
+    "brick_shapes_failing": 0,
+    "brick_violations": 0,
+    "brick_warnings": 0,
     "outside_project": {
      "violation": 38
     }
@@ -300,7 +300,7 @@
      "id": "shape:FeedsBetweenEquipment",
      "origin": "building",
      "label": "feeds runs between equipment",
-     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is rec:locatedIn (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
      "severity": "violation",
      "targets": 3,
      "failed": 0,
@@ -311,7 +311,7 @@
      "id": "shape:HasLocationIsLocation",
      "origin": "building",
      "label": "hasLocation points at a location",
-     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "comment": "hasLocation places a unit in a floor, room or zone. The export writes it as rec:locatedIn, which Brick 1.4 declares equivalent to brick:hasLocation. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
      "severity": "violation",
      "targets": 61,
      "failed": 0,
@@ -612,492 +612,24 @@
        ]
       }
      ]
-    },
-    {
-     "id": "brick:Collection",
-     "origin": "brick",
-     "label": "Brick shape on brick:Collection",
-     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
-     "severity": "violation",
-     "targets": 4,
-     "failed": 4,
-     "passed": 0,
-     "failing": [
-      {
-       "id": "net:TROOPD-NAE01/FC-1",
-       "label": "FC-1 · Plant, AHU, exhaust, gateways",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      },
-      {
-       "id": "net:TROOPD-NAE01/FC-2",
-       "label": "FC-2 · Level 1 terminal units",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      },
-      {
-       "id": "net:TROOPD-NAE01/FC-3",
-       "label": "FC-3 · Level 2 terminal units",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      },
-      {
-       "id": "net:TROOPD-NAE01/FC-4",
-       "label": "FC-4 · Level 3 terminal units",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      }
-     ]
-    },
-    {
-     "id": "brick:Entity",
-     "origin": "brick",
-     "label": "Brick shape on brick:Entity",
-     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
-     "severity": "violation",
-     "targets": 221,
-     "failed": 31,
-     "passed": 190,
-     "failing": [
-      {
-       "id": "ctrl:3104",
-       "label": "AHU-1 · FAC4911 + IOM4711",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3105",
-       "label": "CHW-PLANT · FAC2611",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3108",
-       "label": "CWP-1 · IOM2721",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3109",
-       "label": "CWP-2 · IOM2721",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3113",
-       "label": "EF-CONT · IOM2721",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:128 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3114",
-       "label": "MS-1, MS-2, MS-3 · LG PI485 BACnet gateway",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3206",
-       "label": "VAV-03 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:116 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3208",
-       "label": "VAV-05 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:137 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3209",
-       "label": "VAV-06 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:119 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3210",
-       "label": "VAV-07 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:118 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3212",
-       "label": "VAVE-01 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:105 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3217",
-       "label": "VAVE-06 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:123 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3219",
-       "label": "FVAV-01 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:104 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3220",
-       "label": "FVAV-02 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:101 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3307",
-       "label": "VAV-12 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:216 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3308",
-       "label": "VAV-13 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:208 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3310",
-       "label": "VAVE-09 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:201 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3311",
-       "label": "VAVE-10 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:201 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3313",
-       "label": "VAVE-12 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:211 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3315",
-       "label": "VAVE-14 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:214 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3317",
-       "label": "FVAV-04 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:201 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3318",
-       "label": "FVAV-05 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:202 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3320",
-       "label": "FVAV-08 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:207 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3321",
-       "label": "FVAV-09 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:209 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3405",
-       "label": "VAV-15 · VMA1930",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:333 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      }
-     ]
-    },
-    {
-     "id": "bsh:DeprecationRuleForInstances",
-     "origin": "brick",
-     "label": "Brick shape on bsh:DeprecationRuleForInstances",
-     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
-     "severity": "warning",
-     "targets": 247,
-     "failed": 26,
-     "passed": 221,
-     "failing": [
-      {
-       "id": "room:109",
-       "label": "109 Conference",
-       "class": "rec:Room",
-       "messages": [
-        "room:109 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:110",
-       "label": "110 Director'S Office",
-       "class": "rec:Room",
-       "messages": [
-        "room:110 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:111",
-       "label": "111 Break/Work",
-       "class": "rec:Room",
-       "messages": [
-        "room:111 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:117",
-       "label": "117 Data/Server Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:117 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:120",
-       "label": "120 Firing Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:120 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:121",
-       "label": "121 Firearms Lab",
-       "class": "rec:Room",
-       "messages": [
-        "room:121 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:122",
-       "label": "122 Biohazard",
-       "class": "rec:Room",
-       "messages": [
-        "room:122 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:127",
-       "label": "127 Corridor",
-       "class": "rec:Room",
-       "messages": [
-        "room:127 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:131",
-       "label": "131 Elec",
-       "class": "rec:Room",
-       "messages": [
-        "room:131 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:139",
-       "label": "139 Demarcation Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:139 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:203",
-       "label": "203 Photo Lab",
-       "class": "rec:Room",
-       "messages": [
-        "room:203 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:206",
-       "label": "206 Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:206 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:210",
-       "label": "210 Exam Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:210 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:212",
-       "label": "212 Trace Evidence Lab",
-       "class": "rec:Room",
-       "messages": [
-        "room:212 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:213",
-       "label": "213 Instrument Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:213 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:217",
-       "label": "217 Elec Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:217 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:220",
-       "label": "220 Data Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:220 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:223",
-       "label": "223 Lounge/Breakroom",
-       "class": "rec:Room",
-       "messages": [
-        "room:223 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:302",
-       "label": "302 Toxicology Lab",
-       "class": "rec:Room",
-       "messages": [
-        "room:302 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:304",
-       "label": "304 Shared Chem Storage",
-       "class": "rec:Room",
-       "messages": [
-        "room:304 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:305",
-       "label": "305 Balance Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:305 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:306",
-       "label": "306 Work Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:306 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:308",
-       "label": "308 Drug Chem Instrument Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:308 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:319",
-       "label": "319 Lounge/Breakroom",
-       "class": "rec:Room",
-       "messages": [
-        "room:319 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:321",
-       "label": "321 Women'S Restroom",
-       "class": "rec:Room",
-       "messages": [
-        "room:321 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      }
-     ]
     }
    ],
    "name": "troop_d",
-   "export_seconds": 0.3,
+   "export_seconds": 0.24,
    "roundtrip": {
     "ok": true,
     "nodes": 306,
     "edges": 512,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-25 08:40",
+   "generated": "2026-11-25 16:56",
    "turtle": "data/export/troop_d.confirmed.ttl"
   },
   "with_proposed": {
    "project": "troop-d/documents",
    "scope": "confirmed + proposed",
    "engine": "shifty",
-   "seconds": 6.37,
+   "seconds": 4.93,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -1142,7 +674,7 @@
      "relations": []
     },
     "triples": {
-     "facts": 4952,
+     "facts": 5023,
      "provenance": 36222
     }
    },
@@ -1150,9 +682,9 @@
     "building_rules": 13,
     "building_rules_failing": 1,
     "building_failures": 1,
-    "brick_shapes_failing": 4,
-    "brick_violations": 31,
-    "brick_warnings": 49,
+    "brick_shapes_failing": 2,
+    "brick_violations": 2,
+    "brick_warnings": 0,
     "outside_project": {
      "violation": 38
     }
@@ -1215,7 +747,7 @@
      "id": "shape:FeedsBetweenEquipment",
      "origin": "building",
      "label": "feeds runs between equipment",
-     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is rec:locatedIn (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
      "severity": "violation",
      "targets": 5,
      "failed": 0,
@@ -1226,7 +758,7 @@
      "id": "shape:HasLocationIsLocation",
      "origin": "building",
      "label": "hasLocation points at a location",
-     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "comment": "hasLocation places a unit in a floor, room or zone. The export writes it as rec:locatedIn, which Brick 1.4 declares equivalent to brick:hasLocation. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
      "severity": "violation",
      "targets": 83,
      "failed": 0,
@@ -1317,259 +849,15 @@
      "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
      "severity": "violation",
      "targets": 5,
-     "failed": 5,
-     "passed": 0,
+     "failed": 1,
+     "passed": 4,
      "failing": [
-      {
-       "id": "net:TROOPD-NAE01/FC-1",
-       "label": "FC-1 · Plant, AHU, exhaust, gateways",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      },
-      {
-       "id": "net:TROOPD-NAE01/FC-2",
-       "label": "FC-2 · Level 1 terminal units",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      },
-      {
-       "id": "net:TROOPD-NAE01/FC-3",
-       "label": "FC-3 · Level 2 terminal units",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      },
-      {
-       "id": "net:TROOPD-NAE01/FC-4",
-       "label": "FC-4 · Level 3 terminal units",
-       "class": "ba:Field_Network",
-       "messages": [
-        "Fewer than 1 values on path rec:includes [rec:includes]"
-       ]
-      },
       {
        "id": "unit:CHWPLANT",
        "label": "CHW-PLANT",
        "class": "brick:Chilled_Water_System",
        "messages": [
         "Value unit:CHWPLANT does not conform to shape (an anonymous shape)"
-       ]
-      }
-     ]
-    },
-    {
-     "id": "brick:Entity",
-     "origin": "brick",
-     "label": "Brick shape on brick:Entity",
-     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
-     "severity": "violation",
-     "targets": 999,
-     "failed": 25,
-     "passed": 974,
-     "failing": [
-      {
-       "id": "ctrl:3104",
-       "label": "AHU-1 · FAC4911 + IOM4711",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3105",
-       "label": "CHW-PLANT · FAC2611",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3108",
-       "label": "CWP-1 · IOM2721",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3109",
-       "label": "CWP-2 · IOM2721",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3113",
-       "label": "EF-CONT · IOM2721",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:128 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "ctrl:3114",
-       "label": "MS-1, MS-2, MS-3 · LG PI485 BACnet gateway",
-       "class": "ba:Field_Controller",
-       "messages": [
-        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:AHU1",
-       "label": "AHU01",
-       "class": "brick:AHU",
-       "messages": [
-        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:CH1A",
-       "label": "CH01a",
-       "class": "brick:Chiller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:CH1B",
-       "label": "CH01b",
-       "class": "brick:Chiller",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:CWP1",
-       "label": "CWP01",
-       "class": "brick:Chilled_Water_Pump",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:CWP2",
-       "label": "CWP02",
-       "class": "brick:Chilled_Water_Pump",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:EFCONT",
-       "label": "EF-CONT",
-       "class": "brick:Exhaust_Fan",
-       "messages": [
-        "Value room:128 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:EFLAB",
-       "label": "EF-LAB",
-       "class": "brick:Exhaust_Fan",
-       "messages": [
-        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:EFLOCAL",
-       "label": "EF-LOCAL",
-       "class": "brick:Exhaust_Fan",
-       "messages": [
-        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:EFRR",
-       "label": "EF-RR",
-       "class": "brick:Exhaust_Fan",
-       "messages": [
-        "Value floor:RF is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:HS1",
-       "label": "HS01",
-       "class": "brick:Equipment",
-       "messages": [
-        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:HS2",
-       "label": "HS02",
-       "class": "brick:Equipment",
-       "messages": [
-        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:HS3",
-       "label": "HS03",
-       "class": "brick:Chilled_Water_Thermal_Expansion_Tank",
-       "messages": [
-        "Value room:144 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:HS4",
-       "label": "HS04",
-       "class": "brick:Equipment",
-       "messages": [
-        "Value room:143 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:MS2",
-       "label": "MS02",
-       "class": "brick:HVAC_Equipment",
-       "messages": [
-        "Value room:142 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:MS3",
-       "label": "MS03",
-       "class": "brick:HVAC_Equipment",
-       "messages": [
-        "Value room:142 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:UH1",
-       "label": "UH01",
-       "class": "ba:Unit_Heater",
-       "messages": [
-        "Value room:103 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:UH2",
-       "label": "UH02",
-       "class": "ba:Unit_Heater",
-       "messages": [
-        "Value room:200 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:UH3",
-       "label": "UH03",
-       "class": "ba:Unit_Heater",
-       "messages": [
-        "Value room:134 is not an instance of class brick:Location [brick:hasLocation]"
-       ]
-      },
-      {
-       "id": "unit:UH5",
-       "label": "UH05",
-       "class": "ba:Unit_Heater",
-       "messages": [
-        "Value room:142 is not an instance of class brick:Location [brick:hasLocation]"
        ]
       }
      ]
@@ -1593,229 +881,17 @@
        ]
       }
      ]
-    },
-    {
-     "id": "bsh:DeprecationRuleForInstances",
-     "origin": "brick",
-     "label": "Brick shape on bsh:DeprecationRuleForInstances",
-     "comment": "Brick 1.4.4's own shape, run with Brick's inference rules.",
-     "severity": "warning",
-     "targets": 1048,
-     "failed": 49,
-     "passed": 999,
-     "failing": [
-      {
-       "id": "room:101",
-       "label": "101 Evidence Receipt Lobby",
-       "class": "rec:Room",
-       "messages": [
-        "room:101 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:104",
-       "label": "104 Administrative Work Area",
-       "class": "rec:Room",
-       "messages": [
-        "room:104 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:105",
-       "label": "105 Work Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:105 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:109",
-       "label": "109 Conference",
-       "class": "rec:Room",
-       "messages": [
-        "room:109 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:110",
-       "label": "110 Director'S Office",
-       "class": "rec:Room",
-       "messages": [
-        "room:110 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:111",
-       "label": "111 Break/Work",
-       "class": "rec:Room",
-       "messages": [
-        "room:111 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:116",
-       "label": "116 Record Storage",
-       "class": "rec:Room",
-       "messages": [
-        "room:116 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:117",
-       "label": "117 Data/Server Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:117 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:118",
-       "label": "118 Nibin Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:118 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:119",
-       "label": "119 Ammo Storage",
-       "class": "rec:Room",
-       "messages": [
-        "room:119 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:120",
-       "label": "120 Firing Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:120 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:121",
-       "label": "121 Firearms Lab",
-       "class": "rec:Room",
-       "messages": [
-        "room:121 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:122",
-       "label": "122 Biohazard",
-       "class": "rec:Room",
-       "messages": [
-        "room:122 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:123",
-       "label": "123 Tool Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:123 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:127",
-       "label": "127 Corridor",
-       "class": "rec:Room",
-       "messages": [
-        "room:127 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:131",
-       "label": "131 Elec",
-       "class": "rec:Room",
-       "messages": [
-        "room:131 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:137",
-       "label": "137 Elevator Lobby",
-       "class": "rec:Room",
-       "messages": [
-        "room:137 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:139",
-       "label": "139 Demarcation Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:139 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:201",
-       "label": "201 Open Work Area",
-       "class": "rec:Room",
-       "messages": [
-        "room:201 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:202",
-       "label": "202 Latent Prints Lab",
-       "class": "rec:Room",
-       "messages": [
-        "room:202 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:203",
-       "label": "203 Photo Lab",
-       "class": "rec:Room",
-       "messages": [
-        "room:203 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:204",
-       "label": "204",
-       "class": "rec:Room",
-       "messages": [
-        "room:204 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:206",
-       "label": "206 Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:206 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:207",
-       "label": "207 Dna Work Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:207 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      },
-      {
-       "id": "room:208",
-       "label": "208 Dna Exam Room",
-       "class": "rec:Room",
-       "messages": [
-        "room:208 has type brick:Location which was deprecated in version 1.4.0. For now, it has been updated to also be of type rec:Architecture."
-       ]
-      }
-     ]
     }
    ],
    "name": "troop_d",
-   "export_seconds": 1.75,
+   "export_seconds": 1.49,
    "roundtrip": {
     "ok": true,
     "nodes": 1085,
     "edges": 2124,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-25 08:40",
+   "generated": "2026-11-25 16:56",
    "turtle": "data/export/troop_d.with_proposed.ttl"
   }
  }

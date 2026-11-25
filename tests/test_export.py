@@ -190,6 +190,40 @@ def test_building_rules_catch_gaps(km):
     assert r["targets"] == r["passed"] + r["failed"] and r["failing"][0]["messages"]
 
 
+def test_location_relations_are_written_as_their_rec_equivalent(km):
+    """hasLocation is written rec:locatedIn, the property Brick 1.4.4 declares equivalent: Brick's generic shape on
+    brick:hasLocation still asks for the deprecated brick:Location, which a rec:Room is not."""
+    from rdflib.namespace import OWL
+    from projectmodel.export.brick import LOCATION_RELATIONS
+    for rel, rec in LOCATION_RELATIONS.items():
+        assert (BRICK[rel], OWL.equivalentProperty, rec) in km.graph and relation_uri(km, rel) == rec
+    nodes, edges = building()
+    ex = export_project(small_store(nodes, edges), P, km)
+    assert (node_uri(P, "unit:AHU1"), REC.locatedIn, node_uri(P, "floor:L1")) in ex.graph
+    assert not any(ex.graph.triples((None, BRICK.hasLocation, None)))
+
+
+def test_networks_list_their_controllers(km):
+    """A ba:Field_Network is a brick:Collection: the export lists its members with rec:includes, the other direction
+    of each isOnNetwork edge, with no statement of its own, so the round trip still sees one edge."""
+    nodes, edges = building()
+    ex = export_project(small_store(nodes, edges), P, km)
+    assert (node_uri(P, "net:FC-1"), REC.includes, node_uri(P, "ctrl:1")) in ex.graph
+    assert not any(ex.prov.subjects(RDF.predicate, REC.includes))
+    assert ex.summary["edges"] == len(edges)
+
+
+def test_a_valid_building_meets_brick_on_networks_and_rooms(km):
+    """The two ontology fixes, seen by Brick's own shapes: the trunk lists its controller (Collection shape) and the
+    served room is not typed as the deprecated brick:Location (ba:serves ends on rec:Space)."""
+    nodes, edges = building()
+    report = validate(export_project(small_store(nodes, edges), P, km), km)
+    failing = {f["id"]: f["messages"] for r in report["rules"] if r["origin"] == "brick" for f in r["failing"]}
+    assert "net:FC-1" not in failing, failing.get("net:FC-1")
+    assert not any("deprecated" in m for m in failing.get("room:101", [])), failing.get("room:101")
+    assert "unit:AHU1" not in failing, failing.get("unit:AHU1")  # located on a rec:Level, through rec:locatedIn
+
+
 def test_brick_shapes_run(km):
     """Brick's own shapes must really run: given an extra shapes graph, shifty skips the shapes inside the data, so
     a regression here would make every Brick check pass silently."""

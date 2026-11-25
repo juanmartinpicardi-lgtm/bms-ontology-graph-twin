@@ -133,6 +133,16 @@ def test_serves_maps_to_brick_feeds(km):
     assert (BA.serves, rdflib_subproperty(), BRICK.feeds) in km.graph
 
 
+def test_serves_ends_on_any_space(km):
+    """ba:serves's range is rec:Space, the parent of brick:Location and of every rec: location the export writes, so
+    a reasoner never types a served room as the deprecated brick:Location."""
+    from rdflib.namespace import RDFS
+    from projectmodel.knowledge_model import BA, BRICK, REC
+    assert km.graph.value(BA.serves, RDFS.range) == REC.Space
+    for c in (BRICK.Location, *(REC[v[4:]] for v in ("rec:Room", "rec:Level", "rec:HVACZone", "rec:Building"))):
+        assert REC.Space in set(km.graph.transitive_objects(c, RDFS.subClassOf)), c
+
+
 def rdflib_subproperty():
     from rdflib.namespace import RDFS
     return RDFS.subPropertyOf

@@ -5,7 +5,14 @@ Terms come from the knowledge model, never from the store's spelling alone:
     - a class of the BA extension         -> ba:<Class>
     - a location (Floor, Room, HVAC_Zone…) -> the rec: class that replaces it in Brick 1.4 (W1: rec:Level, rec:Room…)
     - a relation of the subset             -> brick:<rel>;  a relation of the extension -> ba:<rel> (serves, drives…)
+    - a location relation (hasLocation, isLocationOf) -> the rec: property Brick 1.4 declares equivalent to it
+      (rec:locatedIn, rec:isLocationOf), as for the location classes. Brick 1.4.4's generic shape on brick:hasLocation
+      still wants the deprecated brick:Location at the end, so a unit in a rec:Room would fail it.
     - a point's unit, where its source spelling names one QUDT unit (W4) -> brick:hasUnit unit:<QUDT id>
+    - a controller on a network (ba:isOnNetwork)  -> also <network> rec:includes <controller>. A ba:Field_Network is a
+      brick:Collection, and Brick's Collection shape wants its members listed with rec:includes. The store keeps one
+      row (the isOnNetwork edge); this triple is its other direction, so it carries no statement of its own: its
+      provenance is the isOnNetwork statement.
 A class or relation the knowledge model doesn't declare is still written (every fact the store holds is exported),
 under the pm-undeclared: namespace, and listed in `Export.summary["undeclared"]`, so nothing passes as Brick that
 isn't.
@@ -69,7 +76,13 @@ def class_uri(km: KnowledgeModel, cls: str) -> rdflib.URIRef | None:
     return BA[cls] if info.source == "ba" else BRICK[cls]
 
 
+# Brick 1.4 relations written as their RealEstateCore equivalent (owl:equivalentProperty in Brick 1.4.4)
+LOCATION_RELATIONS = {"hasLocation": REC.locatedIn, "isLocationOf": REC.isLocationOf}
+
+
 def relation_uri(km: KnowledgeModel, rel: str) -> rdflib.URIRef | None:
+    if rel in LOCATION_RELATIONS and rel in km.relations:
+        return LOCATION_RELATIONS[rel]
     if rel in km.ba_relations:
         return BA[rel]
     if rel in km.relations:
@@ -179,6 +192,8 @@ def export_project(store: Store, project: str, km: KnowledgeModel, include_propo
             p = UNDECLARED[row["rel"]]
         s, o = node_uri(project, row["src"]), node_uri(project, row["dst"])
         g.add((s, p, o))
+        if row["rel"] == "isOnNetwork":
+            g.add((o, REC.includes, s))
         key = hashlib.sha1(f"{row['src']}\x1f{row['rel']}\x1f{row['dst']}".encode()).hexdigest()[:20]
         st = base(project)[f"fact-{key}"]
         prov.add((st, RDF.type, RDF.Statement))

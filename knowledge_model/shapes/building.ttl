@@ -47,10 +47,10 @@ shape:HasPointFromEquipment a sh:NodeShape ;
 
 shape:HasLocationIsLocation a sh:NodeShape ;
     rdfs:label "hasLocation points at a location" ;
-    rdfs:comment "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of)." ;
-    sh:targetSubjectsOf brick:hasLocation ;
+    rdfs:comment "hasLocation places a unit in a floor, room or zone. The export writes it as rec:locatedIn, which Brick 1.4 declares equivalent to brick:hasLocation. Its end must be a location (rec:Space, which brick:Location is a subclass of)." ;
+    sh:targetSubjectsOf rec:locatedIn ;
     sh:property [
-        sh:path brick:hasLocation ;
+        sh:path rec:locatedIn ;
         sh:class rec:Space ;
         sh:message "hasLocation ends on something that is not a location." ;
     ] .
@@ -112,7 +112,7 @@ shape:TemperatureUnit a sh:NodeShape ;
 
 shape:FeedsBetweenEquipment a sh:NodeShape ;
     rdfs:label "feeds runs between equipment" ;
-    rdfs:comment "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant)." ;
+    rdfs:comment "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is rec:locatedIn (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant)." ;
     sh:targetSubjectsOf brick:feeds ;
     sh:or ( [ sh:class brick:Equipment ] [ sh:class brick:System ] ) ;
     sh:property [

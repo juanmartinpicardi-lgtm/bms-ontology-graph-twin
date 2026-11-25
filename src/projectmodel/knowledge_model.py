@@ -343,7 +343,8 @@ def load_knowledge_model(km_dir: Path = KM_DIR, brick: rdflib.Graph | None = Non
             if not (any(g.triples((sup, RDF.type, OWL.ObjectProperty))) or (sup, RDF.type, OWL.ObjectProperty) in ext):
                 problems.append(f"ba_extension: parent relation {sup} of {rname} is unknown")
         for rng in list(ext.objects(p, RDFS.range)) + list(ext.objects(p, RDFS.domain)):
-            if not ((rng, RDF.type, OWL.Class) in ext or brick_has(rng, OWL.Class)):
+            # Brick declares its own classes owl:Class and the RealEstateCore ones it ships (rec:Space) rdfs:Class
+            if not ((rng, RDF.type, OWL.Class) in ext or brick_has(rng, OWL.Class) or brick_has(rng, RDFS.Class)):
                 problems.append(f"ba_extension: domain/range {rng} of {p} is unknown")
     merged = g + ext
 

@@ -1,5 +1,6 @@
 @prefix ba:    <urn:projectmodel:ba#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rec:   <https://w3id.org/rec#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
@@ -154,10 +155,13 @@ ba:switches a owl:ObjectProperty ;
 # "this terminal unit serves this room", which is what the thermostat on a plan tells us: the room is the place the
 # unit's thermostat sits in, not a zone the unit feeds. ba:serves is a sub-property of brick:feeds, so a reader of
 # plain Brick still sees the VAV feeding that space.
+# Its range is rec:Space, the parent of both Brick 1.4's brick:Location and RealEstateCore's rec:Room, rec:Level
+# and rec:HVACZone (the classes the export writes, W1). With brick:Location, a reasoner typed every served room as the
+# deprecated brick:Location, and Brick's deprecation rule flagged each one.
 
 ba:serves a owl:ObjectProperty ;
     rdfs:subPropertyOf brick:feeds ;
     rdfs:label "serves" ;
-    rdfs:comment "A terminal unit serves this room or zone: its thermostat is there. Equipment that only sits in a room uses brick:hasLocation instead." ;
+    rdfs:comment "A terminal unit serves this room or zone: its thermostat is there. Equipment that only sits in a room uses brick:hasLocation (rec:locatedIn) instead." ;
     rdfs:domain brick:Equipment ;
-    rdfs:range brick:Location .
+    rdfs:range rec:Space .

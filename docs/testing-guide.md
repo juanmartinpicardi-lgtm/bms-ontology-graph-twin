@@ -44,7 +44,7 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
 | Package | Command | What you should get |
 |---|---|---|
 | W5 calibration | `.venv/bin/python scripts/eval.py mapper` | Alpha's 0.9–1.0 band right about 99% of the time, against 50% before calibration. |
-| W2 export + SHACL | `.venv/bin/python scripts/export_brick.py troop_d --include-proposed` | 1,085 nodes and 2,124 edges round-trip; 12 of 13 building rules pass (the CHW plant is a system, not equipment). |
+| W2 export + SHACL | `.venv/bin/python scripts/export_brick.py troop_d --include-proposed` | 1,085 nodes and 2,124 edges round-trip; 12 of 13 building rules pass and Brick's own shapes report 2 violations, both on the CHW plant (a system, not equipment). |
 | W9 graphics | `.venv/bin/python scripts/graphics_coverage.py troop-d/documents` | Every Troop D type with points has a graphic; 694 of 847 points on an anchor; QA passes. |
 | W6 plan reader | `.venv/bin/python scripts/eval.py plan_meaning` | Keyed plan facts: 49% with rules alone, 83% with Hydrogen and rules. About $0.04 per sheet. |
 | W8 sequences | `.venv/bin/python scripts/eval.py sequence_read` | Relations found: 18% with rules alone, 87% with Hydrogen and rules, at 88% precision. |
@@ -59,9 +59,13 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
 - **W0 guardrails.** No step is silent. Over 17 stress variations, 10 read and 7 ask (`tests/test_stress_intake.py`).
   - **Real sets:** `msu_mbb` and `itd_d1_lab` are dev sets.
   - **Held out:** `liberty_boe` is held out. Only its headline counts are ever reported.
-- **W1 ontology.** Every term the app writes is declared. W2's checks found two fixes still to make:
-  - `ba:serves` has range `brick:Location` but rooms are `rec:Room`;
-  - `ba:Field_Network` doesn't list its members with `rec:includes`.
+- **W1 ontology.** Every term the app writes is declared. The two fixes W2's checks found are made (25 Nov 2026):
+  - `ba:serves` now ends on `rec:Space`, and the export writes `hasLocation` as `rec:locatedIn`, so rooms are no
+    longer typed as Brick's deprecated `brick:Location`;
+  - each `ba:Field_Network` lists its controllers with `rec:includes`.
+
+  Troop D's Brick shape results: confirmed facts 35 violations and 26 warnings → 0 and 0; with proposed facts
+  31 violations and 49 warnings → 2 and 0 (the CHW plant, a system).
 - **W3 many sources.** Facts are proposed until one of these happens:
   - 2 sources agree;
   - a calibrated score reaches 0.9;
@@ -113,6 +117,6 @@ no longer fails a job on cost. So the plan reader (W6) and the sequence reader (
    first. For plans and sequences, the AI agent that built each reader also wrote its answer key (before building it,
    but still). Needed: about 1–2 hours of an engineer's time marking up one more building's plan sheets and sequence
    of operations. Otherwise those scores stay "promising, not proven".
-4. **Two small ontology corrections.** These are technical and low-risk, so I can make them without your input:
-   - a room is typed one way in our extension and another way in the export;
-   - a network doesn't list its controllers the way Brick expects.
+
+**Done (25 Nov 2026).** The two small ontology corrections: rooms are now typed the same way in our extension and
+in the export, and each network lists its controllers the way Brick expects (§4, W1).

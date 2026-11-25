@@ -42,12 +42,18 @@ template slots), and `tests/test_intake.py` checks the terms a published Troop D
   `feeds` to an HVAC zone, and "is in a place" as `hasLocation`. The floor plans give a third fact: the unit's
   thermostat is in this room. That is not a zone the unit feeds, so it keeps its own term, and a reader of plain
   Brick still sees `feeds` through the sub-property. Equipment that only sits in a room uses `hasLocation`.
+  Its range is `rec:Space`, the parent of `brick:Location` and of every `rec:` location, so a reasoner never types
+  a served room as the deprecated `brick:Location`.
 - **Locations** `Floor`, `Room`, `HVAC_Zone`, `Building`, `Site` → Brick classes, kept in a `locations:` section of
   `brick_subset.yaml`. Brick 1.4 deprecated all of them in favour of RealEstateCore (`rec:Level`, `rec:Room`,
   `rec:HVACZone`, `rec:Building`, `rec:Site`), and the Troop D answer key already names the `rec:` classes. The
   loader still rejects a deprecated class anywhere else. Here it accepts it only while Brick's own `isReplacedBy`
   matches the `rec:` class written in the file, and records it as `replaced_by`. Export (W2) writes the `rec:`
-  class.
+  class, and writes `hasLocation` / `isLocationOf` as `rec:locatedIn` / `rec:isLocationOf`, which Brick 1.4.4
+  declares equivalent: its generic `brick:hasLocation` shape still asks for the deprecated `brick:Location`.
+- **Networks** (`ba:Field_Network`, a `brick:Collection`): the store keeps one edge per controller,
+  `isOnNetwork`. The export also writes the other direction, `<network> rec:includes <controller>`, because
+  Brick's Collection shape wants a collection's members listed that way.
 - **`RVAV`** is a real Brick 1.4.4 class (under `VAV`), not deprecated: added to the subset as it is.
 - **`Unit_Heater`** is not in Brick. Brick has `Space_Heater` ("a heater used to warm the air in an enclosed
   area"): `ba:Unit_Heater` is a subclass of it, so the name the readers and the answer key already use stays.
