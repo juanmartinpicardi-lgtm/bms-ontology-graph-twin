@@ -133,8 +133,11 @@ def test_run_check(td):
     fails = {x["cite"] for x in r["results"] if x["status"] == "fail"}
     assert f"check:class|{P}CHWV-O" in fails  # an analog output classed as a flow sensor
     assert r["summary"]["binding"] == {"pass": 1, "fail": 0}  # 54 points on the AHU's controller, all BACnet objects
-    ef = td.run_check("unit:EFLAB", ["binding"])
-    assert ef["summary"]["binding"]["fail"] > 5  # EF-LAB-1's points sit on no equipment
+    for u in ("unit:EFLAB1", "unit:EFLAB2"):  # W7 bound the former orphan points: none is left loose
+        assert td.run_check(u, ["binding"])["summary"]["binding"] == {"pass": 1, "fail": 0}
+    spd = td.run_check("unit:EFLAB1", ["class"])
+    assert "check:class|pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD" in {
+        x["cite"] for x in spd["results"] if x["status"] == "fail"}  # a BO classed as a speed sensor
     c = td.run_check("unit:FVAV1", ["conflicts"])["results"][0]
     assert c["cite"] == "check:conflict|unit:FVAV1" and "104" in c["message"] and "108" in c["message"]
     assert c["relation"] == "rel:unit:FVAV1|serves|room:104"

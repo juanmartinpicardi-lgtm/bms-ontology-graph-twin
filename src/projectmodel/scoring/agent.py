@@ -83,7 +83,7 @@ def score_answer(q: dict, text: str, cited: list[str], bad: list[str], tools=Non
         "citation": sum(v["cited"] for v in with_cite) / len(with_cite) if with_cite else 1.0,
         "correct": sum(v["stated"] and v["cited"] is not False for v in req) / len(req) if req else 1.0,
         "precision": len(good) / len(cited) if cited else None,
-        "cited": len(cited), "bad_cites": bad,
+        "n_cited": len(cited), "bad_cites": bad,
         "forbidden": [rx for rx in q.get("forbid") or [] if re.search(rx, text, re.I)],
     }
 
