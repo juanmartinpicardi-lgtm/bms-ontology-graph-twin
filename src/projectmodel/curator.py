@@ -387,7 +387,6 @@ def propose(store: Store, km: KnowledgeModel, project: str, *, router=None, min_
     ensure_schema(store)
     cands = find(store, km, project, min_fixes)
     picks, call = _ask_model(cands, router, store, project) if use_model else ({}, {"off": "not asked"})
-    scope = scope_of(project)
     out = []
     with store.conn:
         for c in cands:
@@ -398,18 +397,11 @@ def propose(store: Store, km: KnowledgeModel, project: str, *, router=None, min_
             title, why = default_text(c, oid)
             if pick.get("title") and pick.get("why"):
                 title, why = pick["title"].strip(), pick["why"].strip()
-            entry = entry_of(c, oid)
-            pid = proposal_id(scope, c.kind, entry)
-            row = store.conn.execute("SELECT status FROM proposals WHERE id = ?", (pid,)).fetchone()
-            if row and row["status"] != "pending":
-                continue
             o = c.option(oid)
-            payload = {"kind": c.kind, "entry": entry, "skill": skill_name(scope),
-                       "file": "rules/terms.yaml" if c.kind == "terms" else "rules/conventions.yaml",
-                       "title": title, "chosen": oid, "rules_chose": c.chosen, "before": c.before, "after": c.after,
-                       "template": c.template,
-                       "options": [{"id": x.id, "pattern": x.pattern, "says": x.says, "would_change": len(x.would_change),
-                                    "examples": x.examples} for x in c.options]}
+            extra = {"chosen": oid, "rules_chose": c.chosen, "before": c.before, "after": c.after,
+                     "template": c.template,
+                     "options": [{"id": x.id, "pattern": x.pattern, "says": x.says, "would_change": len(x.would_change),
+                                  "examples": x.examples} for x in c.options]}
             evidence = [{"node": x.node, "name": x.name, "before": x.before, "after": x.after, "by": x.by, "at": x.at,
                          "folder": x.f.get("folder", ""), "equipment": x.f.get("equipment"),
                          "template": x.f.get("template"), "role": x.f.get("role"),
@@ -417,16 +409,39 @@ def propose(store: Store, km: KnowledgeModel, project: str, *, router=None, min_
             checks = {"knowledge_model": "ok", "would_change": len(o.would_change), "examples": o.examples,
                       "would_change_ids": o.would_change, "dropped": c.dropped,
                       "phrased_by": call.get("model") if pick else "rules", "model_call": call}
-            store.conn.execute(
-                "INSERT INTO proposals (id, project, scope, op, target, payload, why, evidence, lane, checks, status,"
-                " model, llm_call) VALUES (?, ?, ?, 'rules.patch', ?, ?, ?, ?, 'approve', ?, 'pending', ?, ?)"
-                " ON CONFLICT (id) DO UPDATE SET payload = excluded.payload, why = excluded.why,"
-                " evidence = excluded.evidence, checks = excluded.checks, model = excluded.model,"
-                " llm_call = excluded.llm_call",
-                (pid, project, scope, skill_name(scope), json.dumps(payload), why, json.dumps(evidence),
-                 json.dumps(checks), call.get("model") if pick else None, call.get("call") if pick else None))
-            out.append(pid)
+            pid = record(store, project, c.kind, entry_of(c, oid), title, why, evidence, checks, extra=extra,
+                         model=call.get("model") if pick else None, llm_call=call.get("call") if pick else None)
+            if pid:
+                out.append(pid)
     return [proposal(store, p) for p in out]
+
+
+FILES = {"class_hints": "rules/conventions.yaml", "abbreviations": "rules/conventions.yaml", "terms": "rules/terms.yaml"}
+
+
+def record(store: Store, project: str, kind: str, entry: dict, title: str, why: str, evidence: list[dict],
+           checks: dict, *, extra: dict | None = None, model: str | None = None, llm_call: int | None = None
+           ) -> str | None:
+    """Write one pending proposal (from the pattern finder, or an interview answer). Its id is a hash of what it
+    says, so the same proposal is refreshed, never duplicated; one already approved or rejected is left alone (None).
+    Call it inside `with store.conn:` (the caller commits)."""
+    ensure_schema(store)
+    scope = scope_of(project)
+    pid = proposal_id(scope, kind, entry)
+    row = store.conn.execute("SELECT status FROM proposals WHERE id = ?", (pid,)).fetchone()
+    if row and row["status"] != "pending":
+        return None
+    payload = {"kind": kind, "entry": entry, "skill": skill_name(scope), "file": FILES[kind], "title": title,
+               **(extra or {})}
+    store.conn.execute(
+        "INSERT INTO proposals (id, project, scope, op, target, payload, why, evidence, lane, checks, status,"
+        " model, llm_call) VALUES (?, ?, ?, 'rules.patch', ?, ?, ?, ?, 'approve', ?, 'pending', ?, ?)"
+        " ON CONFLICT (id) DO UPDATE SET payload = excluded.payload, why = excluded.why,"
+        " evidence = excluded.evidence, checks = excluded.checks, model = excluded.model,"
+        " llm_call = excluded.llm_call",
+        (pid, project, scope, skill_name(scope), json.dumps(payload), why, json.dumps(evidence), json.dumps(checks),
+         model, llm_call))
+    return pid
 
 
 def _row(r) -> dict:
@@ -464,8 +479,8 @@ def _skill_md(name: str, scope: str, version: int, rules: list[str], approved_by
              "metadata": {"projectmodel": {"scope": scope, "applies_to": {"step": "mapper and setup"}, "rules": rules,
                                            "status": "active", "locked": False, "method": "curator",
                                            "approved_by": approved_by, "evidence": evidence}}}
-    lines = [f"- `{e.get('id')}` {e.get('why', '').strip() or ''} (approved by {e.get('approved_by')}, "
-             f"{e.get('approved_at')})" for e in entries]
+    lines = [f"- `{e['id']}` {e['kind']}: `{e['pattern']}` → {e['says']} (approved by {e['approved_by']}, "
+             f"{e['approved_at']})" for e in entries]
     body = f"""# Learned conventions: {scope}
 
 ## When to use
@@ -510,43 +525,36 @@ def approve(store: Store, km: KnowledgeModel, pid: str, by: str, *, knowledge: P
     data = (yaml.safe_load(rules_path.read_text()) or {}) if rules_path.exists() else {}
     when = date.today().isoformat()
     e = dict(entry or pay["entry"])
+    stamp = {"id": pid, "approved_by": by, "approved_at": when, "why": p["why"], "evidence": len(p["evidence"])}
     if kind == "terms":
         if e.get("class") not in km.classes or km.classes[e["class"]].kind != "point":
             raise ValueError(f"{e.get('class')} is not a point class of the knowledge model")
         data.setdefault("terms", {})[e["phrase"]] = e["class"]
-        data.setdefault("provenance", {})[e["phrase"]] = {"id": pid, "approved_by": by, "approved_at": when,
-                                                         "why": p["why"], "evidence": len(p["evidence"])}
-        entries = [{"id": v["id"], "why": f"“{k}” is {data['terms'][k]}. {v.get('why', '')}",
-                    "approved_by": v["approved_by"], "approved_at": v["approved_at"]}
-                   for k, v in data["provenance"].items()]
+        data.setdefault("provenance", {})[e["phrase"]] = stamp
     else:
-        e |= {"id": pid, "why": p["why"], "approved_by": by, "approved_at": when, "evidence": len(p["evidence"])}
-        hints = [h for h in data.get("class_hints") or [] if h.get("id") != pid] + [e]
-        data = {"description": f"Learned from review fixes on {scope}; each entry approved by a person.",
-                **{k: v for k, v in data.items() if k != "class_hints"}, "class_hints": hints}
+        data = {"description": f"Learned from review fixes and interviews on {scope}; each entry approved by a "
+                               "person.", **data}
+        if kind == "abbreviations":
+            data.setdefault("abbreviations", {})[e["token"]] = e["words"]
+            data.setdefault("provenance", {})[f"abbreviations.{e['token']}"] = stamp
+        else:
+            data["class_hints"] = [h for h in data.get("class_hints") or [] if h.get("id") != pid] + [e | stamp]
         try:
             apply_conventions(km, [Layer(scope, rules_path, {"scope": scope, **data}, name)])
         except ConventionError as err:
             raise ValueError(f"the convention does not check against the knowledge model: {err}") from err
-        entries = hints
     md = folder / "SKILL.md"
     old = {}
     if md.exists():
         from .conventions import _skill_front
         old = _skill_front(md)
     pm = ((old.get("metadata") or {}).get("projectmodel")) or {}
-    rules = sorted(set(pm.get("rules") or []) | {pay["file"]})
-    if kind != "terms" and (folder / "rules/terms.yaml").exists():
-        tp = yaml.safe_load((folder / "rules/terms.yaml").read_text()) or {}
-        entries = entries + [{"id": v["id"], "why": f"“{k}” is {tp['terms'][k]}.", "approved_by": v["approved_by"],
-                              "approved_at": v["approved_at"]} for k, v in (tp.get("provenance") or {}).items()]
-    if kind == "terms" and (folder / "rules/conventions.yaml").exists():
-        cp = yaml.safe_load((folder / "rules/conventions.yaml").read_text()) or {}
-        entries = (cp.get("class_hints") or []) + entries
     rules_path.parent.mkdir(parents=True, exist_ok=True)
     rules_path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True, width=120))
-    md.write_text(_skill_md(name, scope, int(old.get("version") or 0) + 1, rules, by,
-                            sorted(set(pm.get("evidence") or []) | {pid}), entries))
+    md.write_text(_skill_md(name, scope, int(old.get("version") or 0) + 1,
+                            sorted(set(pm.get("rules") or []) | {pay["file"]}), by,
+                            sorted(set(pm.get("evidence") or []) | {pid}),
+                            [x for x in learned(knowledge) if x["scope"] == scope]))
     with store.conn:
         store.conn.execute("UPDATE proposals SET status = 'approved', decided_by = ?, decided_at = ?, payload = ?"
                            " WHERE id = ?", (by, _now(), json.dumps(pay if entry is None else pay | {"entry": entry}),
@@ -577,6 +585,11 @@ def learned(knowledge: Path | None = None) -> list[dict]:
                         "says": " ".join([h["class"], *([f"on {h['template']}"] if h.get("template") else []),
                                           *([f"instead of {h['instead_of']}"] if h.get("instead_of") else [])]),
                         "approved_by": h.get("approved_by", ""), "approved_at": str(h.get("approved_at", ""))})
+        for token, words in (data.get("abbreviations") or {}).items():
+            pv = (data.get("provenance") or {}).get(f"abbreviations.{token}") or {}
+            out.append({"scope": scope, "id": pv.get("id", ""), "kind": "abbreviation", "pattern": str(token),
+                        "says": entry_text(words), "approved_by": pv.get("approved_by", ""),
+                        "approved_at": str(pv.get("approved_at", ""))})
         for phrase, cls in (data.get("terms") or {}).items():
             pv = (data.get("provenance") or {}).get(phrase) or {}
             out.append({"scope": scope, "id": pv.get("id", ""), "kind": "setup term", "pattern": phrase,

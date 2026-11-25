@@ -138,7 +138,7 @@ def simulate(project: str = "alpha/names_paths", *, fixes: int = 2, max_patterns
         after = _classes(store, project)
         after_score = score_project(store, project, gt, km, DEFAULT_ACCEPT)
         cost = store.conn.execute("SELECT COUNT(*), COALESCE(SUM(cost_usd), 0) FROM llm_calls WHERE job = ?",
-                                  (curator.JOB,)).fetchone() if _has_job_col(store) else (0, 0.0)
+                                  (curator.JOB,)).fetchone()
 
         convs = []
         for p in proposals:
@@ -183,10 +183,6 @@ def simulate(project: str = "alpha/names_paths", *, fixes: int = 2, max_patterns
             "also": also_rows,
             "model": {"calls": cost[0], "cost_usd": round(cost[1], 4)},
         }
-
-
-def _has_job_col(store) -> bool:
-    return "job" in {r[1] for r in store.conn.execute("PRAGMA table_info(llm_calls)")}
 
 
 def print_report(r: dict, out=print) -> None:

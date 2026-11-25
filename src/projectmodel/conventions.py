@@ -34,7 +34,9 @@ from .knowledge_model import ROOT, ClassHint, IgnoreRule, KnowledgeModel, Knowle
 
 CONV_DIR = ROOT / "conventions"
 LAYER_ORDER = ("contractor", "customer", "site")
-FILE_KEYS = {"scope", "description", "author", "abbreviations", "equipment_patterns", "class_hints", "ignore"}
+# provenance: who approved which learned entry (curator.py), keyed by entry; read by people, not by the mapper
+FILE_KEYS = {"scope", "description", "author", "abbreviations", "equipment_patterns", "class_hints", "ignore",
+             "provenance"}
 # A class hint is {pattern, class}; a learned one also says who approved it and why, and may be scoped.
 HINT_KEYS = {"pattern", "class"}
 HINT_OPTIONAL = {"id", "template", "instead_of", "why", "approved_by", "approved_at", "evidence"}

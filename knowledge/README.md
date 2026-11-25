@@ -25,4 +25,11 @@ scopes is shown, never silently resolved.
 Rule of thumb: if it changes how a document or name is read, it is a skill rule; if it says how we work or what is
 true about a party, it is memory; if it describes one building, it stays a note.
 
+Learned conventions (the learning loop, `src/projectmodel/curator.py`): when people make the same fix twice in review,
+the curator proposes a convention; a named person approves it in Tribal knowledge, and it is written to
+`skills/<scope>/learned-conventions-<name>/` (`rules/conventions.yaml` for the mapper, `rules/terms.yaml` for the
+guided setup). The mapper and the setup read any active skill's `rules/conventions.yaml` and `rules/terms.yaml` for a
+project's scopes on their next run. `PM_KNOWLEDGE_DIR` points everything at a copy of this folder (the simulation in
+`scripts/learning_loop.py` uses one, so nothing here changes).
+
 Check every file: `.venv/bin/python -m pytest tests/test_memory.py`.
