@@ -66,7 +66,9 @@ def test_a_row_passes_to_another_source_when_its_owner_stops_stating_it():
     assert out["released"] == 1 and (r["source"], r["source_file"], r["confidence"]) == ("plans", "plan.pdf", 0.6)
 
 
-def test_two_sources_agreeing_confirm_a_fact_and_disagreeing_ones_wait_for_review():
+def test_two_sources_agreeing_wait_for_the_expert_with_a_note_and_disagreeing_ones_for_review():
+    """Agreement is the expert's call (plan §8.5): the fact stays proposed, noted with the agreeing sources and their
+    combined confidence; review.accept_agreed accepts those in one go."""
     s = Store(":memory:")
     s.write_source(P, "schedules", 1, [node("ahu", "AHU"), node("vav", "VAV"), node("p", "Temp_Sensor", kind="point")],
                    [edge("ahu", "feeds", "vav", medium="air"), edge("vav", "hasPoint", "p")])
@@ -74,18 +76,34 @@ def test_two_sources_agreeing_confirm_a_fact_and_disagreeing_ones_wait_for_revie
     s.write_source(P, "bms", 1, [node("vav2", "VAV")],
                    [edge("ahu", "feeds", "vav", src="bms.csv", medium="air"), edge("vav2", "hasPoint", "p")])
     n, e = rows(s), rows(s, "edges")
-    assert (n["ahu"]["status"], n["ahu"]["confirmed_by"]) == ("confirmed", "agreement")
-    assert json.loads(n["ahu"]["attrs"])["agree"] == ["plans", "schedules"]
+    assert (n["ahu"]["status"], n["ahu"]["confirmed_by"]) == ("proposed", None)
+    ahu = json.loads(n["ahu"]["attrs"])
+    assert ahu["agree"] == ["plans", "schedules"] and ahu["agree_confidence"] == 0.75  # 1 - 0.5 * 0.5
     assert n["vav"]["status"] == "proposed"
     c = json.loads(n["vav"]["attrs"])["conflict"][0]
     assert (c["source"], c["class"], c["source_file"]) == ("plans", "FCU", "plan.pdf")
-    assert e[("ahu", "feeds", "vav")]["confirmed_by"] == "agreement"
+    assert e[("ahu", "feeds", "vav")]["status"] == "proposed"
+    assert json.loads(e[("ahu", "feeds", "vav")]["attrs"])["agree"] == ["bms", "schedules"]
     for key in (("vav", "hasPoint", "p"), ("vav2", "hasPoint", "p")):  # a point on two equipment: both kept, held
         assert e[key]["status"] == "proposed" and json.loads(e[key]["attrs"])["conflict"]
     a = s.agreement(P)
-    assert (a["stated_twice"], a["agreed"], a["conflicts"]) == (3, 2, 3)
+    assert (a["stated_twice"], a["agree"], a["agree_open"], a["agreed"], a["conflicts"]) == (3, 2, 2, 0, 3)
     assert [x["id"] for x in review.queue(s, P)][:3] == ["vav", "vav2|hasPoint|p", "vav|hasPoint|p"]
-    assert all(x["id"] != "ahu" for x in review.queue(s, P))  # only proposed facts wait for a person
+    q = {x["id"]: x for x in review.queue(s, P)}
+    assert q["ahu"]["agree"] == ["plans", "schedules"] and q["ahu"]["agree_confidence"] == 0.75
+    assert {x["id"] for x in review.agreed(s, P)} == {"ahu", "ahu|feeds|vav"}  # agreeing, no conflict
+    assert review.agreed(s, P, min_confidence=0.8) == []
+    assert review.accept_agreed(s, P, "expert") == 2
+    n, e = rows(s), rows(s, "edges")
+    assert (n["ahu"]["status"], n["ahu"]["confirmed_by"], n["ahu"]["method"]) == ("confirmed", "human", "human")
+    assert e[("ahu", "feeds", "vav")]["confirmed_by"] == "human" and n["vav"]["status"] == "proposed"
+
+
+def test_the_old_agreement_rule_can_be_brought_back():
+    s = Store(":memory:", auto=AutoAccept(agreement=2))
+    s.write_source(P, "schedules", 1, [node("ahu", "AHU")])
+    s.write_source(P, "plans", 1, [node("ahu", "AHU", src="plan.pdf")])
+    assert (rows(s)["ahu"]["status"], rows(s)["ahu"]["confirmed_by"]) == ("confirmed", "agreement")
 
 
 def test_claims_count_but_never_create_rows():
@@ -104,7 +122,7 @@ def test_a_new_node_resolves_to_an_existing_one_through_aliases():
                                                                            ("submittal_ref", "DEV3104")])],
                    [edge("ctrl:DEV3104", "hasPoint", "pt:x")])
     assert set(rows(s)) == {"unit:ahu1"} and ("unit:ahu1", "hasPoint", "pt:x") in rows(s, "edges")
-    assert rows(s)["unit:ahu1"]["confirmed_by"] == "agreement"
+    assert json.loads(rows(s)["unit:ahu1"]["attrs"])["agree"] == ["schedules", "submittal"]
     assert s.resolve(P, "submittal_ref", "DEV3104") == s.resolve(P, "schedule_tag", "AHU-1") == "unit:ahu1"
 
 
