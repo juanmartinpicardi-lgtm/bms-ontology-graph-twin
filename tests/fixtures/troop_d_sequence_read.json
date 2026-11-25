@@ -1,0 +1,919 @@
+{
+ "about": "Troop D's sequences as the sequence_read job read them (W8), frozen so the agent's Troop D graph (scoring/agent.py) has the same ba: control relations every run without a model call. The model's raw answers, taken from the W8 bake-off's call log (llm_calls ids below); the merge, calibration and checks of intake/sequence_ai.py are applied on load, as in the setup.",
+ "job": "sequence_read",
+ "prompt": "sequence_read@1",
+ "model": "hydrogen",
+ "answers": {
+  "seq:exhaust-fans": {
+   "output": {
+    "relations": [
+     {
+      "from": "EF-LAB.P",
+      "rel": "feedback",
+      "to": "EF-LAB.BYP-O",
+      "kind": "loop",
+      "loop": "Exhaust Duct Static Pressure",
+      "section": "A",
+      "confidence": 0.95,
+      "why": "modulate the internal bypass damper as required to maintain the duct static pressure setpoint"
+     },
+     {
+      "from": "AHU.SF1-S",
+      "rel": "requires",
+      "to": "EF-RR.C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "B",
+      "confidence": 0.9,
+      "why": "When AHU01 is in operation, EF-RR shall be enabled"
+     }
+    ],
+    "gaps": [
+     {
+      "section": "A",
+      "text": "EF-LAB has no duct static pressure setpoint point."
+     }
+    ],
+    "conflicts": []
+   },
+   "model": "hydrogen",
+   "calls": [
+    25
+   ],
+   "paid_usd": 0.013776,
+   "latency_s": 8.264
+  },
+  "seq:chilled-water-system": {
+   "output": {
+    "relations": [
+     {
+      "from": "CHW-PLANT.CWP-LEAD",
+      "rel": "switches",
+      "to": "CWP.C",
+      "kind": "mode",
+      "loop": "",
+      "section": "A",
+      "confidence": 0.95,
+      "why": "chilled water pumps shall operate in duty/standby configuration"
+     },
+     {
+      "from": "CWP.A",
+      "rel": "requires",
+      "to": "CWP.C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "A",
+      "confidence": 0.9,
+      "why": "stand-by pump shall enable if the duty pump has an alarm and is not operable"
+     },
+     {
+      "from": "AHU.CHWV-O",
+      "rel": "requests",
+      "to": "unit:CWP",
+      "kind": "interlock",
+      "loop": "",
+      "section": "A",
+      "confidence": 0.85,
+      "why": "when the building has a call for cooling and the chilled water valve opens to the air handler coil, the pumps should enable"
+     },
+     {
+      "from": "CHW-PLANT.CW-F",
+      "rel": "feedback",
+      "to": "CWP.O",
+      "kind": "loop",
+      "loop": "chw_flow",
+      "section": "A",
+      "confidence": 0.9,
+      "why": "The pumps shall control the flow rate"
+     },
+     {
+      "from": "CHW-PLANT.CH-LEAD",
+      "rel": "switches",
+      "to": "CH.CH-E",
+      "kind": "mode",
+      "loop": "",
+      "section": "B",
+      "confidence": 0.95,
+      "why": "The chillers will operate in lead/lag configuration"
+     },
+     {
+      "from": "CHW-PLANT.CH-LEAD",
+      "rel": "switches",
+      "to": "CH.ISOV-C",
+      "kind": "mode",
+      "loop": "",
+      "section": "B",
+      "confidence": 0.9,
+      "why": "When the lead chiller is selected, the control valve shall be opened"
+     },
+     {
+      "from": "CWP.S",
+      "rel": "requires",
+      "to": "CH.CH-E",
+      "kind": "interlock",
+      "loop": "",
+      "section": "B",
+      "confidence": 0.9,
+      "why": "When the building has a call for cooling and the pumps are enabled, the lead chiller should modulate"
+     },
+     {
+      "from": "AHU.CHWV-O",
+      "rel": "requests",
+      "to": "unit:CH",
+      "kind": "interlock",
+      "loop": "",
+      "section": "B",
+      "confidence": 0.8,
+      "why": "When the building has a call for cooling"
+     },
+     {
+      "from": "CH.LCHWT-SP",
+      "rel": "drives",
+      "to": "CH.CH-E",
+      "kind": "loop",
+      "loop": "chw_leaving_temp",
+      "section": "B",
+      "confidence": 0.85,
+      "why": "lead chiller should modulate to maintain a leaving water temperature of 42 degrees (adj)"
+     },
+     {
+      "from": "CH.LEWT",
+      "rel": "feedback",
+      "to": "CH.CH-E",
+      "kind": "loop",
+      "loop": "chw_leaving_temp",
+      "section": "B",
+      "confidence": 0.85,
+      "why": "lead chiller should modulate to maintain a leaving water temperature of 42 degrees (adj)"
+     },
+     {
+      "from": "CHW-PLANT.CW-F",
+      "rel": "requires",
+      "to": "CH.CH-E",
+      "kind": "interlock",
+      "loop": "",
+      "section": "B",
+      "confidence": 0.85,
+      "why": "As the flow rate in the chilled water loop increases above 140 gpm (adj), the lag"
+     },
+     {
+      "from": "CHW-PLANT.LAG-ON-SP",
+      "rel": "requires",
+      "to": "CH.CH-E",
+      "kind": "interlock",
+      "loop": "",
+      "section": "B",
+      "confidence": 0.7,
+      "why": "As the flow rate in the chilled water loop increases above 140 gpm (adj), the lag"
+     }
+    ],
+    "gaps": [
+     {
+      "section": "A",
+      "text": "The pumps control the chilled water flow rate, but there is no chilled water flow setpoint point for the pumps."
+     }
+    ],
+    "conflicts": []
+   },
+   "model": "hydrogen",
+   "calls": [
+    23
+   ],
+   "paid_usd": 0.02848,
+   "latency_s": 19.629
+  },
+  "seq:fvav-terminal-units": {
+   "output": {
+    "relations": [
+     {
+      "from": "FVAV.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "FVAV.DPR-O",
+      "kind": "mode",
+      "loop": "",
+      "section": "C",
+      "confidence": 0.9,
+      "why": "When the zone temperature is between the occupied heating and cooling setpoints, the primary air damper will be at the minimum CFM"
+     },
+     {
+      "from": "FVAV.SAFLOW-SP",
+      "rel": "drives",
+      "to": "FVAV.DPR-O",
+      "kind": "loop",
+      "loop": "airflow",
+      "section": "C",
+      "confidence": 0.95,
+      "why": "the primary air damper will be at the minimum CFM"
+     },
+     {
+      "from": "FVAV.SA-F",
+      "rel": "feedback",
+      "to": "FVAV.DPR-O",
+      "kind": "loop",
+      "loop": "airflow",
+      "section": "C",
+      "confidence": 0.95,
+      "why": "the primary air damper will be at the minimum CFM"
+     },
+     {
+      "from": "FVAV.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "FVAV.SAFLOW-SP",
+      "kind": "mode",
+      "loop": "",
+      "section": "D",
+      "confidence": 0.9,
+      "why": "During unoccupied mode, the operation as noted above shall apply with minimum primary airflows set to zero"
+     },
+     {
+      "from": "FVAV.OCC-CLG-SP",
+      "rel": "drives",
+      "to": "FVAV.DPR-O",
+      "kind": "loop",
+      "loop": "zone cooling",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "as the zone temperature rises above setpoint, the VAV damper shall modulate open to the cooling cfm setpoint"
+     },
+     {
+      "from": "FVAV.ZN-T",
+      "rel": "feedback",
+      "to": "FVAV.DPR-O",
+      "kind": "loop",
+      "loop": "zone cooling",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "as the zone temperature rises above setpoint, the VAV damper shall modulate open to the cooling cfm setpoint"
+     },
+     {
+      "from": "FVAV.OCC-HTG-SP",
+      "rel": "drives",
+      "to": "FVAV.HTG-E",
+      "kind": "loop",
+      "loop": "zone heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "as the zone temperature falls below setpoint, the electric reheat coil shall enable"
+     },
+     {
+      "from": "FVAV.ZN-T",
+      "rel": "feedback",
+      "to": "FVAV.HTG-E",
+      "kind": "loop",
+      "loop": "zone heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "as the zone temperature falls below setpoint, the electric reheat coil shall enable"
+     },
+     {
+      "from": "FVAV.OCC-HTG-SP",
+      "rel": "drives",
+      "to": "FVAV.FAN-C",
+      "kind": "loop",
+      "loop": "zone heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "as the zone temperature falls below setpoint... the plenum fan shall enable"
+     },
+     {
+      "from": "FVAV.ZN-T",
+      "rel": "feedback",
+      "to": "FVAV.FAN-C",
+      "kind": "loop",
+      "loop": "zone heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "as the zone temperature falls below setpoint... the plenum fan shall enable"
+     },
+     {
+      "from": "FVAV.DA-T",
+      "rel": "feedback",
+      "to": "FVAV.HTG-O",
+      "kind": "loop",
+      "loop": "discharge air temperature",
+      "section": "G",
+      "confidence": 0.95,
+      "why": "the electric reheat coil shall enable and modulate to maintain a discharge air tempearture of 90 degrees (adj)"
+     }
+    ],
+    "gaps": [
+     {
+      "section": "D",
+      "text": "No minimum outdoor air setpoint point exists on AHU to reduce minimum air requirements during unoccupied mode."
+     },
+     {
+      "section": "G",
+      "text": "No discharge air temperature setpoint point exists on FVAV for the 90 degrees (adj) heating discharge air temperature setpoint."
+     }
+    ],
+    "conflicts": []
+   },
+   "model": "hydrogen",
+   "calls": [
+    21
+   ],
+   "paid_usd": 0.02603,
+   "latency_s": 16.88
+  },
+  "seq:vav-terminal-units": {
+   "output": {
+    "relations": [
+     {
+      "from": "VAV.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "VAV.DPR-O",
+      "kind": "mode",
+      "loop": "",
+      "section": "C",
+      "confidence": 0.9,
+      "why": "Occupied mode sets primary air damper to minimum CFM"
+     },
+     {
+      "from": "VAV.SAFLOW-SP",
+      "rel": "drives",
+      "to": "VAV.DPR-O",
+      "kind": "loop",
+      "loop": "airflow",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "VAV damper modulates to cooling/minimum cfm setpoint"
+     },
+     {
+      "from": "VAV.SA-F",
+      "rel": "feedback",
+      "to": "VAV.DPR-O",
+      "kind": "loop",
+      "loop": "airflow",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "Supply airflow closes the loop on the VAV damper"
+     },
+     {
+      "from": "VAV.OCC-CLG-SP",
+      "rel": "drives",
+      "to": "VAV.DPR-O",
+      "kind": "loop",
+      "loop": "zone_cooling",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "as the zone temperature rises above setpoint, the VAV damper shall modulate open"
+     },
+     {
+      "from": "VAV.ZN-T",
+      "rel": "feedback",
+      "to": "VAV.DPR-O",
+      "kind": "loop",
+      "loop": "zone_cooling",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "zone temperature rises above setpoint / is satisfied"
+     },
+     {
+      "from": "VAV.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "VAV.DPR-O",
+      "kind": "mode",
+      "loop": "",
+      "section": "F",
+      "confidence": 0.9,
+      "why": "When in the occupied mode, cooling control operates"
+     },
+     {
+      "from": "VAV.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "VAV.HTG-E",
+      "kind": "mode",
+      "loop": "",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "When in the occupied mode, electric reheat coil enables"
+     },
+     {
+      "from": "VAV.OCC-HTG-SP",
+      "rel": "drives",
+      "to": "VAV.HTG-E",
+      "kind": "loop",
+      "loop": "zone_heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "as the zone temperature falls below setpoint, the electric reheat coil shall enable"
+     },
+     {
+      "from": "VAV.ZN-T",
+      "rel": "feedback",
+      "to": "VAV.HTG-E",
+      "kind": "loop",
+      "loop": "zone_heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "zone temperature falls below setpoint / is satisfied"
+     },
+     {
+      "from": "VAV.OCC-HTG-SP",
+      "rel": "drives",
+      "to": "VAV.DPR-O",
+      "kind": "loop",
+      "loop": "zone_heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "VAV damper shall modulate open to the heating cfm setpoint to satisfy the zone temperature setpoints"
+     },
+     {
+      "from": "VAV.ZN-T",
+      "rel": "feedback",
+      "to": "VAV.DPR-O",
+      "kind": "loop",
+      "loop": "zone_heating",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "zone temperature falls below setpoint / is satisfied"
+     },
+     {
+      "from": "VAV.DA-T",
+      "rel": "feedback",
+      "to": "VAV.HTG-O",
+      "kind": "loop",
+      "loop": "discharge_air_temp",
+      "section": "G",
+      "confidence": 0.95,
+      "why": "electric reheat coil shall modulate to maintain a discharge air temperature of 90 degrees"
+     }
+    ],
+    "gaps": [
+     {
+      "section": "G",
+      "text": "Discharge air temperature setpoint of 90 degrees (adj) has no corresponding setpoint point on the VAV units."
+     },
+     {
+      "section": "G",
+      "text": "Electric heat enable (VAV.HTG-E) and output (VAV.HTG-O) are only present on 19 of 38 VAV units."
+     }
+    ],
+    "conflicts": []
+   },
+   "model": "hydrogen",
+   "calls": [
+    22
+   ],
+   "paid_usd": 0.02659,
+   "latency_s": 17.825
+  },
+  "seq:air-handling-unit": {
+   "output": {
+    "relations": [
+     {
+      "from": "AHU.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "AHU.SF-C",
+      "kind": "mode",
+      "loop": "",
+      "section": "C",
+      "confidence": 0.95,
+      "why": "When the AHU is in the occupied mode, the supply and exhaust fans shall run"
+     },
+     {
+      "from": "AHU.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "AHU.EF1-C",
+      "kind": "mode",
+      "loop": "",
+      "section": "C",
+      "confidence": 0.95,
+      "why": "When the AHU is in the occupied mode, the supply and exhaust fans shall run"
+     },
+     {
+      "from": "AHU.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "AHU.EF2-C",
+      "kind": "mode",
+      "loop": "",
+      "section": "C",
+      "confidence": 0.95,
+      "why": "When the AHU is in the occupied mode, the supply and exhaust fans shall run"
+     },
+     {
+      "from": "AHU.OCC-SCHEDULE",
+      "rel": "switches",
+      "to": "AHU.MOA-O",
+      "kind": "mode",
+      "loop": "",
+      "section": "C",
+      "confidence": 0.9,
+      "why": "Minimum outdoor air damper position shall be maintained whenever occupied"
+     },
+     {
+      "from": "AHU.DAP-SP",
+      "rel": "drives",
+      "to": "AHU.SF-O",
+      "kind": "loop",
+      "loop": "duct_static_pressure",
+      "section": "E",
+      "confidence": 0.95,
+      "why": "supply fan speed shall modulate to maintain the discharge static pressure setpoint"
+     },
+     {
+      "from": "AHU.DA-P",
+      "rel": "feedback",
+      "to": "AHU.SF-O",
+      "kind": "loop",
+      "loop": "duct_static_pressure",
+      "section": "E",
+      "confidence": 0.95,
+      "why": "supply fan speed shall modulate to maintain the discharge static pressure setpoint"
+     },
+     {
+      "from": "AHU.SF1-S",
+      "rel": "requires",
+      "to": "AHU.SF-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "E",
+      "confidence": 0.9,
+      "why": "alarm shall be generated if the proof-of-run sensor does not acknowledge fan operation"
+     },
+     {
+      "from": "AHU.BLDGP-SP",
+      "rel": "drives",
+      "to": "AHU.MOA-O",
+      "kind": "loop",
+      "loop": "building_pressure",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "minimum outside air damper shall modulate open as required to maintain building pressurization"
+     },
+     {
+      "from": "AHU.BLDG-P",
+      "rel": "feedback",
+      "to": "AHU.MOA-O",
+      "kind": "loop",
+      "loop": "building_pressure",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "minimum outside air damper shall modulate open as required to maintain building pressurization"
+     },
+     {
+      "from": "AHU.BLDG-P",
+      "rel": "requires",
+      "to": "AHU.EF1-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "F",
+      "confidence": 0.9,
+      "why": "If the building pressure sensor rises above +0.02 in. wc, the exhaust fan plenums shall enable"
+     },
+     {
+      "from": "AHU.BLDG-P",
+      "rel": "requires",
+      "to": "AHU.EF2-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "F",
+      "confidence": 0.9,
+      "why": "If the building pressure sensor rises above +0.02 in. wc, the exhaust fan plenums shall enable"
+     },
+     {
+      "from": "AHU.BLDGP-SP",
+      "rel": "drives",
+      "to": "AHU.EF1-O",
+      "kind": "loop",
+      "loop": "building_pressure",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "exhaust fan plenums shall enable and modulate up to maintain the building pressure setpoint"
+     },
+     {
+      "from": "AHU.BLDG-P",
+      "rel": "feedback",
+      "to": "AHU.EF1-O",
+      "kind": "loop",
+      "loop": "building_pressure",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "exhaust fan plenums shall enable and modulate up to maintain the building pressure setpoint"
+     },
+     {
+      "from": "AHU.BLDGP-SP",
+      "rel": "drives",
+      "to": "AHU.EF2-O",
+      "kind": "loop",
+      "loop": "building_pressure",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "exhaust fan plenums shall enable and modulate up to maintain the building pressure setpoint"
+     },
+     {
+      "from": "AHU.BLDG-P",
+      "rel": "feedback",
+      "to": "AHU.EF2-O",
+      "kind": "loop",
+      "loop": "building_pressure",
+      "section": "F",
+      "confidence": 0.95,
+      "why": "exhaust fan plenums shall enable and modulate up to maintain the building pressure setpoint"
+     },
+     {
+      "from": "AHU.OA-T",
+      "rel": "requires",
+      "to": "AHU.ECON-O",
+      "kind": "interlock",
+      "loop": "",
+      "section": "G",
+      "confidence": 0.95,
+      "why": "economizer shall be enabled whenever the outdoor air dry bulb temperature is below 55 deg F"
+     },
+     {
+      "from": "AHU.MA-SP",
+      "rel": "drives",
+      "to": "AHU.ECON-O",
+      "kind": "loop",
+      "loop": "economizer_mixed_air_temp",
+      "section": "G",
+      "confidence": 0.85,
+      "why": "economizer shall modulate open and maintain a maximum mixed air temperature of 60 deg F"
+     },
+     {
+      "from": "AHU.MA-T",
+      "rel": "feedback",
+      "to": "AHU.ECON-O",
+      "kind": "loop",
+      "loop": "economizer_mixed_air_temp",
+      "section": "G",
+      "confidence": 0.95,
+      "why": "economizer shall modulate open and maintain a maximum mixed air temperature of 60 deg F"
+     },
+     {
+      "from": "AHU.ECON-O",
+      "rel": "requires",
+      "to": "AHU.RAD-O",
+      "kind": "interlock",
+      "loop": "",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "If the economizer is opened, the return air damper shall be closed"
+     },
+     {
+      "from": "AHU.ECON-O",
+      "rel": "requires",
+      "to": "AHU.EF1-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "If the economizer is opened, the exhaust fans shall be enabled"
+     },
+     {
+      "from": "AHU.ECON-O",
+      "rel": "requires",
+      "to": "AHU.EF2-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "G",
+      "confidence": 0.9,
+      "why": "If the economizer is opened, the exhaust fans shall be enabled"
+     },
+     {
+      "from": "AHU.MA-T",
+      "rel": "requires",
+      "to": "AHU.PH-E",
+      "kind": "interlock",
+      "loop": "",
+      "section": "I",
+      "confidence": 0.95,
+      "why": "If the mixed air temperature falls below 55 degrees, the electric preheat coil shall enable"
+     },
+     {
+      "from": "AHU.MA-SP",
+      "rel": "drives",
+      "to": "AHU.PH-O",
+      "kind": "loop",
+      "loop": "preheat_mixed_air_temp",
+      "section": "I",
+      "confidence": 0.95,
+      "why": "electric preheat coil shall modulate up and down to maintain a mixed air temperature of 55 degrees"
+     },
+     {
+      "from": "AHU.MA-T",
+      "rel": "feedback",
+      "to": "AHU.PH-O",
+      "kind": "loop",
+      "loop": "preheat_mixed_air_temp",
+      "section": "I",
+      "confidence": 0.95,
+      "why": "electric preheat coil shall modulate up and down to maintain a mixed air temperature of 55 degrees"
+     },
+     {
+      "from": "AHU.RA-H",
+      "rel": "requires",
+      "to": "AHU.HUM-E",
+      "kind": "interlock",
+      "loop": "",
+      "section": "J",
+      "confidence": 0.95,
+      "why": "When the return air humidity falls below 40% RH, the steam generating humidifier shall enable"
+     },
+     {
+      "from": "AHU.HUM-SP",
+      "rel": "drives",
+      "to": "AHU.HUM-O",
+      "kind": "loop",
+      "loop": "humidification",
+      "section": "J",
+      "confidence": 0.95,
+      "why": "steam generating humidifier shall modulate to maintain 45% RH in the supply air"
+     },
+     {
+      "from": "AHU.HUM-H",
+      "rel": "feedback",
+      "to": "AHU.HUM-O",
+      "kind": "loop",
+      "loop": "humidification",
+      "section": "J",
+      "confidence": 0.95,
+      "why": "steam generating humidifier shall modulate to maintain 45% RH in the supply air"
+     },
+     {
+      "from": "AHU.MA-T",
+      "rel": "requires",
+      "to": "AHU.CHWV-O",
+      "kind": "interlock",
+      "loop": "",
+      "section": "K",
+      "confidence": 0.9,
+      "why": "When the mixed air temperature rises above 55 degrees, the chilled water 3-way valve shall open"
+     },
+     {
+      "from": "AHU.DA-SP",
+      "rel": "drives",
+      "to": "AHU.CHWV-O",
+      "kind": "loop",
+      "loop": "cooling_discharge_air_temp",
+      "section": "K",
+      "confidence": 0.95,
+      "why": "chilled water 3-way valve shall modulate open and closed to maintain a discharge air temperature of 53 deg F"
+     },
+     {
+      "from": "AHU.DA-T",
+      "rel": "feedback",
+      "to": "AHU.CHWV-O",
+      "kind": "loop",
+      "loop": "cooling_discharge_air_temp",
+      "section": "K",
+      "confidence": 0.95,
+      "why": "chilled water 3-way valve shall modulate open and closed to maintain a discharge air temperature of 53 deg F"
+     },
+     {
+      "from": "AHU.OA-T",
+      "rel": "requires",
+      "to": "AHU.CHWV-O",
+      "kind": "interlock",
+      "loop": "",
+      "section": "K",
+      "confidence": 0.95,
+      "why": "When the outside air temperature falls below 40 deg F, the chilled water valve shall be closed"
+     },
+     {
+      "from": "AHU.LT-A",
+      "rel": "requires",
+      "to": "AHU.SF-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If a temperature low limit switch senses a temperature below setpoint the supply fan shall be shutdown"
+     },
+     {
+      "from": "AHU.LT-A",
+      "rel": "requires",
+      "to": "AHU.EF1-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If a temperature low limit switch senses a temperature below setpoint the exhaust fan shall be shutdown"
+     },
+     {
+      "from": "AHU.LT-A",
+      "rel": "requires",
+      "to": "AHU.EF2-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If a temperature low limit switch senses a temperature below setpoint the exhaust fan shall be shutdown"
+     },
+     {
+      "from": "AHU.LT-A",
+      "rel": "requires",
+      "to": "AHU.CHWV-O",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "cooling coil control valve shall open on freeze stat trip"
+     },
+     {
+      "from": "AHU.LT-A",
+      "rel": "requests",
+      "to": "unit:CWP",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.9,
+      "why": "chilled water pump shall be enabled to maintain 25% flow on freeze stat trip"
+     },
+     {
+      "from": "AHU.HSP-A",
+      "rel": "requires",
+      "to": "AHU.SF-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If the high static pressure switch senses a discharge pressure greater than 3.0 in. the supply fan shall be shutdown"
+     },
+     {
+      "from": "AHU.HSP-A",
+      "rel": "requires",
+      "to": "AHU.EF1-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If the high static pressure switch senses a discharge pressure greater than 3.0 in. the exhaust fan shall be shutdown"
+     },
+     {
+      "from": "AHU.HSP-A",
+      "rel": "requires",
+      "to": "AHU.EF2-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If the high static pressure switch senses a discharge pressure greater than 3.0 in. the exhaust fan shall be shutdown"
+     },
+     {
+      "from": "AHU.LSP-A",
+      "rel": "requires",
+      "to": "AHU.SF-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If the low static pressure switch senses an inlet pressure less than -2.0 in. the supply fan shall be shutdown"
+     },
+     {
+      "from": "AHU.LSP-A",
+      "rel": "requires",
+      "to": "AHU.EF1-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If the low static pressure switch senses an inlet pressure less than -2.0 in. the exhaust fan shall be shutdown"
+     },
+     {
+      "from": "AHU.LSP-A",
+      "rel": "requires",
+      "to": "AHU.EF2-C",
+      "kind": "interlock",
+      "loop": "",
+      "section": "L",
+      "confidence": 0.95,
+      "why": "If the low static pressure switch senses an inlet pressure less than -2.0 in. the exhaust fan shall be shutdown"
+     },
+     {
+      "from": "AHU.OA-T",
+      "rel": "requires",
+      "to": "AHU.CHWV-O",
+      "kind": "interlock",
+      "loop": "",
+      "section": "M",
+      "confidence": 0.9,
+      "why": "Chilled water valve shall be closed, unless outside air temperature is below 32 degrees"
+     }
+    ],
+    "gaps": [
+     {
+      "section": "L",
+      "text": "No fire alarm input point is available on AHU01 to shut down the supply and exhaust fans when the fire alarm is triggered."
+     }
+    ],
+    "conflicts": [
+     {
+      "sections": [
+       "B",
+       "C"
+      ],
+      "text": "Section B states the unit shall be in occupied mode according to a schedule, while Section C states the air handler shall be in occupied mode at all times."
+     }
+    ]
+   },
+   "model": "hydrogen",
+   "calls": [
+    26
+   ],
+   "paid_usd": 0.058833,
+   "latency_s": 42.639
+  }
+ }
+}
