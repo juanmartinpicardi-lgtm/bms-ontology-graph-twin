@@ -468,5 +468,5 @@ const Parts = (() => {
   }
 
   return { V, MAT, C, MEDIUM, mesh, box, duct, joint, flow, pleatedFilter, bagFilter, coil, valve, damper, fan, motor,
-           vfd, sensor, flowStation, pipeRun, particles };
+           vfd, sensor, flowStation, pipeRun, particles, frameAround };
 })();

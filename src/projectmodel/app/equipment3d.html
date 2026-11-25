@@ -204,7 +204,10 @@ document.getElementById("eqSub").innerHTML =
    `fit ${Math.round(eq.slot_fill * 100)}%`, esc(DATA.project)].join(" · ");
 
 const viewer = Core.createViewer(document.getElementById("view"), document.getElementById("labels"));
-const BUILD = { ahu: AHU.build, vav: VAV.build, fcu: FCU.build, chiller: Chiller.build, boiler: Boiler.build, pump: Pump.build };
+const BUILD = { ahu: AHU.build, vav: VAV.build, rvav: VAV.build, fcu: FCU.build, chiller: Chiller.build, boiler: Boiler.build,
+                pump: Pump.build, rtu: RTU.build, exhaust_fan: ExhaustFan.build, unit_heater: UnitHeater.build,
+                split_system: Split.build, cooling_tower: CoolingTower.build, heat_exchanger: HeatExchanger.build,
+                meter: Meter.build };
 const model = BUILD[eq.template](DATA, viewer);
 viewer.scene.add(model.group);
 viewer.setModel(model);

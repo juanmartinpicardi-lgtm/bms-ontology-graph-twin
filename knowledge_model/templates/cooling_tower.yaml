@@ -1,0 +1,16 @@
+id: cooling_tower
+brick_class: Cooling_Tower
+description: Open or closed circuit cooling tower rejecting condenser water heat; fan on a VFD, isolation valve per cell.
+name_patterns: ['\bCT[-_ ]?\d', '\bCOOLING[-_ ]?TOWER\b']
+point_count: [1, 20]
+points:
+  - {role: cmd, classes: [Start_Stop_Command, Fan_Command, Run_Enable_Command, Enable_Command], required: true}
+  - {role: status, classes: [Status, Fan_Status, Run_Status, On_Off_Status], required: false}
+  - {role: fan_speed, classes: [Speed_Command, Fan_Speed_Command], required: false}
+  - {role: fan_freq, classes: [Frequency_Sensor, Speed_Sensor], required: false}
+  - {role: power, classes: [Power_Sensor, Current_Sensor], required: false}
+  - {role: cw_leaving_temp, classes: [Leaving_Condenser_Water_Temperature_Sensor], required: false}
+  - {role: cw_entering_temp, classes: [Entering_Condenser_Water_Temperature_Sensor], required: false}
+  - {role: cw_sp, classes: [Entering_Condenser_Water_Temperature_Setpoint], required: false}
+  - {role: iso_valve, classes: [Valve_Command, Valve_Position_Command, Valve_Position_Sensor], required: false}
+relations: []

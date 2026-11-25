@@ -1,0 +1,25 @@
+id: rvav
+brick_class: RVAV
+description: VAV terminal with a reheat coil, electric (SCR or staged) or hot water, optionally fan powered (series or parallel fan).
+name_patterns: ['\bRVAV\b', '\bVAV[ER][-_ ]?\d']
+point_count: [4, 22]
+points:
+  - {role: zone_temp, classes: [Zone_Air_Temperature_Sensor], required: true}
+  - {role: airflow, classes: [Discharge_Air_Flow_Sensor, Air_Flow_Sensor, Supply_Air_Flow_Sensor], required: true}
+  - {role: airflow_sp, classes: [Discharge_Air_Flow_Setpoint, Air_Flow_Setpoint], required: false}
+  - {role: damper, classes: [Damper_Command, Damper_Position_Command, Damper_Position_Sensor], required: true}
+  - {role: discharge_temp, classes: [Discharge_Air_Temperature_Sensor], required: false}
+  - {role: reheat_cmd, classes: [Heating_Command], required: false}
+  - {role: reheat_enable, classes: [Heating_Enable_Command], required: false}
+  - {role: reheat_valve, classes: [Valve_Command, Valve_Position_Command], required: false, medium: hot_water}
+  - {role: occ_cooling_sp, classes: [Occupied_Cooling_Zone_Air_Temperature_Setpoint], required: false}
+  - {role: unocc_cooling_sp, classes: [Unoccupied_Cooling_Zone_Air_Temperature_Setpoint], required: false}
+  - {role: occ_heating_sp, classes: [Occupied_Heating_Zone_Air_Temperature_Setpoint], required: false}
+  - {role: unocc_heating_sp, classes: [Unoccupied_Heating_Zone_Air_Temperature_Setpoint], required: false}
+  - {role: setpoint_adjust, classes: [Temperature_Adjust_Sensor], required: false}
+  - {role: occupancy, classes: [Occupancy_Command, Occupancy_Status, Occupancy_Sensor], required: false}
+  - {role: fan_cmd, classes: [Fan_Command, Start_Stop_Command], required: false}
+  - {role: fan_status, classes: [Fan_Status, Run_Status], required: false}
+relations:
+  - {rel: isFedBy, target: ahu, medium: air, required: true}
+  - {rel: isFedBy, target: boiler, medium: hot_water, required: false, system: Hot_Water_System}

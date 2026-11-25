@@ -42,6 +42,11 @@ ba:Unit_Heater a owl:Class ;
     rdfs:label "Unit heater" ;
     skos:definition "A self-contained heater with its own fan, hung in or on a space (electric, hot water or gas). Brick has Space_Heater but no unit heater." .
 
+ba:Split_System a owl:Class ;
+    rdfs:subClassOf brick:HVAC_Equipment ;
+    rdfs:label "Split system" ;
+    skos:definition "A ductless split or VRF system: an indoor fan-coil head in the zone and an outdoor condensing unit, usually read over the vendor's BACnet gateway. Brick 1.4 has no split or VRF unit class." .
+
 # --- Point kinds that are about the BA system, not the building ----------------------------
 
 ba:Software_Point a owl:Class ;

@@ -1,0 +1,16 @@
+id: exhaust_fan
+brick_class: Exhaust_Fan
+description: Exhaust fan (roof, inline or wall), started by the BMS or by its own interlock; often with a VFD and a backdraft damper.
+name_patterns: ['\bEF\b', '\bEF[-_ ]?\d', '\bEXH(AUST)?[-_ ]?FAN\b']
+point_count: [1, 10]
+points:
+  - {role: status, classes: [Fan_Status, Run_Status, On_Off_Status, Status], required: true}
+  - {role: cmd, classes: [Start_Stop_Command, Fan_Command, Run_Enable_Command, Enable_Command], required: false}
+  - {role: speed, classes: [Fan_Speed_Command, Speed_Command], required: false}
+  - {role: frequency, classes: [Frequency_Sensor, Speed_Sensor], required: false}
+  - {role: power, classes: [Power_Sensor, Current_Sensor], required: false}
+  - {role: flow, classes: [Exhaust_Air_Flow_Sensor, Air_Flow_Sensor], required: false}
+  - {role: static_pressure, classes: [Exhaust_Air_Static_Pressure_Sensor], required: false}
+  - {role: damper, classes: [Damper_Command, Damper_Position_Command, Damper_Position_Sensor], required: false}
+  - {role: alarm, classes: [Fault_Status, Alarm], required: false}
+relations: []

@@ -141,7 +141,34 @@ const VAV = (() => {
       stream("return", [V(fx, yb + 1.2, 0.48), V(fx, yb + 0.15, 0.48)], { size: 0.5, spacing: 0.3, groups: 2, gap: 0.11 }).tag = "induced";
       xIn = 0.2 + fanLen;
     }
-    if (v.reheat) {
+    let heatGlow = null;
+    if (v.reheat && v.electric) {
+      // electric reheat (RVAV): open-coil elements in a frame across the box, an SCR panel on top; they glow with
+      // the heat %. No water.
+      heatGlow = new THREE.MeshStandardMaterial({ color: 0x5a2a1e, emissive: 0xff5a1f, emissiveIntensity: 0, metalness: 0.4, roughness: 0.5 });
+      const el = new THREE.Group(), h = BH - 0.2, d = D - 0.3;
+      Parts.frameAround(el, 0.08, h, d, 0.04);
+      for (let i = 0; i < 3; i++) for (let j = 0; j < 7; j++) {
+        const sp = Parts.mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 16), heatGlow);
+        sp.rotation.y = Math.PI / 2;
+        sp.scale.set(1, 1, 3.5);
+        sp.position.set(0, -h / 2 + 0.1 + i * (h - 0.2) / 2, -d / 2 + 0.08 + j * (d - 0.16) / 6);
+        el.add(sp);
+      }
+      for (let i = 0; i < 3; i++) el.add(box(V(-0.01, -h / 2 + 0.1 + i * (h - 0.2) / 2 - 0.006, -d / 2), V(0.01, -h / 2 + 0.1 + i * (h - 0.2) / 2 + 0.006, d / 2), MAT.trim));
+      el.position.set(BL - 0.3, yc, 0);
+      add("reheat_coil", el);
+      const scr = new THREE.Group();
+      scr.add(box(V(-0.2, -0.14, -0.12), V(0.2, 0.14, 0.12), new THREE.MeshStandardMaterial({ color: 0x9aa1a8, metalness: 0.4, roughness: 0.45 }), 0.02));
+      for (let i = 0; i < 4; i++) scr.add(box(V(-0.16 + i * 0.1, 0.14, -0.1), V(-0.13 + i * 0.1, 0.2, 0.1), MAT.frame));  // heat sink fins
+      const l = Plant.lamp(0.025);
+      l.position.set(0.12, 0.0, 0.125);
+      scr.add(l);
+      scr.userData.lamp = l;
+      scr.position.set(BL - 0.3, yb + 0.14, 0.15);
+      add("reheat_coil.scr", scr);
+      label("Electric reheat", V(BL - 0.3, yb + 0.55, 0.3));
+    } else if (v.reheat) {
       const k = Parts.coil(BH - 0.2, D - 0.35, { medium: "hot_water", thick: 0.2, pitch: 0.04 });
       const kp = V(BL - 0.3, yc, -0.1);
       k.position.copy(kp);
@@ -252,6 +279,7 @@ const VAV = (() => {
         if (dd) { open("damper@cold", st.deck.cold.damper); open("damper@hot", st.deck.hot.damper); }
         else open("damper", st.damper);
         parts["reheat_coil.valve"]?.userData.setCommand?.(st.reheat / 100);
+        if (heatGlow) { heatGlow.emissiveIntensity = 2.4 * st.reheat / 100; parts["reheat_coil.scr"].userData.lamp.userData.set(st.reheat > 0); }
         for (const w of water) w.setSpeed(0.5 * st.reheat / 100);
         if (fan) { fan.speed = st.run ? 1 : 0; fan.setStatus(st.run ? "on" : "off"); }
         const pct = { primary: st.damper, cold: st.deck.cold.damper, hot: st.deck.hot.damper, induced: st.run && fan ? 60 : 0 };

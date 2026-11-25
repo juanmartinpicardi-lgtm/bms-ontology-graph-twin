@@ -24,6 +24,7 @@ from .value_model import describe
 ANCHORS = KM_DIR / "templates" / "anchors.yaml"
 APP = Path(__file__).resolve().parent / "app"
 MODULES = ("core.js", "parts.js", "sim.js", "ahu.js", "vav.js", "plant.js", "fcu.js", "chiller.js", "boiler.js", "pump.js",
+           "fans.js", "rtu.js", "terminal.js", "waterside.js",
            "labels.js", "panels.js")  # inlined in this order into equipment3d.html
 
 
@@ -58,6 +59,31 @@ def anchor_problems(km: KnowledgeModel, anchors: dict) -> list[str]:
             if part not in parts:
                 problems.append(f"{where}: sub_equipment {cls} -> {part!r} is not in parts")
     return problems
+
+
+def template_for(cls: str | None, label: str, attrs: dict | None, km: KnowledgeModel) -> Template | None:
+    """The template an equipment is drawn and bound with, from the graph facts:
+
+    1. its class: the template of the most specific class it is (an RVAV is a VAV: rvav wins over vav);
+    2. else its name, when the class is generic (a mini-split typed HVAC_Equipment, named "MS01");
+    3. else the template the mapper or the guided setup wrote on the node.
+    """
+    known = cls in km.classes if cls else False
+    if known:
+        fits = [t for t in km.templates.values() if t.brick_class in km.classes and km.is_a(cls, t.brick_class)]
+        best = [t for t in fits if not any(u is not t and u.brick_class != t.brick_class
+                                           and km.is_a(u.brick_class, t.brick_class) for u in fits)]
+        if best:
+            return sorted(best, key=lambda t: t.id)[0]
+    named = [t for t in km.templates.values() if t.matches_name(label or "")
+             and (not known or km.is_a(t.brick_class, cls))]
+    if named:
+        return sorted(named, key=lambda t: t.id)[0]
+    return km.templates.get((attrs or {}).get("template") or "")
+
+
+def node_template(node: TreeNode, km: KnowledgeModel) -> Template | None:
+    return template_for(node.cls, node.label, node.attrs, km)
 
 
 def slot_for(template: Template, cls: str | None, words: set[str], km: KnowledgeModel) -> Slot | None:
@@ -101,11 +127,43 @@ def medium(*names: str, km: KnowledgeModel) -> str | None:
     return None
 
 
+METER_KINDS = {"Electrical_Meter": "electric", "Gas_Meter": "gas", "Chilled_Water_Meter": "chilled_water",
+               "Hot_Water_Meter": "hot_water"}
+
+
 def variant(template: Template, slots: dict[str, list[str]], name: str, sub_parts: set[str],
-            km: KnowledgeModel, parent_label: str = "") -> dict:
-    """Optional parts to draw, from the slots found (and the name, for VAV box types and pump media).
-    True flags name a drawn option; a string value (a pump's medium) is shown as is."""
+            km: KnowledgeModel, parent_label: str = "", cls: str = "", attrs: dict | None = None,
+            labels: tuple[str, ...] = ()) -> dict:
+    """Optional parts to draw, from the slots found (and the name, for VAV box types and pump media; the class and
+    the node's schedule attributes for meters, unit heaters and exhaust fans). True flags name a drawn option; a
+    string value (a pump's medium) is shown as is."""
     has = lambda *roles: any(slots.get(r) for r in roles)  # noqa: E731
+    attrs = attrs or {}
+    tokens = set(km.name_rules.tokenize(name))
+    words = set(km.name_rules.words(" ".join((name, *labels))))
+    if template.id == "rvav":  # electric unless a hot water valve says otherwise; FVAV / FPB boxes have a fan
+        hot = has("reheat_valve")
+        return {"reheat": True, "electric": not hot, "hot_water": hot, "dual_duct": False,
+                "fan_powered": has("fan_cmd", "fan_status") or bool(tokens & {"fvav", "fpb"})
+                or attrs.get("family") == "fvav"}
+    if template.id == "rtu":
+        return {"economizer": has("economizer_damper", "mixed_temp"), "vfd": has("supply_fan_speed"),
+                "heat": "electric" if "electric" in words else "gas"}
+    if template.id == "exhaust_fan":  # a roof fan on the roof level, else inline in its duct
+        roof = attrs.get("floor") in ("RF", "ROOF") or "roof" in words or not attrs.get("floor")
+        return {"roof": roof, "inline": not roof, "vfd": has("speed", "frequency", "power"), "damper": has("damper")}
+    if template.id == "unit_heater":
+        hot = has("heating_valve") or "hot" in words
+        return {"electric": not hot, "hot_water": hot}
+    if template.id == "split_system":
+        return {"ducted": "ducted" in words}
+    if template.id == "cooling_tower":
+        return {"vfd": has("fan_speed", "fan_freq")}
+    if template.id == "heat_exchanger":
+        return {"primary": "steam" if "steam" in words else "water"}
+    if template.id == "meter":
+        kind = next((k for c, k in METER_KINDS.items() if cls and cls in km.classes and km.is_a(cls, c)), None)
+        return {"kind": kind or ("gas" if "gas" in words else "water" if "water" in words else "electric")}
     if template.id == "ahu":
         return {"heating_coil": has("heating_valve"), "mixing_box": has("economizer_damper"),
                 "relief_outlet": has("relief_damper"),
@@ -163,13 +221,14 @@ def _point(p: TreeNode) -> dict:
 
 
 def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeModel,
-                      anchors: dict | None = None) -> dict:
+                      anchors: dict | None = None, tree=None) -> dict:
+    """`tree`: the project's tree when the caller already built it (one tree for a whole project's graphics)."""
     anchors = load_anchors() if anchors is None else anchors
-    tree = build_tree(store, project)
+    tree = build_tree(store, project) if tree is None else tree
     eq = tree.by_id.get(equip_id)
     if eq is None or eq.kind != "equipment":
         raise KeyError(f"{equip_id} is not an equipment of {project}")
-    template = km.templates.get(eq.attrs.get("template") or "")
+    template = node_template(eq, km)
     if template is None or template.id not in anchors:
         raise ValueError(f"{eq.label} has no 3D model (template {template.id if template else None})")
     spec = anchors[template.id]
@@ -179,7 +238,7 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
     points = {p.id: {**_point(p), "sub_equipment": None, "context": None} for p in live(eq.points)}
     sub_parts, sub_of = set(), {}
     for c in eq.children:
-        if c.attrs.get("template"):
+        if node_template(c, km):
             continue  # equipment in its own right (a VAV under its AHU folder), not a part of this one
         part = sub_equipment_part(c, spec, km)
         if part:
@@ -208,23 +267,27 @@ def equipment_payload(store: Store, project: str, equip_id: str, km: KnowledgeMo
     for pid in unplaced:
         points[pid].update(role=None, part=None, at=None)
     parent = tree.by_id.get(tree.parent.get(eq.id, ""))
-    var = variant(template, slots, eq.label, sub_parts, km, parent.label if parent else "")
+    var = variant(template, slots, eq.label, sub_parts, km, parent.label if parent else "", eq.cls, eq.attrs,
+                  tuple(p["label"] for p in points.values()))
     if var.get("dual_duct"):  # each deck has its own damper and flow cross: "Htg Dmpr Cmnd" -> damper@hot
         for p in points.values():
             if p["part"] in DECK_PARTS:
                 p["at"] = deck(p["label"], km)
     for p in points.values():
         del p["context"]
-        p["sim"] = describe(p["cls"], p["role"], p["part"], p["at"] if p["part"] in DECK_PARTS else None)
+        p["sim"] = describe(p["cls"], p["role"], p["part"], p["at"] if p["part"] in DECK_PARTS else None,
+                            template.id)
 
     required = [s for s in template.slots if s.required]
     def _rel(nid):
         n = tree.by_id[nid]
-        return {"id": n.id, "label": n.label, "cls": n.cls, "template": n.attrs.get("template")}
+        t = node_template(n, km)
+        return {"id": n.id, "label": n.label, "cls": n.cls, "template": t.id if t else None}
     # Plant equipment often has no feeds links, only the plant folder it sits in: link it to that folder's other
     # drawn equipment. Not for equipment inside a drawn parent (a VAV under its AHU has the AHU as fed-by).
-    plant = parent is not None and (parent.attrs.get("template") or "") not in anchors
-    siblings = [c for c in parent.children if c.id != eq.id and c.attrs.get("template") in anchors] if plant else []
+    tid = lambda n: getattr(node_template(n, km), "id", None)  # noqa: E731
+    plant = parent is not None and tid(parent) not in anchors
+    siblings = [c for c in parent.children if c.id != eq.id and tid(c) in anchors] if plant else []
     return {
         "project": project,
         "equipment": {"id": eq.id, "label": eq.label, "cls": eq.cls, "template": template.id,
