@@ -6,7 +6,7 @@
    "project": "alpha/names_paths",
    "scope": "confirmed",
    "engine": "shifty",
-   "seconds": 5.7,
+   "seconds": 4.84,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -119,7 +119,7 @@
      "id": "shape:FeedsBetweenEquipment",
      "origin": "building",
      "label": "feeds runs between equipment",
-     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is rec:locatedIn (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
      "severity": "violation",
      "targets": 4,
      "failed": 0,
@@ -130,7 +130,7 @@
      "id": "shape:HasLocationIsLocation",
      "origin": "building",
      "label": "hasLocation points at a location",
-     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "comment": "hasLocation places a unit in a floor, room or zone. The export writes it as rec:locatedIn, which Brick 1.4 declares equivalent to brick:hasLocation. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
      "severity": "violation",
      "targets": 0,
      "failed": 0,
@@ -574,21 +574,21 @@
     }
    ],
    "name": "alpha",
-   "export_seconds": 0.78,
+   "export_seconds": 0.69,
    "roundtrip": {
     "ok": true,
     "nodes": 640,
     "edges": 760,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 15:24",
+   "generated": "2026-11-25 16:56",
    "turtle": "data/export/alpha.confirmed.ttl"
   },
   "with_proposed": {
    "project": "alpha/names_paths",
    "scope": "confirmed + proposed",
    "engine": "shifty",
-   "seconds": 7.16,
+   "seconds": 6.57,
    "conforms": false,
    "engine_conforms": {
     "building": false,
@@ -718,7 +718,7 @@
      "id": "shape:FeedsBetweenEquipment",
      "origin": "building",
      "label": "feeds runs between equipment",
-     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is hasLocation (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
+     "comment": "In this model brick:feeds is a medium flowing from one unit or plant to another (AHU to VAV, hot water plant to reheat VAV). A unit serving a room is ba:serves; a place is rec:locatedIn (knowledge_model/README.md, Modelling decisions). Both ends are equipment or a system (a plant).",
      "severity": "violation",
      "targets": 6,
      "failed": 0,
@@ -729,7 +729,7 @@
      "id": "shape:HasLocationIsLocation",
      "origin": "building",
      "label": "hasLocation points at a location",
-     "comment": "brick:hasLocation places a unit or point in a floor, room or zone. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
+     "comment": "hasLocation places a unit in a floor, room or zone. The export writes it as rec:locatedIn, which Brick 1.4 declares equivalent to brick:hasLocation. Its end must be a location (rec:Space, which brick:Location is a subclass of).",
      "severity": "violation",
      "targets": 0,
      "failed": 0,
@@ -1164,14 +1164,14 @@
     }
    ],
    "name": "alpha",
-   "export_seconds": 1.96,
+   "export_seconds": 1.88,
    "roundtrip": {
     "ok": true,
     "nodes": 2026,
     "edges": 2300,
     "statements_without_fact": 0
    },
-   "generated": "2026-11-24 15:24",
+   "generated": "2026-11-25 16:56",
    "turtle": "data/export/alpha.with_proposed.ttl"
   }
  }

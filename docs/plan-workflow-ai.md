@@ -251,7 +251,9 @@ Status, 25 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
   - **W2:** `scripts/export_brick.py` writes Brick Turtle with provenance (reified), round-trip checked, and runs 13
     building SHACL rules plus Brick 1.4's shapes. Troop D passes 12 of 13 with proposed facts. Findings: 19 points
     on no equipment (W7), sequence relations ending on plants (W8), `ba:Field_Network` members not listed with
-    `rec:includes`, and `ba:serves`'s range (`brick:Location` vs `rec:Room`). Not yet run on every import.
+    `rec:includes`, and `ba:serves`'s range (`brick:Location` vs `rec:Room`). The last two are fixed (25 Nov 2026):
+    networks list their controllers, `ba:serves` ends on `rec:Space`, and location links are written
+    `rec:locatedIn`. Troop D with proposed facts: Brick violations 31 → 2. Not yet run on every import.
   - **W4:** Troop D's riser becomes 67 field controllers, 1 supervisory controller and 4 networks, each confirmed by
     the BMS export. 847 of 847 points are on the right controller; 66 of 69 `controls` links are right, none wrong.
     Units on every point (QUDT where clear); site and building nodes. Troop D's graph standard: 57 → 67.
