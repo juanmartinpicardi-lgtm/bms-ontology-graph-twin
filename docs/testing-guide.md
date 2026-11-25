@@ -1,7 +1,7 @@
 # Testing guide: what was built in waves 1 to 3
 
 How to try each work package of `docs/plan-workflow-ai.md`, what you should see, and what is known to be missing.
-Every number below was measured when its PR merged (#26 to #41). The commands are run from the repo root.
+Every number below was measured when its PR merged (#26 to #42). The commands are run from the repo root.
 
 ## 1. Start
 
@@ -20,7 +20,7 @@ Then open http://localhost:8521.
   PM_AI=off .venv/bin/python -m pytest -q
   ```
 
-  It passed on `main` after every merge, most recently with 499 tests.
+  It passed on `main` after every merge, most recently with 532 tests.
 
 ## 2. Ten minutes in the app
 
@@ -35,7 +35,7 @@ Then open http://localhost:8521.
 | **Sequences** | Troop D's control relations, proposed, with their source section (W8). |
 | **Tribal knowledge** | Proposed conventions waiting for **Approve / Reject**, with their evidence and a dry run, plus a "Look for patterns" button. The project page has an interview form (W10). |
 | **Agent dock** | Ask "Does AHU-1 run as designed?" on Troop D. The answer goes step by step, and every claim is a citation you can open as a page crop or a graph link (W11). |
-| **Equipment 3D / Graphics** | See §4, W9. |
+| **Graphics** | Each Troop D equipment type with its 2D schematic, points on anchors, simulated values and a QA result. Also floor and system graphics. **Equipment 3D** has the new types (W9). |
 
 ## 3. One command per package
 
@@ -44,7 +44,8 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
 | Package | Command | What you should get |
 |---|---|---|
 | W5 calibration | `.venv/bin/python scripts/eval.py mapper` | Alpha's 0.9–1.0 band right about 99% of the time, against 50% before calibration. |
-| W2 export + SHACL | `.venv/bin/python scripts/export_brick.py troop_d --include-proposed` | 1,082 nodes and 2,098 edges round-trip; 12 of 13 building rules pass. |
+| W2 export + SHACL | `.venv/bin/python scripts/export_brick.py troop_d --include-proposed` | 1,085 nodes and 2,124 edges round-trip; 12 of 13 building rules pass (the CHW plant is a system, not equipment). |
+| W9 graphics | `.venv/bin/python scripts/graphics_coverage.py troop-d/documents` | Every Troop D type with points has a graphic; 694 of 847 points on an anchor; QA passes. |
 | W6 plan reader | `.venv/bin/python scripts/eval.py plan_meaning` | Keyed plan facts: 49% with rules alone, 83% with Hydrogen and rules. About $0.04 per sheet. |
 | W8 sequences | `.venv/bin/python scripts/eval.py sequence_read` | Relations found: 18% with rules alone, 87% with Hydrogen and rules, at 88% precision. |
 | W7 binding | `.venv/bin/python scripts/eval.py point_bind` | Renamed export, names only: recall goes from 84.5% to 99.6% with the model. $0.13 per 1,000 points. |
@@ -89,7 +90,8 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
   after each review batch.
 - **W11 agent.** No live BMS values, so "runs as designed" in operation is always "unknown". Argon sometimes stalls past
   120 s.
-- **W9 graphics.** Filled in when its PR merges.
+- **W9 graphics.** Not every point has an anchor yet: 153 Troop D points, mostly on the AHU and chillers, are listed under their graphic. Unit heaters and two exhaust fans have no BMS points, so they show dashed "expected, not found" cards. On Alpha, 1,809 of 1,848 points are on an anchor, but QA fails on
+  the 8 chilled-water meters, the 3 boilers and 2 pumps (Graphics → Coverage lists why). All values are simulated.
 - **W12 tool adapters.** Waits for Niagara and CPO Studio access.
 
 ## 5. Decisions waiting for you (plan §8)

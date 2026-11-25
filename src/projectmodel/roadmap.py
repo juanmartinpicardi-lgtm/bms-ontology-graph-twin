@@ -38,7 +38,7 @@ STAGES = [
      "model": "Order the queue, explain each proposal in one line",
      "people": "Decide"},
     {"n": 8, "name": "Graphics", "icon": "view_in_ar", "ai": "next",
-     "rules": "Renderers draw from the graph; points sit on template anchors",
+     "rules": "2D and 3D graphics drawn from the graph; points on template anchors; QA (built)",
      "model": "Write new equipment builders as code; check each graphic against the graph",
      "people": "Approve new builders"},
     {"n": 9, "name": "Tribal knowledge", "icon": "groups", "ai": "now",
@@ -136,8 +136,14 @@ PACKAGES = [
                ("All 93 model picks right; calibrated; $0.13 per 1,000 points", True),
                ("19 orphan points placed: CHW plant and two lab exhaust fans", True),
                ("A penalty when a device has fewer objects than the submittal", False)]},
-    {"id": "W9", "name": "Graphics creation", "wave": 3, "status": "doing",
-     "plain": "Equipment, floor and system graphics generated from the graph, points bound."},
+    {"id": "W9", "name": "Graphics creation", "wave": 3, "status": "done",
+     "plain": "Equipment, floor and system graphics generated from the graph, points on their anchors.",
+     "parts": [("Templates and anchors for all 14 equipment types", True),
+               ("3D builders: exhaust fan, unit heater, split system, RTU, cooling tower, heat exchanger, meter", True),
+               ("2D equipment, floor and air- and water-side system graphics", True),
+               ("Troop D: every type with points has a graphic; 694 of 847 points on an anchor", True),
+               ("QA on every graphic; the agent's show-graphic tool opens it", True),
+               ("Anchors for the AHU and chiller points still unplaced", False)]},
     {"id": "W10", "name": "Learning loop", "wave": 3, "status": "done",
      "plain": "A fix made twice becomes a proposed convention; once approved, the next run applies it.",
      "parts": [("Every review fix recorded with the features a rule can key on", True),
@@ -164,4 +170,4 @@ REAL_SETS = {
     "msu_mbb": {"name": "Montana State University lab renovation", "rooms": 39, "equipment": 80, "sequences": 2},
     "itd_d1_lab": {"name": "Idaho DOT District 1 testing lab", "rooms": 27, "equipment": 70, "sequences": 6},
 }
-WAVES = {1: "First wave · done", 2: "Second wave · done", 3: "Third wave · now", 4: "When access exists"}
+WAVES = {1: "First wave · done", 2: "Second wave · done", 3: "Third wave · done", 4: "When access exists"}
