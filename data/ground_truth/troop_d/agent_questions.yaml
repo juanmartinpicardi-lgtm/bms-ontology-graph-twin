@@ -1,0 +1,225 @@
+# Answer key: questions to the agent on Troop D (W11, plan-workflow-ai §7; spec-agent §6-§9).
+#
+# Written before the agent's prompt was tuned for W11, from the Troop D documents (test_packages/troop_d: sheet M-304
+# for the sequences, M-401 for the schedules, C-200 for the controls submittal) and the graph the agent reads
+# (agent/projects.py: the rules-only setup plus W8's frozen sequence_read answers). Scoring only (scoring/agent.py):
+# never shown to the agent.
+#
+# Each question lists the facts a right answer states. A fact is
+#   answer   regexes (case-insensitive) that must ALL match the answer text for the fact to count as stated
+#   cite     citation ids, any one of which the answer must cite for the fact (fnmatch patterns: * and ?)
+#   optional true: a hit is reported, a miss is not counted against the question
+# Citation ids are the ones the agent's tools return (agent_tools.py, agent/documents.py):
+#   unit:AHU1, pt:<ref>                      graph nodes
+#   rel:<src>|<rel>|<dst>                    a graph edge (feeds, serves, a sequence's ba: control relation)
+#   src:<file>#p<page>, src:<file>#r<row>    a page (from 1) or a row of a project document
+#   seq:<sequence>, seq:<sequence>/<letter>  a sequence of operation and its sections
+#   issue:<id>                               a gap or conflict a reader raised
+#   check:<kind>[.<detail>]|<node>           a check result: shacl.<Rule>, template, binding, class, setpoint.<section>,
+#                                            conflict, live
+#   graphic:<node>                           the unit's graphic
+# `rules` is the evidence the rules gather for the question (tool calls, no model): the rules-evidence score checks
+# that each fact's citation is in what they return, so a miss there is the tools' fault, not the model's.
+# `forbid` are regexes a right answer never matches (a value stated as live, a verdict the graph cannot support).
+site: troop_d
+project: troop-d/documents
+
+questions:
+
+  - id: ahu1-as-designed
+    question: Does AHU-1 run as designed?
+    rules: [{tool: diagnose, args: {node_id: unit:AHU1}}]
+    facts:
+      - id: sequence
+        text: AHU-1 follows the Air Handling Unit sequence of sheet M-304
+        answer: ['M-304|air handling unit sequence|sequence of operations?']
+        cite: ['seq:air-handling-unit*', 'src:3_sequences.pdf#p1']
+      - id: discharge-loop
+        text: The cooling loop holds discharge (supply) air at 53 °F with DA-T, DA-SP and the chilled water valve CHWV-O
+        answer: ['53', 'discharge|supply air']
+        cite: ['pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP', 'pt:TROOPD-NAE01/FC-1.AHU-1.DA-T', 'pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O',
+               'rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-*', 'check:setpoint.K|pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP',
+               'seq:air-handling-unit/K']
+      - id: setpoints-agree
+        text: The BMS setpoints match the sequence where both give a value (DA-SP 53 °F, MA-SP 55 °F, BLDGP-SP +0.02 in.wc, HUM-SP 45 %RH)
+        answer: ['agree|match|consistent|same']
+        cite: ['check:setpoint.*']
+      - id: static-by-tab
+        text: The duct static pressure setpoint has no value yet; the test and balance engineer sets it (section E)
+        answer: ['test and balance|TAB|balanc']
+        cite: ['pt:TROOPD-NAE01/FC-1.AHU-1.DAP-SP', 'check:setpoint.E|*', 'seq:air-handling-unit/E']
+      - id: economizer-60
+        text: The economizer's 60 °F maximum mixed air temperature has no setpoint point (MA-SP is the preheat's 55 °F)
+        answer: ['60', 'mixed air|economi']
+        cite: ['seq:air-handling-unit/G', 'check:setpoint.G|*', 'issue:*']
+      - id: valve-class
+        text: The chilled water valve output CHWV-O is classed as a flow sensor, which does not fit an output (unsure class)
+        answer: ['CHWV-O|chilled water valve|cooling valve', 'sensor|class']
+        cite: ['check:class|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O', 'pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O']
+      - id: fire-alarm-gap
+        text: Section L shuts the fans down on fire alarm, but the unit has no fire alarm input
+        answer: ['fire alarm']
+        cite: ['issue:ai-air-handling-unit-gap-*', 'seq:air-handling-unit/L']
+        optional: true
+      - id: occupied-conflict
+        text: Sections B and C disagree on when the unit is occupied (schedule vs at all times)
+        answer: ['occupied|schedule']
+        cite: ['issue:ai-air-handling-unit-conflict-*']
+        optional: true
+      - id: live-unknown
+        text: Whether it actually runs this way is unknown, the graph has no live or trended BMS values
+        answer: ['unknown|no live|not live|live values|trend|cannot (tell|confirm|say)|can.t (tell|confirm|say)|on site']
+        cite: ['check:live|unit:AHU1']
+    forbid: ['\bis running\b', 'currently (at|reads|reading|holding)']
+
+  - id: ahu1-cooling-points
+    question: Which points does AHU-1's cooling loop use, and are they on the BMS?
+    rules: [{tool: read_sequence, args: {node_id: unit:AHU1}}, {tool: run_check, args: {node_id: unit:AHU1}}]
+    facts:
+      - id: points
+        text: Discharge air temperature DA-T, its setpoint DA-SP and the chilled water valve CHWV-O
+        answer: ['DA-T', 'DA-SP', 'CHWV-O']
+        cite: ['pt:TROOPD-NAE01/FC-1.AHU-1.DA-T', 'pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP', 'pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O',
+               'rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-*']
+      - id: bound
+        text: All three are BACnet objects on AHU-1's controller (FAC4911, instance 3104)
+        answer: ['BACnet|controller|3104|FAC4911|bound|on the BMS']
+        cite: ['check:binding|*', 'ctrl:3104', 'pt:TROOPD-NAE01/FC-1.AHU-1.*']
+      - id: section-k
+        text: The loop is section K of the sequence
+        answer: ['\bK\b|cooling control']
+        cite: ['seq:air-handling-unit/K', 'rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-*']
+      - id: valve-class
+        text: CHWV-O's class (a flow sensor) does not fit a valve output
+        answer: ['sensor|class']
+        cite: ['check:class|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O', 'pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O']
+        optional: true
+
+  - id: ahu1-capacity-source
+    question: Where does the graph get AHU-1's cooling capacity from? Show me the page.
+    rules: [{tool: describe, args: {node_id: unit:AHU1}}, {tool: source_page, args: {ref: unit:AHU1}}]
+    facts:
+      - id: value
+        text: 1367.2 MBH total cooling (1078.7 MBH sensible)
+        answer: ['1,?367']
+        cite: ['unit:AHU1', 'src:2_equipment_schedules.pdf#p1']
+      - id: page
+        text: The air handling unit schedule on sheet M-401, page 1 of the equipment schedules
+        answer: ['M-401|schedule']
+        cite: ['src:2_equipment_schedules.pdf#p1']
+
+  - id: ahu1-building-pressure
+    question: What building pressure should AHU-1 hold, and does the BMS setpoint agree with the sequence?
+    rules: [{tool: read_sequence, args: {node_id: unit:AHU1}}, {tool: diagnose, args: {node_id: unit:AHU1}}]
+    facts:
+      - id: value
+        text: +0.02 in. w.c. positive building pressure (section F)
+        answer: ['0\.02']
+        cite: ['seq:air-handling-unit/F', 'src:3_sequences.pdf#p1', 'check:setpoint.F|*']
+      - id: agrees
+        text: BLDGP-SP is described as +0.02 in.wc, so it agrees with the sequence
+        answer: ['BLDGP-SP|setpoint', 'agree|match|same|consistent']
+        cite: ['check:setpoint.F|pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP', 'pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP']
+      - id: outputs
+        text: The loop modulates the minimum outdoor air damper and the exhaust fans from BLDG-P
+        answer: ['damper|MOA-O|exhaust']
+        cite: ['rel:pt:TROOPD-NAE01/FC-1.AHU-1.BLDG*', 'pt:TROOPD-NAE01/FC-1.AHU-1.BLDG-P']
+        optional: true
+
+  - id: vav01-as-designed
+    question: Does VAV01 run as designed?
+    rules: [{tool: diagnose, args: {node_id: unit:VAV1}}]
+    facts:
+      - id: sequence
+        text: VAV01 follows the VAV Terminal Units sequence of M-304
+        answer: ['VAV terminal units?|M-304|sequence']
+        cite: ['seq:vav-terminal-units*', 'src:3_sequences.pdf#p1']
+      - id: cooling-loop
+        text: The zone cooling loop runs from the zone temperature ZN-T and the occupied cooling setpoint to the airflow setpoint and damper
+        answer: ['ZN-T|zone temperature', 'airflow|damper|DPR-O|SAFLOW']
+        cite: ['pt:TROOPD-NAE01/FC-2.VAV-01.*', 'rel:pt:TROOPD-NAE01/FC-2.VAV-01.*', 'seq:vav-terminal-units/F']
+      - id: no-heater
+        text: Section G describes reheat, but VAV01 has no heater in the schedule (only the VAVE boxes have one)
+        answer: ['reheat|heat', 'no heat|without (a )?heat|no (electric )?(re)?heat|lacks?|not have|has no|missing']
+        cite: ['issue:vav-terminal-units-reheat', 'issue:ai-vav-terminal-units-gap-*', 'seq:vav-terminal-units/G']
+      - id: live-unknown
+        text: Actual operation is unknown without live values
+        answer: ['unknown|no live|not live|live values|trend|cannot (tell|confirm|say)|can.t (tell|confirm|say)|on site']
+        cite: ['check:live|unit:VAV1']
+        optional: true
+    forbid: ['\bis running\b', 'currently (at|reads|reading|holding)']
+
+  - id: eflab-checks
+    question: Which checks fail on the lab exhaust fan EF-LAB?
+    rules: [{tool: run_check, args: {node_id: unit:EFLAB}}]
+    facts:
+      - id: orphan-points
+        text: Its BMS points (EF-LAB-1-S, EF-LAB-1-C, ...) are not on the EF-LAB unit or on any equipment
+        answer: ['EF-LAB-\d|point', 'not on|no equipment|orphan|unattached|not (linked|attached)|any equipment|one equipment']
+        cite: ['check:binding|*', 'check:shacl.PointOnOneEquipment|*', 'pt:TROOPD-NAE01/FC-1.EF-LAB-*']
+      - id: static-gap
+        text: The lab exhaust duct static pressure loop has no setpoint point
+        answer: ['static pressure', 'setpoint']
+        cite: ['issue:ai-exhaust-fans-gap-*', 'seq:exhaust-fans*']
+        optional: true
+
+  - id: fvav01-room-conflict
+    question: Do the documents agree on which room FVAV01 serves?
+    rules: [{tool: run_check, args: {node_id: unit:FVAV1, checks: [conflicts]}}]
+    facts:
+      - id: two-rooms
+        text: The submittal says room 104, the floor plan places it at room 108
+        answer: ['104', '108']
+        cite: ['check:conflict|unit:FVAV1', 'rel:unit:FVAV1|serves|room:104']
+      - id: proposed
+        text: So the link stays proposed, for a person to decide
+        answer: ['propos|review|confirm|decide']
+        cite: ['check:conflict|unit:FVAV1', 'rel:unit:FVAV1|serves|room:104']
+
+  - id: ahu1-graphic
+    question: Show me AHU-1's graphic.
+    rules: [{tool: show_graphic, args: {node_id: unit:AHU1}}]
+    facts:
+      - id: graphic
+        text: The Equipment 3D graphic of AHU-1 (the AHU template), with its points on the model
+        answer: ['graphic|3D|Equipment 3D']
+        cite: ['graphic:unit:AHU1']
+
+  - id: ahu1-live-value
+    question: What is AHU-1's discharge air temperature right now?
+    rules: [{tool: describe, args: {node_id: unit:AHU1}}]
+    facts:
+      - id: unknown
+        text: Not known, the graph has no live BMS values
+        answer: ['not (know|have|available|live)|no live|unknown|cannot|can.t|isn.t (available|connected)|no (BMS )?connection']
+        cite: []
+      - id: design
+        text: The design setpoint is 53 °F (DA-SP), measured by DA-T
+        answer: ['53|DA-T|DA-SP']
+        cite: ['pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP', 'pt:TROOPD-NAE01/FC-1.AHU-1.DA-T', 'seq:air-handling-unit/K']
+        optional: true
+    forbid: ['(is|reads|reading) (currently |now )?(at )?\d+(\.\d+)? ?°? ?F (right )?now', 'currently (at|reads|reading) \d']
+
+  - id: chw-plant-as-designed
+    question: Does the chilled water plant run as designed?
+    rules: [{tool: diagnose, args: {node_id: unit:CH1A}}]
+    facts:
+      - id: sequence
+        text: The plant follows the Chilled Water System sequence (lead/lag chillers, duty/standby pumps)
+        answer: ['chilled water system|lead|lag|duty|standby']
+        cite: ['seq:chilled-water-system*', 'src:3_sequences.pdf#p1']
+      - id: pumps-on-valve
+        text: The pumps (and chillers) are requested when AHU-1's chilled water valve opens
+        answer: ['valve|CHWV-O|AHU']
+        cite: ['rel:pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O|requests|*', 'seq:chilled-water-system/A', 'seq:chilled-water-system/B']
+      - id: plant-points-loose
+        text: The plant controller's points (CHW-PLANT lead/lag, flow, return temperature) are not on any equipment
+        answer: ['CHW-PLANT|plant controller|plant points?|lead|flow', 'not on|no equipment|orphan|unattached|not (linked|attached)|any equipment|unbound']
+        cite: ['check:binding|*', 'pt:TROOPD-NAE01/FC-1.CHW-PLANT.*']
+        optional: true
+      - id: live-unknown
+        text: Actual operation is unknown without live values
+        answer: ['unknown|no live|not live|live values|trend|cannot (tell|confirm|say)|can.t (tell|confirm|say)|on site']
+        cite: ['check:live|*']
+        optional: true
+    forbid: ['\bis running\b', 'currently (at|reads|reading|holding)']
