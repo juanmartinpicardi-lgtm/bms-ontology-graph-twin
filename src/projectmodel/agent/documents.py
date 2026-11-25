@@ -208,7 +208,7 @@ class DocumentIndex:
                 letters = sorted({x.strip() for part in secs for x in part.split(",") if x.strip()})
                 seq.issues.append({"id": i["id"], "text": text, "sections": letters, "by": ai.get("by", "rule"),
                                    "kind": ai.get("kind") or ("gap" if "missing" in text or "no " in text else "check"),
-                                   "status": i.get("status")})
+                                   "status": i.get("status"), "src": i.get("src")})
             out.append(seq)
         return out
 

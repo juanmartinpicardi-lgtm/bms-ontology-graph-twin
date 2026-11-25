@@ -10,6 +10,11 @@ so thinking blocks stay valid). `emit` receives events as they happen, in the AG
     Event("tool", {"name", "input"})         a tool call starts
     Event("tool_result", {"name", "summary"})
     Event("model", {"model"})                the model changed (handover to Opus 5.5)
+    Event("reset", {"why"})                  the answer so far is replaced (the citation check asked for a rewrite)
+
+Citations (spec-agent §9, plan §6.1 "candidates in, ids out"): every [[id]] in the answer must be an id a tool returned
+in this conversation. After the answer, `check_citations` finds the ones that are not; when there are some, the model
+is asked once to rewrite the answer with tool ids only. What is left unverified is in TurnResult.bad_cites.
 
 Routing: Sonnet 5.5 at low effort by default; Opus 5.5 when the person asks to think it through, or once the turn
 needs more than HANDOVER tool hops (when that is another model). When the GCP project has not enabled a Claude model,
@@ -36,7 +41,8 @@ from ..ai.providers import ModelError, ModelNotEnabled, ModelRequest, ModelUnava
 
 MAX_STEPS = 14       # model calls in one turn
 HANDOVER = 4         # tool hops on Sonnet before Opus takes over
-RESULT_CHARS = 14000
+RESULT_CHARS = 30000  # diagnose on a large unit is ~20k characters
+REPAIRS = 1         # rewrites asked for when the answer cites ids no tool returned
 THINK = re.compile(r"(?i)\b(think (it|this) (through|over)|think about it|reason (it|this) out|step by step|"
                    r"root cause|dig deeper)\b")
 
@@ -64,6 +70,8 @@ class TurnResult:
     seconds: float = 0.0
     calls: list[int] = field(default_factory=list)      # llm_calls rows
     cited: list[str] = field(default_factory=list)      # ids cited in the answer
+    bad_cites: list[str] = field(default_factory=list)  # cited ids no tool returned in this conversation
+    repaired: bool = False                              # the answer was rewritten after the citation check
     error: str | None = None
     note: str | None = None                             # e.g. the picked model was off, another answered
 
@@ -72,9 +80,43 @@ def citations(text: str) -> list[str]:
     return list(dict.fromkeys(re.findall(r"\[\[([^\]]+)\]\]", text)))
 
 
+def tool_text(history: list[dict]) -> str:
+    """Every tool result in the conversation, as one string: the ids an answer may cite."""
+    out = []
+    for m in history:
+        if m["role"] == "user" and isinstance(m["content"], list):
+            out += [b.get("content", "") for b in m["content"] if isinstance(b, dict) and b.get("type") == "tool_result"]
+    return "\n".join(x if isinstance(x, str) else json.dumps(x) for x in out)
+
+
+def check_citations(text: str, history: list[dict], tools=None) -> list[str]:
+    """Cited ids that no tool result in the conversation contains (or, with `tools`, that resolve to nothing)."""
+    seen = tool_text(history)
+    resolve = getattr(tools, "resolve", None)
+    bad = []
+    for c in citations(text):
+        if c.startswith(("m-", "skill:")):
+            continue  # memory entries and skills come from the system prompt and skill_view
+        if (json.dumps(c)[1:-1] not in seen and c not in seen) or (resolve is not None and resolve(c) is None):
+            bad.append(c)
+    return bad
+
+
 def _summary(name: str, result: dict) -> str:
     if "error" in result:
         return f"error: {result['error']}"
+    if name == "diagnose":
+        return result.get("verdict", "done")
+    if name == "run_check":
+        fails = sum(v.get("fail", 0) for v in result.get("summary", {}).values())
+        return f"{fails} failing" if fails else "all pass"
+    if name == "read_sequence":
+        return f"{len(result.get('sequences', []))} sequences, {len(result.get('relations', []))} relations"
+    if name == "source_page":
+        return " ".join(str(x) for x in (result.get("file"), result.get("sheet"), result.get("page") and
+                                         f"page {result['page']}") if x) or "no document"
+    if name == "show_graphic":
+        return result.get("kind") or "no graphic"
     if name == "find_nodes":
         return f"{result.get('total', 0)} found"
     if name in ("upstream", "downstream"):
@@ -203,6 +245,38 @@ class Agent:
                     emit(Event("model", {"model": model}))
         else:
             res.error = f"stopped after {MAX_STEPS} steps"
+        repairs = 0
+        while not res.error and res.text and repairs < REPAIRS and history[-1]["role"] == "assistant" \
+                and (bad := check_citations(res.text, history, self.tools)):
+            # Ids out (plan §6.1): an id the tools never returned is not a citation. Ask once for a rewrite.
+            repairs += 1
+            history.append({"role": "user", "content": (
+                "Citation check: these ids are not in any tool result of this conversation: "
+                + ", ".join(bad[:20]) + ". Rewrite the whole answer citing only ids copied from tool results; drop "
+                "any sentence you cannot cite that way. Do not call tools.")})
+            emit(Event("reset", {"why": "citation check"}))
+            j = get_job(job)
+            try:
+                resp = self.router.call(model, ModelRequest(system=system, messages=history, tools=tools,
+                                                            max_tokens=j.max_tokens, effort=effort or j.effort),
+                                        job=job, prompt=prompt_ref, store=self.store, project=self.project or "",
+                                        on_text=lambda d: emit(Event("text", d)))
+            except (ModelError, ModelUnavailable, ModelNotEnabled) as e:
+                history.pop()
+                res.error = str(e)
+                break
+            res.cost_usd += resp.cost_usd
+            if resp.call_id:
+                res.calls.append(resp.call_id)
+            history.append({"role": "assistant", "content": resp.content})
+            if resp.text:
+                res.text, res.repaired = resp.text, True
+            if resp.stop_reason == "tool_use":
+                # it asked for a tool anyway: answer the call with an error so the history stays well formed
+                history.append({"role": "user", "content": [
+                    {"type": "tool_result", "tool_use_id": tc.id, "content": '{"error": "no tools in a rewrite"}',
+                     "is_error": True} for tc in resp.tool_calls]})
+                history.append({"role": "assistant", "content": [{"type": "text", "text": res.text}]})
         if history[-1]["role"] == "user":
             # The turn ended without an answer (error or step limit): close it so the next question starts cleanly.
             history.append({"role": "assistant", "content": [{"type": "text", "text": res.error or "(stopped)"}]})
@@ -212,6 +286,7 @@ class Agent:
                         f"{get_model(model).label} answered.")
         res.seconds = round(time.perf_counter() - t0, 2)
         res.cited = citations(res.text)
+        res.bad_cites = check_citations(res.text, history, self.tools) if self.tools is not None else []
         return res
 
 

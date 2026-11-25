@@ -2,6 +2,7 @@
 
 Usage: .venv/bin/python scripts/agent_tools.py find_nodes '{"query": "VAV 1-2-81", "kind": "equipment"}'
        .venv/bin/python scripts/agent_tools.py describe '{"node_id": "eq:Airside AHU-2/VAV 1-2-81"}'
+       .venv/bin/python scripts/agent_tools.py --project troop_d diagnose '{"node_id": "unit:AHU1"}'
        .venv/bin/python scripts/agent_tools.py --list
 """
 
@@ -14,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.agent_tools import TOOLS, GraphTools, call  # noqa: E402
-from projectmodel.db.store import Store  # noqa: E402
+from projectmodel.agent.projects import open_project  # noqa: E402
 from projectmodel.knowledge_model import load_knowledge_model  # noqa: E402
 
 if __name__ == "__main__":
@@ -28,5 +29,6 @@ if __name__ == "__main__":
     if a.list or not a.tool:
         print(json.dumps(TOOLS, indent=2))
     else:
-        tools = GraphTools(Store(a.db), load_knowledge_model(), a.project)
+        store, project, docs = open_project(a.project, Path(a.db))
+        tools = GraphTools(store, load_knowledge_model(), project, docs)
         print(json.dumps(call(tools, a.tool, json.loads(a.args)), indent=2, ensure_ascii=False))

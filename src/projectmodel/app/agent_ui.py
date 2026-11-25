@@ -1,5 +1,9 @@
 """The conversation in the agent dock: history, the streaming answer with its tool steps, citations as trust badges,
-cost per answer, and what the agent sees (the context packet)."""
+cost per answer, and what the agent sees (the context packet).
+
+Under each answer, its citations open: a document page (src:, seq:, issue:, a node's own source) as a crop of the page
+with the box drawn; a node, a relation or a check with its trust and a link to its graphic or the tree; a graphic as a
+link to its page. A cited id no tool returned is shown struck through (TurnResult.bad_cites)."""
 
 from __future__ import annotations
 
@@ -20,13 +24,22 @@ from projectmodel.app.shell import DB, get_store, knowledge_model
 from projectmodel.memory import KNOWLEDGE_DIR, KnowledgeError, load_knowledge
 from projectmodel.projects import site_of, summaries
 
-TRUST_COLOR = {"verified": "green", "agreed": "green", "stated": "violet", "likely": "blue", "unsure": "orange"}
-CITE = re.compile(r"\[\[([^\]]+)\]\](?:\s*\*(verified|agreed|stated|likely|unsure)\*)?")
+TRUST_COLOR = {"verified": "green", "agreed": "green", "stated": "violet", "accepted": "blue", "likely": "blue",
+               "unsure": "orange"}
+CITE = re.compile(r"\[\[([^\]]+)\]\](?:\s*\*(verified|agreed|stated|accepted|likely|unsure)\*)?")
+KIND_ICON = {"page": "description", "sequence": "sync_alt", "section": "sync_alt", "issue": "report", "check": "rule",
+             "graphic": "view_in_ar", "relation": "share", "equipment": "hvac", "point": "sensors",
+             "controller": "memory", "location": "meeting_room", "network": "lan"}
 # Each tool step in plain words, while it runs and once done: what the agent is looking at, not how it calls it.
 STEP_WORDS = {"find_nodes": ("Searching the graph", "Searched the graph"), "describe": ("Reading", "Read"),
               "upstream": ("Following what feeds", "Followed what feeds"),
               "downstream": ("Following what is fed by", "Followed what is fed by"),
               "behaviour": ("Reading the sequences for", "Read the sequences for"),
+              "read_sequence": ("Reading the sequence for", "Read the sequence for"),
+              "source_page": ("Opening the source page of", "Opened the source page of"),
+              "run_check": ("Running the checks on", "Ran the checks on"),
+              "show_graphic": ("Opening the graphic of", "Opened the graphic of"),
+              "diagnose": ("Checking the design of", "Checked the design of"),
               "skill_view": ("Reading the skill", "Read the skill")}
 
 
@@ -131,6 +144,24 @@ def _label(tools: GraphTools | None, ref: str) -> str:
         return f"skill {ref[6:]}"
     if tools is not None and (n := tools.tree.by_id.get(ref)):
         return n.label
+    if ref.startswith("src:"):
+        file, _, where = ref[4:].rpartition("#")
+        return f"{file} {'p.' + where[1:] if where.startswith('p') else 'row ' + where[1:]}"
+    if ref.startswith("seq:"):
+        sid, _, sec = ref[4:].partition("/")
+        return f"{sid.replace('-', ' ')}" + (f" §{sec}" if sec else "")
+    if ref.startswith("check:"):
+        kind, _, node = ref[6:].partition("|")
+        return f"{kind.replace('.', ' ')} · {_label(tools, node)}"
+    if ref.startswith("rel:"):
+        a, rel, b = (ref[4:].split("|") + ["", ""])[:3]
+        return f"{_label(tools, a)} {rel} {_label(tools, b)}"
+    if ref.startswith("graphic:"):
+        return f"graphic · {_label(tools, ref[8:])}"
+    if ref.startswith("issue:"):
+        return "gap or conflict" if "ai-" in ref else "reader's check"
+    if tools is not None and ref in tools.rows:
+        return tools.rows[ref]["label"]
     return ref.split(":", 1)[-1].split(" ")[-1]
 
 
@@ -142,6 +173,98 @@ def render_citations(text: str, tools: GraphTools | None) -> str:
         color = TRUST_COLOR.get(trust or "", "gray")
         return f":{color}-badge[{label}{' · ' + trust if trust else ''}]"
     return CITE.sub(badge, text)
+
+
+@st.cache_data(show_spinner=False, max_entries=64)
+def _crop(project: str, file: str, page: int, boxes: tuple, stamp: float) -> bytes | None:
+    from projectmodel.agent.documents import DocumentIndex
+    docs = DocumentIndex.for_project(project)
+    box = None
+    if boxes:
+        box = [min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)]
+        if (box[2] - box[0]) * (box[3] - box[1]) > 1_500_000:  # boxes far apart: the first one
+            box = list(boxes[0])
+    try:
+        return docs.crop_png(file, page, box)
+    except Exception:  # noqa: BLE001 - a page the file does not have
+        return None
+
+
+def _page_of(tools: GraphTools, cite: str) -> dict | None:
+    """The page (file, page, boxes) a citation shows, asking the tools for it when the turn did not."""
+    try:
+        if cite.startswith("src:"):
+            info = tools.resolve(cite) or {}
+        elif cite.startswith(("seq:", "issue:", "rel:")) or cite in tools.rows:
+            src = tools.source_page(cite)
+            info = dict(tools.issued.get(src.get("cite") or "", {}), boxes=[src["bbox"]] if src.get("bbox") else [])
+        else:
+            return None
+    except (KeyError, ValueError):
+        return None
+    if not info.get("file") or not info.get("page"):
+        return None
+    return {"file": info["file"], "page": int(info["page"]), "sheet": info.get("sheet"),
+            "boxes": tuple(tuple(b) for b in info.get("boxes") or [] if b)}
+
+
+def sources(turn: dict, tools: GraphTools | None) -> None:
+    """The answer's citations, each a popover: the source page with its box, or the node, check or graphic it is."""
+    cited = [c for c in turn.get("cited") or [] if not c.startswith(("m-", "skill:"))]
+    if not cited or tools is None:
+        return
+    bad = set(turn.get("bad_cites") or [])
+    with st.container(key=f"dsrc_{abs(hash((turn.get('text') or '')[:200]))}", horizontal=True, gap="small"):
+        for i, c in enumerate(cited[:16]):
+            info = tools.resolve(c) if c not in bad else None
+            kind = (info or {}).get("kind") or ("page" if c.startswith("src:") else "check")
+            label = _label(tools, c)
+            if c in bad or info is None:
+                st.caption(f":gray[~~{label}~~] (not from a tool)")
+                continue
+            with st.popover(label[:40], icon=f":material/{KIND_ICON.get(kind, 'link')}:"):
+                _source_card(c, info, tools)
+
+
+PAGE_URLS = {"views/equipment_3d.py": "Equipment_3D", "tree_app.py": "tree"}
+
+
+def _link(page: str, label: str, icon: str, query: dict) -> None:
+    """A link to an app page with its query; a plain link where the page is not in this app's navigation."""
+    from urllib.parse import urlencode
+
+    from streamlit.errors import StreamlitPageNotFoundError
+    try:
+        st.page_link(page, label=label, icon=icon, query_params=query)
+    except StreamlitPageNotFoundError:
+        st.markdown(f"{icon} [{label}](/{PAGE_URLS.get(page, page)}?{urlencode(query)})")
+
+
+def _source_card(cite: str, info: dict, tools: GraphTools) -> None:
+    if info.get("trust"):
+        st.markdown(f":{TRUST_COLOR.get(info['trust'], 'gray')}-badge[{info['trust']}] {info.get('label') or ''}")
+    if text := info.get("text"):
+        st.caption(str(text)[:600])
+    if cite.startswith("graphic:"):
+        _link("views/equipment_3d.py", "Open the graphic", ":material/view_in_ar:", info.get("query") or {})
+        return
+    node = cite if cite in tools.rows else None
+    if node is None and cite.startswith("check:"):
+        node = cite.partition("|")[2] or None
+    if node and node in tools.rows:
+        eq = tools._equipment_of(tools.tree.by_id[node]) if node in tools.tree.by_id else None
+        if eq is not None and eq.attrs.get("template"):
+            _link("views/equipment_3d.py", f"{eq.label} in Equipment 3D", ":material/view_in_ar:",
+                  {"project": tools.project, "equip": eq.id})
+        _link("tree_app.py", "Open the tree", ":material/account_tree:", {"project": tools.project})
+    page = _page_of(tools, node or cite)
+    if page:
+        png = _crop(tools.project, page["file"], page["page"], page["boxes"], _db_stamp())
+        where = " · ".join(x for x in (page["file"], page.get("sheet"), f"page {page['page']}") if x)
+        if png:
+            st.image(png, caption=where)
+        else:
+            st.caption(where + " (the file is not on this machine)")
 
 
 def _meta(turn: dict) -> str:
@@ -186,6 +309,7 @@ def _show(turn: dict, tools: GraphTools | None) -> None:
         _steps(turn, tools)
         if turn.get("text"):
             st.markdown(render_citations(turn["text"], tools))
+            sources(turn, tools)
         if turn.get("note"):
             st.caption(f":material/swap_horiz: {turn['note']}")
         if turn.get("error"):
@@ -463,7 +587,11 @@ def _answer(question: str, chips: list[Chip], state, tools, project, store, live
             n_steps = [0]
 
             def on(ev: Event) -> None:
-                if ev.type == "text":
+                if ev.type == "reset":  # the citation check asked for a rewrite: the new answer replaces this one
+                    buf.clear()
+                    status.update(label="Checking the citations…", state="running")
+                    out.markdown("")
+                elif ev.type == "text":
                     if not buf:
                         status.update(label="Writing the answer…", expanded=bool(n_steps[0]))
                     buf.append(ev.data)
@@ -482,6 +610,7 @@ def _answer(question: str, chips: list[Chip], state, tools, project, store, live
             status.update(label=f"Thought in {n} step{'s' if n != 1 else ''}" if n else "Answered",
                           state="error" if res.error else "complete", expanded=False)
     log.append({"role": "assistant", "text": res.text, "steps": res.steps, "model": res.model, "cost": res.cost_usd,
-                "seconds": res.seconds, "error": res.error, "cited": res.cited, "note": res.note})
+                "seconds": res.seconds, "error": res.error, "cited": res.cited, "note": res.note,
+                "bad_cites": res.bad_cites})
     _save(store, project)
     st.rerun()  # redraw the conversation from the log, with the steps folded and the badges final

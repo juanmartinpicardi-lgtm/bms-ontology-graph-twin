@@ -2,6 +2,10 @@
 
     .venv/bin/python scripts/agent_ask.py "Why is zone 2-14 warm?"
     .venv/bin/python scripts/agent_ask.py --project alpha/names_paths --focus "eq:Airside AHU-2" "What does this feed?"
+    .venv/bin/python scripts/agent_ask.py --project troop_d "Does AHU-1 run as designed?"
+
+`--project troop_d` is the Troop D graph the agent eval scores (agent/projects.py: the test package read by the setup's
+rules, plus W8's sequence logic), built once into data/eval/agent/.
 
 Uses the same agent, tools, memory and logging as the dock (every call lands in llm_calls).
 """
@@ -17,6 +21,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.agent.chat import Agent, Event  # noqa: E402
 from projectmodel.agent.context import Ref, ScreenState, chips_for, context_packet  # noqa: E402
+from projectmodel.agent.projects import open_project  # noqa: E402
 from projectmodel.agent_tools import GraphTools  # noqa: E402
 from projectmodel.ai.calls import Router  # noqa: E402
 from projectmodel.db.store import Store  # noqa: E402
@@ -32,12 +37,13 @@ def main() -> int:
     ap.add_argument("--model", help="pin a model (fable, opus, sonnet, haiku, hydrogen, argon); default: auto")
     ap.add_argument("--effort", choices=["low", "medium", "high"], help="override the job's effort")
     ap.add_argument("--quiet", action="store_true", help="print only the summary line")
-    ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"))
+    ap.add_argument("--db", default=str(ROOT / "data/kg.sqlite"), help="the store (and where model calls are logged)")
     args = ap.parse_args()
 
-    store, km = Store(args.db), load_knowledge_model()
-    tools = GraphTools(store, km, args.project)
-    state = ScreenState(page="cli", title="Command line", project=args.project, project_label=args.project)
+    km = load_knowledge_model()
+    store, project, docs = open_project(args.project, Path(args.db))
+    tools = GraphTools(store, km, project, docs)
+    state = ScreenState(page="cli", title="Command line", project=project, project_label=project)
     if args.focus:
         n = tools.tree.by_id.get(args.focus)
         state.focus = Ref("equipment" if args.focus.startswith("eq:") else "point", args.focus,
@@ -56,12 +62,15 @@ def main() -> int:
         elif ev.type == "model":
             print(f"[{ev.data['model']}]", flush=True)
 
-    agent = Agent(Router(), tools=tools, knowledge=load_knowledge(km=km), project=args.project, store=store)
+    log = store if args.project != "troop_d" else Store(args.db)  # model calls are logged in --db
+    agent = Agent(Router(), tools=tools, knowledge=load_knowledge(km=km), project=project, store=log)
     res = agent.run([], args.question, packet, emit=on, model=args.model, effort=args.effort)
     print(f"\n\nmodel {res.model} · {len(res.steps)} tool calls · ${res.cost_usd:.4f} · {res.seconds:.1f} s · "
           f"calls {res.calls}")
     if not args.quiet:
         print(f"cited: {res.cited}")
+        if res.bad_cites:
+            print(f"NOT FROM A TOOL: {res.bad_cites}")
     if res.error:
         print(f"ERROR: {res.error}")
         return 1
