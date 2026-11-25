@@ -229,7 +229,7 @@ def statements(it: Intake) -> dict[str, dict[str, list]]:
         if f["kind"] != "bms_object" or not f["data"].get("matched"):
             continue
         d = f["data"]
-        pid = f"pt:{d['ref']}"
+        pid = d.get("point") or f"pt:{d['ref']}"  # the submittal point it is bound to (intake/binding.py)
         if pid not in points:
             continue
         src, ref, method, conf, status = _prov(f)
