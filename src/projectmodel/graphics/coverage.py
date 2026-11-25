@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from ..db.store import Store
 from ..equipment_view import equipment_payload, load_anchors, node_template
 from ..knowledge_model import KnowledgeModel
-from ..tree import build_tree
+from ..tree import UNPLACED, build_tree
 from .equipment2d import render
 from .layouts import LAYOUTS
 from .qa import check_equipment
@@ -39,7 +39,9 @@ class EquipmentCoverage:
 
     @property
     def status(self) -> str:
-        return self.qa["status"] if self.qa else "no graphic"
+        if self.qa:
+            return self.qa["status"]
+        return "passive, no points" if not self.points else "no graphic"
 
 
 @dataclass
@@ -55,6 +57,11 @@ class TypeCoverage:
     @property
     def has_graphic(self) -> bool:
         return all(e.has_2d and e.has_3d for e in self.equipment)
+
+    @property
+    def needs_graphic(self) -> bool:
+        """A type with no template and no points anywhere (an expansion tank, an air separator) has nothing to bind."""
+        return any(e.template or e.points for e in self.equipment)
 
     @property
     def points(self) -> int:
@@ -78,7 +85,7 @@ def equipment_coverage(store: Store, project: str, km: KnowledgeModel, anchors: 
     anchors = load_anchors() if anchors is None else anchors
     tree = build_tree(store, project) if tree is None else tree
     out = []
-    for n in sorted((n for n in tree.by_id.values() if n.kind == "equipment"), key=lambda n: n.label):
+    for n in sorted((n for n in tree.by_id.values() if n.kind == "equipment" and n.id != UNPLACED), key=lambda n: n.label):
         t = node_template(n, km)
         ec = EquipmentCoverage(n.id, n.label, n.cls or "", t.id if t else None)
         if t and t.id in anchors:
@@ -104,3 +111,9 @@ def by_type(rows: list[EquipmentCoverage]) -> list[TypeCoverage]:
         groups.setdefault(r.cls or "(no class)", []).append(r)
     return sorted((TypeCoverage(c, sorted({e.template for e in es if e.template}), es) for c, es in groups.items()),
                   key=lambda t: (-t.count, t.cls))
+
+
+def orphan_points(tree) -> list[tuple[str, str, str]]:
+    """Points the graph puts on no equipment (no hasPoint): they can't be on any graphic. (id, label, class)."""
+    n = tree.by_id.get(UNPLACED)
+    return [(p.id, p.label, p.cls or "") for p in n.points] if n else []

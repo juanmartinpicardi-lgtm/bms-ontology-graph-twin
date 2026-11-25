@@ -1,5 +1,6 @@
 """3D view of one piece of equipment: its parametric model with every point pinned on it, provenance on click, and
-simulated values (spec-equipment-3d §7).
+simulated values (spec-equipment-3d §7). Next to it, the 2D graphic generated from the same payload (graphics/,
+plan §5.4) with its QA result, and an optional vision check.
 
 Left: every piece of equipment with a 3D model in the active project, filtered by type and name, so you always see
 what else there is and pick one. Above the viewer: previous / next and the equipment this one is fed by or feeds.
@@ -23,12 +24,19 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools, box  # noqa: E402
-from projectmodel.equipment_view import equipment_payload, load_anchors, render_html  # noqa: E402
+from projectmodel.equipment_view import equipment_payload, load_anchors, render_html, template_for  # noqa: E402
+from projectmodel.graphics.drawing import img_tag  # noqa: E402
+from projectmodel.graphics.equipment2d import render as render_2d  # noqa: E402
+from projectmodel.graphics.qa import check_equipment  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
 
 PAGE = "/Equipment_3D"
-TYPES = {"ahu": "AHU", "vav": "VAV", "fcu": "FCU", "chiller": "Chiller", "boiler": "Boiler",
-         "pump": "Pump"}  # templates with a 3D model, in picker order
+TYPES = {"ahu": "AHU", "rtu": "RTU", "vav": "VAV", "rvav": "VAV reheat", "fcu": "FCU", "unit_heater": "Unit heater",
+         "split_system": "Split", "exhaust_fan": "Exhaust fan", "chiller": "Chiller", "boiler": "Boiler",
+         "pump": "Pump", "cooling_tower": "Cooling tower", "heat_exchanger": "Heat exchanger",
+         "meter": "Meter"}  # templates with a 3D model, in picker order
+QA_ICON = {"pass": ":material/check_circle:", "warn": ":material/warning:", "fail": ":material/error:",
+           "no points": ":material/radio_button_unchecked:"}
 ALL = "all"
 # Simulated-value scenarios (keys and labels as in equipment3d/sim.js). One runs app-wide: its clock keeps going as
 # you move between equipment, so a fault develops the same way on the plant, the AHU and the VAV.
@@ -62,13 +70,20 @@ if not projects:
 project = active_project(projects)  # the header dropdown; a ?project= deep link sets it
 
 # --- the equipment of this project, with a 3D model -------------------------------------------
-rows = {r["id"]: (r["label"], json.loads(r["attrs"])) for r in store.nodes(project, "equipment")}
-models = sorted((i for i, (_, a) in rows.items() if a.get("template") in TYPES and a.get("template") in anchors()),
-                key=lambda i: (list(TYPES).index(rows[i][1]["template"]), natural(rows[i][0])))
+km = knowledge_model()
+rows, resolved = {}, {}
+for r in store.nodes(project, "equipment"):
+    if r["status"] == "rejected":
+        continue
+    rows[r["id"]] = (r["label"], json.loads(r["attrs"]))
+    t = template_for(r["class"], r["label"], rows[r["id"]][1], km)  # class first, then name, then the node's own
+    if t and t.id in TYPES and t.id in anchors():
+        resolved[r["id"]] = t.id
+models = sorted(resolved, key=lambda i: (list(TYPES).index(resolved[i]), natural(rows[i][0])))
 if not models:
     st.warning("This project has no equipment with a 3D model yet.")
     st.stop()
-kind = {i: rows[i][1]["template"] for i in models}
+kind = resolved
 fed_by: dict[str, list[str]] = {}
 feeds: dict[str, list[str]] = {}
 for e in store.edges(project, "feeds"):
@@ -97,7 +112,7 @@ def upstream(i: str) -> list[str]:
 
 def downstream(i: str) -> list[str]:
     """What this one feeds, with a model; a plant's unit (CH-1) feeds what its plant feeds."""
-    plant_unit = kind[i] in ("chiller", "boiler", "pump")  # a VAV is also a part (of its AHU) but feeds nothing
+    plant_unit = kind[i] in ("chiller", "boiler", "pump", "cooling_tower", "heat_exchanger")  # a VAV is also a part (of its AHU) but feeds nothing
     return [d for d in feeds.get(i) or (feeds.get(part_of.get(i, ""), []) if plant_unit else []) if d in kind]
 
 
@@ -187,8 +202,8 @@ with browser, box("eq_list", "Equipment", "view_in_ar", fit=True):
         while (box && box.scrollHeight <= box.clientHeight + 1) box = box.parentElement;
         if (box) box.scrollTo({{ top: el.offsetTop - box.clientHeight / 2, behavior: "smooth" }});
       }})(60);</script>""", unsafe_allow_javascript=True)
-    st.caption(f"{untemplated} more equipment have no 3D model yet (meters, drives, plant groups, or no "
-               "template match).")
+    st.caption(f"{untemplated} more equipment have no model: drives, plant groups, passive specialties (an "
+               "expansion tank), or no template match.")
 
 # --- viewer, with previous / next and related equipment ---------------------------------------
 with main, box("eq_view", fit=True):
@@ -218,10 +233,38 @@ with main, box("eq_view", fit=True):
         qp.pop("scenario", None)
         st.session_state["_linked_scenario"] = scenario
     st.session_state["_linked_equip"] = equip
-    payload = equipment_payload(store, project, equip, knowledge_model(), anchors())
+    payload = equipment_payload(store, project, equip, km, anchors())
+    graphic = render_2d(payload)
+    qa = check_equipment(payload, graphic)
     # Links inside the viewer open the target on this page (the top window), not inside the iframe.
     payload["links"] = {i: link(project, i, scenario) for i in models if i != equip}
     # The start time, not the elapsed time: the page stays identical between reruns, so the viewer doesn't reload.
     payload["sim"] = {"scenario": scenario, "started": st.session_state.setdefault("sim_started", time.time())}
     payload["link_target"] = "top"
-    st.iframe(render_html(payload, st.context.theme.type), height=760)
+    view3d, view2d = st.columns([1.15, 1], gap="small")
+    with view3d:
+        st.iframe(render_html(payload, st.context.theme.type), height=760)
+    with view2d:
+        svg = graphic.svg(st.context.theme.type or "light", max_width=None)
+        st.html(f"<div style='max-height:620px;overflow:auto'>{img_tag(svg, graphic.drawing.title)}</div>")
+        c = qa["counts"]
+        st.markdown(f"{QA_ICON.get(qa['status'], '')} **2D graphic QA: {qa['status']}** · {c['bound']} of "
+                    f"{c['points']} points on their anchor · {c['anchors_filled']} of {c['anchors']} anchors filled")
+        with st.expander("QA checks", icon=":material/rule:"):
+            for chk in qa["checks"]:
+                st.markdown(f"{QA_ICON.get({'ok': 'pass'}.get(chk['level'], chk['level']), '')} "
+                            f"**{chk['rule']}** · {chk['detail']}")
+            vkey = f"vision_{project}_{equip}"
+            if st.button("Vision check", icon=":material/visibility:", key="eq_vision",
+                         help="Send the 2D graphic and its cards to the graphic_qa model (about $0.005). "
+                              "It can only flag cards we drew."):
+                from projectmodel.ai.providers import ModelError, ModelUnavailable
+                from projectmodel.graphics.vision import vision_check
+                try:
+                    st.session_state[vkey] = vision_check(payload, graphic, store=store, project=project)
+                except (ModelUnavailable, ModelError) as e:
+                    st.session_state[vkey] = {"detail": f"not run: {e}", "issues": [], "cost_usd": 0}
+            if v := st.session_state.get(vkey):
+                st.markdown(f"**vision** · {v['detail']} · ${v['cost_usd']:.4f}")
+                for i in v["issues"]:
+                    st.caption(f"{i['card']} {i['problem']}: {', '.join(i['points'])} → {i['part']}. {i['note']}")

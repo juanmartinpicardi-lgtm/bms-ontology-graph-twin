@@ -1,5 +1,6 @@
 # Anchor map: where each template slot role sits on the 3D model of its equipment type
-# (docs/spec-equipment-3d.md §3.2). Per type, not per project.
+# (docs/spec-equipment-3d.md §3.2), and on its 2D graphic (src/projectmodel/graphics/layouts.py names the same
+# parts). Per type, not per project. Every template has a section.
 #
 #   parts:          named objects the geometry code builds; every anchor part must be one of them
 #   sub_equipment:  class of an untemplated part (e.g. "SF VFD" typed Supply_Fan) -> the part its points attach to.

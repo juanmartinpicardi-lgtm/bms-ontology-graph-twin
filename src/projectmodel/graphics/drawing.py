@@ -203,6 +203,14 @@ class Drawing:
         return buf.getvalue()
 
 
+def img_tag(svg: str, alt: str = "", style: str = "max-width:100%;height:auto") -> str:
+    """The SVG as an <img> (a data URI): Streamlit's st.html sanitises inline SVG away, an image it keeps."""
+    import base64
+
+    data = base64.b64encode(svg.encode()).decode()
+    return f'<img src="data:image/svg+xml;base64,{data}" alt="{html.escape(alt)}" style="{style}">'
+
+
 def along(pts: list[tuple[float, float]], at: float) -> tuple[float, float, float]:
     """Point and direction angle (radians) at `at` (0-1) along a polyline."""
     lens = [math.dist(pts[i], pts[i + 1]) for i in range(len(pts) - 1)]
