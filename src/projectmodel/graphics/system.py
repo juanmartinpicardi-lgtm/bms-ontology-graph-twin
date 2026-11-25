@@ -11,6 +11,7 @@ Every edge drawn is a feeds edge in the graph; nothing is inferred from names or
 
 from __future__ import annotations
 
+from ..value_model import describe, sample
 from .drawing import Drawing, text_width
 from .floor import SYS_COLOR, FlatGraphic, zone_temp
 from .qa import check_drawing
@@ -73,8 +74,41 @@ def _strip_h(n: int, w: float = 110, h: float = 36) -> float:
     return 20 + ((n + per - 1) // per) * (h + 10) + 10
 
 
+def plant_role(cls: str) -> str | None:
+    """The value_model role of a water plant's own point, so it simulates in water units (gpm, CHW temperatures)."""
+    if "Flow_Sensor" in cls:
+        return "chw_flow"
+    if "Temperature_Sensor" in cls:
+        return "chw_entering_temp" if ("Entering" in cls or "Return" in cls) else "chw_leaving_temp"
+    if cls.endswith("_Command"):
+        return "cmd"
+    return None
+
+
+def _system_card(d: Drawing, s: dict, x: float, y: float, w: float) -> float:
+    """A plant system's own points (lead/lag, plant supply and return temperatures) in one card. Returns its height."""
+    pts = sorted(s.get("points", []), key=lambda p: p["n"])
+    h = 26 + 15 * len(pts) + 6
+    d.rect(x, y, w, h, rx=5, fill="card", stroke="chilled_water", width=1.5, dash="5 3", kind="unit", ref=s["id"],
+           title=f"{s['name']} · {s['cls']}")
+    d.text(x + 8, y + 17, f"{s['name']} · {s['cls'].replace('_', ' ')}", size=11, weight=700, kind="unit_label",
+           ref=s["id"])
+    for k, p in enumerate(pts):
+        ty = y + 34 + 15 * k
+        role = plant_role(p["c"])
+        v = (sample(describe(p["c"], role), f"{s['id']}/{p['n']}") if role or p["c"] not in ("", "Sensor", "Point")
+             else {"text": "no unit", "state": "off"})  # a generic Sensor: nothing to simulate
+        d.text(x + 10, ty, p["n"], size=10, weight=600, kind="label", ref=f"{s['id']}/{p['n']}")
+        d.text(x + w - 10, ty, v["text"], size=10, anchor="end", kind="value", ref=f"{s['id']}/{p['n']}",
+               fill={"ok": "ok", "warn": "warn", "off": "muted"}.get(v["state"], "accent"))
+    return h
+
+
 def render_water(payload: dict) -> FlatGraphic:
     E = {e["id"]: e for e in payload["equip"]}
+    systems = sorted((e for e in payload["equip"] if e["type"] == "System" and e["sys"] == "Waterside"
+                      and e.get("points")), key=lambda e: e["name"])
+    sys_h = sum(26 + 15 * len(s["points"]) + 6 + 12 for s in systems)
     wet = [r for r in payload["rels"] if medium(r["via"]) != "supply" and r["s"] in E and r["d"] in E]
     ids = {r["s"] for r in wet} | {r["d"] for r in wet}
     loose = sorted((e for e in payload["equip"] if e["type"] in PLANT and e["id"] not in ids), key=lambda e: e["name"])
@@ -95,12 +129,16 @@ def render_water(payload: dict) -> FlatGraphic:
     ncol = len(cols)
     span = ncol * BOX_W + max(0, ncol - 1) * COL_GAP
     x0 = MARGIN + max(0, (W - 2 * MARGIN - span) / 2)
-    height = HEAD + 20 + plant_h + _strip_h(len(loose)) + 20
+    height = HEAD + 20 + sys_h + plant_h + _strip_h(len(loose)) + 20
     d = Drawing(W, height, "Water side · system graphic")
     _head(d, "Water side", f"{len(ids)} connected by feeds · {len(wet)} feeds edges · {len(loose)} not connected")
+    y = HEAD + 10
+    for s in systems:  # the plant's own points, above the plant
+        y += _system_card(d, s, MARGIN + max(0, (W - 2 * MARGIN - span) / 2), y, max(span, 320)) + 12
+    top0 = HEAD + 20 + sys_h
     pos: dict[str, tuple[float, float]] = {}
     for c, members in sorted(cols.items()):
-        top = HEAD + 20 + (plant_h - 20 - len(members) * (BOX_H + ROW_GAP) + ROW_GAP) / 2
+        top = top0 + (plant_h - 20 - len(members) * (BOX_H + ROW_GAP) + ROW_GAP) / 2
         for k, i in enumerate(members):
             pos[i] = (x0 + c * (BOX_W + COL_GAP), top + k * (BOX_H + ROW_GAP))
     for r in wet:
@@ -112,8 +150,8 @@ def render_water(payload: dict) -> FlatGraphic:
         d.poly([(b[0] - 7, b[1] - 4), b, (b[0] - 7, b[1] + 4)], stroke=medium(r["via"]), width=2, kind="flow")
     for i, (x, y) in pos.items():
         _unit(d, E[i], x, y)
-    _strip(d, loose, HEAD + 20 + plant_h, "Plant equipment with no feeds edge in the graph")
-    expected = ids | {e["id"] for e in loose}
+    _strip(d, loose, top0 + plant_h, "Plant equipment with no feeds edge in the graph")
+    expected = ids | {e["id"] for e in loose} | {s["id"] for s in systems}
     return FlatGraphic(d, "water", check_drawing(d, None, expected, "unit"), {i: p for i, p in pos.items()},
                        [e["id"] for e in loose])
 

@@ -54,7 +54,10 @@ def render_floor(payload: dict, level: str) -> FlatGraphic:
     aspect = lv.get("aspect") or payload.get("aspect") or 0.65
     pw = W - 2 * MARGIN
     ph = pw * aspect
-    units = [e for e in payload["equip"] if e.get("floor") == level and not e.get("parent")]
+    # a system (the CHW plant) is not a unit on a plan; a part of another unit is drawn with it, unless the graph
+    # puts it in a room of its own (a chiller in the plant room, part of the CHW plant)
+    units = [e for e in payload["equip"] if e.get("floor") == level and e["type"] != "System"
+             and (not e.get("parent") or e.get("room"))]
     on_plan = [e for e in units if e.get("room") in rooms and rooms[e["room"]].get("xy")]
     off_plan = [e for e in units if e not in on_plan]
 

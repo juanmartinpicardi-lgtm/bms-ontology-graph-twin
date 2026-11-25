@@ -148,9 +148,14 @@ TWIN = {
          "room": "room:101", "points": []},
         {"id": "u:V3", "name": "VAV03", "cls": "VAV", "type": "VAV", "sys": "Airside", "floor": "L1", "points": []},
         {"id": "u:P1", "name": "CWP01", "cls": "Pump", "type": "Pump", "sys": "Waterside", "floor": "L1",
-         "room": "room:102", "points": []},
+         "room": "room:102", "parent": "u:PLANT", "points": []},
         {"id": "u:C1", "name": "CH01", "cls": "Chiller", "type": "Chiller", "sys": "Waterside", "floor": "L1",
-         "room": "room:102", "points": []},
+         "room": "room:102", "parent": "u:PLANT", "points": []},
+        {"id": "u:PLANT", "name": "CHW-PLANT", "cls": "Chilled_Water_System", "type": "System", "sys": "Waterside",
+         "floor": "L1", "points": [{"n": "CWS-T", "c": "Chilled_Water_Supply_Temperature_Sensor"},
+                                   {"n": "CH-LEAD", "c": "Command"}]},
+        {"id": "u:SF", "name": "SF VFD", "cls": "Supply_Fan", "type": "Fan VFD", "sys": "Airside", "floor": "L1",
+         "parent": "u:AHU1", "points": []},
         {"id": "u:T1", "name": "HS01", "cls": "Equipment", "type": "Hydronic specialty", "sys": "Waterside",
          "floor": "L1", "points": []},
     ],
@@ -166,6 +171,7 @@ def test_floor_places_units_in_their_rooms_and_lists_the_rest():
     assert g.qa["status"] == "pass"
     assert set(g.placed) == {"u:V1", "u:V2", "u:V3", "u:P1", "u:C1", "u:T1"}
     assert set(g.unplaced) == {"u:V3", "u:T1"}            # no room in the graph: in the strip, not guessed
+    # parts in a room of their own (the plant's chiller) are drawn; the plant system and a fan inside the AHU are not
     assert any("°F" in s.geo["text"] for s in g.drawing.of_kind("value"))
 
 
@@ -174,6 +180,8 @@ def test_water_and_air_follow_feeds():
     assert w.qa["status"] == "pass"
     assert {s.ref for s in w.drawing.of_kind("edge")} == {"u:P1>u:C1", "u:C1>u:AHU1"}
     assert w.unplaced == ["u:T1"]                          # plant equipment with no feeds edge
+    plant = [x for x in w.drawing.of_kind("label") if x.ref.startswith("u:PLANT/")]
+    assert [x.geo["text"] for x in plant] == ["CH-LEAD", "CWS-T"]  # the plant's own points, on its card
     assert w.placed["u:P1"][0] < w.placed["u:C1"][0] < w.placed["u:AHU1"][0]  # columns follow the chain
     a = render_air(TWIN)
     assert a.qa["status"] == "pass"

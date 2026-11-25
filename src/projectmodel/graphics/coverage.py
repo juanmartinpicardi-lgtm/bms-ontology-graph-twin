@@ -36,11 +36,14 @@ class EquipmentCoverage:
     qa: dict | None = None
     has_3d: bool = False
     has_2d: bool = False
+    system: bool = False  # a system (the CHW plant): its points are on the water-side system graphic, not a model
 
     @property
     def status(self) -> str:
         if self.qa:
             return self.qa["status"]
+        if self.system and self.points:
+            return "on the system graphic"
         return "passive, no points" if not self.points else "no graphic"
 
 
@@ -56,7 +59,7 @@ class TypeCoverage:
 
     @property
     def has_graphic(self) -> bool:
-        return all(e.has_2d and e.has_3d for e in self.equipment)
+        return all(e.has_2d and (e.has_3d or e.system) for e in self.equipment)
 
     @property
     def needs_graphic(self) -> bool:
@@ -99,8 +102,14 @@ def equipment_coverage(store: Store, project: str, km: KnowledgeModel, anchors: 
                 ec.has_2d = True
                 ec.qa = check_equipment(p, g)
         else:
-            ec.points = len([p for p in n.points if p.prov.get("status") != "rejected"])
-            ec.unplaced = [(p.id, p.label, p.cls or "") for p in n.points if p.prov.get("status") != "rejected"]
+            live = [p for p in n.points if p.prov.get("status") != "rejected"]
+            ec.points = len(live)
+            info = km.classes.get(n.cls or "")
+            if info is not None and info.kind == "system" and live:  # drawn as a card on the system graphic
+                ec.system = ec.has_2d = True
+                ec.bound = len(live)
+            else:
+                ec.unplaced = [(p.id, p.label, p.cls or "") for p in live]
         out.append(ec)
     return out
 
