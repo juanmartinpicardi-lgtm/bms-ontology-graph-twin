@@ -246,3 +246,31 @@ def test_no_project_means_no_graph_tools(kb):
 
 def test_citations_unique_in_order():
     assert citations("a [[x]] *likely* b [[m-0001]] c [[x]]") == ["x", "m-0001"]
+
+
+# citations come from the tools (W11) ------------------------------------------------------------------------------
+
+def test_a_citation_no_tool_returned_gets_one_rewrite():
+    bad = "VAV 1-2-81 is fed by AHU-9 [[eq:Airside AHU-9]] *likely*."
+    good = f"VAV 1-2-81 is fed by AHU-2 [[{AHU.id}]] *likely*."
+    a, scripted = agent(tool_use(("upstream", {"node_id": VAV.id})), bad, good)
+    events, history = [], []
+    res = a.run(history, "What feeds VAV 1-2-81?", {}, emit=events.append)
+    assert res.repaired and res.text == good and res.bad_cites == [] and res.cited == [AHU.id]
+    assert any(e.type == "reset" for e in events)
+    assert "eq:Airside AHU-9" in history[-2]["content"] and history[-1]["role"] == "assistant"
+    assert len(scripted.requests) == 3
+
+
+def test_a_citation_still_wrong_after_the_rewrite_is_reported():
+    bad = "Fed by [[eq:Airside AHU-9]]."
+    a, _ = agent(tool_use(("upstream", {"node_id": VAV.id})), bad, bad)
+    res = a.run([], "What feeds VAV 1-2-81?", {})
+    assert res.repaired and res.bad_cites == ["eq:Airside AHU-9"] and res.error is None
+
+
+def test_check_citations_reads_every_tool_result():
+    from projectmodel.agent.chat import check_citations
+    history = [{"role": "user", "content": [{"type": "tool_result", "tool_use_id": "t",
+                                             "content": json.dumps({"cite": "src:a.pdf#p1", "id": "unit:X"})}]}]
+    assert check_citations("A [[src:a.pdf#p1]] B [[unit:X]] C [[unit:Y]] D [[m-0001]]", history) == ["unit:Y"]

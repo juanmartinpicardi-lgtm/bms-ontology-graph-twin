@@ -1,0 +1,754 @@
+{
+ "job": "agent",
+ "sets": [
+  "troop_d"
+ ],
+ "rows": [
+  {
+   "label": "troop_d \u00b7 rules evidence",
+   "kind": "rules",
+   "questions": 10,
+   "facts": 24,
+   "evidence_pct": 100.0,
+   "per_question": {
+    "ahu1-as-designed": {
+     "found": {
+      "sequence": true,
+      "discharge-loop": true,
+      "setpoints-agree": true,
+      "static-by-tab": true,
+      "economizer-60": true,
+      "valve-class": true,
+      "fire-alarm-gap": true,
+      "occupied-conflict": true,
+      "live-unknown": true
+     },
+     "share": 1.0
+    },
+    "ahu1-cooling-points": {
+     "found": {
+      "points": true,
+      "bound": true,
+      "section-k": true,
+      "valve-class": true
+     },
+     "share": 1.0
+    },
+    "ahu1-capacity-source": {
+     "found": {
+      "value": true,
+      "page": true
+     },
+     "share": 1.0
+    },
+    "ahu1-building-pressure": {
+     "found": {
+      "value": true,
+      "agrees": true,
+      "outputs": true
+     },
+     "share": 1.0
+    },
+    "vav01-as-designed": {
+     "found": {
+      "sequence": true,
+      "cooling-loop": true,
+      "no-heater": true,
+      "live-unknown": true
+     },
+     "share": 1.0
+    },
+    "eflab-checks": {
+     "found": {
+      "two-fans": true,
+      "speed-output": true,
+      "roof-location": true,
+      "static-gap": false
+     },
+     "share": 1.0
+    },
+    "fvav01-room-conflict": {
+     "found": {
+      "two-rooms": true,
+      "proposed": true
+     },
+     "share": 1.0
+    },
+    "ahu1-graphic": {
+     "found": {
+      "graphic": true
+     },
+     "share": 1.0
+    },
+    "ahu1-live-value": {
+     "found": {
+      "design": true
+     },
+     "share": 1.0
+    },
+    "chw-plant-as-designed": {
+     "found": {
+      "sequence": true,
+      "pumps-on-valve": true,
+      "plant-controller": true,
+      "live-unknown": true
+     },
+     "share": 1.0
+    }
+   }
+  },
+  {
+   "label": "troop_d \u00b7 argon",
+   "kind": "model",
+   "model": "argon",
+   "questions": 10,
+   "answer_pct": 100.0,
+   "citation_pct": 100.0,
+   "correct_pct": 100.0,
+   "precision_pct": 100.0,
+   "forbidden": 0,
+   "errors": 0,
+   "repaired": 0,
+   "usd": 0.5618,
+   "usd_per_question": 0.0562,
+   "seconds_per_question": 43.6,
+   "answers": [
+    {
+     "id": "ahu1-as-designed",
+     "question": "Does AHU-1 run as designed?",
+     "text": "Whether AHU01 (AHU-1) [[unit:AHU1]] *agreed* actually runs as designed in operation is unknown because there is no live BMS data [[check:live|unit:AHU1]] [[m-0007]], and on paper its setup has problems in 4 of 7 diagnostic steps:\n\n- **Sequence (ok):** AHU01 [[unit:AHU1]] *agreed* follows the \"Air Handling Unit\" sequence on sheet M-304 [[seq:air-handling-unit]] [[src:3_sequences.pdf#p1]].\n- **Control loops (problem):** 3 of 6 loops (economizer [[seq:air-handling-unit/G]], preheat [[seq:air-handling-unit/I]], humidification [[seq:air-handling-unit/J]]) have matching points and classes, while 3 loops (duct static pressure [[seq:air-handling-unit/E]], building pressure [[seq:air-handling-unit/F]], cooling discharge air temperature [[seq:air-handling-unit/K]]) have analog outputs misclassified as sensors: SF-O [[pt:TROOPD-NAE01/FC-1.AHU-1.SF-O]] *unsure* [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.SF-O]], EF1-O [[pt:TROOPD-NAE01/FC-1.AHU-1.EF1-O]] *unsure* [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.EF1-O]], EF2-O [[pt:TROOPD-NAE01/FC-1.AHU-1.EF2-O]] *unsure* [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.EF2-O]], and CHWV-O [[pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]] *unsure* [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]].\n- **Interlocks (ok):** All 26 published interlocks, safeties, modes, and plant requests have their points on the unit [[seq:air-handling-unit/C]] [[seq:air-handling-unit/E]] [[seq:air-handling-unit/F]] [[seq:air-handling-unit/G]] [[seq:air-handling-unit/I]] [[seq:air-handling-unit/J]] [[seq:air-handling-unit/K]] [[seq:air-handling-unit/L]] [[seq:chilled-water-system/A]] [[seq:chilled-water-system/B]] [[seq:exhaust-fans/B]].\n- **Setpoints (problem):** 4 sequence values agree with the BMS and schedule (BLDGP-SP at +0.02 in.wc [[check:setpoint.F|pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP]], preheat MA-SP at 55 \u00b0F [[check:setpoint.I|pt:TROOPD-NAE01/FC-1.AHU-1.MA-SP]], HUM-SP at 45 %RH [[check:setpoint.J|pt:TROOPD-NAE01/FC-1.AHU-1.HUM-SP]], and DA-SP at 53 \u00b0F [[check:setpoint.K|pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP]] [[src:2_equipment_schedules.pdf#p1]]), while 3 do not: MA-SP is 55 \u00b0F in the BMS vs. 60 \u00b0F in the economizer sequence [[check:setpoint.G|pt:TROOPD-NAE01/FC-1.AHU-1.MA-SP]] [[m-0001]], DAP-SP is \"set by TAB\" with no value [[check:setpoint.E|pt:TROOPD-NAE01/FC-1.AHU-1.DAP-SP]], and the 25% freeze-protection flow in section L has no setpoint point [[check:setpoint.L|unit:AHU1]].\n- **Checks (problem):** 8 checks fail on AHU01 [[unit:AHU1]] *agreed*: 1 SHACL location rule failure on `floor:RF` [[check:shacl.Entity|unit:AHU1]] and 7 analog outputs misclassified as sensors (CHWV-O [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]], EAD1-O [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.EAD1-O]], EAD2-O [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.EAD2-O]], EF1-O [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.EF1-O]], EF2-O [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.EF2-O]], RAD-O [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.RAD-O]], and SF-O [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.SF-O]]).\n- **Gaps and conflicts (problem):** Section D is missing from the sequence lettering [[issue:air-handling-unit-skips]], there is no fire alarm input point on AHU01 [[unit:AHU1]] *agreed* for the section L shutdown [[issue:ai-air-handling-unit-gap-f02915c0]], and section B (scheduled occupancy) conflicts with section C (occupied at all times) [[issue:ai-air-handling-unit-conflict-beccff1e]].\n- **Operation (unknown):** No live or trended BMS values are in the graph; check actual loop tracking, the TAB duct static setpoint, occupancy schedule mode, and fire alarm hardwiring on site or in BMS trends [[check:live|unit:AHU1]] [[m-0007]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "find_nodes",
+      "diagnose"
+     ],
+     "cost_usd": 0.061494,
+     "seconds": 41.0,
+     "cited": 40,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      34,
+      35,
+      36
+     ],
+     "note": null,
+     "facts": {
+      "sequence": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:air-handling-unit",
+        "src:3_sequences.pdf#p1",
+        "seq:air-handling-unit/G"
+       ],
+       "optional": false
+      },
+      "discharge-loop": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:air-handling-unit/K",
+        "pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O",
+        "check:setpoint.K|pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP"
+       ],
+       "optional": false
+      },
+      "setpoints-agree": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:setpoint.F|pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP",
+        "check:setpoint.I|pt:TROOPD-NAE01/FC-1.AHU-1.MA-SP",
+        "check:setpoint.J|pt:TROOPD-NAE01/FC-1.AHU-1.HUM-SP"
+       ],
+       "optional": false
+      },
+      "static-by-tab": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:air-handling-unit/E",
+        "check:setpoint.E|pt:TROOPD-NAE01/FC-1.AHU-1.DAP-SP"
+       ],
+       "optional": false
+      },
+      "economizer-60": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:air-handling-unit/G",
+        "check:setpoint.G|pt:TROOPD-NAE01/FC-1.AHU-1.MA-SP",
+        "issue:air-handling-unit-skips"
+       ],
+       "optional": false
+      },
+      "valve-class": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O",
+        "check:class|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O"
+       ],
+       "optional": false
+      },
+      "fire-alarm-gap": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:air-handling-unit/L",
+        "issue:ai-air-handling-unit-gap-f02915c0"
+       ],
+       "optional": true
+      },
+      "occupied-conflict": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "issue:ai-air-handling-unit-conflict-beccff1e"
+       ],
+       "optional": true
+      },
+      "live-unknown": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:live|unit:AHU1"
+       ],
+       "optional": false
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "ahu1-cooling-points",
+     "question": "Which points does AHU-1's cooling loop use, and are they on the BMS?",
+     "text": "AHU01 (BMS device AHU-1) [[unit:AHU1]] *agreed* uses three loop points and two interlock points for its cooling control (Section K), and all of them are on the BMS, though the valve output has a classification error [[seq:air-handling-unit/K]] [[src:3_sequences.pdf#p1]]:\n\n- **Setpoint (`DA-SP`)**: Supply Air Temperature Setpoint (53 \u00b0F) [[pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP]] *likely* drives the chilled water valve output [[rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP|drives|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]] *likely* and matches the 53 \u00b0F sequence setpoint [[check:setpoint.K|pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP]].\n- **Measured (`DA-T`)**: Supply Air Temperature Sensor [[pt:TROOPD-NAE01/FC-1.AHU-1.DA-T]] *unsure* provides feedback to the chilled water valve output [[rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-T|feedback|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]] *likely*.\n- **Output (`CHWV-O`)**: Chilled water 3-way valve output [[pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]] *unsure* is on the BMS as an analog output (AO), but fails the class check because it is misclassified as a `Chilled_Water_Flow_Sensor` [[check:class|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]].\n- **Enable / Lockout Interlocks (`MA-T`, `OA-T`)**: Mixed Air Temperature Sensor [[pt:TROOPD-NAE01/FC-1.AHU-1.MA-T]] *unsure* enables the cooling valve above 55 \u00b0F [[rel:pt:TROOPD-NAE01/FC-1.AHU-1.MA-T|requires|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]] *unsure*, and Outside Air Temperature Sensor [[pt:TROOPD-NAE01/FC-1.AHU-1.OA-T]] *unsure* closes the valve below 40 \u00b0F [[rel:pt:TROOPD-NAE01/FC-1.AHU-1.OA-T|requires|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O]] *likely* [[seq:air-handling-unit/K]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "find_nodes",
+      "diagnose",
+      "behaviour",
+      "describe",
+      "read_sequence"
+     ],
+     "cost_usd": 0.102496,
+     "seconds": 59.5,
+     "cited": 14,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      37,
+      38,
+      39,
+      40
+     ],
+     "note": null,
+     "facts": {
+      "points": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP",
+        "rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP|drives|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O",
+        "pt:TROOPD-NAE01/FC-1.AHU-1.DA-T"
+       ],
+       "optional": false
+      },
+      "bound": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP",
+        "pt:TROOPD-NAE01/FC-1.AHU-1.DA-T",
+        "pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O"
+       ],
+       "optional": false
+      },
+      "section-k": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:air-handling-unit/K",
+        "rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP|drives|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O",
+        "rel:pt:TROOPD-NAE01/FC-1.AHU-1.DA-T|feedback|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O"
+       ],
+       "optional": false
+      },
+      "valve-class": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O",
+        "check:class|pt:TROOPD-NAE01/FC-1.AHU-1.CHWV-O"
+       ],
+       "optional": true
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "ahu1-capacity-source",
+     "question": "Where does the graph get AHU-1's cooling capacity from? Show me the page.",
+     "text": "AHU-1's (tag AHU01) cooling capacity comes from the Air Handling Unit Schedule on sheet M-401, page 1 of `2_equipment_schedules.pdf` [[unit:AHU1]] *agreed* [[src:2_equipment_schedules.pdf#p1]] [[m-0101]].\n\n- **Total cooling capacity:** 1,367.2 MBH (`cooling_mbh`) [[unit:AHU1]] *agreed* [[src:2_equipment_schedules.pdf#p1]].\n- **Sensible cooling capacity:** 1,078.7 MBH (`cooling_sensible_mbh`) [[unit:AHU1]] *agreed* [[src:2_equipment_schedules.pdf#p1]].\n- **Coil conditions:** 84.1 / 67.0 \u00b0F entering air (`cooling_eat`), 53.1 / 53.1 \u00b0F leaving air (`cooling_lat`), and 183 GPM chilled water at 42 / 58 \u00b0F (`chw_gpm`, `chw_ewt_lwt`) [[unit:AHU1]] *agreed* [[src:2_equipment_schedules.pdf#p1]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "describe",
+      "source_page"
+     ],
+     "cost_usd": 0.054721,
+     "seconds": 54.7,
+     "cited": 3,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      41,
+      42,
+      43,
+      44
+     ],
+     "note": null,
+     "facts": {
+      "value": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "unit:AHU1",
+        "src:2_equipment_schedules.pdf#p1"
+       ],
+       "optional": false
+      },
+      "page": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "src:2_equipment_schedules.pdf#p1"
+       ],
+       "optional": false
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "ahu1-building-pressure",
+     "question": "What building pressure should AHU-1 hold, and does the BMS setpoint agree with the sequence?",
+     "text": "AHU01 (AHU-1) [[unit:AHU1]] *agreed* should hold a positive building pressure of **+0.02 in.wc** (adjustable), and the BMS setpoint agrees with the sequence [[seq:air-handling-unit/F]] [[check:setpoint.F|pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP]].\n\n- **Sequence of Operation (Sheet M-304, Section F):** States that the air handler references a building differential pressure sensor to maintain a positive pressurization of +0.02\" wc (adj) by modulating the minimum outside air damper [[pt:TROOPD-NAE01/FC-1.AHU-1.MOA-O]] *unsure* and enabling/modulating the exhaust fan plenums [[pt:TROOPD-NAE01/FC-1.AHU-1.EF1-O]] *unsure* [[pt:TROOPD-NAE01/FC-1.AHU-1.EF2-O]] *unsure* if building pressure rises above +0.02\" wc [[seq:air-handling-unit/F]] [[src:3_sequences.pdf#p1]].\n- **BMS & Submittal Setpoint:** The point `BLDGP-SP` (\"Building Pressure Setpoint (+0.02 in.wc)\") [[pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP]] *likely* on controller `TROOPD-NAE01/FC-1.AHU-1` specifies `+0.02 in.wc`, matching the sequence [[check:setpoint.F|pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP]] [[src:4_controls_submittal.pdf#p8]].\n- **Live Verification:** Because there is no live BMS connection in the graph, the actual active setpoint value and measured building pressure (`BLDG-P` [[pt:TROOPD-NAE01/FC-1.AHU-1.BLDG-P]] *unsure*) in the running controller are unknown and must be checked on site [[check:live|unit:AHU1]] [[m-0007]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "find_nodes",
+      "diagnose",
+      "read_sequence",
+      "read_sequence",
+      "describe"
+     ],
+     "cost_usd": 0.07383,
+     "seconds": 74.5,
+     "cited": 12,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      45,
+      46,
+      47,
+      48
+     ],
+     "note": null,
+     "facts": {
+      "value": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:air-handling-unit/F",
+        "check:setpoint.F|pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP",
+        "src:3_sequences.pdf#p1"
+       ],
+       "optional": false
+      },
+      "agrees": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:setpoint.F|pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP",
+        "pt:TROOPD-NAE01/FC-1.AHU-1.BLDGP-SP"
+       ],
+       "optional": false
+      },
+      "outputs": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "pt:TROOPD-NAE01/FC-1.AHU-1.BLDG-P"
+       ],
+       "optional": true
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "vav01-as-designed",
+     "question": "Does VAV01 run as designed?",
+     "text": "Whether VAV01 [[unit:VAV1]] *agreed* actually runs as designed is unknown because there is no live BMS connection [[m-0007]], and on paper its setup has setpoint, classification, and sequence gaps [[check:live|unit:VAV1]].\n\n- **Sequence (ok):** VAV01 [[unit:VAV1]] *agreed* follows the \"Vav Terminal Units\" sequence on sheet M-304 [[seq:vav-terminal-units]] [[src:3_sequences.pdf#p1]].\n- **Control loops (ok):** All 3 published loops\u2014airflow [[seq:vav-terminal-units/F]] (SA-F [[pt:TROOPD-NAE01/FC-2.VAV-01.SA-F]] *unsure*, SAFLOW-SP [[pt:TROOPD-NAE01/FC-2.VAV-01.SAFLOW-SP]] *likely*, DPR-O [[pt:TROOPD-NAE01/FC-2.VAV-01.DPR-O]] *unsure*), zone cooling [[seq:vav-terminal-units/F]] (ZN-T [[pt:TROOPD-NAE01/FC-2.VAV-01.ZN-T]] *unsure*, OCC-CLG-SP [[pt:TROOPD-NAE01/FC-2.VAV-01.OCC-CLG-SP]] *likely*, DPR-O [[pt:TROOPD-NAE01/FC-2.VAV-01.DPR-O]] *unsure*), and zone heating [[seq:vav-terminal-units/G]] (OCC-HTG-SP [[pt:TROOPD-NAE01/FC-2.VAV-01.OCC-HTG-SP]] *likely* driving DPR-O [[pt:TROOPD-NAE01/FC-2.VAV-01.DPR-O]] *unsure*)\u2014have their mapped points on the BMS.\n- **Interlocks and modes (ok):** Occupancy schedule switching is mapped from OCC-SCHEDULE to DPR-O [[rel:pt:TROOPD-NAE01/FC-2.VAV-01.OCC-SCHEDULE|switches|pt:TROOPD-NAE01/FC-2.VAV-01.DPR-O]] *stated* [[seq:vav-terminal-units/C]].\n- **Setpoints (problem):** Section G specifies a 90 \u00b0F heating discharge air setpoint with no matching BMS point [[check:setpoint.G|unit:VAV1]] [[seq:vav-terminal-units/G]], while SAFLOW-SP [[check:setpoint.F|pt:TROOPD-NAE01/FC-2.VAV-01.SAFLOW-SP]], OCC-CLG-SP [[check:setpoint.F|pt:TROOPD-NAE01/FC-2.VAV-01.OCC-CLG-SP]], and OCC-HTG-SP [[check:setpoint.G|pt:TROOPD-NAE01/FC-2.VAV-01.OCC-HTG-SP]] have no values in the BMS description or sequence.\n- **Checks (problem):** Point ZN-SP [[pt:TROOPD-NAE01/FC-2.VAV-01.ZN-SP]] *unsure* fails the class check because it is an analog input (AI) classed as a Setpoint [[check:class|pt:TROOPD-NAE01/FC-2.VAV-01.ZN-SP]].\n- **Gaps and conflicts (problem):** The sequence is missing section E [[issue:vav-terminal-units-skips]], calls for a 90 \u00b0F discharge air setpoint with no point on the VAVs [[issue:ai-vav-terminal-units-gap-c86ae875]], and describes electric reheat (HTG-E and HTG-O) in section G even though VAV01 [[unit:VAV1]] *agreed* and 18 other VAVs have no heater in the schedule or BMS [[issue:vav-terminal-units-reheat]] [[issue:ai-vav-terminal-units-gap-54015b66]] [[issue:ai-vav-terminal-units-gap-8e072687]] [[issue:ai-vav-terminal-units-gap-06082c61]].\n- **Operation (unknown):** No live or trended BMS data exists in the graph; check live values, actual setpoints for SAFLOW-SP, OCC-CLG-SP, and OCC-HTG-SP, and damper tracking on site [[check:live|unit:VAV1]] [[m-0007]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "diagnose"
+     ],
+     "cost_usd": 0.046752,
+     "seconds": 28.4,
+     "cited": 27,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      49,
+      50,
+      51
+     ],
+     "note": null,
+     "facts": {
+      "sequence": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:vav-terminal-units",
+        "src:3_sequences.pdf#p1",
+        "seq:vav-terminal-units/F"
+       ],
+       "optional": false
+      },
+      "cooling-loop": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:vav-terminal-units/F",
+        "pt:TROOPD-NAE01/FC-2.VAV-01.SA-F",
+        "pt:TROOPD-NAE01/FC-2.VAV-01.SAFLOW-SP"
+       ],
+       "optional": false
+      },
+      "no-heater": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:vav-terminal-units/G",
+        "issue:ai-vav-terminal-units-gap-c86ae875",
+        "issue:vav-terminal-units-reheat"
+       ],
+       "optional": false
+      },
+      "live-unknown": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:live|unit:VAV1"
+       ],
+       "optional": true
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "eflab-checks",
+     "question": "Which checks fail on the lab exhaust fan EF-LAB?",
+     "text": "On `EF-LAB` [[unit:EFLAB]] *agreed*, one SHACL check fails, and on the BMS units `EF-LAB1` [[unit:EFLAB1]] *likely* and `EF-LAB2` [[unit:EFLAB2]] *likely*, one point class check fails on each:\n\n- **EF-LAB (`shacl.Entity`):** Fails because its `brick:hasLocation` value `floor:RF` is not typed as an instance of `brick:Location` [[unit:EFLAB]] *agreed* [[check:shacl.Entity|unit:EFLAB]]. (`EF-LAB` has 0 bound points, and its template, binding, class, and conflict checks pass [[check:template|unit:EFLAB]] [[check:binding|unit:EFLAB]] [[check:class|unit:EFLAB]] [[check:conflict|unit:EFLAB]].)\n- **EF-LAB1 (`class`):** Fails on `EF-LAB-1-SPD` [[pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD]] *unsure*, which is a binary output (BO) classed as a `Speed_Sensor` [[check:class|pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD]].\n- **EF-LAB2 (`class`):** Fails on `EF-LAB-2-SPD` [[pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-SPD]] *unsure*, which is a binary output (BO) classed as a `Speed_Sensor` [[check:class|pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-SPD]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "run_check",
+      "run_check",
+      "run_check"
+     ],
+     "cost_usd": 0.044125,
+     "seconds": 40.3,
+     "cited": 12,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      52,
+      53,
+      54,
+      55
+     ],
+     "note": null,
+     "facts": {
+      "two-fans": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "unit:EFLAB1",
+        "unit:EFLAB2",
+        "check:class|pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD"
+       ],
+       "optional": false
+      },
+      "speed-output": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:class|pt:TROOPD-NAE01/FC-1.EF-LAB-1.EF-LAB-1-SPD",
+        "check:class|pt:TROOPD-NAE01/FC-1.EF-LAB-2.EF-LAB-2-SPD"
+       ],
+       "optional": false
+      },
+      "roof-location": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:shacl.Entity|unit:EFLAB"
+       ],
+       "optional": true
+      },
+      "static-gap": {
+       "stated": false,
+       "cited": false,
+       "cites": [],
+       "optional": true
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "fvav01-room-conflict",
+     "question": "Do the documents agree on which room FVAV01 serves?",
+     "text": "No, the documents disagree on which room FVAV01 [[unit:FVAV1]] *agreed* serves [[check:conflict|unit:FVAV1]] [[m-0001]]:\n\n- **Controls submittal** (`4_controls_submittal.pdf`, sheet C-700, page 21): states FVAV01 serves Room **104 Administrative Work Area** [[src:4_controls_submittal.pdf#p21]] [[rel:unit:FVAV1|serves|room:104]].\n- **Mechanical floor plans** (`1_floor_plans.pdf`, sheet M-101, page 1): states FVAV01 serves Room **108 Corridor** [[check:conflict|unit:FVAV1]] [[m-0104]].\n\nBecause the sources conflict, the `serves` link remains proposed for a person to review and confirm [[check:conflict|unit:FVAV1]] [[m-0001]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "describe",
+      "run_check",
+      "downstream",
+      "source_page"
+     ],
+     "cost_usd": 0.036891,
+     "seconds": 57.4,
+     "cited": 6,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      56,
+      57,
+      58,
+      59
+     ],
+     "note": null,
+     "facts": {
+      "two-rooms": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:conflict|unit:FVAV1",
+        "rel:unit:FVAV1|serves|room:104"
+       ],
+       "optional": false
+      },
+      "proposed": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:conflict|unit:FVAV1",
+        "rel:unit:FVAV1|serves|room:104"
+       ],
+       "optional": false
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "ahu1-graphic",
+     "question": "Show me AHU-1's graphic.",
+     "text": "Here is the 3D graphic for AHU01 [[unit:AHU1]] *agreed* [[graphic:unit:AHU1]].\n\n- It displays the `ahu` template with 27 points on the model and 27 points off the model [[graphic:unit:AHU1]].\n- All values shown on the model are simulated, as there is no live BMS connection yet [[graphic:unit:AHU1]] [[m-0007]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "show_graphic"
+     ],
+     "cost_usd": 0.026306000000000003,
+     "seconds": 20.6,
+     "cited": 3,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      60,
+      61,
+      62
+     ],
+     "note": null,
+     "facts": {
+      "graphic": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "graphic:unit:AHU1"
+       ],
+       "optional": false
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "ahu1-live-value",
+     "question": "What is AHU-1's discharge air temperature right now?",
+     "text": "AHU-1's current discharge air temperature is unknown because there is no live BMS connection yet [[m-0007]].\n\n- **Sensor to check on site:** Check the live reading on `TROOPD-NAE01/FC-1.AHU-1.DA-T` (Supply Air Temperature, \u00b0F) at the Metasys station [[pt:TROOPD-NAE01/FC-1.AHU-1.DA-T]] *unsure* [[src:4_controls_submittal.pdf#p7]].\n- **Design setpoint:** The discharge air temperature setpoint `TROOPD-NAE01/FC-1.AHU-1.DA-SP` is 53 \u00b0F [[pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP]] *likely* [[src:4_controls_submittal.pdf#p8]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "describe",
+      "describe"
+     ],
+     "cost_usd": 0.04098,
+     "seconds": 18.9,
+     "cited": 5,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      63,
+      64,
+      65,
+      66
+     ],
+     "note": null,
+     "facts": {
+      "unknown": {
+       "stated": true,
+       "cited": null,
+       "cites": [],
+       "optional": false
+      },
+      "design": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "pt:TROOPD-NAE01/FC-1.AHU-1.DA-T",
+        "pt:TROOPD-NAE01/FC-1.AHU-1.DA-SP"
+       ],
+       "optional": true
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    },
+    {
+     "id": "chw-plant-as-designed",
+     "question": "Does the chilled water plant run as designed?",
+     "text": "On paper, the chilled water plant [[unit:CHWPLANT]] *likely* (chillers [[unit:CH1A]] *agreed* and [[unit:CH1B]] *agreed*, pumps [[unit:CWP1]] *agreed* and [[unit:CWP2]] *agreed*) has problems in its flow control loop, setpoints, checks, and sequence gaps, while actual operation is unknown because there is no live BMS data [[check:live|unit:CHWPLANT]] [[m-0007]].\n\n- **Sequence (ok):** The plant and its equipment follow the \"Chilled Water System\" sequence on sheet M-304 [[seq:chilled-water-system]] [[src:3_sequences.pdf#p1]].\n- **Loops (problem):** The chillers' leaving water temperature loops have all required BMS points with fitting classes (`LCHWT-SP`, `LEWT`, `CH-E`) [[seq:chilled-water-system/B]] [[pt:TROOPD-NAE01/FC-1.CH-1A.LCHWT-SP]] *likely* [[pt:TROOPD-NAE01/FC-1.CH-1B.LCHWT-SP]] *likely*, but the chilled water flow loop on [[unit:CHWPLANT]] *likely* has no setpoint point driving it and its pump speed outputs `CWP-1-O` [[pt:TROOPD-NAE01/FC-1.CWP-1.CWP-1-O]] *unsure* and `CWP-2-O` [[pt:TROOPD-NAE01/FC-1.CWP-2.CWP-2-O]] *unsure* are misclassified as `Speed_Sensor` [[seq:chilled-water-system/A]] [[check:class|pt:TROOPD-NAE01/FC-1.CWP-1.CWP-1-O]] [[check:class|pt:TROOPD-NAE01/FC-1.CWP-2.CWP-2-O]].\n- **Interlocks (ok):** Lead/lag switching, isolation valves, flow proving (`CW-F`), pump status interlocks, and cooling/freeze requests are mapped without issues across the plant [[seq:chilled-water-system/A]] [[seq:chilled-water-system/B]] [[rel:pt:TROOPD-NAE01/FC-1.CHW-PLANT.CH-LEAD|switches|pt:TROOPD-NAE01/FC-1.CH-1A.CH-E]] *stated* [[rel:pt:TROOPD-NAE01/FC-1.CHW-PLANT.CWP-LEAD|switches|pt:TROOPD-NAE01/FC-1.CWP-1.CWP-1-C]] *stated*.\n- **Setpoints (problem):** The chillers' 42 \u00b0F leaving water setpoint points `LCHWT-SP` match the sequence and equipment schedule [[check:setpoint.B|pt:TROOPD-NAE01/FC-1.CH-1A.LCHWT-SP]] [[check:setpoint.B|pt:TROOPD-NAE01/FC-1.CH-1B.LCHWT-SP]] [[src:2_equipment_schedules.pdf#p1]], but `CHW-PLANT` has no setpoint point carrying 42 \u00b0F or the 140 gpm lag-chiller enable threshold [[check:setpoint.B|unit:CHWPLANT]] (though `LAG-ON-SP` exists on the plant interlocks [[rel:pt:TROOPD-NAE01/FC-1.CHW-PLANT.LAG-ON-SP|requires|pt:TROOPD-NAE01/FC-1.CH-1A.CH-E]] *stated*).\n- **Checks (problem):** `CWP-1-O` and `CWP-2-O` fail class checks as analog outputs classed as `Speed_Sensor` [[check:class|pt:TROOPD-NAE01/FC-1.CWP-1.CWP-1-O]] [[check:class|pt:TROOPD-NAE01/FC-1.CWP-2.CWP-2-O]], `CHW-PLANT` fails Brick `Collection`/`Equipment` SHACL shapes [[check:shacl.Collection|unit:CHWPLANT]] [[check:shacl.Equipment|unit:CHWPLANT]], and the chillers and pumps fail SHACL location checks on `room:144` [[check:shacl.Entity|unit:CH1A]] [[check:shacl.Entity|unit:CWP1]].\n- **Gaps and conflicts (problem):** Sequence section A states the pumps control chilled water flow rate, but there is no chilled water flow setpoint point for the pumps [[issue:ai-chilled-water-system-gap-84ccbb31]].\n- **Operation (unknown):** The graph has no live or trended BMS values; check the pump speed loop, lead/lag staging thresholds, and leaving water temperatures on site or in BMS trends [[check:live|unit:CHWPLANT]] [[m-0007]].",
+     "model": "argon",
+     "steps": [
+      "find_nodes",
+      "find_nodes",
+      "find_nodes",
+      "diagnose",
+      "diagnose",
+      "diagnose",
+      "diagnose",
+      "diagnose"
+     ],
+     "cost_usd": 0.074237,
+     "seconds": 41.1,
+     "cited": 29,
+     "bad_cites": [],
+     "repaired": false,
+     "error": null,
+     "calls": [
+      67,
+      68,
+      69,
+      70
+     ],
+     "note": null,
+     "facts": {
+      "sequence": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:chilled-water-system",
+        "src:3_sequences.pdf#p1",
+        "seq:chilled-water-system/B"
+       ],
+       "optional": false
+      },
+      "pumps-on-valve": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "seq:chilled-water-system/B",
+        "seq:chilled-water-system/A"
+       ],
+       "optional": false
+      },
+      "plant-controller": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "unit:CHWPLANT",
+        "check:live|unit:CHWPLANT",
+        "check:setpoint.B|unit:CHWPLANT"
+       ],
+       "optional": true
+      },
+      "live-unknown": {
+       "stated": true,
+       "cited": true,
+       "cites": [
+        "check:live|unit:CHWPLANT"
+       ],
+       "optional": true
+      }
+     },
+     "answer": 1.0,
+     "citation": 1.0,
+     "correct": 1.0,
+     "precision": 1.0,
+     "forbidden": []
+    }
+   ]
+  }
+ ],
+ "skipped": []
+}

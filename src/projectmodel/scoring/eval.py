@@ -1048,6 +1048,9 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
              log=print) -> dict:
     if job == "sequence_read":
         return sequence_read_evaluate(sets, models, router=router, store=store, fit=fit, budget=budget, log=log)
+    if job == "agent":  # the agent's question set (W11): its own module, scoring/agent.py
+        from . import agent
+        return agent.evaluate(sets, models, router=router, store=store, log=log)
     if job == "point_bind":  # W7: scoring/binding.py
         from . import binding
         return binding.evaluate(sets, models, router=router, store=store, fit=fit, budget=budget, log=log)
@@ -1058,6 +1061,9 @@ def evaluate(job: str, sets: list[str] | None = None, models: list[str] | None =
 def print_report(r: dict, out=print) -> None:  # noqa: F811
     if r["job"] == "sequence_read":
         return sequence_read_print(r, out)
+    if r["job"] == "agent":
+        from . import agent
+        return agent.print_report(r, out)
     if r["job"] == "point_bind":
         from . import binding
         return binding.print_report(r, out)
