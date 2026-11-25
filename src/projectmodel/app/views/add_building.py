@@ -824,12 +824,14 @@ def review_live() -> None:
         return
     conf = sum(1 for f in facts if f["status"] == "confirmed")
     asks = it.open_questions()
-    waiting = sum(1 for f in facts if f["status"] == "proposed" and not f.get("ask"))
+    waiting = [f for f in facts if f["status"] == "proposed" and not f.get("ask")]
+    agree = sum(1 for f in waiting if f["data"].get("agree"))
     c = st.columns(4)
     c[0].metric("Facts read", len(facts), border=True)
     c[1].metric("Confirmed", conf, f"{round(100 * conf / max(1, len(facts)))}%", border=True, delta_color="off")
-    c[2].metric("Waiting for a 2nd source", waiting, border=True)
-    c[3].metric("Need you", len(asks), border=True)
+    c[2].metric("Waiting for you", len(waiting), f"{agree} where two documents agree" if agree else None,
+                border=True, delta_color="off")
+    c[3].metric("Questions", len(asks), border=True)
     rows = [{"step": "0 · Locate", "status": "confirmed" if it.location else "to do",
              "facts": 1 if it.location else 0, "confirmed": 1 if it.location else 0, "need you": 0}]
     for s_ in STEPS[:-1]:
@@ -1044,6 +1046,38 @@ def read_now(files: list[tuple[str, bytes]]) -> None:
     st.rerun()
 
 
+def waiting_groups(proposed: list[dict]) -> None:
+    """The facts nobody contradicted that wait for the expert, in two groups: those two documents agree on (a note
+    and their combined confidence; agreement is the expert's call, plan §8.5) and those one document states. Each
+    group is accepted in one click, recorded as the person's decision."""
+    agree = sorted((f for f in proposed if f["data"].get("agree")),
+                   key=lambda f: -(f["data"].get("agree_confidence") or f["conf"]))
+    single = [f for f in proposed if not f["data"].get("agree")]
+
+    def accept(fs: list[dict]) -> None:
+        for f in fs:
+            it.s["decisions"][f["id"]] = {"status": "confirmed", "value": None, "field": None, "at": 0}
+        it.save()
+        st.rerun()
+
+    for name, fs, note, key in (
+            ("Two documents agree", agree, "Both documents state the same fact. The confidence is the two together, as "
+             "if they were independent: high, but you decide.", "agree"),
+            ("One document only", single, "Stated by one document and contradicted by none, below the confidence "
+             "that confirms on its own.", "single")):
+        if not fs:
+            continue
+        st.markdown(f"**{name}** · {len(fs)}")
+        st.caption(note)
+        table(pd.DataFrame([{"fact": f["label"], "kind": KIND_NAME.get(f["kind"], f["kind"]),
+                             **({"note": "plan + submittal agree"} if key == "agree" else {}),
+                             "confidence": f["data"].get("agree_confidence") or f["conf"], "source": f.get("step", "")}
+                            for f in fs]), hide_index=True, width="stretch",
+              column_config={"confidence": st.column_config.ProgressColumn(format="%.2f", min_value=0, max_value=1)})
+        if st.button(f"Accept these {len(fs)}", icon=":material/done_all:", key=f"accept_{key}"):
+            accept(fs)
+
+
 def review_step() -> None:
     live_eq = list(b["equip"].values())
     pts = b["points"]
@@ -1062,15 +1096,9 @@ def review_step() -> None:
         viewer([f["name"] for fs in it.s["files"].values() for f in fs])
     elif work == "wait":
         if not proposed:
-            st.success("Nothing waits for a second source.", icon=":material/task_alt:")
+            st.success("Nothing waits for you.", icon=":material/task_alt:")
         else:
-            st.caption(f"{len(proposed)} facts nobody contradicted but no second document confirmed either "
-                       f"({', '.join(sorted({KIND_NAME.get(f['kind'], f['kind']) for f in proposed}))}).")
-            if st.button(f"Confirm these {len(proposed)}", icon=":material/done_all:"):
-                for f in proposed:
-                    it.s["decisions"][f["id"]] = {"status": "confirmed", "value": None, "field": None, "at": 0}
-                it.save()
-                st.rerun()
+            waiting_groups(proposed)
     elif work == "score":
         keys = score.answer_keys()
         if keys:

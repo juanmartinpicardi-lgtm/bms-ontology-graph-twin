@@ -34,7 +34,8 @@ STAGES = [
      "model": "Pick the match from a short list when names don't line up (built: point_bind)",
      "people": "Confirm below the threshold"},
     {"n": 7, "name": "Review", "icon": "fact_check", "ai": "next",
-     "rules": "Calibrated thresholds, agreement between two sources (built)",
+     "rules": "Calibrated thresholds (built); two documents agreeing is noted with a combined confidence for the "
+              "expert (built)",
      "model": "Order the queue, explain each proposal in one line",
      "people": "Decide"},
     {"n": 8, "name": "Graphics", "icon": "view_in_ar", "ai": "next",

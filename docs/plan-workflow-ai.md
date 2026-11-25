@@ -241,7 +241,8 @@ Status, 25 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
   - **W1:** every term the app writes is declared. Control relations and `ba:serves` are in the extension, and the
     locations are `rec:` classes. `RVAV`, `ba:Unit_Heater` and the missing point classes are added. The loader
     refuses an undeclared term. Troop D rules alone go from 51% to 61% exact.
-  - **W3:** rows are written `proposed`. They are confirmed by agreement between 2 sources, by a calibrated score of
+  - **W3:** rows are written `proposed`. They were confirmed by agreement between 2 sources (since 25 Nov 2026,
+    agreement is a note for the expert instead, §8.5), by a calibrated score of
     0.9 or more, or by a person. A `claims` table and an `aliases` table hold the evidence, and each source replaces
     only its own rows. Troop D: 828 of 828 point links agree between the submittal and the BMS export.
   - **W5:** `scripts/eval.py` scores the mapper, the setup readers and `point_class`. Isotonic calibration runs per
@@ -278,9 +279,9 @@ Status, 25 Nov 2026 (the app's Roadmap page shows it live, from `src/projectmode
   - **W11:** read-only tools (source page, sequence, checks, graphic) and a "runs as designed" recipe. Rules gather
     the evidence and the model writes the answer, citing only ids the tools returned. On 10 Troop D questions,
     answers and citations are 100% right, at $0.06 per question.
-- **Left:** W12 (tool adapters) waits for access. Open decisions: §8.2 (a real submittal and BMS pair) and
-  §8.5 (auto-accept on agreement). How to test everything: `docs/testing-guide.md`.
-- §8.5 (auto-accept on agreement) is on by default and switched by `PM_AUTO_AGREE`. It is still to be agreed.
+- **Left:** W12 (tool adapters) waits for access. Open decision: §8.2 (a real submittal and BMS pair: none
+  available to us, so a public one is being searched for). §8.5 is decided: agreement goes to the expert, with a note
+  and a combined confidence. How to test everything: `docs/testing-guide.md`.
 
 Suggested first wave (parallel): **W0**, **W1**, **W3**, **W5**. Second wave: **W2**, **W4**, **W6**, **W8**. Then
 W7, W9, W10, W11.
@@ -298,7 +299,11 @@ models are measured on buildings the rules have never seen.
 3. **Data policy.** Vertex AI only, or may a job call a model outside GCP?
 4. **Budget per building.** Decided 25 Nov 2026: no limit while model calls are billed to our GCP project (Vertex AI).
    Cost is still measured per job.
-5. **Auto-accept.** May a fact that two sources agree on be confirmed without a person?
+5. **Auto-accept.** May a fact that two sources agree on be confirmed without a person? Decided 25 Nov 2026: no.
+   Agreement is the expert's call. The fact stays proposed, noted "documents agree" with the agreeing sources and
+   their combined confidence, and the expert accepts such facts in one click (`review.accept_agreed`, the setup's
+   Review → Waiting). Only a fact's own calibrated confidence (0.9) still confirms it without a person.
+   `PM_AUTO_AGREE=2` brings the old rule back.
 6. **Model access.** Which models are enabled on our GCP project today? Claude has been off at times: point
    classification falls back to Argon.
 7. **Order.** Is the first wave above right, or should a customer-visible stage (floor plans, graphics) go first?

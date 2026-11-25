@@ -67,11 +67,12 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
   Troop D's Brick shape results: confirmed facts 35 violations and 26 warnings → 0 and 0; with proposed facts
   31 violations and 49 warnings → 2 and 0 (the CHW plant, a system).
 - **W3 many sources.** Facts are proposed until one of these happens:
-  - 2 sources agree;
   - a calibrated score reaches 0.9;
   - a person confirms.
 
-  Troop D has 28 unit→room conflicts held for review.
+  When two documents agree, the fact still waits for the expert, noted "documents agree" with their combined
+  confidence, and can be accepted in one click (Add a building → Review → Waiting). Troop D has 28 unit→room
+  conflicts held for review.
 - **W4 nodes.** Troop D has 67 controllers and 4 networks, and 847 of 847 points sit on the right controller.
   - **Zones:** only where a source states them. Troop D gets none.
   - **Alpha:** has no site or building node.
@@ -100,20 +101,21 @@ All model runs reuse answers already in `llm_calls`, so a rerun costs nothing.
 
 ## 5. Decisions
 
+**Decided (25 Nov 2026).** Two documents agreeing does not confirm a fact on its own: the expert decides. The fact
+waits in the review, noted "documents agree" with their combined confidence (1 minus the product of each document's
+doubt, as if they were independent), and the expert can accept that whole group in one click. Only a fact's own
+calibrated confidence of 0.9 or more still confirms it without a person. `PM_AUTO_AGREE=2` brings the old rule back.
+
 **Decided (25 Nov 2026).** No cost limit on AI jobs, as long as calls are billed to our GCP project. The app's model
 calls all go to Vertex AI on GCP: about $6 so far across every package. The bake-off still reports cost per job, but
 no longer fails a job on cost. So the plan reader (W6) and the sequence reader (W8) now pass.
 
 **Still open, in plain words:**
 
-1. **Should two documents agreeing be enough to confirm a fact?** Today, when two sources say the same thing (for
-   example, the controls submittal and the BMS export both put point X on VAV-2-14), the app marks the fact confirmed
-   without a person looking. Anything only one source says waits for a person. Recommended: keep it on. Turn it off
-   with `PM_AUTO_AGREE=0` if every fact must be checked by a person.
-2. **Real test data.** Troop D's drawings are real, but its controls submittal and BMS point list were made up by us to
+1. **Real test data.** Troop D's drawings are real, but its controls submittal and BMS point list were made up by us to
    match those drawings. The point-matching and point-class numbers are only as good as that made-up data. Needed: one
    real controls submittal plus the BMS point export from the same past job, which can stay anonymised.
-3. **Answer keys written by a person.** To score an AI reader, someone writes down the right answers for a building
+2. **Answer keys written by a person.** To score an AI reader, someone writes down the right answers for a building
    first. For plans and sequences, the AI agent that built each reader also wrote its answer key (before building it,
    but still). Needed: about 1–2 hours of an engineer's time marking up one more building's plan sheets and sequence
    of operations. Otherwise those scores stay "promising, not proven".

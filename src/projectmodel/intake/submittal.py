@@ -279,8 +279,11 @@ def _room_check(rows, placements, log) -> list[dict]:
         data = {"tag": r["box"], "normal": norm, "room": r["room"], "floor": r["floor"], "room_name": r["name"],
                 "plan_room": plan_room}
         if plan_room == r["room"]:
+            # Two documents agree: the expert decides (plan §8.5). The fact keeps the submittal's own confidence, so it
+            # waits for review, noted with the plan's agreement and their combined confidence.
             agree += 1
-            conf, ask, data["agree"] = 0.97, None, True
+            conf, ask, data["agree"] = 0.85, None, True
+            data["agree_confidence"] = round(1 - (1 - 0.85) * (1 - float(p.get("conf") or 0)), 4)
         elif p:
             differ += 1
             conf, data["agree"] = 0.5, False
