@@ -70,7 +70,7 @@ SCHEDULE_FIELDS = [
 def trust(prov: dict) -> str:
     if prov.get("method") == "human" or prov.get("confirmed_by") == "human":
         return "verified"
-    if prov.get("confirmed_by") == "agreement":
+    if prov.get("confirmed_by") == "agreement" or len(prov.get("agree") or []) > 1:
         return "agreed"
     if prov.get("method") == "document":
         return "stated"
@@ -249,7 +249,7 @@ class GraphTools:
             "points": [self._brief(p) | {"role": roles.get(p.id), "on_part": ctx} for p, ctx in self._points(n)],
             "missing_required_points": missing,
         }
-        skip = {"sources", "agree", "conflict", "alternatives", "controller", "points"}
+        skip = {"sources", "agree", "agree_confidence", "conflict", "alternatives", "controller", "points"}
         if data := {k: v for k, v in n.attrs.items() if k not in skip and v not in (None, "", [], {})}:
             out["data"] = data  # what the schedules and the setup stated about the unit (nameplate, tag, sequence)
         for p in out["points"]:

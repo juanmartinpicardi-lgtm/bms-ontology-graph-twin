@@ -93,8 +93,8 @@ def test_riser_is_controllers_on_networks(troop_d):
     on = {e["src"]: e for e in store.edges(p, "isOnNetwork")}
     for f in riser:
         e = on[f"ctrl:{f['data']['instance']}"]
-        assert e["dst"].endswith(f"/{f['data']['trunk']}") and e["confirmed_by"] == "agreement"
-    assert all(r["confirmed_by"] == "agreement" for r in ctrl.values())  # riser + BMS device instance
+        assert e["dst"].endswith(f"/{f['data']['trunk']}") and _agree(e)
+    assert all(_agree(r) for r in ctrl.values())  # riser + BMS device instance
     sup = ctrl["ctrl:TROOPD-NAE01"]
     assert sup["class"] == "Supervisory_Controller"
     assert {e["dst"] for e in store.edges(p, "isOnNetwork") if e["src"] == sup["id"]} == set(nets)
@@ -117,7 +117,7 @@ def test_every_point_lives_in_one_controller_and_has_its_bacnet_object(troop_d):
     for e in store.edges(p, "isHostedBy"):
         hosted[e["src"]].add(e["dst"])
     assert set(hosted) == set(points) and all(len(h) == 1 for h in hosted.values())
-    agreed = sum(1 for e in store.edges(p, "isHostedBy") if e["confirmed_by"] == "agreement")
+    agreed = sum(1 for e in store.edges(p, "isHostedBy") if _agree(e))
     assert agreed >= 800  # the submittal's reference and the BMS device instance say the same controller
     keyed = [pid for pid in points
              if any(store.resolve(p, "device_object", a["value"]) == pid
@@ -161,9 +161,9 @@ def test_republishing_the_bms_keeps_the_riser(troop_d):
     before = {r["id"] for r in store.nodes(p, "controller")}
     store.remove_source(p, "setup:bms")
     assert {r["id"] for r in store.nodes(p, "controller")} == before  # the riser still states them
-    assert not any(e["confirmed_by"] == "agreement" for e in store.edges(p, "isHostedBy"))
+    assert not any(_agree(e) for e in store.edges(p, "isHostedBy"))
     publish(it, store, steps=["bms"])
-    assert sum(1 for e in store.edges(p, "isHostedBy") if e["confirmed_by"] == "agreement") >= 800
+    assert sum(1 for e in store.edges(p, "isHostedBy") if _agree(e)) >= 800
 
 
 def test_graph_standard_and_cards_measure_the_new_layers(troop_d, km):
@@ -261,3 +261,8 @@ def test_tree_shows_the_controller_of_a_unit_and_a_point():
     assert [c.id for c, _ in tree.controlled_by("unit:VAV1")] == ["ctrl:3204"]
     assert [c.id for c, _ in tree.controlled_by("pt:1")] == ["ctrl:3204"]
     assert [n.id for n, _ in tree.network_of("ctrl:3204")] == ["net:FC-2"]
+
+
+def _agree(row) -> bool:
+    """Two or more sources state this fact (settle's note; agreement no longer confirms it, plan §8.5)."""
+    return len(json.loads(row["attrs"] or "{}").get("agree", [])) > 1

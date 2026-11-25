@@ -16,13 +16,18 @@ Many sources, one project
     passes to another source that still does, or goes.
 
 Statuses: nothing is confirmed by accident
-    A machine row is written `proposed`. `settle` confirms it only when
-      - two or more sources state the same fact (same node and class, or same edge): confirmed_by = agreement;
-      - or its confidence reaches the auto-accept threshold (AutoAccept, 0.9 by default): confirmed_by = auto;
-    and never while sources disagree (a node with two classes, a point on two equipment, a unit fed by two air
+    A machine row is written `proposed`. `settle` confirms it only when its own confidence (one source's, calibrated)
+    reaches the auto-accept threshold (AutoAccept, 0.9 by default): confirmed_by = auto; and never while sources
+    disagree (a node with two classes, a point on two equipment, a unit fed by two air
     handlers): that row stays proposed with attrs.conflict listing the other sources' answers. A writer can also hold
     a row for review (status `proposed`, e.g. a question the guided setup asked). A person's decision (method human)
     is confirmed_by = human.
+
+    Two documents agreeing is evidence for the expert, not a decision (decided 25 Nov 2026, plan §8.5): when two or
+    more sources state the same fact, settle notes them in attrs.agree and their combined confidence in
+    attrs.agree_confidence (1 - the product of each one's doubt, as if the documents were independent), and the row
+    stays proposed unless its own confidence confirms it. review.accept_agreed accepts such rows in one go, as the
+    expert's decision. PM_AUTO_AGREE=2 brings back the old rule (agreement confirms, confirmed_by = agreement).
 
 Aliases
     `aliases` maps the names other sources use for a node to its id: schedule_tag, bms_name, bms_path, device_object
@@ -172,22 +177,35 @@ CREATE TABLE IF NOT EXISTS notes (
 """
 NEW_ROW_COLUMNS = {"source": "TEXT NOT NULL DEFAULT ''",
                    "confirmed_by": f"TEXT CHECK (confirmed_by IS NULL OR confirmed_by IN {CONFIRMED_BY})"}
-DERIVED = ("sources", "agree", "conflict")  # attrs keys settle() writes; recomputed every time
+DERIVED = ("sources", "agree", "agree_confidence", "conflict")  # attrs keys settle() writes; recomputed every time
+
+
+def combined_confidence(claims) -> float:
+    """The confidence of a fact several sources state: 1 - the product of each source's doubt (its best claim), as if
+    the sources were independent. Shown to the expert; it never confirms a row by itself."""
+    best: dict[str, float] = {}
+    for c in claims:
+        best[c["source"]] = max(best.get(c["source"], 0.0), float(c["confidence"] or 0))
+    doubt = 1.0
+    for v in best.values():
+        doubt *= 1 - min(max(v, 0.0), 1.0)
+    return round(1 - doubt, 4)
 
 
 @dataclass(frozen=True)
 class AutoAccept:
     """When a machine row is confirmed without a person. `threshold`: confidence at or above which a row is confirmed
-    (None: never). `agreement`: how many distinct sources must state the same fact to confirm it (0: never)."""
+    (None: never). `agreement`: how many distinct sources must state the same fact to confirm it (0: never, the
+    default: agreement is shown to the expert, who decides)."""
     threshold: float | None = 0.9
-    agreement: int = 2
+    agreement: int = 0
 
     @classmethod
     def from_env(cls) -> "AutoAccept":
-        """PM_AUTO_ACCEPT=0.95 (a threshold) or off; PM_AUTO_AGREE=2 (sources) or 0 (off)."""
+        """PM_AUTO_ACCEPT=0.95 (a threshold) or off; PM_AUTO_AGREE=2 (sources) or 0 (off, the default)."""
         t = os.environ.get("PM_AUTO_ACCEPT", "0.9").strip().lower()
         return cls(threshold=None if t in ("off", "none", "") else float(t),
-                   agreement=int(os.environ.get("PM_AUTO_AGREE", "2")))
+                   agreement=int(os.environ.get("PM_AUTO_AGREE", "0")))
 
 
 @dataclass
@@ -504,14 +522,15 @@ class Store:
                 if r["source"] == REVIEW or r["method"] == "human":
                     status = r["status"]
                     by = "human" if status == "confirmed" else None
-                    agree, conflict = [], []
+                    agree, conflict, agreeing = [], [], []
                 else:
                     if table == "nodes":
-                        agree = sorted({c["source"] for c in cs if r["class"] is not None and c["value"] == r["class"]})
+                        agreeing = [c for c in cs if r["class"] is not None and c["value"] == r["class"]]
+                        agree = sorted({c["source"] for c in agreeing})
                         conflict = [c for c in cs if c["value"] is not None and r["class"] is not None
                                     and c["value"] != r["class"]]
                     else:
-                        agree = sources
+                        agreeing, agree = cs, sources
                         rivals = by_fkey.get((r["rel"], *self._fkey(r)), []) if r["rel"] in FUNCTIONAL else []
                         conflict = [c for c in rivals
                                     if (c["src"], c["dst"]) != (r["src"], r["dst"]) and c["source"] not in sources]
@@ -521,6 +540,7 @@ class Store:
                     attrs["sources"] = sources
                 if len(agree) > 1:
                     attrs["agree"] = agree
+                    attrs["agree_confidence"] = combined_confidence(agreeing)
                 if conflict:
                     attrs["conflict"] = [{"source": c["source"], **({"class": c["value"]} if table == "nodes" else
                                                                     {"src": c["src"], "dst": c["dst"]}),
@@ -618,18 +638,22 @@ class Store:
 
     def agreement(self, project: str, kinds: tuple[str, ...] | None = None, rels: tuple[str, ...] | None = None) -> dict:
         """How far the project's sources agree: live machine facts (nodes of `kinds` and edges of `rels`, all when
-        None; not rejected, not people's), those two or more sources state, those confirmed by agreement, and those
-        in conflict."""
-        out = {"sources": [s for s in self.sources(project)], "facts": 0, "stated_twice": 0, "agreed": 0,
-               "conflicts": 0}
+        None; not rejected, not people's), those two or more sources state, those two or more agree on (`agree`, of
+        which `agree_open` still wait for the expert), those confirmed by agreement (only with PM_AUTO_AGREE), and
+        those in conflict."""
+        out = {"sources": [s for s in self.sources(project)], "facts": 0, "stated_twice": 0, "agree": 0,
+               "agree_open": 0, "agreed": 0, "conflicts": 0}
         for table, col, only in (("nodes", "kind", kinds), ("edges", "rel", rels)):
-            q = f"SELECT attrs, confirmed_by FROM {table} WHERE project = ? AND status != 'rejected' AND source != ?"
+            q = f"SELECT attrs, status, confirmed_by FROM {table} WHERE project = ? AND status != 'rejected' AND source != ?"
             if only is not None:
                 q += f" AND {col} IN ({','.join('?' * len(only))})"
             for r in self.conn.execute(q, (project, REVIEW, *(only or ()))):
                 a = json.loads(r["attrs"] or "{}")
                 out["facts"] += 1
                 out["stated_twice"] += len(a.get("sources", [])) > 1
+                both = len(a.get("agree", [])) > 1 and not a.get("conflict")
+                out["agree"] += both
+                out["agree_open"] += both and r["status"] == "proposed"
                 out["agreed"] += r["confirmed_by"] == "agreement"
                 out["conflicts"] += bool(a.get("conflict"))
         return out

@@ -237,7 +237,7 @@ def test_each_step_is_a_source_that_republishes_alone(intake):
     assert len(pts) >= 800
 
     def agreed(rel):
-        return sum(1 for e in store.edges(project, rel) if e["confirmed_by"] == "agreement")
+        return sum(1 for e in store.edges(project, rel) if _agree(e))
     assert agreed("hasPoint") >= 800  # on the submittal's controller and on the same BMS device
     assert all(r["status"] == "proposed" for r in store.conn.execute(  # disagreements wait for a person
         "SELECT status FROM edges WHERE project = ? AND attrs LIKE '%\"conflict\"%'", (project,)))
@@ -281,3 +281,22 @@ def test_every_term_the_setup_publishes_is_declared(intake):
     rels = {r[0] for r in store.conn.execute("SELECT DISTINCT rel FROM edges WHERE project = ?", (project,))}
     assert not {c for c in classes if c and c not in km.classes}, classes - set(km.classes)
     assert not rels - (set(km.relations) | set(km.ba_relations)), rels
+
+
+def _agree(row) -> bool:
+    """Two or more sources state this fact (settle's note; agreement no longer confirms it, plan §8.5)."""
+    return len(json.loads(row["attrs"] or "{}").get("agree", [])) > 1
+
+
+def test_a_room_the_plan_and_the_submittal_agree_on_waits_for_the_expert():
+    """Two documents agreeing is noted, with their combined confidence, but the expert decides (plan §8.5)."""
+    from projectmodel.intake.submittal import _room_check
+    rows = [{"box": "VAV-1", "room": "101", "floor": "L1", "name": "Office", "src": {"file": "sub.pdf", "page": 3}},
+            {"box": "VAV-2", "room": "102", "floor": "L1", "name": "Lab", "src": {"file": "sub.pdf", "page": 3}}]
+    plan = [{"data": {"normal": "VAV1", "room": "101"}, "conf": 0.95},
+            {"data": {"normal": "VAV2", "room": "105"}, "conf": 0.95}]
+    out = {f["data"]["tag"]: f for f in _room_check(rows, plan, lambda _m: None)}
+    same, differ = out["VAV-1"], out["VAV-2"]
+    assert same["data"]["agree"] is True and same["ask"] is None
+    assert same["conf"] < 0.9 and same["data"]["agree_confidence"] >= 0.99  # 1 - 0.15 * 0.05
+    assert differ["ask"] and differ["data"]["agree"] is False

@@ -1,7 +1,9 @@
 """Human review actions on a mapped project. The review screen calls these; so can tests.
 
 `queue` is what waits for a person: the proposed nodes and edges, conflicts between sources first, then by
-confidence. Confirmed rows (by a person, by two agreeing sources, or by the auto-accept rule) are not in it.
+confidence. Confirmed rows (by a person, or by the auto-accept rule) are not in it. A row two or more documents agree
+on stays in it, with the note `agree` (which sources) and `agree_confidence` (their combined confidence): agreement
+is the expert's call (plan §8.5). `accept_agreed` accepts those rows in one go.
 
 Every action turns the row into method=human and source=review (confirmed_by=human), keeps what the machine proposed
 under attrs.review.previous (class, method, confidence, status, source), and records who decided and when. Rows with
@@ -17,6 +19,7 @@ new hasPoint edge, with the equipment it left.
   reject        - the proposed class is wrong, no replacement     -> status rejected (scored as no class)
   move_points   - put points on another equipment                 -> human hasPoint edge, old edge rejected
   accept_edges / reject_edges - a link (feeds, hasPoint, serves...) is right / wrong
+  accept_agreed - every proposed row two or more documents agree on (no conflict), at or above a combined confidence
 """
 
 from __future__ import annotations
@@ -190,7 +193,8 @@ def queue(store: Store, project: str, kind: str | None = None) -> list[dict]:
         a = json.loads(r["attrs"] or "{}")
         out.append({"target": "node", "id": r["id"], "kind": r["kind"], "label": r["label"], "class": r["class"],
                     "confidence": r["confidence"], "method": r["method"], "source": r["source"],
-                    "source_file": r["source_file"], "source_ref": r["source_ref"], "conflict": a.get("conflict", [])})
+                    "source_file": r["source_file"], "source_ref": r["source_ref"], "conflict": a.get("conflict", []),
+                    "agree": a.get("agree", []), "agree_confidence": a.get("agree_confidence")})
     if not kind:
         for r in store.conn.execute("SELECT * FROM edges WHERE project = ? AND status = 'proposed'", (project,)):
             a = json.loads(r["attrs"] or "{}")
@@ -198,5 +202,21 @@ def queue(store: Store, project: str, kind: str | None = None) -> list[dict]:
                         "label": f"{r['src']} {r['rel']} {r['dst']}", "rel": r["rel"], "src": r["src"],
                         "dst": r["dst"], "confidence": r["confidence"], "method": r["method"], "source": r["source"],
                         "source_file": r["source_file"], "source_ref": r["source_ref"],
-                        "conflict": a.get("conflict", [])})
+                        "conflict": a.get("conflict", []), "agree": a.get("agree", []),
+                        "agree_confidence": a.get("agree_confidence")})
     return sorted(out, key=lambda x: (not x["conflict"], x["confidence"], x["id"]))
+
+
+def agreed(store: Store, project: str, min_confidence: float = 0.0) -> list[dict]:
+    """The queue's rows two or more documents agree on, with no conflict, at or above `min_confidence` combined."""
+    return [i for i in queue(store, project) if len(i["agree"]) > 1 and not i["conflict"]
+            and (i["agree_confidence"] or 0) >= min_confidence]
+
+
+def accept_agreed(store: Store, project: str, reviewer: str, min_confidence: float = 0.0) -> int:
+    """The expert accepts, in one go, every proposed fact two or more documents agree on (see `agreed`). Each row
+    becomes the reviewer's decision (method human), with the sources that agreed kept in attrs.review.previous."""
+    items = agreed(store, project, min_confidence)
+    n = _update_nodes(store, project, [i["id"] for i in items if i["target"] == "node"], reviewer, "accept")
+    return n + _update_edges(store, project, [(i["src"], i["rel"], i["dst"]) for i in items if i["target"] == "edge"],
+                             reviewer, "accept")

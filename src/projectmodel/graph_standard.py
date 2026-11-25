@@ -428,11 +428,11 @@ def status(store: Store, km: KnowledgeModel, project: str = PROJECT, score: dict
         a = store.agreement(project, kinds=("equipment", "point"), rels=("feeds", "hasPoint", "serves"))
         if not a["stated_twice"]:
             return fact(0, f"{len(a['sources'])} source{'s' if len(a['sources']) != 1 else ''} today, and no key fact is "
-                           "stated by two of them, so nothing is confirmed by a second one.")
+                           "stated by two of them, so nothing is checked against a second one.")
         return fact(_pct(a["stated_twice"], a["facts"]),
                     f"{a['stated_twice']:,} of {a['facts']:,} key facts are stated by two or more of {len(a['sources'])} "
-                    f"sources; {a['agreed']:,} are confirmed by that agreement, {a['conflicts']:,} disagree and wait "
-                    "for review.")
+                    f"sources; {a['agree']:,} agree ({a['agree_open']:,} wait for the expert, marked \"documents "
+                    f"agree\" with a combined confidence), {a['conflicts']:,} disagree and wait for review.")
 
     controllers = [n for n in nodes.values() if n["kind"] == "controller"]
     networks = [n for n in nodes.values() if n["kind"] == "network"]
