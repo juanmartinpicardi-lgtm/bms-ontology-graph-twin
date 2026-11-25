@@ -280,13 +280,12 @@ def plan_item(site: str, item: dict, data: dict, job: str) -> None:
 def item_buttons(job: str, site: str, item: dict, rec: dict, build, locked: bool, k) -> None:
     ids = [i["id"] for i in st.session_state["ak_ids"]]
     msg = st.session_state.get("ak_msg")
-    b1, b2, b3 = st.columns(3)
-    b1.button("Save draft", key=k("sd"), disabled=locked, on_click=save_item, args=(job, site, item, "draft", build),
-              use_container_width=True)
-    b2.button("Mark done", key=k("md"), type="primary", disabled=locked, on_click=save_item,
-              args=(job, site, item, "done", build), use_container_width=True)
-    b3.button("Next item ›", key=k("nx"), on_click=go_next, args=(job, site, ids), use_container_width=True,
-              help="The next item not done yet")
+    with st.container(horizontal=True, gap="small"):  # wraps on a narrow column instead of cutting the labels
+        st.button("Save draft", key=k("sd"), disabled=locked, on_click=save_item,
+                  args=(job, site, item, "draft", build))
+        st.button("Mark done", key=k("md"), type="primary", disabled=locked, on_click=save_item,
+                  args=(job, site, item, "done", build))
+        st.button("Next item ›", key=k("nx"), on_click=go_next, args=(job, site, ids), help="The next item not done yet")
     if msg and msg[0] == item["id"]:
         (st.error if msg[1] == "error" else st.success)(msg[2])
     if rec.get("status") == "done":
