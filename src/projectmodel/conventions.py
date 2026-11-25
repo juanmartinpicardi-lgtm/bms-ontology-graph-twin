@@ -11,6 +11,14 @@ Layering: knowledge model <- contractor <- customer <- site (layers are sorted i
   ignore              extend, same rule as class_hints
 Every entry keeps its origin ("site/alpha:abbreviations.cc") so the mapper can record it as provenance.
 A problem raises ConventionError naming the file and the key.
+
+Skills' rules (spec-memory-skills §5.3, the M3 read path): an active skill under knowledge/skills/<scope>/ whose
+SKILL.md lists rules/conventions.yaml adds one more layer for that scope, after the scope's own conventions file.
+That is where approved learned conventions live (curator.py, skill learned-conventions-<name>). A learned class hint
+names itself ({pattern, class, id, template?, instead_of?, ...}): its origin is "<scope>:<id>", e.g.
+"site/alpha:lc-3f2a1b". `template` keeps it to points on equipment of that template; `instead_of` to points the rules
+would otherwise give that class. A skill's rules/terms.yaml (phrase -> class) is read by the guided setup
+(learned_terms, hooked in intake/knowledge.apply).
 """
 
 from __future__ import annotations
@@ -27,6 +35,9 @@ from .knowledge_model import ROOT, ClassHint, IgnoreRule, KnowledgeModel, Knowle
 CONV_DIR = ROOT / "conventions"
 LAYER_ORDER = ("contractor", "customer", "site")
 FILE_KEYS = {"scope", "description", "author", "abbreviations", "equipment_patterns", "class_hints", "ignore"}
+# A class hint is {pattern, class}; a learned one also says who approved it and why, and may be scoped.
+HINT_KEYS = {"pattern", "class"}
+HINT_OPTIONAL = {"id", "template", "instead_of", "why", "approved_by", "approved_at", "evidence"}
 
 
 class ConventionError(KnowledgeModelError):
@@ -40,6 +51,7 @@ class Layer:
     scope: str  # "site/alpha"
     path: Path
     data: dict
+    skill: str = ""  # the skill whose rules/conventions.yaml this is; "" for a conventions/ file
 
     @property
     def where(self) -> str:
@@ -49,24 +61,62 @@ class Layer:
             return str(self.path)
 
 
-def scopes_for(project: str, conv_dir: Path = CONV_DIR) -> list[str]:
-    """Convention scopes that apply to a project ("alpha/names_paths"), in layer order. Unlisted project: none.
+def _knowledge_root(knowledge: Path | None) -> Path:
+    from .memory import knowledge_dir
+    return Path(knowledge) if knowledge is not None else knowledge_dir()
 
-    projects.yaml also lists scopes that only hold memory and skills (designer/*, or a contractor with no naming
-    rules yet); those have no file here and are skipped. The memory loader (memory.py) checks that every listed
-    scope exists somewhere, so a misspelt scope still fails."""
+
+def _skill_front(md: Path) -> dict:
+    text = md.read_text()
+    if not text.startswith("---\n") or "\n---\n" not in text[4:]:
+        return {}
+    return yaml.safe_load(text[4:].split("\n---\n", 1)[0]) or {}
+
+
+def skill_rule_files(scope: str, filename: str, knowledge: Path | None = None) -> list[tuple[str, Path]]:
+    """(skill name, path) of the active skills of `scope` whose SKILL.md lists rules/<filename>, by skill name."""
+    out = []
+    base = _knowledge_root(knowledge) / "skills" / scope
+    for md in sorted(base.glob("*/SKILL.md")) if base.is_dir() else []:
+        front = _skill_front(md)
+        pm = ((front.get("metadata") or {}).get("projectmodel")) or {}
+        if pm.get("status", "active") == "active" and f"rules/{filename}" in (pm.get("rules") or []) \
+                and (md.parent / "rules" / filename).exists():
+            out.append((str(front.get("name") or md.parent.name), md.parent / "rules" / filename))
+    return out
+
+
+def _has_rules(scope: str, conv_dir: Path, knowledge: Path | None) -> bool:
+    return (Path(conv_dir) / f"{scope}.yaml").exists() or bool(skill_rule_files(scope, "conventions.yaml", knowledge))
+
+
+def _listed(project: str, conv_dir: Path) -> list[str]:
     path = Path(conv_dir) / "projects.yaml"
-    if not path.exists():
-        return []
-    data = yaml.safe_load(path.read_text()) or {}
+    data = (yaml.safe_load(path.read_text()) or {}) if path.exists() else {}
     scopes = data.get(project) or []
     if not isinstance(scopes, list):
         raise ConventionError([f"{path.name}: {project}: must be a list of scopes"])
-    return [str(s) for s in scopes
-            if str(s).split("/")[0] in LAYER_ORDER and (Path(conv_dir) / f"{s}.yaml").exists()]
+    return [str(s) for s in scopes]
 
 
-def load_layers(scopes: list[str], conv_dir: Path = CONV_DIR) -> list[Layer]:
+def scopes_for(project: str, conv_dir: Path = CONV_DIR, knowledge: Path | None = None) -> list[str]:
+    """Convention scopes that apply to a project ("alpha/names_paths"), in layer order. Unlisted project: none, unless
+    its site has rules of its own (a site/<site> conventions file or skill, such as a learned convention a person
+    approved for that site).
+
+    projects.yaml also lists scopes that only hold memory and skills (designer/*, or a contractor with no naming
+    rules yet); those have no rules here and are skipped. The memory loader (memory.py) checks that every listed
+    scope exists somewhere, so a misspelt scope still fails."""
+    scopes = _listed(project, conv_dir)
+    site = f"site/{project.split('/')[0]}"
+    if site not in scopes and _has_rules(site, conv_dir, knowledge):
+        scopes = [*scopes, site]
+    return [s for s in scopes if s.split("/")[0] in LAYER_ORDER and _has_rules(s, conv_dir, knowledge)]
+
+
+def load_layers(scopes: list[str], conv_dir: Path = CONV_DIR, knowledge: Path | None = None) -> list[Layer]:
+    """Each scope's conventions file, then its skills' rules/conventions.yaml (knowledge/skills/<scope>/), in layer
+    order. A scope with neither is an error."""
     problems, layers = [], []
     for scope in scopes:
         kind = scope.split("/")[0]
@@ -74,18 +124,36 @@ def load_layers(scopes: list[str], conv_dir: Path = CONV_DIR) -> list[Layer]:
         if kind not in LAYER_ORDER or scope.count("/") != 1:
             problems.append(f"{scope}: scope must be <{'|'.join(LAYER_ORDER)}>/<name>")
             continue
-        if not path.exists():
+        skills = skill_rule_files(scope, "conventions.yaml", knowledge)
+        if not path.exists() and not skills:
             problems.append(f"{scope}: no file {path.name} in {Path(conv_dir).name}/{kind}/")
             continue
-        try:
-            data = yaml.safe_load(path.read_text()) or {}
-        except yaml.YAMLError as e:
-            problems.append(f"{scope}.yaml: does not parse: {e}")
-            continue
-        layers.append(Layer(scope, path, data))
+        for name, p in ([("", path)] if path.exists() else []) + skills:
+            try:
+                data = yaml.safe_load(p.read_text()) or {}
+            except yaml.YAMLError as e:
+                problems.append(f"{f'{name}/rules/' if name else ''}{p.name}: does not parse: {e}")
+                continue
+            if name and isinstance(data, dict):
+                data = {"scope": scope, **data}  # a skill's rules take the skill's scope
+            layers.append(Layer(scope, p, data, name))
     if problems:
         raise ConventionError(problems)
     return sorted(layers, key=lambda layer: LAYER_ORDER.index(layer.scope.split("/")[0]))
+
+
+def learned_terms(project: str, conv_dir: Path = CONV_DIR, knowledge: Path | None = None) -> list[tuple[str, str]]:
+    """(phrase, class) from the rules/terms.yaml of the active skills in the project's scopes (designer included) and
+    its site's, for the guided setup's readers. Approved learned conventions for a setup project land there."""
+    scopes = _listed(project, conv_dir)
+    if (site := f"site/{project.split('/')[0]}") not in scopes:
+        scopes.append(site)
+    out = []
+    for scope in scopes:
+        for _, p in skill_rule_files(scope, "terms.yaml", knowledge):
+            terms = (yaml.safe_load(p.read_text()) or {}).get("terms") or {}
+            out += [(str(k), str(v)) for k, v in terms.items()]
+    return out
 
 
 def _compile(pattern, flags=0) -> tuple[re.Pattern | None, str | None]:
@@ -150,18 +218,26 @@ def apply_conventions(km: KnowledgeModel, layers: list[Layer]) -> KnowledgeModel
         new_hints = []
         for i, h in enumerate(d.get("class_hints") or []):
             where = f"{f}: class_hints[{i}]"
-            if not isinstance(h, dict) or set(h) != {"pattern", "class"}:
-                problems.append(f"{where}: must be {{pattern: <regex>, class: <point class>}}")
+            if not isinstance(h, dict) or not HINT_KEYS <= set(h) or set(h) - HINT_KEYS - HINT_OPTIONAL:
+                problems.append(f"{where}: must be {{pattern: <regex>, class: <point class>}}, optionally with "
+                                f"{', '.join(sorted(HINT_OPTIONAL))}")
                 continue
             rx, err = _compile(h["pattern"])
             if err:
                 problems.append(f"{where}: bad regex {h['pattern']!r}: {err}")
             elif h["class"] not in point_classes:
                 problems.append(f"{where}: class {h['class']!r} is not a point class in the knowledge model")
+            elif h.get("template") and h["template"] not in templates:
+                problems.append(f"{where}: template {h['template']!r} is not a template "
+                                f"({', '.join(sorted(templates))})")
+            elif h.get("instead_of") and h["instead_of"] not in point_classes:
+                problems.append(f"{where}: instead_of {h['instead_of']!r} is not a point class in the knowledge model")
             else:
-                new_hints.append(ClassHint(rx, h["class"], f"{layer.scope}:class_hints[{i}]"))
-        replaced = {h.pattern.pattern for h in new_hints}
-        hints = new_hints + [h for h in hints if h.pattern.pattern not in replaced]
+                origin = f"{layer.scope}:{h['id']}" if h.get("id") else f"{layer.scope}:class_hints[{i}]"
+                new_hints.append(ClassHint(rx, h["class"], origin, h.get("template") or None,
+                                           h.get("instead_of") or None))
+        replaced = {(h.pattern.pattern, h.template, h.instead_of) for h in new_hints}
+        hints = new_hints + [h for h in hints if (h.pattern.pattern, h.template, h.instead_of) not in replaced]
 
         new_ignore = []
         for i, g in enumerate(d.get("ignore") or []):
@@ -181,7 +257,8 @@ def apply_conventions(km: KnowledgeModel, layers: list[Layer]) -> KnowledgeModel
         raise ConventionError(problems)
     return dataclasses.replace(
         km, name_rules=dataclasses.replace(nr, abbreviations=abbreviations), templates=templates,
-        conventions=km.conventions + [layer.scope for layer in layers], class_hints=hints, ignore=ignore,
+        conventions=km.conventions + [f"{layer.scope}/{layer.skill}" if layer.skill else layer.scope
+                                      for layer in layers], class_hints=hints, ignore=ignore,
         abbreviation_origin=abbr_origin)
 
 
@@ -195,7 +272,10 @@ def layer_entries(layers: list[Layer]) -> list[dict]:
         for tid, ps in (d.get("equipment_patterns") or {}).items():
             rows += [{"scope": layer.scope, "kind": "equipment_patterns", "key": tid, "value": p} for p in ps or []]
         for h in d.get("class_hints") or []:
-            rows.append({"scope": layer.scope, "kind": "class_hints", "key": h.get("pattern"), "value": h.get("class")})
+            value = " ".join([str(h.get("class")), *([f"on {h['template']}"] if h.get("template") else []),
+                              *([f"instead of {h['instead_of']}"] if h.get("instead_of") else [])])
+            rows.append({"scope": layer.scope, "kind": "class_hints", "key": h.get("pattern"), "value": value,
+                         "convention": h.get("id") or "", "approved_by": h.get("approved_by") or ""})
         for g in d.get("ignore") or []:
             rows.append({"scope": layer.scope, "kind": "ignore", "key": g.get("pattern"), "value": g.get("reason")})
     return rows
