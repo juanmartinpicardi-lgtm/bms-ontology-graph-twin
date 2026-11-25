@@ -650,15 +650,13 @@ class GraphTools:
             if r is None:
                 return {"id": pid, "role": role, "exists": False}
             b = bindings.get(pid) or self._binding(pid) if r["kind"] == "point" else None
-            out = {"id": pid, "name": r["label"], "role": role, "class": r["class"], "trust": trust(provenance(r))}
+            out = {"id": pid, "name": r["label"], "role": role, "trust": trust(provenance(r))}
             if pid not in own:
                 out["on"] = self._label((b or {}).get("equipment") or "") if b else None
-            if b is not None:
-                out["bound"] = not b["missing"]
-                if b["missing"]:
-                    out["not_bound"] = b["missing"]
+            if b is not None and b["missing"]:
+                out["not_bound"] = b["missing"]
             if r["kind"] == "point" and (why := self._class_fit(pid)):
-                out["class_problem"] = why
+                out["class"], out["class_problem"] = r["class"], why
                 out["class_cite"] = self._issue(check_cite("class", pid), kind="check", status="fail",
                                                 text=f"{r['label']} is {why}", label=r["label"])
             return out
@@ -704,16 +702,15 @@ class GraphTools:
             sec = a.get("section") or "?"
             sid = (a.get("sequence") or "").split(":", 1)[-1]
             g = other.setdefault(f"{sid}/{sec}", {"section_cite": f"seq:{sid}/{sec}" if sid else None,
-                                                  "relations": [], "says": [], "problems": []})
+                                                  "relations": [], "problems": []})
             g["relations"].append(rel_cite(e["src"], e["rel"], e["dst"]))
-            g["says"].append(f"{self._label(e['src'])} {e['rel']} {self._label(e['dst'])}")
             for end in (e["src"], e["dst"]):
                 r = self.rows.get(end)
                 if r is not None and r["kind"] == "point" and (b := self._binding(end))["missing"]:
                     g["problems"].append(f"{r['label']}: {', '.join(b['missing'])}")
         for g in other.values():
             g["count"] = len(g["relations"])
-            g["says"], g["relations"] = g["says"][:8], g["relations"][:8]
+            g["relations"] = g["relations"][:6]
             g["problems"] = sorted(set(g["problems"]))
         steps.append({"step": "interlocks", "status": ("unknown" if not other else "problem"
                                                        if any(g["problems"] for g in other.values()) else "ok"),
@@ -726,8 +723,7 @@ class GraphTools:
                       "says": (f"{len(fails)} checks fail on {eq.label} or its points" if fails else
                                f"Every check passes on {eq.label} and its points"),
                       "failing": [{k: r[k] for k in ("cite", "check", "message")} | {"node": r["node"]["name"]}
-                                  for r in fails[:20]],
-                      "passing": [r["cite"] for r in chk["results"] if r["status"] == "pass"]})
+                                  for r in fails[:20]]})
         issues = [i for s in mine for i in s.get("issues", [])]
         steps.append({"step": "gaps_and_conflicts", "status": "problem" if issues else "ok", "issues": issues,
                       "says": f"{len(issues)} gaps or conflicts raised on the sequence" if issues else
@@ -759,7 +755,7 @@ class GraphTools:
                 sec_cite = f"{seq.cite}/{sp['section']}"
                 in_sec = [lp for lp in loops if lp["section"] == sp["section"]]
                 sps = [x for lp in in_sec for x in lp["points"] if x["role"] == "setpoint" and x.get("name")]
-                item = {"section_cite": sec_cite, "value": f"{sp['value']:g} {sp['unit']}", "text": sp["text"][:160]}
+                item = {"section_cite": sec_cite, "value": f"{sp['value']:g} {sp['unit']}", "text": sp["text"][:110]}
                 matched = None
                 for x in (sps if maintain else []):  # a threshold ("enable below 55 °F outdoor") is not a setpoint
                     desc = json.loads(self.rows[x["id"]]["attrs"]).get("description") or ""
@@ -799,6 +795,10 @@ class GraphTools:
                 self.issued.pop(i.pop("cite"), None)
                 i.pop("point")
                 i |= {"status": "threshold", "says": "a fixed threshold in the program (adj), not a point"}
+        for i in items:  # the demoted item shared its check id with the one that agrees: that one keeps it
+            if i.get("status") == "agree":
+                self._issue(i["cite"], kind="check", status="agree", text=i["says"],
+                            label=self.rows[i["point"]]["label"])
         # loops whose setpoint point has no value in the sequence (DAP-SP: "set by TAB")
         for lp in loops:
             for x in lp["points"]:

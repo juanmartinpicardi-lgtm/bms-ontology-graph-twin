@@ -162,6 +162,9 @@ def test_diagnose_ahu1(td):
     assert not any(v["status"] == "differ" and "J" in v["section_cite"] for v in vals.values())  # 40 %RH: threshold
     for cite in [*steps["sequence"]["cite"], da["cite"], *steps["operation"]["cite"]]:
         assert td.resolve(cite) is not None, cite
+    from projectmodel.scoring.agent import ids_in
+    unresolved = [c for c in ids_in(d) if td.resolve(c) is None]
+    assert not unresolved, unresolved  # every id diagnose hands out is one the citation check accepts
 
 
 def test_resolve_rejects_made_up_ids(td):

@@ -61,6 +61,8 @@ def main() -> int:
             print(f"    {ev.data['summary']}", flush=True)
         elif ev.type == "model":
             print(f"[{ev.data['model']}]", flush=True)
+        elif ev.type == "reset":
+            print(f"\n\n--- {ev.data.get('why', 'reset')}: the answer is rewritten ---\n", flush=True)
 
     log = store if args.project != "troop_d" else Store(args.db)  # model calls are logged in --db
     agent = Agent(Router(), tools=tools, knowledge=load_knowledge(km=km), project=project, store=log)
