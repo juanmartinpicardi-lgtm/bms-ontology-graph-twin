@@ -80,3 +80,20 @@ def test_source_data_is_read_only(tmp_path, monkeypatch):
     with pytest.raises(ValueError):
         library.delete("site/names_paths", d)
     assert Path(tmp_path / "raw/haystack/site.json").exists()
+
+
+def test_missing_copes_with_units_of_unknown_family():
+    """A unit whose tag the rules do not know has family None: the sequences gap must not crash (hosted app, MSU)."""
+    from projectmodel.intake.model import missing
+
+    class It:
+        def files(self, step): return ["x"]
+        def open_questions(self, step): return []
+        def done(self, step): return step == "sequences"
+
+    eq = {"A": {"tag": "EF-1", "family": None, "sequence": None},
+          "B": {"tag": "VAV-1", "family": "vav", "sequence": None},
+          "C": {"tag": "AHU-1", "family": "ahu", "sequence": "s1"}}
+    gaps = missing(It(), {"equip": eq})
+    seq = [t for s, _, t in gaps if s == "sequences"]
+    assert seq and "VAV" in seq[0]

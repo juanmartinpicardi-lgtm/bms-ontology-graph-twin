@@ -68,7 +68,7 @@ else:
 views = [("domain", "Digital twin", "The building, floor by floor.", "views/digital_twin.py"),
          ("account_tree", "Tree", "Equipment, parts and points.", "tree_app.py"),
          ("bubble_chart", "Graph 3D", "The whole graph in space.", "views/graph_3d.py"),
-         ("view_in_ar", "Equipments", "One machine, 3D or 2D, points live.", "views/equipment_3d.py"),
+         ("view_in_ar", "Equipments", "One machine in 3D, points live.", "views/equipment_3d.py"),
          ("schema", "Graphics", "Floors and systems, drawn from the graph.", "views/graphics.py"),
          ("sync_alt", "Sequences", "How the equipment is controlled.", "views/sequences.py"),
          ("table", "Data tables", "Points, equipment, links.", "views/data_tables.py"),

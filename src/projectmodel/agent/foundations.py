@@ -72,9 +72,9 @@ PAGES = [
     ("Project", "Location", "Where the building is, on a map."),
     ("Project", "Tree", "Equipment, parts and points, with the provenance of every node."),
     ("Project", "Graph 3D", "The whole graph in space."),
-    ("Project", "Equipments", "One unit at a time, as a 3D model or a 2D graphic (toggle), points live."),
-    ("Project", "Graphics", "Generated 2D graphics: coverage per type, floors, system graphics (water and air side), "
-                            "equipment."),
+    ("Project", "Equipments", "One unit at a time as its 3D model, points pinned on it, simulated values."),
+    ("Project", "Graphics", "Coverage per equipment type (3D model, points on anchors), floor graphics and system "
+                            "graphics (water and air side)."),
     ("Project", "Sequences", "Sequences of operation linked to the graph: Read, or Simulate a step-by-step walk."),
     ("Project", "Data tables", "Points, equipment and links as tables."),
     ("Project", "Documentation", "Every document of the project by category: preview, download, replace, delete, add "

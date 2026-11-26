@@ -144,27 +144,6 @@ def _check_plan_meaning(out: Any, values: dict) -> str | None:
     return None
 
 
-GRAPHIC_QA_SCHEMA = _obj({
-    "verdict": {"type": "string", "enum": ["ok", "fix"]},
-    "issues": {"type": "array", "items": _obj({
-        "card": {"type": "string"},
-        "problem": {"type": "string", "enum": ["unreadable", "wrong_part", "wrong_value", "overlap", "other"]},
-        "note": {"type": "string"},
-    })},
-})
-
-
-def _check_graphic_qa(out: Any, values: dict) -> str | None:
-    """Candidates in, ids out: every issue names a card we drew."""
-    cards = set(values.get("card_ids", ()))
-    unknown = [i["card"] for i in out["issues"] if i["card"] not in cards]
-    if unknown:
-        return f"{len(unknown)} cards that are not candidates (e.g. {unknown[:3]})"
-    if out["verdict"] == "ok" and out["issues"]:
-        return "verdict ok with issues"
-    return None
-
-
 JOBS: dict[str, Job] = {j.id: j for j in [
     # Gemini reads the page image with our candidates (intake/plan_ai.py). Contender: Argon stands in while Claude is
     # not enabled on the project (Sonnet, the spec's contender, answers 404 there in Nov 2026).
@@ -211,10 +190,6 @@ JOBS: dict[str, Job] = {j.id: j for j in [
     Job("document_digest", "Documents: what a file is", "hydrogen", ("argon",), ("sonnet",), prompt="document_digest",
         schema=_file_ai.DIGEST_SCHEMA, check=_file_ai.check_digest, max_tokens=3000, effort="low", status="built",
         people="Change the category if wrong"),
-    # The vision pass after the rule QA of a generated graphic (graphics/vision.py): the PNG plus its cards.
-    Job("graphic_qa", "Graphics: vision QA", "hydrogen", ("argon",), ("opus",), prompt="graphic_qa",
-        schema=GRAPHIC_QA_SCHEMA, check=_check_graphic_qa, max_tokens=4000, effort="low", status="built",
-        people="Fix the flagged cards"),
 ]}
 
 

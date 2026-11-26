@@ -1,4 +1,4 @@
-"""Graphics coverage of one project: for every equipment, its template, whether it has a 3D and a 2D graphic, how
+"""Graphics coverage of one project: for every equipment, its template, whether it has a 3D model, how
 many of its points are bound to anchors, which are not (and their classes), and its QA result. Rolled up per
 equipment type (the equipment's class), which is how the W9 done-when is stated: every type has a graphic with its
 points bound, and QA runs on each.
@@ -16,9 +16,7 @@ from ..db.store import Store
 from ..equipment_view import equipment_payload, load_anchors, node_template
 from ..knowledge_model import KnowledgeModel
 from ..tree import UNPLACED, build_tree
-from .equipment2d import render
-from .layouts import LAYOUTS
-from .qa import check_equipment
+from .qa import check_binding
 
 DRAWN_3D = {"ahu", "vav", "rvav", "fcu", "chiller", "boiler", "pump", "rtu", "exhaust_fan", "unit_heater",
             "split_system", "cooling_tower", "heat_exchanger", "meter"}  # templates with a builder in equipment3d/
@@ -35,7 +33,6 @@ class EquipmentCoverage:
     unplaced: list[tuple[str, str, str]] = field(default_factory=list)  # (point id, label, class)
     qa: dict | None = None
     has_3d: bool = False
-    has_2d: bool = False
     system: bool = False  # a system (the CHW plant): its points are on the water-side system graphic, not a model
 
     @property
@@ -59,7 +56,7 @@ class TypeCoverage:
 
     @property
     def has_graphic(self) -> bool:
-        return all(e.has_2d and (e.has_3d or e.system) for e in self.equipment)
+        return all(e.has_3d or e.system for e in self.equipment)
 
     @property
     def needs_graphic(self) -> bool:
@@ -97,16 +94,14 @@ def equipment_coverage(store: Store, project: str, km: KnowledgeModel, anchors: 
             ec.bound = ec.points - len(p["unplaced"])
             ec.unplaced = [(i, p["points"][i]["label"], p["points"][i]["cls"] or "") for i in p["unplaced"]]
             ec.has_3d = t.id in DRAWN_3D
-            if graphics and t.id in LAYOUTS:
-                g = render(p)
-                ec.has_2d = True
-                ec.qa = check_equipment(p, g)
+            if graphics and ec.has_3d:
+                ec.qa = check_binding(p)
         else:
             live = [p for p in n.points if p.prov.get("status") != "rejected"]
             ec.points = len(live)
             info = km.classes.get(n.cls or "")
             if info is not None and info.kind == "system" and live:  # drawn as a card on the system graphic
-                ec.system = ec.has_2d = True
+                ec.system = True
                 ec.bound = len(live)
             else:
                 ec.unplaced = [(p.id, p.label, p.cls or "") for p in live]

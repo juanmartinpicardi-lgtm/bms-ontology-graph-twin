@@ -1,18 +1,16 @@
-"""Graphics: the 2D graphics generated from the knowledge graph and the equipment templates (plan §5.4), and how
-well they cover the active project.
+"""Graphics: the graphics generated from the knowledge graph and the equipment templates (plan §5.4), and how well
+they cover the active project.
 
-- Coverage: each equipment type, whether it has a graphic (2D and 3D), its points bound to template anchors, its QA
-  result, and the classes of the points that land on no anchor.
+- Coverage: each equipment type, whether it has a 3D model (Equipments page), its points bound to template anchors,
+  its binding QA, and the classes of the points that land on no anchor.
 - Floors: each level's plan with its units in their rooms (hasLocation / serves, room positions from the plans).
 - Systems: the water side (feeds between plant equipment) and the air side (air handlers and what they feed).
-- Equipment: the 2D graphic of any equipment, with its QA; the 3D one is on the Equipments page.
 
 Values are simulated (value_model), and every graphic says so.
 """
 
 import sys
 from pathlib import Path
-from urllib.parse import urlencode
 
 import streamlit as st
 
@@ -20,12 +18,10 @@ ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "src"))
 
 from projectmodel.app.shell import active_project, box, get_store, knowledge_model, table  # noqa: E402
-from projectmodel.equipment_view import equipment_payload, load_anchors  # noqa: E402
+from projectmodel.equipment_view import load_anchors  # noqa: E402
 from projectmodel.graphics.drawing import img_tag  # noqa: E402
 from projectmodel.graphics.coverage import by_type, equipment_coverage, orphan_points  # noqa: E402
-from projectmodel.graphics.equipment2d import render  # noqa: E402
 from projectmodel.graphics.floor import render_floor  # noqa: E402
-from projectmodel.graphics.qa import check_equipment  # noqa: E402
 from projectmodel.graphics.system import render_air, render_water  # noqa: E402
 from projectmodel.projects import list_projects, site_of  # noqa: E402
 from projectmodel.tree import build_tree  # noqa: E402
@@ -65,19 +61,20 @@ def qa_line(qa: dict) -> None:
                + " · ".join(f"{c['rule']}: {c['detail']}" for c in qa["checks"]))
 
 
-tab_cov, tab_floor, tab_sys, tab_eq = st.tabs(["Coverage", "Floors", "Systems", "Equipment"])
+tab_cov, tab_floor, tab_sys = st.tabs(["Coverage", "Floors", "Systems"])
 
 with tab_cov, box("gx_cov", "Coverage per equipment type", "fact_check"):
     total, bound = sum(t.points for t in types), sum(t.bound for t in types)
     need = [t for t in types if t.needs_graphic]
     c1, c2, c3 = st.columns(3)
-    c1.metric("Types with a graphic", f"{sum(t.has_graphic for t in need)} of {len(need)}",
-              help="Types with no template and no points (passive specialties) need none.")
+    c1.metric("Types with a 3D model", f"{sum(t.has_graphic for t in need)} of {len(need)}",
+              help="A plant system counts when its points are on the water-side system graphic. Types with no "
+                   "template and no points (passive specialties) need none.")
     c2.metric("Points on their anchor", f"{bound} of {total}", f"{100 * bound / max(1, total):.0f}%", delta_color="off")
-    c3.metric("Graphics passing QA", f"{sum(1 for r in rows if r.status == 'pass')} of "
+    c3.metric("Units passing binding QA", f"{sum(1 for r in rows if r.status == 'pass')} of "
                                      f"{sum(1 for r in rows if r.qa)}")
     table([{"Type": t.cls, "Units": t.count, "Template": ", ".join(t.templates) or "—",
-            "Graphic": "yes" if t.has_graphic else "no" if t.needs_graphic else "not needed",
+            "3D model": "yes" if t.has_graphic else "no" if t.needs_graphic else "not needed",
             "Points bound": f"{t.bound} / {t.points}",
             "QA": ", ".join(f"{QA_ICON.get(k, '')} {k} {v}" for k, v in sorted(t.qa.items())),
             "On no anchor": ", ".join(f"{c} ×{n}" for c, n in t.unplaced_classes.most_common(6))}
@@ -113,16 +110,3 @@ with tab_sys, box("gx_sys", "System graphics", "account_tree"):
     g = render_water(twin) if which != "Air side" else render_air(twin)
     qa_line(g.qa)
     svg(g)
-
-with tab_eq, box("gx_eq", "Equipment graphics", "view_in_ar"):
-    drawn = [r for r in rows if r.has_2d]
-    if not drawn:
-        st.info("No equipment here matches a template with a graphic.")
-    else:
-        pick = st.selectbox("Equipment", [r.id for r in drawn], key="gx_eq_pick",
-                            format_func=lambda i: next(f"{r.label} · {r.template}" for r in drawn if r.id == i))
-        p = equipment_payload(store, project, pick, knowledge_model(), load_anchors())
-        g = render(p)
-        qa_line(check_equipment(p, g))
-        st.markdown(f"[Open in 3D](/Equipment_3D?{urlencode({'project': project, 'equip': pick})})")
-        svg(g)

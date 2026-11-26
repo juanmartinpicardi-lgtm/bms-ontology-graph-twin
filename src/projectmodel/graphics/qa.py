@@ -1,15 +1,17 @@
-"""QA for generated graphics, rules first (plan §5.4, §6.2 row 8). Every rule reads the drawing's shapes and the
-payload, never pixels:
+"""QA for generated graphics, rules first (plan §5.4, §6.2 row 8). Rules read the payload and the drawing's shapes,
+never pixels.
 
+An equipment (its 3D model, Equipments page), from the payload alone, `check_binding`:
     anchors   every anchor (template slot) has a point, or is optional (its slot isn't required)
-    points    every point of the equipment is on the drawing at its anchor, or listed as having no slot
+    points    every point of the equipment is on an anchor, or listed as having no slot
+
+A floor or system graphic (a 2D drawing), `check_drawing`:
     bounds    nothing is placed off the drawing
-    overlap   point cards don't overlap each other or the equipment (a warning, not a failure)
+    drawn     every unit expected is on it
+    overlap   cards don't overlap (a warning, not a failure)
 
 An equipment with no points at all (a unit heater on its own line-voltage thermostat) is reported as "no points":
-there is nothing to bind, and its graphic shows the anchors it would have.
-
-The optional vision check (graphics/vision.py) runs after these and only adds findings.
+there is nothing to bind.
 """
 
 from __future__ import annotations
@@ -45,9 +47,8 @@ def overlap_check(d: Drawing, area: tuple[float, float, float, float] | None = N
                       f"{hits} card overlaps, {on_eq} cards over the equipment", "refs": []}
 
 
-def check_equipment(payload: dict, graphic) -> dict:
-    """QA of one equipment graphic: {status, checks: [...], counts}."""
-    d = graphic.drawing
+def check_binding(payload: dict) -> dict:
+    """QA of one equipment's points on its template's anchors: {status, checks: [...], counts}."""
     slots = payload["slots"]
     missing = [s["role"] for s in slots if s["required"] and not s["points"]]
     empty_optional = [s["role"] for s in slots if not s["required"] and not s["points"]]
@@ -56,32 +57,22 @@ def check_equipment(payload: dict, graphic) -> dict:
                "detail": (f"{len(filled)} anchors have points, {len(empty_optional)} empty and optional"
                           + (f"; required with no point: {', '.join(missing)}" if missing else "")),
                "refs": missing}]
-
     pts = set(payload["points"])
-    listed = {s.ref for s in d.of_kind("unplaced")}
-    labelled = {s.ref for s in d.of_kind("label")}
-    lost = set(graphic.unanchored)
-    nowhere = sorted(pts - labelled - listed - lost)
-    wrong = sorted(p for p in labelled if p in payload["points"] and not payload["points"][p].get("role"))
-    bad = nowhere + sorted(lost) + wrong
-    checks.append({"rule": "points", "ok": not bad, "level": "fail" if bad else "ok",
-                   "detail": (f"{len(labelled & pts)} on their anchor, {len(listed & pts)} listed with no slot"
-                              + (f"; on a part not drawn: {len(lost)}" if lost else "")
-                              + (f"; missing from the drawing: {len(nowhere)}" if nowhere else "")),
-                   "refs": bad})
-    checks.append(bounds_check(d))
-    checks.append(overlap_check(d, graphic.area))
-
+    on_slot = {p for s in slots for p in s["points"]} & pts
+    listed = set(payload.get("unplaced", [])) & pts
+    nowhere = sorted(pts - on_slot - listed)
+    checks.append({"rule": "points", "ok": not nowhere, "level": "fail" if nowhere else "ok",
+                   "detail": (f"{len(on_slot)} on their anchor, {len(listed)} listed with no slot"
+                              + (f"; on neither: {len(nowhere)}" if nowhere else "")),
+                   "refs": nowhere})
     if not pts:
         status = "no points"
     elif any(c["level"] == "fail" for c in checks):
         status = "fail"
-    elif any(c["level"] == "warn" for c in checks):
-        status = "warn"
     else:
         status = "pass"
     return {"status": status, "checks": checks,
-            "counts": {"points": len(pts), "bound": len(labelled & pts), "unplaced": len(listed & pts),
+            "counts": {"points": len(pts), "bound": len(on_slot), "unplaced": len(listed),
                        "anchors": len(slots), "anchors_filled": len(filled), "required_missing": len(missing)}}
 
 
