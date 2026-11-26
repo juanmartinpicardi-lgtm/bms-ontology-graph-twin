@@ -15,14 +15,14 @@ agent's, and how often the two agree.
 ## What you need
 
 - About **1 hour 40 minutes** in all. You can stop and resume at any time. The page keeps what you saved.
-- The three document sets, on the machine that runs the app (they are not in git):
-
-  ```bash
-  .venv/bin/python scripts/run_real_sets.py --fetch
-  ```
-
-  `troop_d`'s sequences come with the repo.
-- The app:
+- **Online, nothing to install:** open https://bms-ontology-graph-twin.streamlit.app/answer-keys. The online copy
+  forgets saved answers whenever it restarts (every update to the app restarts it), so:
+  - at the end of each sitting, open **Your key file** and press **Download the key file**;
+  - to carry on, upload that file in the same box: your answers come back, and where an item was saved in both
+    places, the later save wins.
+- **Or on your own computer**, where saves stay on disk. The drawings are not in git: the page fetches the public bid
+  set when you press **Get the drawings** (or run `.venv/bin/python scripts/run_real_sets.py --fetch`). `troop_d`'s
+  sequences come with the repo. Start the app:
 
   ```bash
   .venv/bin/python -m streamlit run src/projectmodel/app/main.py --server.port 8521
@@ -65,7 +65,7 @@ Your answers are written to new files, and the agent's keys are never touched:
 - `data/ground_truth/<set>/plans.human.yaml`
 - `data/ground_truth/<set>/sequences.human.yaml`
 
-When you finish, commit them (or send them back).
+When you finish, commit them, or download them from **Your key file** and send them back (the only way online).
 
 ## Plan sheets: what to mark
 

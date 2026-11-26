@@ -125,8 +125,11 @@ no longer fails a job on cost. So the plan reader (W6) and the sequence reader (
    and sequences, the AI agent that built each reader also wrote its answer key (before building it, but still). The
    tool for fixing this now exists. It needs about 1–2 hours of an engineer, and no code:
 
-   - **Start it:** run the app (§1), open **Overview → Answer keys**, pick a job and a set. The documents must be in
-     `data/raw/` (`.venv/bin/python scripts/run_real_sets.py --fetch`). Troop D's sequences come with the repo.
+   - **Start it:** open **Overview → Answer keys** online (https://bms-ontology-graph-twin.streamlit.app/answer-keys)
+     or in the local app (§1), pick a job and a set. If the drawings are not there, **Get the drawings** fetches the
+     public bid set (checked against the copy the key was written on). Troop D's sequences come with the repo.
+     Online, saved answers last only until the app restarts: download the key file at the end of each sitting and
+     upload it to carry on (**Your key file**).
    - **What it asks:** a fixed, seeded sample (about 100 minutes in all): 17 plan tags on `msu_mbb` and 21 on
      `itd_d1_lab` (which room each is in or serves), and 17 sections of Troop D's sequences (which control relations
      each states). The page shows the source, takes the answer from dropdowns built from the documents, saves any time,

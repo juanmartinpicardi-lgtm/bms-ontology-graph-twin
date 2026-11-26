@@ -361,3 +361,87 @@ def test_page_plan_item_with_the_sheet_image(gt):
 
 def test_the_page_is_in_the_navigation():
     assert 'views/answer_keys.py' in (ROOT / "src/projectmodel/app/main.py").read_text()
+
+
+# the hosted app: drawings on demand, key files carried across restarts --------------------------------------------
+
+class _Body:
+    def __init__(self, data: bytes):
+        self.data, self.pos = data, 0
+
+    def read(self, n=-1):
+        out = self.data[self.pos:] if n < 0 else self.data[self.pos:self.pos + n]
+        self.pos += len(out)
+        return out
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+
+def test_fetch_drawing_checks_the_copy(gt, tmp_path, monkeypatch):
+    monkeypatch.setattr(ak, "ROOT", tmp_path)
+    body = b"%PDF-1.7 the bid set"
+    url = ak.DRAWINGS["itd_d1_lab"][0]
+    monkeypatch.setitem(ak.DRAWINGS, "itd_d1_lab", (url, hashlib.sha256(body).hexdigest(), 0.1))
+    seen = []
+    p = ak.fetch_drawing("itd_d1_lab", opener=lambda req: seen.append(req.full_url) or _Body(body))
+    assert p == ak.plan_file("itd_d1_lab") and p.read_bytes() == body and seen == [url]
+    assert not list(p.parent.glob("*.part"))
+    assert ak.fetch_drawing("itd_d1_lab", opener=lambda req: pytest.fail("fetched twice")) == p  # already here
+    p.unlink()
+    with pytest.raises(ValueError, match="sha256"):
+        ak.fetch_drawing("itd_d1_lab", opener=lambda req: _Body(b"something else"))
+    assert not p.exists() and not list(p.parent.glob("*.part"))
+    with pytest.raises(ValueError, match="held out"):
+        ak.fetch_drawing("liberty_boe")
+
+
+def test_a_downloaded_key_file_carries_the_work_across_a_restart(gt):
+    data = ak.load("plans", "msu_mbb")
+    ak.upsert(data, plan_item("FC-1.17"))
+    ak.upsert(data, plan_item("FC-1.18", rooms=("120",)))
+    data["engineer"] = "Pat"
+    raw = ak.save("plans", "msu_mbb", data).read_bytes()
+    ak.key_path("plans", "msu_mbb").unlink()  # the hosted app restarted: its disk is empty
+    n = ak.import_key("plans", "msu_mbb", raw)
+    assert n == {"items": 2, "added": 2, "replaced": 0, "kept": 0}
+    back = ak.load("plans", "msu_mbb")
+    assert [i["id"] for i in back["items"]] == ["M201|FC-1.17", "M201|FC-1.18"] and back["engineer"] == "Pat"
+    assert ak.load_derived("plans", "msu_mbb")["tags"]  # the agent-schema part is rebuilt
+    # merged per item: the record saved last wins
+    newer = ak.load("plans", "msu_mbb")
+    newer["items"][0] = dict(newer["items"][0], rooms=["130"], at="2999-01-01T00:00:00+00:00")
+    ak.save("plans", "msu_mbb", newer)
+    assert ak.import_key("plans", "msu_mbb", raw) == {"items": 2, "added": 0, "replaced": 0, "kept": 2}
+    assert ak.load("plans", "msu_mbb")["items"][0]["rooms"] == ["130"]
+
+
+@pytest.mark.parametrize("raw, match", [
+    (b"set: itd_d1_lab\nby: human\nitems: []\n", "not 'msu_mbb'|for 'itd_d1_lab'"),
+    (b"set: msu_mbb\nby: agent\nitems: []\n", "not a key file"),
+    (b"set: msu_mbb\nby: human\nitems: [{tag: X}]\n", "no id"),
+    (b"\xff\xfe", "not a key file"),
+])
+def test_a_wrong_key_file_is_refused(gt, raw, match):
+    with pytest.raises(ValueError, match=match):
+        ak.import_key("plans", "msu_mbb", raw)
+    assert not ak.exists("plans", "msu_mbb")
+
+
+def test_without_the_drawings_the_page_offers_to_fetch_them(gt, tmp_path, monkeypatch):
+    monkeypatch.setattr(ak, "ROOT", tmp_path)  # no data/raw here
+    at = run_page(ak_job="Plan sheets")
+    assert not at.exception
+    assert any(b.label == "Get the drawings" for b in at.button)
+    assert any("public bid set" in i.value for i in at.info)
+
+
+def test_the_hosted_app_warns_and_offers_the_key_file(gt, monkeypatch):
+    monkeypatch.setattr(ak, "hosted", lambda: True)
+    at = run_page(ak_job="Sequences")
+    assert not at.exception
+    assert any("forgets saved answers" in w.value for w in at.warning)
+    assert at.get("file_uploader")

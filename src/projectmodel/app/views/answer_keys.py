@@ -423,6 +423,59 @@ def seq_item(site: str, item: dict, data: dict, job: str) -> None:
 
 # the page ----------------------------------------------------------------------------------------------------------
 
+def get_drawing(site: str) -> bool:
+    """The set's drawing PDF is not on this computer (it is not in git; on the hosted app, never): offer to fetch the
+    public bid set it was keyed on. True once it is here."""
+    url, _sha, mb = ak.DRAWINGS[site]
+    st.info(f"The drawings for this set are not here yet. They come from the public bid set (about {mb:g} MB), checked "
+            "against the copy the key was written on.", icon=":material/cloud_download:")
+    if not st.button("Get the drawings", type="primary", icon=":material/download:", key=f"ak_fetch_{site}"):
+        st.caption(f"Source: {url}")
+        return False
+    try:
+        with st.spinner("Downloading the drawings…"):
+            ak.fetch_drawing(site)
+    except (OSError, ValueError) as e:
+        st.error(f"Could not get the drawings: {e}", icon=":material/error:")
+        return False
+    st.rerun()
+    return True
+
+
+def key_file(job: str, site: str) -> None:
+    """Download the key file, and carry on from one downloaded earlier. On the hosted app the disk is wiped on every
+    restart, so this is how an engineer's answers survive: download at the end of each sitting, upload to resume."""
+    p = ak.key_path(job, site)
+    host = ak.hosted()
+    if host:
+        st.warning("This online copy of the app forgets saved answers when it restarts (each update restarts it). "
+                   "Download your key file at the end of each sitting, and upload it here to carry on.",
+                   icon=":material/cloud_off:")
+    with st.expander("Your key file", expanded=host):
+        c1, c2 = st.columns([1, 2], vertical_alignment="bottom")
+        if p.exists():
+            c1.download_button("Download the key file", p.read_bytes(), file_name=p.name, mime="application/x-yaml",
+                               icon=":material/download:", key=f"ak_dl_{job}_{site}")
+            st.caption(f"`{ak.rel(p)}` is rewritten on every save. When the work is done, send the file to be "
+                       "committed to the repo, so the scores use it.")
+        else:
+            c1.caption("Nothing saved yet for this set.")
+        up = c2.file_uploader("Carry on from a key file you downloaded", type=["yaml", "yml"],
+                              key=f"ak_up_{job}_{site}_{st.session_state.get('ak_up_n', 0)}")
+        if up is not None:
+            try:
+                n = ak.import_key(job, site, up.getvalue())
+            except ValueError as e:
+                st.error(str(e), icon=":material/error:")
+            else:
+                st.session_state["ak_up_n"] = st.session_state.get("ak_up_n", 0) + 1
+                st.session_state["ak_up_msg"] = (f"Loaded {n['items']} items: {n['added']} added, {n['replaced']} "
+                                                 f"newer than here, {n['kept']} kept as they were.")
+                st.rerun()
+        if msg := st.session_state.pop("ak_up_msg", None):
+            st.success(msg, icon=":material/task_alt:")
+
+
 def main() -> None:
     st.html('<p style="margin:0">Write the answers the readers are scored against, on a fixed sample, about 1 to 2 hours '
             'in all. Blind: the reader\'s answer and the agent key stay hidden until you mark an item done.</p>')
@@ -435,10 +488,8 @@ def main() -> None:
     st.session_state["ak_site"] = site
     ak.check_set(job, site)
     if job == "plans" and not ak.plan_file(site).exists():
-        st.warning(f"The drawing PDF is not here: `{ak.rel(ak.plan_file(site))}`. The documents are not in "
-                   "git. Get them with `.venv/bin/python scripts/run_real_sets.py --fetch`, then reload.",
-                   icon=":material/folder_off:")
-        return
+        if not get_drawing(site):
+            return
     sample = ak.sample_for(site)
     data = ak.load(job, site)
     items = list(sample["items"])
@@ -459,6 +510,7 @@ def main() -> None:
                + f"Saved in `{ak.rel(ak.key_path(job, site))}`; the agent key is never touched.")
     st.text_input("Your name (saved in the key file)", value=data.get("engineer", ""), key="ak_engineer",
                   placeholder="Optional")
+    key_file(job, site)
 
     curkey = f"ak_cur_{site}"
     ids = [i["id"] for i in all_items]
@@ -489,11 +541,6 @@ def main() -> None:
     else:
         seq_item(site, item, data, job)
 
-    if ak.exists(job, site):
-        p = ak.key_path(job, site)
-        with st.expander("The key file"):
-            st.caption(f"`{ak.rel(p)}` is rewritten on every save. Commit it when you're done.")
-            st.download_button("Download", p.read_bytes(), file_name=p.name, mime="application/x-yaml")
     st.caption("Scores: `.venv/bin/python scripts/eval.py plan_meaning` or `sequence_read` report each reader against "
                "the human key and the agent key, and how often the two keys agree. Guide: docs/answer-key-guide.md")
 
