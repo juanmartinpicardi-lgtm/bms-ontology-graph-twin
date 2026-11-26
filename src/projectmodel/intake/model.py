@@ -130,8 +130,9 @@ def missing(it: Intake, b: dict) -> list[tuple[str, str, str]]:
                                             f"capacity ({', '.join(plan_only[:6])})"))
     if it.done("sequences"):
         fams = {e["family"] for e in eq.values() if e["sequence"]}
-        none = sorted({e["family"] for e in eq.values() if not e["sequence"] and e["family"] not in fams
-                       and e["family"] not in ("specialty", "uh", "other")})
+        # a unit whose tag no rule knows has family None: no family to name, so it is not listed here
+        none = sorted({e["family"] for e in eq.values() if not e["sequence"] and e["family"]
+                       and e["family"] not in fams and e["family"] not in ("specialty", "uh", "other")})
         if none:
             out.append(("sequences", "gap", f"No sequence for: {', '.join(f.upper() for f in none)}"))
     if it.done("submittal"):

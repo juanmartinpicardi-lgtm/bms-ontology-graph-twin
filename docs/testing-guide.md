@@ -39,7 +39,7 @@ Then open http://localhost:8521.
 | **Agent on the Overview** | Open the round button on any Overview page and ask "Which projects do I have?" or "What is the Documentation tab for?": it answers from the app's foundations and the project list. |
 | **Add a building → Example project documents** | Pick MSU or ITD: each step then offers only that project's document (submittal is a stand-in, no BMS export). |
 | **Documentation** | Every document of the project by category, grid or list, preview, replace, delete, "What is this document?". |
-| **Graphics** | Each Troop D equipment type with its 2D schematic, points on anchors, simulated values and a QA result. Also floor and system graphics. **Equipments** has the new types (W9), in 3D or 2D (a toggle above the viewer). |
+| **Graphics** | Coverage per Troop D equipment type (3D model, points on anchors, binding QA), floor graphics and system graphics. **Equipments** shows each unit's 3D model, including the new types (W9). |
 
 ## 3. One command per package
 

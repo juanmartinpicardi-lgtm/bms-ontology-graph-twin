@@ -1,5 +1,5 @@
-"""W9 graphics: template resolution, anchors for every template, 2D equipment / floor / system graphics, and their
-rule QA. Synthetic payloads keep most tests independent of any built graph; the page tests use data/kg.sqlite."""
+"""W9 graphics: template resolution, anchors for every template, the binding QA of an equipment's points, floor and
+system graphics and their rule QA. Synthetic payloads keep most tests independent of any built graph; the page tests use data/kg.sqlite."""
 
 from pathlib import Path
 
@@ -7,12 +7,10 @@ import pytest
 
 from projectmodel.equipment_view import load_anchors, template_for
 from projectmodel.graphics.drawing import Drawing
-from projectmodel.graphics.equipment2d import render
 from projectmodel.graphics.floor import render_floor
-from projectmodel.graphics.layouts import LAYOUTS
-from projectmodel.graphics.qa import bounds_check, check_drawing, check_equipment
+from projectmodel.graphics.coverage import DRAWN_3D
+from projectmodel.graphics.qa import bounds_check, check_binding, check_drawing
 from projectmodel.graphics.system import medium, render_air, render_water
-from projectmodel.graphics.vision import cards
 from projectmodel.knowledge_model import load_knowledge_model
 from projectmodel.value_model import describe, sample
 
@@ -55,10 +53,10 @@ def payload(tid: str, km, anchors, fill: bool = True, extra: dict | None = None)
             "variant": FULL.get(tid, {}) if fill else {}, "points": points, "slots": slots, "unplaced": list(extra or {})}
 
 
-def test_every_template_has_anchors_and_a_2d_layout(km, anchors):
+def test_every_template_has_anchors_and_a_3d_model(km, anchors):
     for tid in km.templates:
         assert tid in anchors, tid
-        assert tid in LAYOUTS, tid
+        assert tid in DRAWN_3D, tid
         roles = {s.role for s in km.templates[tid].slots}
         assert roles <= set(anchors[tid]["anchors"]), (tid, roles - set(anchors[tid]["anchors"]))
 
@@ -81,34 +79,27 @@ def test_template_for_falls_back_to_the_node_template(km):
     assert template_for("Equipment", "HS01", {}, km) is None
 
 
-@pytest.mark.parametrize("tid", sorted(LAYOUTS))
-def test_each_template_renders_and_passes_rule_qa(km, anchors, tid):
+@pytest.mark.parametrize("tid", sorted(DRAWN_3D))
+def test_each_template_binds_every_point(km, anchors, tid):
     p = payload(tid, km, anchors)
-    g = render(p)
-    qa = check_equipment(p, g)
+    qa = check_binding(p)
     assert qa["status"] == "pass", (tid, [c for c in qa["checks"] if c["level"] != "ok"])
-    assert set(g.placed) == set(p["points"])                 # every point on its anchor
-    assert "<svg" in g.svg("dark") and g.png(scale=0.5)[:4] == b"\x89PNG"
+    assert qa["counts"]["bound"] == len(p["points"])
 
 
-def test_missing_required_slot_fails_and_shows_a_ghost(km, anchors):
+def test_missing_required_slot_fails(km, anchors):
     p = payload("vav", km, anchors, fill=False)
-    g = render(p)
-    qa = check_equipment(p, g)
-    assert qa["status"] == "no points"
-    assert g.ghosts and all(s["role"] in g.ghosts for s in p["slots"] if s["required"])
+    assert check_binding(p)["status"] == "no points"
     p["points"]["x"] = {"label": "X", "cls": "Command", "role": None, "status": "proposed"}
     p["unplaced"] = ["x"]
-    qa = check_equipment(p, render(p))
+    qa = check_binding(p)
     assert qa["status"] == "fail" and qa["checks"][0]["rule"] == "anchors"
 
 
 def test_unplaced_points_are_listed_not_lost(km, anchors):
     extra = {"u1": {"label": "ZN-SP", "cls": "Setpoint", "role": None, "status": "proposed"}}
-    p = payload("vav", km, anchors, extra=extra)
-    g = render(p)
-    assert [s.ref for s in g.drawing.of_kind("unplaced")] == ["u1"]
-    assert check_equipment(p, g)["status"] == "pass"
+    qa = check_binding(payload("vav", km, anchors, extra=extra))
+    assert qa["status"] == "pass" and qa["counts"]["unplaced"] == 1
 
 
 def test_bounds_rule_catches_a_shape_off_the_drawing():
@@ -188,20 +179,3 @@ def test_water_and_air_follow_feeds():
     assert {s.ref for s in a.drawing.of_kind("unit")} == {"u:AHU1", "u:V1", "u:V2", "u:V3"}
     assert a.unplaced == ["u:V3"]
     assert medium("air") == "supply" and medium("hot water") == "hot_water"
-
-
-def test_vision_cards_are_the_drawn_cards(km, anchors):
-    p = payload("ahu", km, anchors)
-    g = render(p)
-    cs = cards(g.drawing)
-    assert len(cs) == len(g.drawing.of_kind("card"))
-    assert sorted(n for c in cs for n in c["points"]) == sorted(v["label"] for v in p["points"].values())
-
-
-def test_graphic_qa_job_check():
-    from projectmodel.ai.jobs import check_output
-
-    vals = {"card_ids": ["C1", "C2"]}
-    assert check_output("graphic_qa", {"verdict": "ok", "issues": []}, vals) is None
-    bad = {"verdict": "fix", "issues": [{"card": "C9", "problem": "overlap", "note": ""}]}
-    assert "not candidates" in check_output("graphic_qa", bad, vals)

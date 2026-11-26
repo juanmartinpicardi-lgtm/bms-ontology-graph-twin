@@ -11,7 +11,7 @@ An agent should not read SQLite or guess node ids. It calls:
   read_sequence  the sequence sections that apply to a unit, and the control relations published from them
   run_check      SHACL rules (W2), missing template points, unbound or loose points, a class that does not fit the
                  point's input or output, and sources that disagree (W3)
-  show_graphic   the unit's graphic: W9's 2D + 3D graphic with its QA (graphics.graphic_ref), else Equipment 3D
+  show_graphic   the unit's graphic: its 3D model with the binding QA (graphics.graphic_ref), else Equipments
   diagnose       "does it run as designed?": the rules gather the evidence step by step (sequence, loops, interlocks,
                  setpoints against the BMS and the schedule, checks, gaps) and say "unknown" where the graph has no data
 
@@ -948,8 +948,8 @@ TOOLS = [
          "type": "array", "items": {"type": "string", "enum": ["shacl", "template", "binding", "class", "conflicts"]},
          "description": "Only these checks (default: all)."}}, "required": ["node_id"]}},
     {"name": "show_graphic",
-     "description": "The unit's graphic (its 3D model and 2D schematic with points on their anchors, and the "
-                    "graphic's QA result), as a link the chat shows.",
+     "description": "The unit's graphic (its 3D model with points on their anchors, and the binding QA result), "
+                    "as a link the chat shows.",
      "input_schema": {"type": "object", "properties": {"node_id": _ID}, "required": ["node_id"]}},
     {"name": "diagnose",
      "description": "Does a unit run as designed? Gathers the evidence step by step: its sequence, each control loop's "

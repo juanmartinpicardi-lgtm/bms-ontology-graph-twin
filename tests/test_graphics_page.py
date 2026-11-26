@@ -1,4 +1,4 @@
-"""The Graphics page and the 2D graphic on the Equipments page, on the graph in data/kg.sqlite (skipped when it
+"""The Graphics page, the Equipments page (3D only) and the Documentation page, on the graph in data/kg.sqlite (skipped when it
 has not been built)."""
 
 from pathlib import Path
@@ -17,28 +17,18 @@ def test_graphics_page_shows_coverage_and_graphics():
     at.query_params["project"] = "alpha/names_paths"
     at.run()
     assert not at.exception
-    assert any("Types with a graphic" in m.label for m in at.metric)
+    assert any("Types with a 3D model" in m.label for m in at.metric)
     assert any("QA" in c.value for c in at.caption)
 
 
-def test_equipment_page_shows_the_2d_graphic_and_its_qa():
+def test_equipment_page_is_3d_only():
+    """No 2D option: an old ?view=2d link still opens the 3D model."""
     at = AppTest.from_file(str(VIEWS / "equipment_3d.py"), default_timeout=60)
     at.query_params.update(project="alpha/names_paths", equip="eq:Airside AHU-2", view="2d")
     at.run()
     assert not at.exception
-    assert any("2D graphic QA" in m.value for m in at.markdown)
-
-
-def test_equipment_page_shows_one_view_at_a_time():
-    """3D by default, with no 2D graphic under it; the toggle switches to the 2D graphic and its QA."""
-    at = AppTest.from_file(str(VIEWS / "equipment_3d.py"), default_timeout=60)
-    at.query_params.update(project="alpha/names_paths", equip="eq:Airside AHU-2")
-    at.run()
-    assert not at.exception
-    assert not any("2D graphic QA" in m.value for m in at.markdown)
-    at.session_state["eq_mode"] = "2d"
-    at.run()
-    assert any("2D graphic QA" in m.value for m in at.markdown)
+    assert not at.get("segmented_control")
+    assert not any("2D" in m.value for m in at.markdown)
 
 
 def test_documentation_page_lists_the_source_data():

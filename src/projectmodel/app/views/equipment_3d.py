@@ -1,12 +1,10 @@
-"""Equipments: one piece of equipment at a time, in 3D or 2D (a toggle above the viewer, one view at a time).
-3D: its parametric model with every point pinned on it, provenance on click, and simulated values
-(spec-equipment-3d §7). 2D: the graphic generated from the same payload (graphics/, plan §5.4) with its QA result, and
-an optional vision check.
+"""Equipments: one piece of equipment at a time, as its 3D model: its parametric model with every point pinned on
+it, provenance on click, and simulated values (spec-equipment-3d §7).
 
 Left: every piece of equipment with a 3D model in the active project, filtered by type and name, so you always see
 what else there is and pick one. Above the viewer: previous / next and the equipment this one is fed by or feeds.
 
-Deep link: /Equipment_3D?project=alpha/names_paths&equip=eq:Airside AHU-2 (add &view=2d for the 2D graphic)
+Deep link: /Equipment_3D?project=alpha/names_paths&equip=eq:Airside AHU-2
 Fed-by / feeds links inside the viewer open the linked equipment on this page.
 """
 
@@ -26,9 +24,6 @@ sys.path.insert(0, str(ROOT / "src"))
 from projectmodel.app import screen  # noqa: E402
 from projectmodel.app.shell import active_project, get_store, knowledge_model, page_tools, box  # noqa: E402
 from projectmodel.equipment_view import equipment_payload, load_anchors, render_html, template_for  # noqa: E402
-from projectmodel.graphics.drawing import img_tag  # noqa: E402
-from projectmodel.graphics.equipment2d import render as render_2d  # noqa: E402
-from projectmodel.graphics.qa import check_equipment  # noqa: E402
 from projectmodel.projects import list_projects  # noqa: E402
 
 PAGE = "/Equipment_3D"
@@ -36,12 +31,9 @@ TYPES = {"ahu": "AHU", "rtu": "RTU", "vav": "VAV", "rvav": "VAV reheat", "fcu": 
          "split_system": "Split", "exhaust_fan": "Exhaust fan", "chiller": "Chiller", "boiler": "Boiler",
          "pump": "Pump", "cooling_tower": "Cooling tower", "heat_exchanger": "Heat exchanger",
          "meter": "Meter"}  # templates with a 3D model, in picker order
-QA_ICON = {"pass": ":material/check_circle:", "warn": ":material/warning:", "fail": ":material/error:",
-           "no points": ":material/radio_button_unchecked:"}
 ALL = "all"
 # Simulated-value scenarios (keys and labels as in equipment3d/sim.js). One runs app-wide: its clock keeps going as
 # you move between equipment, so a fault develops the same way on the plant, the AHU and the VAV.
-VIEWS = {"3d": "3D model", "2d": "2D graphic"}
 SCENARIOS = {"normal": "Normal day", "hot": "Hot afternoon", "stuck": "Stuck reheat valve (VAVs with reheat)",
              "chw_warm": "Chilled water running warm"}
 
@@ -227,17 +219,9 @@ with main, box("eq_view", fit=True):
                           type="tertiary")
             if len(ids) > 2:
                 st.caption(f"+{len(ids) - 2} more", width="content")
-        st.space("stretch")
-        if qp.get("view") in VIEWS and qp.get("view") != st.session_state.get("_linked_view"):
-            st.session_state["_linked_view"] = st.session_state["eq_mode"] = qp.get("view")
-        st.session_state.setdefault("eq_mode", "3d")
-        mode = st.segmented_control("View", list(VIEWS), key="eq_mode", format_func=VIEWS.get,
-                                    label_visibility="collapsed", width="content",
-                                    help="One view at a time: the 3D model, or the 2D graphic made from the same "
-                                         "points") or "3d"
 
-    qp.update(project=project, equip=equip, view=mode)  # the address bar is always a deep link to what is on screen
-    st.session_state["_linked_view"] = mode
+    qp.update(project=project, equip=equip)  # the address bar is always a deep link to what is on screen
+    qp.pop("view", None)  # an old link's view=2d: there is only the 3D model now
     if scenario != "normal":
         qp["scenario"] = st.session_state["_linked_scenario"] = scenario
     else:
@@ -245,37 +229,9 @@ with main, box("eq_view", fit=True):
         st.session_state["_linked_scenario"] = scenario
     st.session_state["_linked_equip"] = equip
     payload = equipment_payload(store, project, equip, km, anchors())
-    if mode == "3d":
-        # Links inside the viewer open the target on this page (the top window), not inside the iframe.
-        payload["links"] = {i: link(project, i, scenario) for i in models if i != equip}
-        # The start time, not the elapsed time: the page stays identical between reruns, so the viewer doesn't reload.
-        payload["sim"] = {"scenario": scenario, "started": st.session_state.setdefault("sim_started", time.time())}
-        payload["link_target"] = "top"
-        st.iframe(render_html(payload, st.context.theme.type), height=760)
-    else:
-        graphic = render_2d(payload)
-        qa = check_equipment(payload, graphic)
-        svg = graphic.svg(st.context.theme.type or "light", max_width=None)
-        st.html(f"<div style='max-height:calc(var(--fit, 900px) - 190px);min-height:420px;overflow:auto;"
-                f"text-align:center'>{img_tag(svg, graphic.drawing.title)}</div>")
-        c = qa["counts"]
-        st.markdown(f"{QA_ICON.get(qa['status'], '')} **2D graphic QA: {qa['status']}** · {c['bound']} of "
-                    f"{c['points']} points on their anchor · {c['anchors_filled']} of {c['anchors']} anchors filled")
-        with st.expander("QA checks", icon=":material/rule:"):
-            for chk in qa["checks"]:
-                st.markdown(f"{QA_ICON.get({'ok': 'pass'}.get(chk['level'], chk['level']), '')} "
-                            f"**{chk['rule']}** · {chk['detail']}")
-            vkey = f"vision_{project}_{equip}"
-            if st.button("Vision check", icon=":material/visibility:", key="eq_vision",
-                         help="Send the 2D graphic and its cards to the graphic_qa model (about $0.005). "
-                              "It can only flag cards we drew."):
-                from projectmodel.ai.providers import ModelError, ModelUnavailable
-                from projectmodel.graphics.vision import vision_check
-                try:
-                    st.session_state[vkey] = vision_check(payload, graphic, store=store, project=project)
-                except (ModelUnavailable, ModelError) as e:
-                    st.session_state[vkey] = {"detail": f"not run: {e}", "issues": [], "cost_usd": 0}
-            if v := st.session_state.get(vkey):
-                st.markdown(f"**vision** · {v['detail']} · ${v['cost_usd']:.4f}")
-                for i in v["issues"]:
-                    st.caption(f"{i['card']} {i['problem']}: {', '.join(i['points'])} → {i['part']}. {i['note']}")
+    # Links inside the viewer open the target on this page (the top window), not inside the iframe.
+    payload["links"] = {i: link(project, i, scenario) for i in models if i != equip}
+    # The start time, not the elapsed time: the page stays identical between reruns, so the viewer doesn't reload.
+    payload["sim"] = {"scenario": scenario, "started": st.session_state.setdefault("sim_started", time.time())}
+    payload["link_target"] = "top"
+    st.iframe(render_html(payload, st.context.theme.type), height=760)
