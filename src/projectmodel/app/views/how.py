@@ -29,6 +29,7 @@ NOT_MAPPED = '<p class="cap">Map a project to see this on real data</p>'
 
 # 1 · Connect: the sources, and one real record as the adapter hands it over.
 sources = ('<div class="srcs rise" style="--i:0"><span class="src">Project Haystack<small>now</small></span>'
+           '<span class="src">Project documents<small>now</small></span>'
            '<span class="src later">Niagara<small>next</small></span>'
            '<span class="src later">CPO Studio<small>next</small></span></div><div class="arrow"></div>')
 if example:
@@ -64,12 +65,14 @@ else:
     graph = NOT_MAPPED
 
 # 4 · Use: the views the graph powers; each tile opens its page.
-views = [("account_tree", "Tree", "Equipment, parts and points.", "tree_app.py"),
+views = [("domain", "Digital twin", "The building, floor by floor.", "views/digital_twin.py"),
+         ("account_tree", "Tree", "Equipment, parts and points.", "tree_app.py"),
          ("bubble_chart", "Graph 3D", "The whole graph in space.", "views/graph_3d.py"),
-         ("view_in_ar", "Equipment 3D", "One machine, its points live.", "views/equipment_3d.py"),
+         ("view_in_ar", "Equipments", "One machine, 3D or 2D, points live.", "views/equipment_3d.py"),
+         ("schema", "Graphics", "Floors and systems, drawn from the graph.", "views/graphics.py"),
          ("sync_alt", "Sequences", "How the equipment is controlled.", "views/sequences.py"),
          ("table", "Data tables", "Points, equipment, links.", "views/data_tables.py"),
-         ("domain", "Digital twin", "The building, floor by floor.", "views/digital_twin.py")]
+         ("folder_open", "Documentation", "Every document, by category.", "views/documentation.py")]
 use = tiles([v[:3] for v in views], [Go(v[1], v[3]) for v in views])
 
 # 5 · Two layers: what is shared by every project, what belongs to one.
@@ -94,7 +97,7 @@ WORDS = glossary([
     ("Ontology", "The classes-and-relations part of the knowledge model (Brick + our extension)."),
     ("Knowledge graph", "One building's graph, built with the knowledge model, every fact with its provenance."),
     ("Tribal knowledge", "What engineers know that isn't written down: conventions and notes, shared or per site."),
-    ("Digital twin", "Knowledge graph + live state + views. Later phase."),
+    ("Digital twin", "Knowledge graph + state + views. Values are simulated until a live BMS connection."),
 ])
 
 hero("Exports go in. A knowledge graph comes out.",
@@ -103,7 +106,9 @@ hero("Exports go in. A knowledge graph comes out.",
 
 story([
     Section("Connect", "cable", "Read every tool into one common record.",
-            p("Adapters read each tool's export into one record per point: name, folder, device, units.",
+            p("Adapters read each tool's export into one record per point: name, folder, device, units. The guided "
+              "setup reads a building's documents the same way: floor plans, schedules, sequences, the controls "
+              "submittal and the BMS export.",
               "Adapters stay thin. All the intelligence lives in the mapper and the knowledge model, so the "
               "pipeline doesn't care where the data came from."),
             f'<div class="flow">{sources}{connect}</div>'),
@@ -119,9 +124,10 @@ story([
               "Each fact keeps its source, method and confidence."),
             graph, [Go("What a complete graph is", "views/complete_graph.py")]),
     Section("Use", "explore", "The graph powers every view here.",
-            p("Tree, 3D graph, equipment, sequences and tables all read the same graph. Next: agents and "
-              "plain-language questions."),
-            use, [Go("Watch the agent tour", "views/agent_tour.py", "play_circle")]),
+            p("Every page reads the same graph. So does the agent on the right of every page: ask it in plain words, "
+              "it answers from the graph and cites every fact."),
+            use, [Go("Watch the agent tour", "views/agent_tour.py", "play_circle"),
+                  Go("See the architecture", "views/architecture.py", "lan")]),
     Section("Two layers", "layers", "Some knowledge is true of every building. Some is true of one.",
             p("They live in different places, and feed each other.")
             + features([

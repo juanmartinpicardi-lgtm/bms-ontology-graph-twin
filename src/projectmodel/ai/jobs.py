@@ -18,6 +18,7 @@ from typing import Any
 import jsonschema
 
 from ..db.store import Store
+from .. import file_ai as _file_ai
 from ..intake import sequence_ai as _sequence_ai
 from .calls import Router, default_router
 from .providers import ModelError, ModelRequest, ModelUnavailable
@@ -202,6 +203,14 @@ JOBS: dict[str, Job] = {j.id: j for j in [
         effort="high", status="built"),
     Job("name_resolve", "Name to entity, when rules are ambiguous", "haiku"),
     Job("snapshot_question", "Snapshot and photo questions", "hydrogen"),
+    # Any file a person gives (fileread.py reads it): the knowledge it teaches, each item quoting the file, for the
+    # person to confirm (file_ai.py); and what a project document is, for the Documentation page.
+    Job("knowledge_extract", "Knowledge from any file", "hydrogen", ("argon",), ("opus",), prompt="knowledge_extract",
+        schema=_file_ai.KNOWLEDGE_SCHEMA, check=_file_ai.check_knowledge, max_tokens=8000, effort="low",
+        status="built", people="Confirm each rule and note"),
+    Job("document_digest", "Documents: what a file is", "hydrogen", ("argon",), ("sonnet",), prompt="document_digest",
+        schema=_file_ai.DIGEST_SCHEMA, check=_file_ai.check_digest, max_tokens=3000, effort="low", status="built",
+        people="Change the category if wrong"),
     # The vision pass after the rule QA of a generated graphic (graphics/vision.py): the PNG plus its cards.
     Job("graphic_qa", "Graphics: vision QA", "hydrogen", ("argon",), ("opus",), prompt="graphic_qa",
         schema=GRAPHIC_QA_SCHEMA, check=_check_graphic_qa, max_tokens=4000, effort="low", status="built",

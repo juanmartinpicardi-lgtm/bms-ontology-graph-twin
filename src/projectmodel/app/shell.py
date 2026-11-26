@@ -87,8 +87,8 @@ def set_project(project: str) -> None:
 # No sidebar anywhere: a black top bar names the app, a fixed icon rail under it picks the area (Overview, Projects,
 # Shared knowledge), folder tabs pick the page inside it, and the project header switches building. Page controls
 # live on the page.
-# Design language (docs/reference: the "List of sites" portal screen): the top bar and the rail are black in both
-# themes; the rail's selected item is a grey tile with a blue bar on its left, its icons thin outlines. A page opens
+# Design language (docs/reference: the "List of sites" portal screen): the top bar and the rail are black in dark
+# mode and white in light mode; the rail's selected item is a grey tile with a blue bar on its left, its icons thin outlines. A page opens
 # with its title in a regular 28px face, then its pages as folder tabs: grey tabs, the open one in the colour of the
 # band below it, a band that fades from dark into the page. Sub-tabs are plain labels underlined in the accent, with
 # their count in a pill. Sections are flat panels with a thin grey outline; tables have uppercase, letter-spaced
@@ -107,7 +107,13 @@ THEME = {
               "warn": "#C98A12", "bad": "#EE3124", "tab": "#E0E0E0", "tab_hover": "#D4D4D4", "band": "#FFFFFF",
               "foot": "#F0F0F0", "search_btn": "#B0B0B0"},
 }
-NAV = {"bg": "#000000", "fg": "#FFFFFF", "hover": "#1C1C1C", "on": "#404040", "bar": "#60A5E5"}
+# The top bar and the rail follow the theme: black in dark mode, white in light mode (the whole app turns light).
+NAV_THEME = {
+    "dark": {"bg": "#000000", "fg": "#FFFFFF", "hover": "#1C1C1C", "on": "#404040", "bar": "#60A5E5",
+             "mark": "#FFFFFF", "edge": "rgba(0,0,0,.35)"},
+    "light": {"bg": "#FFFFFF", "fg": "#303030", "hover": "#EDEDED", "on": "#E0E0E0", "bar": "#1792E5",
+              "mark": "#F0F0F0", "edge": "rgba(0,0,0,.10)"},
+}
 ACCENT = THEME["dark"]["accent"]
 TOP_H, RAIL_W = 50, 56  # the top bar's height and the rail's width, in px
 
@@ -142,6 +148,7 @@ def chrome_css() -> str:
     section sits in (a container keyed box_<name> is a card). Content uses the full width of the screen."""
     t = theme()
     c = THEME[t]
+    NAV = NAV_THEME[t]
     return f"""<style>
 [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"] {{
   display: none !important; }}
@@ -159,9 +166,10 @@ def chrome_css() -> str:
 [data-testid="stHeader"] button, [data-testid="stHeader"] button * {{ pointer-events: auto; }}
 [data-testid="stAppDeployButton"] {{ display: none; }}
 
-/* The top bar: the menu button, the app's mark and name. Black in both themes, with a soft shadow on the page. */
+/* The top bar: the menu button, the app's mark and name. Black in dark mode, white in light mode. */
 #pm-topbar {{ position: fixed; left: 0; right: 0; top: 0; height: {TOP_H}px; z-index: 2; background: {NAV["bg"]};
-  display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.35); }}
+  display: flex; align-items: center; box-shadow: 0 2px 10px {NAV["edge"]};
+  border-bottom: 1px solid {c["line"] if t == "light" else NAV["bg"]}; }}
 #pm-nav {{ width: {RAIL_W}px; height: {TOP_H}px; flex: 0 0 auto; }}
 #pm-nav summary {{ list-style: none; width: {RAIL_W}px; height: {TOP_H}px; display: flex; align-items: center;
   justify-content: center; cursor: pointer; color: {NAV["fg"]}; }}
@@ -171,15 +179,16 @@ def chrome_css() -> str:
 #pm-nav summary:hover {{ background: {NAV["hover"]}; }}
 #pm-nav summary:focus-visible {{ outline: 2px solid {NAV["bar"]}; outline-offset: -2px; }}
 .pm-brand {{ display: flex; align-items: center; gap: 14px; margin-left: 6px; color: {NAV["fg"]}; white-space: nowrap; }}
-.pm-mark {{ width: 26px; height: 26px; border-radius: 6px; background: #FFFFFF; display: flex; align-items: center;
+.pm-mark {{ width: 26px; height: 26px; border-radius: 6px; background: {NAV["mark"]}; display: flex; align-items: center;
   justify-content: center; font-family: 'Material Symbols Rounded'; font-size: 20px; color: #EE3124; }}
-.pm-sep {{ width: 1px; height: 26px; background: #FFFFFF; opacity: .9; }}
+.pm-sep {{ width: 1px; height: 26px; background: {NAV["fg"]}; opacity: .9; }}
 .pm-name {{ font-size: 20px; line-height: 1; font-weight: 400; letter-spacing: .3px; }}
 
-/* Local navigation: a black rail under the top bar, thin outline icons; the menu button opens it with names */
+/* Local navigation: a rail under the top bar (the top bar's colour), thin outline icons; the menu button opens it with names */
 .st-key-rail {{ position: fixed; left: 0; top: {TOP_H}px; bottom: 0; width: {RAIL_W}px; z-index: 999995;
   background: {NAV["bg"]}; padding: 6px 0 14px; align-items: stretch; gap: 0;
-  box-shadow: 2px 0 8px rgba(0,0,0,.35); overflow: visible; }}
+  box-shadow: 2px 0 8px {NAV["edge"]}; overflow: visible;
+  border-right: 1px solid {c["line"] if t == "light" else NAV["bg"]}; }}
 .st-key-rail > div {{ width: 100% !important; }}
 .st-key-rail [data-testid="stPageLink"] {{ width: 100%; }}
 .st-key-rail [data-testid="stPageLink-NavLink"] {{ position: relative; width: 100%; height: 56px; margin: 0;
@@ -219,7 +228,7 @@ body:has(#pm-nav[open]) .st-key-rail [data-testid="stPageLink-NavLink"] [data-te
 .st-key-backlink [data-testid="stPageLink-NavLink"]:hover {{ color: {c["accent"]}; background: transparent; }}
 
 /* Streamlit's toolbar (the theme switch and the menu) sits in the top bar (THEME_WATCH_JS moves it level with it),
-   drawn like the top bar's own tools: plain white icons on black. */
+   drawn like the top bar's own tools: plain icons in the top bar's colours. */
 [data-testid="stHeader"] [data-testid="stBaseButton-header"], #pm-theme {{ height: 36px; min-height: 36px;
   min-width: 36px; padding: 0 10px; border-radius: 4px; background: transparent; border: 0;
   color: {NAV["fg"]}; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }}
@@ -253,7 +262,7 @@ body:has(#pm-nav[open]) .st-key-rail [data-testid="stPageLink-NavLink"] [data-te
 .st-key-top_me {{ margin-left: 6px; }}
 .st-key-top_me [data-testid="stPopoverButton"] {{ width: 34px; min-height: 34px; height: 34px; padding: 0;
   border-radius: 50%; justify-content: center; background: #D0D0D0; border: 0; }}
-.st-key-top_me [data-testid="stPopoverButton"]:hover {{ background: #FFFFFF; }}
+.st-key-top_me [data-testid="stPopoverButton"]:hover {{ background: {"#FFFFFF" if t == "dark" else "#B8B8B8"}; }}
 .st-key-top_me [data-testid="stPopoverButton"] p {{ color: #202020 !important; font-size: 13px; font-weight: 500;
   letter-spacing: .3px; }}
 
@@ -271,7 +280,7 @@ body.pm-theming [data-testid="stMainMenuPopover"] {{ opacity: 0 !important; poin
   background: linear-gradient(to bottom, {c["band"]}, color-mix(in srgb, {c["band"]} 0%, transparent));
   z-index: -1; pointer-events: none; }}
 .st-key-tabs {{ gap: 2px !important; align-items: flex-end; }}
-[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ height: 44px; padding: 0 24px; margin: 0; border: 0;
+[class*="st-key-chip"] [data-testid="stPageLink-NavLink"] {{ height: 44px; padding: 0 18px; margin: 0; border: 0;
   border-radius: 4px 4px 0 0; background: {c["tab"]}; transition: background .12s ease; }}
 [class*="st-key-chip"] [data-testid="stPageLink-NavLink"] > span:first-child:has([data-testid="stIconMaterial"]) {{
   display: none; }}

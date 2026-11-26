@@ -76,6 +76,21 @@ def project_summary(store, project: str | None) -> dict:
     return _summary(project, _db_stamp()) if project else {}
 
 
+@st.cache_data(show_spinner=False, ttl=60)
+def _app_context(stamp: float) -> str:
+    from projectmodel.agent.foundations import foundations_text, projects_text
+    from projectmodel.db.store import Store
+    return foundations_text() + "\n\n" + projects_text(Store(DB))
+
+
+def app_context() -> str:
+    """The app's foundations and every project, for the agent's instructions (agent/foundations.py)."""
+    try:
+        return _app_context(_db_stamp())
+    except Exception:  # noqa: BLE001 - the agent still answers from the graph without it
+        return ""
+
+
 def _knowledge_stamp() -> float:
     return max((p.stat().st_mtime for p in KNOWLEDGE_DIR.rglob("*") if p.is_file()), default=0.0)
 
@@ -254,7 +269,7 @@ def _source_card(cite: str, info: dict, tools: GraphTools) -> None:
     if node and node in tools.rows:
         eq = tools._equipment_of(tools.tree.by_id[node]) if node in tools.tree.by_id else None
         if eq is not None and eq.attrs.get("template"):
-            _link("views/equipment_3d.py", f"{eq.label} in Equipment 3D", ":material/view_in_ar:",
+            _link("views/equipment_3d.py", f"{eq.label} in Equipments", ":material/view_in_ar:",
                   {"project": tools.project, "equip": eq.id})
         _link("tree_app.py", "Open the tree", ":material/account_tree:", {"project": tools.project})
     page = _page_of(tools, node or cite)
@@ -477,7 +492,11 @@ def suggestions(chips: list[Chip]) -> list[tuple[str, str, str]]:
                                                    "and why?"),
                 ("hub", "How is the plant built?", "What are the main air handlers and plants, and what does each "
                                                    "feed?")]
-    return [("lightbulb", "What can you do?", "What can you help me with, and where do your answers come from?")]
+    return [("lightbulb", "What can you do?", "What can you help me with, and where do your answers come from?"),
+            ("apartment", "Where are my projects?", "Which projects and buildings do I have, and how far along is "
+                                                     "each one?"),
+            ("schema", "How does it work?", "Explain in plain words how a building's documents become a knowledge "
+                                            "graph here, and what I should do next.")]
 
 
 def _ask(question: str) -> None:
@@ -486,9 +505,13 @@ def _ask(question: str) -> None:
 
 def welcome(chips: list[Chip], cards: bool = True) -> None:
     ready = router().ready
-    st.html('<div class="dock-welcome"><p>Ask about this building</p><span>The agent reads the knowledge graph, cites '
-            'every fact with how far to trust it, and never changes anything. Type, or hold the microphone and '
-            'speak.</span></div>' if ready else
+    building = any(c.kind == "project" for c in chips)
+    st.html(('<div class="dock-welcome"><p>Ask about this building</p><span>The agent reads the knowledge graph, '
+             'cites every fact with how far to trust it, and never changes anything. Type, or hold the microphone '
+             'and speak.</span></div>' if building else
+             '<div class="dock-welcome"><p>Ask about the app or your projects</p><span>The agent knows how the app '
+             'works, every page and every project, and can tell you where to go next. Open a project to ask about '
+             'its building.</span></div>') if ready else
             f'<div class="dock-welcome"><p>Models are off</p><span>{html.escape(router().why_not_ready())}'
             '</span></div>')
     for i, (icon, title, q) in enumerate(suggestions(chips) if cards else []):
@@ -530,7 +553,8 @@ def conversation(store, chips: list[Chip], state) -> None:
             st.audio(wav, format="audio/wav", autoplay=True)
         live = st.container()
     with st.container(key="dock_compose", gap=None):
-        value = st.chat_input(f"Ask about {focus.label}…" if focus else "Ask me about this building…",
+        value = st.chat_input(f"Ask about {focus.label}…" if focus else "Ask me about this building…" if project else
+                              "Ask about the app or your projects…",
                               key="dock_input", accept_audio=True, audio_sample_rate=16000)
         with st.container(key="dock_pills", horizontal=True, vertical_alignment="center", gap="small"):
             pills()
@@ -548,7 +572,7 @@ def conversation(store, chips: list[Chip], state) -> None:
 
 def _agent(tools, project, store) -> Agent:
     return Agent(router(), tools=tools, knowledge=knowledge(), project=project,
-                 person=st.session_state.get("author") or None, store=store)
+                 person=st.session_state.get("author") or None, store=store, app_context=app_context())
 
 
 def _voice(audio, chips: list[Chip], state, tools, project, store, live) -> None:

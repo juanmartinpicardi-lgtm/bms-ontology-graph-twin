@@ -8,7 +8,8 @@ main.py calls `open_dock()` before the page runs and `close_dock()` after it:
                pin and drop. A page that stops early (st.stop) keeps the chips drawn by open_dock.
 
 The dock keeps its conversation across page changes (session state). It starts collapsed: a round button at the bottom
-right, with a few questions about what is on screen beside it; a click on either opens it. Overview pages have no dock.
+right, with a few questions about what is on screen beside it; a click on either opens it. On the Overview pages it
+answers about the app itself and every project (agent/foundations.py).
 """
 
 from __future__ import annotations

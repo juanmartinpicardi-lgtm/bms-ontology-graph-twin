@@ -19,3 +19,5 @@ data/intake/
 data/eval/
 # Brick Turtle exports (scripts/export_brick.py); the SHACL reports in reports/shacl/ are kept
 data/export/
+data/examples/
+data/library/

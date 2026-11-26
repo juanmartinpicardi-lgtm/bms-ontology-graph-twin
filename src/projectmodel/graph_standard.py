@@ -19,8 +19,8 @@ from .knowledge_model import KnowledgeModel
 APP = Path(__file__).resolve().parent / "app"
 PROJECT = "alpha/names_paths"
 
-# Where facts come from. `today`: in this prototype's input now | next: the Niagara / CPO adapters |
-# later: documents and live data.
+# Where facts come from. `today`: read by this prototype now (Haystack exports, and the documents the guided setup
+# reads) | next: the Niagara / CPO adapters | later: live data and the site team.
 SOURCES = [
     {"id": "names", "name": "BMS point names", "today": "now", "group": "BMS export",
      "gives": "The name the integrator typed, e.g. \"VAV 1-2-81 ZN-T\". Says what a point measures or does, often "
@@ -37,14 +37,14 @@ SOURCES = [
     {"id": "program", "name": "Control programs", "today": "next", "group": "BMS export",
      "gives": "The logic that actually runs in each controller (Niagara wire sheets, CPO programs): loops, "
               "interlocks, resets and schedules as built."},
-    {"id": "io_list", "name": "Points schedule / I/O list", "today": "later", "group": "Project documents",
+    {"id": "io_list", "name": "Points schedule / I/O list", "today": "now", "group": "Project documents",
      "gives": "The engineer's list of every point per equipment, with type and range. The closest thing to an "
               "answer key on a real project."},
-    {"id": "mech", "name": "Mechanical schedule", "today": "later", "group": "Project documents",
+    {"id": "mech", "name": "Mechanical schedule", "today": "now", "group": "Project documents",
      "gives": "Every equipment tag with type, capacity, make and model, and often the area or unit it serves."},
-    {"id": "drawings", "name": "Drawings and BIM", "today": "later", "group": "Project documents",
+    {"id": "drawings", "name": "Drawings and BIM", "today": "now", "group": "Project documents",
      "gives": "Floor plans, air and water schematics, risers. Where equipment is, which rooms a zone covers, which "
-              "AHU supplies which VAVs."},
+              "AHU supplies which VAVs. The guided setup reads floor plans and risers; BIM models are not read yet."},
     {"id": "soo", "name": "Sequence of operations", "today": "now", "group": "Project documents",
      "gives": "How the building is meant to behave (intent): which setpoint drives which output, interlocks, "
               "resets, modes, intended values. Written by the design engineer, refined by the controls "
