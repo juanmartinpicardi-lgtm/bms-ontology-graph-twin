@@ -12,6 +12,9 @@ A fact is one thing read from a document, always with where it came from and how
 Reading a step again replaces that step's facts and keeps every decision, so a person's answer survives a re-read.
 A fact's status: the decision if there is one (method becomes `human`); else confirmed when its confidence is at
 least AUTO_ACCEPT and nothing is asked; else proposed.
+
+Spot checks (`spotcheck.py`): a small, fixed share of the facts that would confirm on their own is asked again,
+blind, so the review also measures the readers. Until answered, such a fact is proposed and carries the spot ask.
 """
 from __future__ import annotations
 
@@ -21,6 +24,8 @@ import re
 import shutil
 import time
 from pathlib import Path
+
+from . import spotcheck
 
 ROOT = Path(__file__).resolve().parents[3]
 INTAKE_DIR = ROOT / "data/intake"
@@ -176,10 +181,36 @@ class Intake:
     def done(self, step: str) -> bool:
         return step in self.s["facts"]
 
-    def decide(self, fact_id: str, status: str, value=None, field: str | None = None) -> None:
-        """A person's answer: confirmed, rejected or fixed (a new value for `field`)."""
+    def decide(self, fact_id: str, status: str, value=None, field: str | None = None, spot: dict | None = None) -> None:
+        """A person's answer: confirmed, rejected or fixed (a new value for `field`). `spot`: the answer to a spot
+        check, {"expected", "same"} or {"skipped": True}."""
         self.s["decisions"][fact_id] = {"status": status, "value": value, "field": field, "at": time.time()}
+        if spot is not None:
+            self.s["decisions"][fact_id]["spot"] = spot
         self.save()
+
+    def spot_asks(self) -> dict[str, dict]:
+        """The spot-check questions, by fact id; picked again only when a step is read again."""
+        if spotcheck.rate() <= 0:
+            return {}
+        facts = self.s.get("facts", {})
+        key = (tuple(sorted(self.s.get("read_at", {}).items())), tuple(len(v) for v in facts.values()),
+               spotcheck.rate(), spotcheck.cap())
+        if getattr(self, "_spot", (None,))[0] != key:
+            raw = [f for step in facts.values() for f in step.values()]
+            self._spot = (key, spotcheck.pick(self.slug, raw, AUTO_ACCEPT))
+        return self._spot[1]
+
+    def answer_spot(self, fact_id: str, given, status: str = "fixed") -> bool | None:
+        """Record an answer to a spot check. Returns whether the reader had it right (None when rejected)."""
+        ask = self.spot_asks()[fact_id]
+        if status == "rejected":
+            self.decide(fact_id, "rejected", spot={"expected": ask["expected"], "same": False})
+            return None
+        ok = spotcheck.same(ask["expected"], given)
+        self.decide(fact_id, "confirmed" if ok else "fixed", None if ok else given, None if ok else ask["field"],
+                    spot={"expected": ask["expected"], "same": ok, "given": given})
+        return ok
 
     def undo(self, fact_id: str) -> None:
         self.s["decisions"].pop(fact_id, None)
@@ -208,7 +239,14 @@ class Intake:
     def _effective(self, f: dict) -> dict:
         f = dict(f, data=dict(f["data"]))
         d = self.s["decisions"].get(f["id"])
-        if d:
+        spot = self.spot_asks().get(f["id"])
+        if spot:
+            f["ask"] = {k: v for k, v in spot.items() if k != "label"}
+            if not d:  # the reader's answer stays out of the label until the person has answered
+                f["label"] = spot["label"]
+        if d and (d.get("spot") or {}).get("skipped"):  # "can't tell": stays the reader's, as if never asked
+            f["status"], f["decided"] = "confirmed", "skipped"
+        elif d:
             f["status"] = "rejected" if d["status"] == "rejected" else "confirmed"
             f["method"] = "human"
             f["decided"] = d["status"]
@@ -225,7 +263,9 @@ class Intake:
             f["status"] = "confirmed" if f["conf"] >= AUTO_ACCEPT and not f.get("ask") else "proposed"
         return f
 
-    def open_questions(self, step: str | None = None) -> list[dict]:
+    def open_questions(self, step: str | None = None, spot: bool = True) -> list[dict]:
         """Facts waiting for a person: proposed, with a question. Proposed facts without one wait for a later
-        document (a tag seen on a plan waits for its schedule row)."""
-        return [f for f in self.facts(step) if f["status"] == "proposed" and f.get("ask")]
+        document (a tag seen on a plan waits for its schedule row). spot=False leaves spot checks out (what the
+        readers themselves asked)."""
+        return [f for f in self.facts(step) if f["status"] == "proposed" and f.get("ask")
+                and (spot or not f["ask"].get("spot"))]

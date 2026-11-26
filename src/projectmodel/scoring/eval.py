@@ -599,13 +599,6 @@ def plan_key(site: str) -> dict:
     return yaml.safe_load((ROOT / "data/ground_truth" / site / "plans.yaml").read_text())
 
 
-def plan_key_used(site: str) -> dict:
-    """The key the plan reader is scored against: the agent key, with a person's answers (plans.human.yaml, scoring/
-    human_keys.py) laid over it on the tags the person answered. Without a human key, the agent key."""
-    from . import human_keys
-    return human_keys.plan_effective_key(site, plan_key(site))
-
-
 def plan_pdf(site: str) -> Path:
     """The keyed sheets of the set's drawing PDF, in key order, as one PDF (page i = key sheet i)."""
     import pypdfium2 as pdfium
@@ -641,7 +634,7 @@ def plan_score(site: str, facts: list[dict]) -> dict:
     """Rooms and placements in `facts` against the key: counts and the headline percentage."""
     from ..intake.plan_ai import normal_of
 
-    key = plan_key_used(site)
+    key = plan_key(site)
     rooms: dict[str, tuple[str, str]] = {}  # number -> (floor, name)
     for s in key["sheets"]:
         fl = next((f for f in s["floors"] if f != "RF"), s["floors"][0])
@@ -717,7 +710,7 @@ def plan_items(site: str, run: dict, model: str) -> list[dict]:
     """One item per answer the model gave (a room or a placement on one sheet), scored against the key."""
     from ..intake.plan_ai import normal_of
 
-    key = plan_key_used(site)
+    key = plan_key(site)
     key_tags = {normal_of(t): k for t, k in key["tags"].items()}
     items = []
     for r in run["results"]:
@@ -750,15 +743,11 @@ def plan_meaning_rows(sets: list[str], models: list[str] | None, *, router=None,
     from ..ai.jobs import get_job
 
     rows, fit_items, skipped = [], [], []
-    from . import human_keys
-
     rules = {s: plan_score(s, plan_rules_facts(s)) for s in sets}
     for s in sets:
         rows.append({"label": f"{s} · rules", "kind": "plan", "set": s, "score": rules[s], "n": rules[s]["n"],
                      "exact_pct": rules[s]["pct"], "raw": [], "calibrated": [], "calibrated_worst_gap": None,
                      "raw_worst_gap": None, "verdict": {"says": "rules alone"}})
-        if hc := human_keys.plan_compare(s, plan_rules_facts(s), plan_key(s)):  # a person's key exists for this set
-            rows[-1]["human_key"] = hc
     job = get_job("plan_meaning")
     models = models or list(dict.fromkeys([*job.chain, *job.contender]))
     router = router or Router()
@@ -806,8 +795,6 @@ def plan_meaning_rows(sets: list[str], models: list[str] | None, *, router=None,
                    "verdict": {"says": "see the all-dev-sets row"}}
             row["raw_worst_gap"], row["calibrated_worst_gap"] = (cal.worst_gap(row["raw"]),
                                                                  cal.worst_gap(row["calibrated"]))
-            if hc := human_keys.plan_compare(s, run["facts"], plan_key(s)):
-                row["human_key"] = hc
             rows.append(row)
         # The bake-off verdict is judged on both dev sets together: calibration needs bands of 30+ answers.
         mine = [r for r in rows if r.get("model") == m]
@@ -823,8 +810,6 @@ def plan_meaning_rows(sets: list[str], models: list[str] | None, *, router=None,
                  "calibrated": both, "cost": {"usd": round(usd, 5), "sheets": sheets},
                  "usd_per_sheet": round(usd / sheets, 4) if sheets else None,
                  "usd_per_1000": round(1000 * usd / len(allitems), 4) if allitems else None}
-        if hc := human_keys.plan_combine([r.get("human_key") for r in mine]):
-            total["human_key"] = hc
         total["raw_worst_gap"], total["calibrated_worst_gap"] = cal.worst_gap(total["raw"]), cal.worst_gap(both)
         total["verdict"] = cal.verdict(metric=total["exact_pct"], rules_metric=total["rules_exact_pct"], table=both,
                                        usd_per_1000=total["usd_per_1000"], budget=budget)
@@ -841,16 +826,6 @@ def print_plan_row(row: dict, out=print) -> None:
         out(f"    placements      {sc['placements_ok']}/{sc['tags']} right ({sc['placed']} placed)")
     out(f"    headline        {_fmt(row['exact_pct'], '%')} right of {row['n']} (keyed rooms + tags + false rooms)"
         + (f"; rules alone {_fmt(row['rules_exact_pct'], '%')}" if row.get("rules_exact_pct") is not None else ""))
-    if hk := row.get("human_key"):
-        ag = hk["agreement"]
-        out(f"    human key       the person's answers replace the agent key's on {hk['tags']} tags "
-            f"({hk['items']} items, {hk['minutes']:g} min, {hk['revealed']} revealed)")
-        out(f"      vs human key  {hk['right']}/{hk['tags']} placements right ({_fmt(hk['right_pct'], '%')})")
-        out(f"      vs agent key  {hk['agent_right']}/{hk['agent_same_tags']} right ({_fmt(hk['agent_right_pct'], '%')}),"
-            f" on the same tags the agent key has")
-        out(f"      keys agree    {ag['agree']}/{ag['both']} tags ({_fmt(ag['agree_pct'], '%')}); "
-            f"{len(ag['human_only'])} tags only the human key has, "
-            f"{len(ag['agent_has_human_says_no_unit'])} the agent key has that the person calls no unit or unsure")
     if row.get("model"):
         out(f"    answers         {row['answers']} ({_fmt(row['answers_right_pct'], '%')} right); "
             f"${row['cost']['usd']} for {row['cost'].get('sheets')} sheets = ${row['usd_per_sheet']} per sheet, "
@@ -933,7 +908,6 @@ def sequence_read_evaluate(sets: list[str] | None = None, models: list[str] | No
     from ..ai.jobs import get_job
     from ..ai.prompts import load_prompt
     from ..intake import sequence_ai
-    from . import human_keys as hk
     from . import sequences as sq
 
     job = "sequence_read"
@@ -945,8 +919,7 @@ def sequence_read_evaluate(sets: list[str] | None = None, models: list[str] | No
            "calibration_before": cal.load(job).ref or "none", "rows": [], "skipped": []}
     fit_items: list[dict] = []
     for site in sets:
-        agent_key = sq.load_key(site)
-        key = hk.sequence_effective_key(site, agent_key)  # a person's answers replace the agent key's where they exist
+        key = sq.load_key(site)
         qs = _cache(("seqq", site), lambda: sequence_read_questions(site))
         rule_gaps = _sequence_rule_gaps(site)
         out["key"] = {"sequences": len(key["sequences"]),
@@ -956,8 +929,6 @@ def sequence_read_evaluate(sets: list[str] | None = None, models: list[str] | No
                       "loops": sum(len(k.get("loops", [])) for k in key["sequences"].values()),
                       "gaps": sum(len(k.get("gaps", [])) for k in key["sequences"].values()),
                       "conflicts": sum(len(k.get("conflicts", [])) for k in key["sequences"].values())}
-        if hk.sequence_human(site):
-            out["key"]["human_sections"] = sum(len(v) for v in hk.sequence_human(site)["covered"].values())
         rules_logic = {}
         for q in qs:
             q.answer = None
@@ -967,8 +938,6 @@ def sequence_read_evaluate(sets: list[str] | None = None, models: list[str] | No
         rules["set"] = site
         rules["verdict"] = {"says": "rules: the baseline"}
         rules.pop("_labels")
-        if hc := hk.sequence_compare(rules_logic, agent_key, site):
-            rules["human_key"] = hc
         out["rows"].append(rules)
         models_ = models or [*get_job(job).chain, *get_job(job).contender]
         router = router or Router()
@@ -998,9 +967,6 @@ def sequence_read_evaluate(sets: list[str] | None = None, models: list[str] | No
                      for sid, x in both.items()}
             row_m = _sequence_row(f"{site} · {m}", "model", alone, key, rule_gaps, cost)
             row_b = _sequence_row(f"{site} · {m} + rules", "model+rules", both, key, rule_gaps, cost)
-            for row_, logic_ in ((row_m, alone), (row_b, both)):
-                if hc := hk.sequence_compare(logic_, agent_key, site):
-                    row_["human_key"] = hc
             items = []
             for sid, x in alone.items():
                 labels = row_m["_labels"].get(sid[4:], {})
@@ -1044,8 +1010,7 @@ def sequence_read_print(r: dict, out=print) -> None:
         f"{r.get('calibration_after') or r['calibration_before']}")
     if k := r.get("key"):
         out(f"  key: {k['sequences']} sequences, {k['loops']} loops, {k['relations']} relations "
-            f"({k['required']} required), {k['gaps']} gaps, {k['conflicts']} conflicts"
-            + (f"; {k['human_sections']} sections from the human key" if k.get("human_sections") else ""))
+            f"({k['required']} required), {k['gaps']} gaps, {k['conflicts']} conflicts")
     for s in r["skipped"]:
         out(f"  skipped {s['model']}: {s['why']}")
     for row in r["rows"]:
@@ -1057,19 +1022,6 @@ def sequence_read_print(r: dict, out=print) -> None:
                                                if v["key"]))
         out(f"    gaps found      {row['gaps']['found']} of {row['gaps']['key']}; conflicts found "
             f"{row['conflicts']['found']} of {row['conflicts']['key']}")
-        if h := row.get("human_key"):
-            a, ag = h["agreement"], h["vs_agent"]
-            hh = h["vs_human"]
-            out(f"    human key       the person's answers replace the agent key's on {h['sections']} sections of "
-                f"{h['sequences']} sequences ({h['minutes']:g} min, {h['revealed']} revealed)")
-            out(f"      vs human key  precision {_fmt(hh['precision_pct'], '%')} ({hh['tp']} right, {hh['fp']} not in the "
-                f"key), recall {_fmt(hh['recall_pct'], '%')} ({hh['found']} of {hh['required']}), F1 {hh['f1']}")
-            out(f"      vs agent key  precision {_fmt(ag['precision_pct'], '%')} ({ag['tp']} right, {ag['fp']} not in the "
-                f"key), recall {_fmt(ag['recall_pct'], '%')} ({ag['found']} of {ag['required']}), F1 {ag['f1']}"
-                f", on the same sections")
-            out(f"      keys agree    {_fmt(a['agree_pct'], '%')}: {a['human_in_agent']} of {a['human_relations']} "
-                f"human relations are in the agent key, {a['agent_in_human']} of {a['agent_relations']} required "
-                f"agent relations are in the human key")
         if row["kind"] != "rules":
             c = row["cost"]
             out(f"    cost            ${row['usd_per_sequence']} per sequence, ${row['usd_per_1000']} per 1,000 "

@@ -72,7 +72,6 @@ overview = [
     st.Page(APP / "views/roadmap.py", title="Roadmap", icon=":material/route:", url_path="roadmap"),
     st.Page(APP / "views/complete_graph.py", title="Complete graph", icon=":material/task_alt:",
             url_path="complete-graph"),
-    st.Page(APP / "views/answer_keys.py", title="Answer keys", icon=":material/fact_check:", url_path="answer-keys"),
     st.Page(APP / "views/agent_tour.py", title="Agent tour", icon=":material/smart_toy:", url_path="agent-tour"),
 ]
 projects = [

@@ -29,8 +29,10 @@ def _question(f: dict) -> dict:
     if isinstance(proposed, list):
         proposed = f"{len(proposed)} units"
     where = (s.get("sheet") or s.get("file", "")) + (f" p{s['page'] + 1}" if s.get("page") is not None else "")
+    spot = bool(ask.get("spot"))  # a spot check is blind: no proposed value, no confidence
     return {"id": f["id"], "q": ask["q"], "field": ask.get("field"), "options": ask.get("options", []),
-            "proposed": proposed, "where": where, "conf": f["conf"], "issue": f["kind"] == "issue"}
+            "proposed": None if spot else proposed, "where": where, "conf": None if spot else f["conf"],
+            "issue": f["kind"] == "issue", "spot": spot}
 
 
 def payload(b: dict, plans: dict[str, dict], selected: str | None, needs_you: dict[str, dict], theme: str = "dark",
