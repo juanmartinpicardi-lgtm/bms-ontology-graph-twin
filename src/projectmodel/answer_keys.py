@@ -15,11 +15,18 @@ scoring reads it, and an `items` list, the record of each item the engineer work
 agent-schema part is derived from the done items on every save. The agent keys are never written here.
 
 Held out: `liberty_boe` is never offered, never read and never written.
+
+On the hosted app (Streamlit Cloud) the disk holds neither the drawings (gitignored) nor anything past a restart:
+`fetch_drawing` downloads a plan set's public drawing PDF (checked against its sha256), and `import_key` takes back
+a key file the engineer downloaded earlier, so the work survives a restart.
 """
 from __future__ import annotations
 
+import hashlib
+import os
 import random
 import re
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -458,3 +465,81 @@ def sequence_reader_answers(site: str, sequence: str, section: str) -> list[str]
             if a:
                 out += lines(f"Model {model}", a["output"]["relations"])
     return out
+
+
+# the hosted app: drawings fetched on demand, key files carried across restarts ------------------------------------
+
+# The public drawing each plan set is keyed on, and its sha256 as recorded in data/raw/SOURCES.md
+# (scripts/run_real_sets.py lists the same URLs). Public bid sets; no login.
+DRAWINGS = {
+    "msu_mbb": ("https://www.montana.edu/pdc/projects/22-0045%20Plans.pdf",
+                "c08c91bcf6de63d2cc7ae960cb32a19d63eabd2b42cda09c82dc4a8fb3d055e3", 42.1),
+    "itd_d1_lab": ("https://apps.itd.idaho.gov/Apps/NonHwyConstructionProjects/PDFS/"
+                   "ITD%20D1%20Laboratory%20Building%20-%20%20Mechanical%20Bid%20Set%2005-14-24.pdf",
+                   "9dafcead2eb5fe3679921f336ccd7ca4813da1524580c5fee75a87c99e1b2707", 3.3),
+}
+
+
+def hosted() -> bool:
+    """True on Streamlit Community Cloud, whose disk is wiped on every restart and redeploy."""
+    return os.environ.get("HOSTNAME") == "streamlit" or str(ROOT).startswith("/mount/src")
+
+
+def fetch_drawing(site: str, opener=None) -> Path:
+    """Download the plan set's public drawing PDF into data/raw/<set>/, checked against its sha256. Nothing for a
+    held-out set. Returns the file; raises ValueError if the download is not the recorded copy."""
+    check_set("plans", site)
+    if site not in DRAWINGS:
+        raise ValueError(f"no public drawing recorded for {site}")
+    url, want, _mb = DRAWINGS[site]
+    p = plan_file(site)
+    if p.exists():
+        return p
+    p.parent.mkdir(parents=True, exist_ok=True)
+    tmp = p.with_name(p.name + ".part")
+    h = hashlib.sha256()
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with (opener or urllib.request.urlopen)(req) as r, tmp.open("wb") as f:
+        for chunk in iter(lambda: r.read(1 << 20), b""):
+            h.update(chunk)
+            f.write(chunk)
+    if h.hexdigest() != want:
+        tmp.unlink(missing_ok=True)
+        raise ValueError(f"the file at {url} is not the copy the key was written on (sha256 differs)")
+    tmp.replace(p)
+    return p
+
+
+def import_key(job: str, site: str, raw: bytes) -> dict:
+    """Take back a key file downloaded from this page (after a restart of the hosted app, or from another computer).
+    It must be a human key for this set. Merged with what is here: per item, the record saved last wins. Returns
+    counts: items in the file, added, replaced, kept."""
+    check_set(job, site)
+    try:
+        d = yaml.safe_load(raw.decode("utf-8")) or {}
+    except (UnicodeDecodeError, yaml.YAMLError) as e:
+        raise ValueError(f"not a key file: {e}") from e
+    if not isinstance(d, dict) or d.get("by") != "human" or not isinstance(d.get("items"), list):
+        raise ValueError("not a key file written by this page (by: human, with items)")
+    if d.get("set") != site:
+        raise ValueError(f"this key file is for {d.get('set')!r}, not {site!r}")
+    if not all(isinstance(i, dict) and i.get("id") for i in d["items"]):
+        raise ValueError("an item in the file has no id")
+    here = load(job, site)
+    mine = {i["id"]: n for n, i in enumerate(here["items"])}
+    added = replaced = kept = 0
+    for rec in d["items"]:
+        n = mine.get(rec["id"])
+        if n is None:
+            here["items"].append(rec)
+            added += 1
+        elif str(rec.get("at") or "") > str(here["items"][n].get("at") or ""):
+            here["items"][n] = rec
+            replaced += 1
+        else:
+            kept += 1
+    for k in ("engineer", "file", "seed"):
+        if d.get(k) and not here.get(k):
+            here[k] = d[k]
+    save(job, site, here)
+    return {"items": len(d["items"]), "added": added, "replaced": replaced, "kept": kept}
