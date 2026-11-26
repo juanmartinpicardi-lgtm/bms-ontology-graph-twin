@@ -37,7 +37,7 @@ Then open http://localhost:8521.
 | **Agent dock** | Ask "Does AHU-1 run as designed?" on Troop D. The answer goes step by step, and every claim is a citation you can open as a page crop or a graph link (W11). |
 | **Overview → Architecture** | The app's parts on one screen: six steps in a line, the knowledge model, tribal knowledge and AI layer underneath. |
 | **Agent on the Overview** | Open the round button on any Overview page and ask "Which projects do I have?" or "What is the Documentation tab for?": it answers from the app's foundations and the project list. |
-| **Add a building → Example project documents** | Pick MSU or ITD: each step then offers only that project's document (submittal is a stand-in, no BMS export). |
+| **Add a building → Or start from an example project** | Pick MSU or ITD: each step then offers only that project's document (submittal is a stand-in, no BMS export). |
 | **Documentation** | Every document of the project by category, grid or list, preview, replace, delete, "What is this document?". |
 | **Graphics** | Coverage per Troop D equipment type (3D model, points on anchors, binding QA), floor graphics and system graphics. **Equipments** shows each unit's 3D model, including the new types (W9). |
 

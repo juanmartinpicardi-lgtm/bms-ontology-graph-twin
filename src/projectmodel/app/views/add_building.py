@@ -131,6 +131,7 @@ def start_form(key: str) -> None:
             else:
                 begin(name.strip(), address.strip())
                 st.rerun()
+    st.caption(":material/arrow_downward: No documents at hand? Start from one of the three example projects below.")
 
 
 def begin(name: str, address: str = "", example: str | None = None) -> None:
@@ -161,11 +162,11 @@ def doc_line(ex, s) -> str:
 
 
 def example_projects() -> None:
-    """Three public bid sets to start from, in a section that opens on demand. The building started from one gets
+    """Three public bid sets to start from, always shown under the start form. The building started from one gets
     that project's documents, and only that project's, at every step."""
-    with st.expander("Example project documents", icon=":material/folder_special:"):
-        st.caption("No documents of your own at hand? Start a building from one of these public bid sets. Each step "
-                   "then offers **that project's document only**, so one building never mixes two projects. "
+    with box("examples", "Or start from an example project", "folder_special"):
+        st.caption("Three public bid sets. A building started from one gets its documents at every step, and "
+                   "**that project's documents only**, so one building never mixes two projects. "
                    ":green[:material/check_circle:] the document the step asks for · :orange[:material/change_circle:] "
                    "the closest thing published · :grey[:material/remove_circle_outline:] nothing published.")
         for col, ex in zip(st.columns(len(examples.EXAMPLES), gap="medium"), examples.EXAMPLES.values()):
