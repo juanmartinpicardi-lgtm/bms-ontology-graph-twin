@@ -115,7 +115,7 @@ def run(name, sc):
         except Exception as e:
             asks[s.id] = f"CRASH {type(e).__name__}: {e}"[:90]
             continue
-        asks[s.id] = len(it.open_questions(s.id))
+        asks[s.id] = len(it.open_questions(s.id, spot=False))
         if s.id == "sequences":
             from collections import Counter
             fs = it.facts("sequences"); asks["seq_kinds"] = dict(Counter(f["kind"] for f in fs)); asks["seq_setpoints"] = sum(len(f.get("data", {}).get("setpoints", []) or []) for f in fs)

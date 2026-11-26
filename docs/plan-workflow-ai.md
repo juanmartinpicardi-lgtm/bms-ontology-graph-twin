@@ -308,6 +308,13 @@ models are measured on buildings the rules have never seen.
 6. **Model access.** Which models are enabled on our GCP project today? Claude has been off at times: point
    classification falls back to Argon.
 7. **Order.** Is the first wave above right, or should a customer-visible stage (floor plans, graphics) go first?
+8. **Measuring the readers on real buildings.** Decided 26 Nov 2026: inside the review, not on a separate page. The
+   engineer's review is the human-in-the-loop step, but it only shows what the readers doubted, so it cannot say how
+   often they are right when they are sure. So a small, fixed share of the facts that would confirm on their own
+   (5% per kind, at most 5, `PM_SPOT_CHECK`, `PM_SPOT_MAX`) comes back in "Needs you" as a blind spot check: no
+   confidence, no proposed value, until the engineer has answered from the document. The answer confirms or fixes
+   the fact like any other, and Review → Score and export shows how often the reader was right
+   (`intake/spotcheck.py`). The separate answer-key page and its guide are gone.
 
 ## 9. Out of scope for this plan
 

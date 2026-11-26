@@ -38,7 +38,8 @@ from projectmodel.fonts import with_fonts  # noqa: E402
 from projectmodel.intake.publish import delete_project, project_id, publish  # noqa: E402
 from projectmodel.locate import LocateError, get_geocoder, location_dict  # noqa: E402
 from projectmodel import notes as project_notes  # noqa: E402
-from projectmodel.intake import graph, knowledge, pdfdoc, score, sequence_links, steps, submittal, twin, vectors  # noqa: E402
+from projectmodel.intake import (graph, knowledge, pdfdoc, score, sequence_links, spotcheck, steps,  # noqa: E402
+                                 submittal, twin, vectors)
 from projectmodel.viz import render_html  # noqa: E402
 from projectmodel.intake.model import building, missing, progress  # noqa: E402
 from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
@@ -340,6 +341,13 @@ def picked(ev: dict | None) -> None:
         if not f or not f.get("ask") or f["status"] != "proposed":
             return
         ask, status, value = f["ask"], ev.get("status"), ev.get("value")
+        if ask.get("spot"):
+            if status == "rejected" or (status == "fixed" and (ask.get("field") == "name" and isinstance(value, str)
+                                                               and value.strip()
+                                                               or any(o["value"] == value for o in ask["options"]))):
+                answer_spot(f, value.strip()[:60] if isinstance(value, str) else value, status)
+                st.rerun()
+            return
         if status == "fixed" and ask.get("field") == "name" and isinstance(value, str) and value.strip():
             it.decide(f["id"], "fixed", value.strip()[:60].title(), "name")
         elif status == "fixed" and any(o["value"] == value for o in ask.get("options", [])):
@@ -574,8 +582,53 @@ def answer(f: dict, value, field) -> None:
         it.decide(f["id"], "confirmed")
 
 
+def answer_spot(f: dict, value, status: str = "fixed") -> None:
+    """A spot check's answer, then what the reader had said, shown once above the questions."""
+    ok = it.answer_spot(f["id"], value, status)
+    said = f["ask"]["said"]
+    st.session_state["ab_spot_said"] = (
+        f"**{f['label']}**: the reader said **{said}** too." if ok else
+        f"**{f['label']}**: you rejected it; the reader had **{said}**." if ok is None else
+        f"**{f['label']}**: the reader said **{said}**. Your answer is kept and counts as a miss for the reader.")
+
+
+def spot_card(f: dict, i) -> None:
+    """A spot check: the reader was sure, so it would have been confirmed without anyone. Asked blind: no confidence,
+    no proposed value, until the answer is in."""
+    ask = f["ask"]
+    with st.container(border=True, key=f"q_{i}"):
+        st.markdown(f":material/target: {ask['q']}")
+        st.caption(f"{where(f)} · spot check: answer from the document; the reader's answer shows after yours")
+        with st.container(horizontal=True, vertical_alignment="bottom", gap="small"):
+            st.button("Show", key=f"show_{i}", icon=":material/visibility:", on_click=show_fact, args=(f["id"],),
+                      type="tertiary")
+            if ask.get("field") == "name":
+                k = f"spot_{i}_{f['id']}"
+                typed = st.text_input("Name", key=k, placeholder="Name on the plan", label_visibility="collapsed",
+                                      width=240)
+                st.button("Save", key=f"spotsave_{i}", type="primary", disabled=not (typed or "").strip(),
+                          on_click=lambda f=f, k=k: answer_spot(f, st.session_state[k].strip()[:60]))
+            elif len(ask["options"]) > 5:
+                k = f"spot_{i}_{f['id']}"
+                st.selectbox("Answer", range(len(ask["options"])), index=None, key=k, placeholder="Pick from the list",
+                             format_func=lambda j, o=ask["options"]: o[j]["label"], label_visibility="collapsed",
+                             width=300)
+                st.button("Save", key=f"spotsave_{i}", type="primary", disabled=st.session_state.get(k) is None,
+                          on_click=lambda f=f, k=k: answer_spot(f, f["ask"]["options"][st.session_state[k]]["value"]))
+            else:
+                for j, o in enumerate(ask["options"]):
+                    st.button(o["label"], key=f"opt_{i}_{j}", on_click=answer_spot, args=(f, o["value"]))
+            st.button("Can't tell", key=f"skip_{i}", type="tertiary",
+                      help="The documents don't say. The fact stays as the reader had it and is not counted.",
+                      on_click=lambda f=f: it.decide(f["id"], "confirmed", spot={"skipped": True}))
+            st.button("Reject", key=f"no_{i}", icon=":material/close:", help="It is not real (no such room, unit, point).",
+                      on_click=answer_spot, args=(f, None, "rejected"))
+
+
 def question_card(f: dict, i) -> None:
     ask = f["ask"]
+    if ask.get("spot"):
+        return spot_card(f, i)
     with st.container(border=True, key=f"q_{i}"):
         st.markdown(ask["q"])
         proposed = f["data"].get(ask["field"]) if ask.get("field") else None
@@ -609,16 +662,24 @@ def question_card(f: dict, i) -> None:
 
 def questions(step_ids: list[str]) -> None:
     qs = [f for s in step_ids for f in it.open_questions(s)]
-    answered = [f for s in step_ids for f in it.facts(s) if f.get("ask") and f["method"] == "human"]
+    answered = [f for s in step_ids for f in it.facts(s) if f.get("ask") and (f["method"] == "human" or f.get("decided"))]
+    if said := st.session_state.pop("ab_spot_said", None):
+        st.info(said, icon=":material/target:")
+    spots = [f for f in qs if f["ask"].get("spot")]
     if not qs:
         st.success(f"No question left here. {len(answered)} answered.", icon=":material/task_alt:")
     else:
         with st.container(horizontal=True, vertical_alignment="center"):
-            st.caption(f"{len(qs)} to answer · {len(answered)} answered. **Show** opens the place in the document.")
-            if st.button("Accept every suggestion", icon=":material/done_all:", key="acc_all", type="tertiary",
-                         help="Confirms what the reader proposed for every open question here; checks are marked noted."):
+            st.caption(f"{len(qs)} to answer · {len(answered)} answered. **Show** opens the place in the document."
+                       + (f" {len(spots)} are spot checks (:material/target:): facts the reader was sure of, asked "
+                          "blind to measure it." if spots else ""))
+            if len(qs) > len(spots) and st.button(
+                    "Accept every suggestion", icon=":material/done_all:", key="acc_all", type="tertiary",
+                    help="Confirms what the reader proposed for every open question here; checks are marked noted. "
+                         "Spot checks stay: they need your answer."):
                 for f in qs:
-                    it.decide(f["id"], "confirmed")
+                    if not f["ask"].get("spot"):
+                        it.decide(f["id"], "confirmed")
                 st.rerun()
         page = st.session_state.get("ab_qpage", 0)
         page = min(page, (len(qs) - 1) // PER_PAGE)
@@ -636,7 +697,14 @@ def questions(step_ids: list[str]) -> None:
             for f in answered:
                 with st.container(horizontal=True, vertical_alignment="center"):
                     val = f["data"].get(f["ask"]["field"]) if f["ask"].get("field") else ""
-                    st.markdown(f"**{f.get('decided', '')}** {f['label']}" + (f" → {val}" if val else ""))
+                    res = (it.s["decisions"].get(f["id"]) or {}).get("spot")
+                    if res is not None:
+                        st.markdown(f":material/target: {f['label']}: " + (
+                            "you couldn't tell" if res.get("skipped") else
+                            f"the reader said **{f['ask']['said']}**, "
+                            + ("same as you" if res["same"] else "you said otherwise")))
+                    else:
+                        st.markdown(f"**{f.get('decided', '')}** {f['label']}" + (f" → {val}" if val else ""))
                     st.button("Undo", key=f"undo_{f['id']}", type="tertiary", on_click=it.undo, args=(f["id"],))
 
 
@@ -1078,6 +1146,25 @@ def waiting_groups(proposed: list[dict]) -> None:
             accept(fs)
 
 
+def spot_report() -> None:
+    """How right the readers were when they were sure, on this building: the spot checks the engineer answered."""
+    rep = spotcheck.report(it)
+    t = rep["total"]
+    st.markdown("##### When the reader was sure, was it right?")
+    if not t["asked"]:
+        st.caption("No spot checks on this building (`PM_SPOT_CHECK=0`, or nothing was read with high confidence).")
+        return
+    share = f"{round(100 * rep['right_share'])}%" if rep["right_share"] is not None else "not measured yet"
+    st.caption(f"Facts the readers were sure of are confirmed without anyone. A few of them "
+               f"({round(100 * spotcheck.rate())}% per kind, at most {spotcheck.cap()}) were asked blind in the open "
+               f"questions. **Right: {share}** ({t['right']} of {t['checked']} checked) · {t['waiting']} still to "
+               f"answer · {t['skipped']} you couldn't tell. Few checks give a rough figure: treat it as a warning "
+               "light, not a score.")
+    df = pd.DataFrame(rep["kinds"])
+    df["right %"] = [f"{round(100 * r / c)}%" if c else "" for r, c in zip(df["right"], df["checked"])]
+    table(df[["what", "asked", "checked", "right", "wrong", "right %", "waiting", "skipped"]], hide_index=True)
+
+
 def review_step() -> None:
     live_eq = list(b["equip"].values())
     pts = b["points"]
@@ -1100,6 +1187,7 @@ def review_step() -> None:
         else:
             waiting_groups(proposed)
     elif work == "score":
+        spot_report()
         keys = score.answer_keys()
         if keys:
             default = next((k for k in keys if k.split("_")[0] in it.slug), None)

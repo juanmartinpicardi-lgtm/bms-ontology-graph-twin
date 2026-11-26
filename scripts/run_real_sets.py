@@ -157,7 +157,7 @@ def run(slug: str, mode: str) -> dict:
             continue
         facts = it.facts(st.id)
         cov = [f for f in facts if f["kind"] == "issue" and f["data"].get("severity") == "coverage"]
-        qs = it.open_questions(st.id)
+        qs = it.open_questions(st.id, spot=False)
         per_step[st.id] = {
             "uploaded": upload, "secs": round(time.time() - t1, 1),
             "facts_by_kind": dict(Counter(f["kind"] for f in facts)),

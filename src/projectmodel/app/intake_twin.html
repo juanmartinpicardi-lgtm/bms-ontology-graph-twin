@@ -78,7 +78,7 @@
   #qcard button.yes { background: var(--s-confirmed); border-color: var(--s-confirmed); color: #fff; }
   #qcard button.sug { border-color: var(--s-ask); }
   #qcard button.link { border: none; background: none; padding: 4px 2px; color: var(--accent); }
-  #qcard input { font: inherit; padding: 4px 7px; border-radius: 4px; border: 1px solid var(--line); background: var(--bg);
+  #qcard input, #qcard select { font: inherit; padding: 4px 7px; border-radius: 4px; border: 1px solid var(--line); background: var(--bg);
     color: var(--text); width: 150px; }
   #qcard .qs + .qs { border-top: 1px solid var(--line); margin-top: 9px; padding-top: 7px; }
   #qcard .note { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
@@ -435,11 +435,13 @@ function questionCard(o, x, y) {
   clearTimeout(qTimer);
   const title = o.tag ? `${esc(o.tag)} <span class="m">${esc(o.cls)}</span>` : `Room ${esc(o.n)} <span class="m">${esc(o.name || "")}</span>`;
   qcard.innerHTML = `<h5>${title}</h5>` + o.q.map((q, i) => `<div class="qs" data-i="${i}"><div class="q">${esc(q.q)}</div>`
-    + `<div class="m">${esc(q.where)} · confidence ${Math.round(q.conf * 100)}%${q.proposed != null && q.proposed !== "" ? " · proposed: <b>" + esc(q.proposed) + "</b>" : ""}</div>`
+    + `<div class="m">${esc(q.where)}${q.spot ? " · spot check: answer from the document" : " · confidence " + Math.round(q.conf * 100) + "%"}${q.proposed != null && q.proposed !== "" ? " · proposed: <b>" + esc(q.proposed) + "</b>" : ""}</div>`
     + (q.field === "name" ? `<div class="opts"><input placeholder="Name from the plan" maxlength="60"><button data-do="name">Save name</button></div>` : "")
-    + `<div class="opts">` + q.options.map((op, k) => `<button data-do="opt" data-k="${k}" class="${op.value === q.proposed && q.proposed != null ? "sug" : ""}">${esc(op.label)}</button>`).join("")
+    + `<div class="opts">` + (q.options.length > 8
+        ? `<select>${q.options.map((op, k) => `<option value="${k}">${esc(op.label)}</option>`).join("")}</select><button data-do="sel">Save</button>`
+        : q.options.map((op, k) => `<button data-do="opt" data-k="${k}" class="${op.value === q.proposed && q.proposed != null ? "sug" : ""}">${esc(op.label)}</button>`).join(""))
     + (q.issue ? `<button data-do="confirmed" class="yes">Noted</button><button data-do="rejected">Not an issue</button>`
-               : (q.options.length ? "" : `<button data-do="confirmed" class="yes">Yes, keep it</button>`) + `<button data-do="rejected">Reject</button>`)
+               : (q.options.length || q.spot ? "" : `<button data-do="confirmed" class="yes">Yes, keep it</button>`) + `<button data-do="rejected">Reject</button>`)
     + `</div></div>`).join("")
     + `<div class="note"><button class="link" data-do="open">Open in the document</button></div>`;
   qcard.style.display = "block";
@@ -461,6 +463,7 @@ qcard.onclick = e => {
   if (act === "open") { closeCard(true); pick(o); return; }
   let ev;
   if (act === "opt") ev = { status: "fixed", value: q.options[+b.dataset.k].value };
+  else if (act === "sel") ev = { status: "fixed", value: q.options[+box.querySelector("select").value].value };
   else if (act === "name") { const v = box.querySelector("input").value.trim(); if (!v) return; ev = { status: "fixed", value: v }; }
   else ev = { status: act };
   emit({ name: "answer", id: q.id, ...ev });
