@@ -35,7 +35,11 @@ Then open http://localhost:8521.
 | **Sequences** | Troop D's control relations, proposed, with their source section (W8). |
 | **Tribal knowledge** | Proposed conventions waiting for **Approve / Reject**, with their evidence and a dry run, plus a "Look for patterns" button. The project page has an interview form (W10). |
 | **Agent dock** | Ask "Does AHU-1 run as designed?" on Troop D. The answer goes step by step, and every claim is a citation you can open as a page crop or a graph link (W11). |
-| **Graphics** | Each Troop D equipment type with its 2D schematic, points on anchors, simulated values and a QA result. Also floor and system graphics. **Equipment 3D** has the new types (W9). |
+| **Overview → Architecture** | The app's parts on one screen: six steps in a line, the knowledge model, tribal knowledge and AI layer underneath. |
+| **Agent on the Overview** | Open the round button on any Overview page and ask "Which projects do I have?" or "What is the Documentation tab for?": it answers from the app's foundations and the project list. |
+| **Add a building → Example project documents** | Pick MSU or ITD: each step then offers only that project's document (submittal is a stand-in, no BMS export). |
+| **Documentation** | Every document of the project by category, grid or list, preview, replace, delete, "What is this document?". |
+| **Graphics** | Each Troop D equipment type with its 2D schematic, points on anchors, simulated values and a QA result. Also floor and system graphics. **Equipments** has the new types (W9), in 3D or 2D (a toggle above the viewer). |
 
 ## 3. One command per package
 

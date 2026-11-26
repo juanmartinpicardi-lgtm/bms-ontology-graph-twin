@@ -68,6 +68,7 @@ overview = [
     st.Page(APP / "views/pitch.py", title="The idea", icon=":material/auto_awesome:", default=True),
     st.Page(APP / "views/why.py", title="Why it matters", icon=":material/bolt:", url_path="why-it-matters"),
     st.Page(APP / "views/how.py", title="How it works", icon=":material/schema:", url_path="how-it-works"),
+    st.Page(APP / "views/architecture.py", title="Architecture", icon=":material/lan:", url_path="architecture"),
     st.Page(APP / "views/ontology.py", title="Ontology", icon=":material/category:", url_path="ontology"),
     st.Page(APP / "views/roadmap.py", title="Roadmap", icon=":material/route:", url_path="roadmap"),
     st.Page(APP / "views/complete_graph.py", title="Complete graph", icon=":material/task_alt:",
@@ -84,11 +85,13 @@ this_project = [  # the twin first: a project opens on it
     st.Page(APP / "views/location.py", title="Location", icon=":material/location_on:", url_path="location"),
     st.Page(APP / "tree_app.py", title="Tree", icon=":material/account_tree:", url_path="tree"),
     st.Page(APP / "views/graph_3d.py", title="Graph 3D", icon=":material/bubble_chart:", url_path="Graph_3D"),
-    st.Page(APP / "views/equipment_3d.py", title="Equipment 3D", icon=":material/view_in_ar:",
+    st.Page(APP / "views/equipment_3d.py", title="Equipments", icon=":material/view_in_ar:",
             url_path="Equipment_3D"),
     st.Page(APP / "views/graphics.py", title="Graphics", icon=":material/schema:", url_path="graphics"),
     st.Page(APP / "views/sequences.py", title="Sequences", icon=":material/sync_alt:", url_path="sequences"),
     st.Page(APP / "views/data_tables.py", title="Data tables", icon=":material/table:", url_path="data"),
+    st.Page(APP / "views/documentation.py", title="Documentation", icon=":material/folder_open:",
+            url_path="documentation"),
     st.Page(APP / "views/notes.py", title="Notes", icon=":material/sticky_note_2:", url_path="Notes"),
     st.Page(APP / "views/project_tribal.py", title="Tribal knowledge", icon=":material/groups:",
             url_path="project-tribal-knowledge"),
@@ -120,8 +123,8 @@ elif among(projects):
 elif among(shared):
     area_header("Shared knowledge", shared, page)
 else:  # every header has the same two rows (title, tabs), so the title and tabs sit at the same place on every page
-    area_header("Overview", overview, page, agent=False)
-chat = not among(overview)  # the agent works on a building: none on the Overview pages
+    area_header("Overview", overview, page)
+chat = True  # on every page: on the Overview it coaches and answers about the app and all the projects
 slots = dock.open_dock(store) if chat else None  # before the page: a page may st.stop()
 page.run()
 if chat:

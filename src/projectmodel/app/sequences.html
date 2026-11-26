@@ -83,36 +83,50 @@
   .arrow { color: var(--muted); }
   .docnote { color: var(--muted); font-size: 12px; margin-top: 12px; }
 
-  /* --- graph (simulate) ---------------------------------------------------------------------------------------- */
+  /* --- graph (simulate) ----------------------------------------------------------------------------------------
+     Each equipment or system is a card; its points are chips inside it. A chip lights in the sequence colour when a
+     step uses it and shows the sequence's intended value. Links run from chip edge to chip edge. */
   .graph { flex: 1; min-height: 0; position: relative; overflow: hidden; }
   .graph svg text { user-select: none; }
   .graph svg { width: 100%; height: 100%; display: block; }
-  .hdr rect { fill: var(--panel); stroke: var(--node); stroke-width: 1.5; }
-  .hdr.sys rect { stroke-dasharray: 5 3; }
-  .hdr text { font-size: 12px; font-weight: 700; fill: var(--text); }
-  .hdr .cls { font-size: 10px; font-weight: 400; fill: var(--muted); }
-  .hdr.lit rect { stroke: var(--seq); stroke-width: 2.5; fill: var(--seq-soft); }
-  .pt circle { fill: var(--panel); stroke: var(--node); stroke-width: 2; transition: all .25s; }
-  .pt text { font-size: 10.5px; fill: var(--muted); transition: fill .25s; }
-  .pt.lit circle { fill: var(--seq); stroke: var(--seq); }
-  .pt.lit text { fill: var(--text); font-weight: 600; }
-  .pt.conflict circle { stroke: var(--conf); stroke-width: 3; }
-  .pt.gap circle { stroke: var(--gap); stroke-dasharray: 3 2; fill: transparent; }
-  .pt.gap.lit circle { fill: color-mix(in srgb, var(--gap) 25%, transparent); }
-  .pt.gap text { fill: var(--gap); }
+  .col rect.body { fill: var(--soft); stroke: var(--line); stroke-width: 1; }
+  .col.sys rect.body { stroke-dasharray: 6 4; stroke: var(--edge); }
+  .col .badge { fill: var(--panel); stroke: var(--line); stroke-width: 1; }
+  .col .btx { font-size: 9.5px; font-weight: 800; fill: var(--muted); letter-spacing: .03em; }
+  .col.lit .badge { fill: var(--seq); stroke: var(--seq); } .col.lit .btx { fill: var(--on-seq); }
+  .hdr text { font-size: 13px; font-weight: 700; fill: var(--text); }
+  .hdr .cls { font-size: 10.5px; font-weight: 500; fill: var(--muted); }
+  .hdr rect { fill: transparent; stroke: none; }
+  .col.lit rect.body { stroke: var(--seq); stroke-width: 2; fill: var(--seq-soft); }
+  .pt .chip { fill: var(--panel); stroke: var(--line); stroke-width: 1; transition: fill .25s, stroke .25s; }
+  .pt .pd { fill: var(--node); transition: fill .25s; }
+  .pt text { font-size: 11.5px; fill: var(--text); transition: fill .25s; }
+  .pt .role { font-size: 9.5px; font-weight: 700; fill: var(--muted); letter-spacing: .04em; }
+  .pt .val { font-size: 11px; font-weight: 700; fill: var(--muted); }
+  .pt.lit .chip { fill: var(--seq-soft); stroke: var(--seq); stroke-width: 2; filter: drop-shadow(0 0 5px var(--seq-soft)); }
+  .pt.lit .pd { fill: var(--seq); }
+  .pt.lit .val { fill: var(--seq); }
+  .pt.lit text { font-weight: 600; }
+  .pt.conflict .chip { stroke: var(--conf); stroke-width: 1.5; }
+  .pt.conflict .pd { fill: var(--conf); }
+  .pt.gap .chip { stroke: var(--gap); stroke-dasharray: 4 3; fill: transparent; }
+  .pt.gap .pd { fill: transparent; stroke: var(--gap); stroke-width: 1.5; stroke-dasharray: 2 2; }
+  .pt.gap text, .pt.gap .role { fill: var(--gap); }
+  .pt.gap.lit .chip { fill: color-mix(in srgb, var(--gap) 14%, transparent); }
+  .pt.sel .chip, .hdr.sel + * { stroke-width: 2.5; }
   .pt, .hdr { cursor: pointer; }
-  .hp { stroke: var(--edge); stroke-width: 1; opacity: .7; }
-  .lnk { fill: none; stroke-width: 2; }
-  .lnk.ctl { stroke: var(--seq); stroke-dasharray: 6 4; }
+  .lnk { fill: none; stroke-width: 2.2; stroke-linecap: round; }
+  .lnk.ctl { stroke: var(--seq); stroke-dasharray: 7 5; }
   .lnk.graph { stroke: var(--accent); }
   .lnk.missing { stroke: var(--gap); }
-  .lnk.old { opacity: .35; }
-  .lbl { font-size: 10px; fill: var(--seq); font-style: italic; paint-order: stroke; stroke: var(--bg); stroke-width: 3px; }
+  .lnk.old { opacity: .28; }
+  .lbl { font-size: 10.5px; font-weight: 700; fill: var(--seq); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
   .lbl.graph { fill: var(--accent); }
   .dot { fill: var(--seq); }
+  .ring { fill: none; stroke: var(--seq); stroke-width: 2; }
   .caption { padding: 12px 16px; min-height: 92px; }
   .caption .n { font-size: 11px; font-weight: 700; color: var(--seq); text-transform: uppercase; letter-spacing: .05em; }
-  .caption .say { margin-top: 2px; }
+  .caption .say { margin-top: 2px; font-size: 15px; }
   .ctrls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .steps { display: flex; gap: 4px; flex: 1; min-width: 120px; }
   .steps i { flex: 1; height: 5px; border-radius: 4px; background: var(--chip); cursor: pointer; }
@@ -306,14 +320,24 @@ function select(ref) {
   if (mode === "sim") { document.querySelectorAll(".pt, .hdr").forEach(e => e.classList.toggle("sel", e.dataset.ref === ref)); }
 }
 
-// --- simulate: the sequence's part of the graph, as columns of equipment with their points -----------------------
+// --- simulate: the sequence's part of the graph, as cards of equipment holding their points --------------------
 const POS = {};
-let svg, linkLayer;
+const CW = 214, GAPX = 76, HDR = 48, ROW = 32, CHIP = 24, TOP = 16;
+let svg, linkLayer, ringLayer;
+// What a point is, from its class (or the class the sequence expects for a missing one): a short role label.
+function role(ref) {
+  const c = (nodeOf(ref)?.cls || R(ref)?.expected || "");
+  return /Setpoint|_SP\b/.test(c) ? "SP" : /Command/.test(c) ? "CMD" : /Status/.test(c) ? "STATUS" : /Alarm/.test(c)
+    ? "ALARM" : /Sensor/.test(c) ? "SENSOR" : /Parameter|Limit/.test(c) ? "PARAM" : "";
+}
+// A card's badge: what kind of equipment it is, in a few letters.
+const BADGE = n => n.system ? "SYS" : /VAV|Terminal|Box/i.test(n.cls) ? "VAV" : /Air_Handl|AHU/i.test(n.cls) ? "AHU"
+  : /Chiller/i.test(n.cls) ? "CH" : /Boiler/i.test(n.cls) ? "BLR" : /Pump/i.test(n.cls) ? "PMP" : /Tower/i.test(n.cls)
+  ? "CT" : /Fan_Coil|FCU/i.test(n.cls) ? "FCU" : "EQ";
 function layout() {
   for (const k of Object.keys(POS)) delete POS[k];
-  const cols = seq.columns, colW = 168, top = 34, rowH = 30;
-  // every ref used by the steps, placed under the column of the equipment it lives on; gap: refs next to what they
-  // link to
+  const cols = seq.columns;
+  // every ref the steps use, under the card of the equipment it lives on; a missing one next to what it links to
   const order = [];
   for (const st of seq.steps) for (const r of [...(st.lit || []), ...(st.links || []).flatMap(l => l.slice(0, 2))])
     if (!order.includes(r)) order.push(r);
@@ -326,65 +350,78 @@ function layout() {
     }
     return cols[0];
   };
-  // Columns wrap onto a second band when there are many, so the graph keeps a readable shape.
-  const perBand = cols.length > 4 ? Math.ceil(cols.length / 2) : cols.length;
-  const rows = Object.fromEntries(cols.map(c => [c, 0]));
-  const colRef = Object.fromEntries(order.filter(r => !cols.includes(r)).map(r => [r, colOf(r)]));
-  for (const r of Object.values(colRef)) rows[r]++;
-  const bandH = b => Math.max(0, ...cols.slice(b * perBand, (b + 1) * perBand).map(c => rows[c])) * rowH + 96;
-  const bands = Math.ceil(cols.length / perBand), h0 = bandH(0), h1 = bands > 1 ? bandH(1) : 0;
-  for (const [i, c] of cols.entries()) {
-    POS[c] = { x: 20 + (i % perBand) * colW, y: top + (i >= perBand ? h0 : 0), hdr: true, col: c };
-    rows[c] = 0;
+  // As many cards side by side as the panel holds; the rest wrap onto the next band.
+  const avail = Math.max(CW + 40, ($("#graph").clientWidth || 900) - 20);
+  const perBand = Math.max(1, Math.min(cols.length, Math.floor((avail + GAPX) / (CW + GAPX))));
+  const kids = Object.fromEntries(cols.map(c => [c, []]));
+  for (const r of order) if (!cols.includes(r)) kids[colOf(r)].push(r);
+  const cardH = c => HDR + Math.max(1, kids[c].length) * ROW + 10;
+  let y = TOP;
+  for (let b = 0; b * perBand < cols.length; b++) {
+    const band = cols.slice(b * perBand, (b + 1) * perBand);
+    const h = Math.max(...band.map(cardH));
+    for (const [i, c] of band.entries()) {
+      const x = 20 + i * (CW + GAPX);
+      POS[c] = { x, y, w: CW, h: cardH(c), hdr: true, col: c };
+      kids[c].forEach((r, k) => { POS[r] = { x: x + 10, y: y + HDR + k * ROW + CHIP / 2, w: CW - 20, col: c }; });
+    }
+    y += h + 40;
   }
-  for (const [ref, c] of Object.entries(colRef)) POS[ref] = { x: POS[c].x + 14, y: POS[c].y + 62 + rows[c]++ * rowH, col: c };
-  return { w: 20 + perBand * colW, h: top + h0 + h1 };
+  return { w: 20 + Math.min(perBand, cols.length) * (CW + GAPX) - GAPX + 20, h: y - 24 };
 }
 function drawGraph() {
   svg = $("#g");
   const { w, h } = layout();
-  svg.setAttribute("viewBox", `0 0 ${w} ${Math.max(h, 360)}`);
-  let out = `<defs>${["seq", "accent", "gap"].map(c => `<marker id="ar-${c}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6"
-    markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--${c})"/></marker>`).join("")}</defs>`;
-  // has-point lines: from each column header down its points
-  for (const c of seq.columns) {
-    const pts = Object.entries(POS).filter(([r, p]) => !p.hdr && p.col === c && R(r).node);
-    if (pts.length) out += `<path class="hp" d="M ${POS[c].x + 6} ${POS[c].y + 22} V ${Math.max(...pts.map(([, p]) => p.y))}"/>` +
-      pts.map(([, p]) => `<path class="hp" d="M ${POS[c].x + 6} ${p.y} H ${p.x - 7}"/>`).join("");
-  }
-  out += `<g id="links"></g>`;
+  svg.setAttribute("viewBox", `0 0 ${w} ${Math.max(h, 260)}`);
+  svg.setAttribute("preserveAspectRatio", "xMidYMin meet");
+  let out = `<defs>${["seq", "accent", "gap"].map(c => `<marker id="ar-${c}" viewBox="0 0 10 10" refX="8" refY="5"
+    markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="var(--${c})"/></marker>`).join("")}</defs>`;
   for (const c of seq.columns) {
     const n = D.nodes[seq.bind[c]], p = POS[c];
-    out += `<g class="hdr${n.system ? " sys" : ""}" data-ref="${esc(c)}"><rect x="${p.x - 6}" y="${p.y - 14}" width="150"
-      height="36" rx="9"/><text x="${p.x + 4}" y="${p.y + 1}">${esc(short(n.label, 20))}</text>
-      <text class="cls" x="${p.x + 4}" y="${p.y + 14}">${esc(n.cls)}</text><title>${esc(n.label)}</title></g>`;
+    out += `<g class="col${n.system ? " sys" : ""}" data-col="${esc(c)}"><rect class="body" x="${p.x}" y="${p.y}"
+      width="${p.w}" height="${p.h}" rx="12"/>
+      <g class="hdr" data-ref="${esc(c)}"><rect x="${p.x}" y="${p.y}" width="${p.w}" height="${HDR - 6}"/>
+      <rect class="badge" x="${p.x + 10}" y="${p.y + 13}" width="30" height="20" rx="5"/>
+      <text class="btx" text-anchor="middle" x="${p.x + 25}" y="${p.y + 27}">${BADGE(n)}</text>
+      <text x="${p.x + 48}" y="${p.y + 21}">${esc(short(n.label, 20))}</text>
+      <text class="cls" x="${p.x + 48}" y="${p.y + 35}">${esc(short((n.cls || "").replace(/_/g, " "), 26))}${n.system ? " · system" : ""}</text>
+      <title>${esc(n.label)} · ${esc(n.cls)}</title></g></g>`;
   }
+  out += `<g id="links"></g>`;
   for (const [ref, p] of Object.entries(POS)) {
     if (p.hdr) continue;
-    const r = R(ref);
-    out += `<g class="pt ${r.status}" data-ref="${esc(ref)}"><circle cx="${p.x}" cy="${p.y}" r="7"/>
-      <text x="${p.x + 12}" y="${p.y + 4}">${esc(short(refLabel(ref).replace(/ \(expected on .*\)| \(no point .*\)/, ""), 22))}</text>
-      <title>${esc(refLabel(ref))}</title></g>`;
+    const r = R(ref), v = seq.values[ref], ro = role(ref);
+    const label = refLabel(ref).replace(/ \(expected on .*\)| \(no point .*\)/, "");
+    out += `<g class="pt ${r.status}" data-ref="${esc(ref)}"><rect class="chip" x="${p.x}" y="${p.y - CHIP / 2}"
+      width="${p.w}" height="${CHIP}" rx="${CHIP / 2}"/><circle class="pd" cx="${p.x + 12}" cy="${p.y}" r="4.5"/>
+      <text x="${p.x + 23}" y="${p.y + 4}">${esc(short(label, v ? 17 : ro ? 21 : 26))}</text>
+      ${v ? `<text class="val" text-anchor="end" x="${p.x + p.w - 10}" y="${p.y + 4}">${esc(short(v, 9))}</text>`
+          : `<text class="role" text-anchor="end" x="${p.x + p.w - 10}" y="${p.y + 4}">${r.status === "gap" ? "MISSING" : ro}</text>`}
+      <title>${esc(refLabel(ref))}${v ? ` = ${esc(v)}` : ""}${r.status === "gap" ? " · not in the graph" : r.status === "conflict" ? ` · the graph classes it ${esc(nodeOf(ref)?.cls)}, the sequence expects ${esc(r.expected)}` : ""}</title></g>`;
   }
+  out += `<g id="rings"></g>`;
   svg.innerHTML = out;
   linkLayer = svg.querySelector("#links");
+  ringLayer = svg.querySelector("#rings");
   svg.querySelectorAll("[data-ref]").forEach(e => e.addEventListener("click", () => select(e.dataset.ref)));
 }
-function short(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
-function anchor(ref, toward) {
-  const p = POS[ref];
-  if (!p) return null;
-  return p.hdr ? { x: p.x + 72, y: p.y + (toward.y > p.y ? 22 : -14) } : { x: p.x, y: p.y };
+function short(s, n) { s = String(s ?? ""); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+// Where a link leaves or reaches a chip (or a card's header): the side facing the other end.
+function anchor(ref, other) {
+  const p = POS[ref], o = POS[other];
+  if (!p || !o) return null;
+  const y = p.hdr ? p.y + 22 : p.y, oc = o.x + (o.w || 0) / 2, pc = p.x + p.w / 2;
+  if (p.col === o.col) return { x: p.x + p.w, y, side: 1 };
+  return oc > pc ? { x: p.x + p.w, y, side: 1 } : { x: p.x, y, side: -1 };
 }
 async function drawLink(a, b, kind) {
-  const pa = POS[a], pb = POS[b];
-  if (!pa || !pb) return;
-  const A = anchor(a, pb), B = anchor(b, pa);
+  const A = anchor(a, b), B = anchor(b, a);
+  if (!A || !B) return;
   const graph = GRAPH.has(kind);
   const missing = graph ? !seq.graph_links[`${a}|${b}|${kind}`] : R(a).status === "gap" || R(b).status === "gap";
-  const dx = B.x - A.x, bend = Math.abs(dx) < 30 ? 46 : 0;
-  const mx = (A.x + B.x) / 2 + bend, my = (A.y + B.y) / 2 - Math.min(60, Math.abs(dx) / 5) - (bend ? 0 : 6);
-  const d = `M ${A.x} ${A.y} Q ${mx} ${my} ${B.x} ${B.y}`;
+  const same = POS[a].col === POS[b].col;
+  const k = same ? 34 + Math.min(40, Math.abs(B.y - A.y) / 6) : Math.max(30, Math.abs(B.x - A.x) / 2.2);
+  const d = `M ${A.x} ${A.y} C ${A.x + A.side * k} ${A.y}, ${B.x + B.side * k} ${B.y}, ${B.x + B.side * 3} ${B.y}`;
   const cls = `lnk ${graph ? "graph" : "ctl"}${missing ? " missing" : ""}`;
   const mk = missing ? "gap" : graph ? "accent" : "seq";
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -393,22 +430,35 @@ async function drawLink(a, b, kind) {
   const len = path.getTotalLength();
   const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
   const mid = path.getPointAtLength(len / 2);
-  lbl.setAttribute("x", mid.x); lbl.setAttribute("y", mid.y - 4); lbl.setAttribute("text-anchor", "middle");
+  lbl.setAttribute("x", mid.x + (same ? 6 : 0)); lbl.setAttribute("y", mid.y - 6);
+  lbl.setAttribute("text-anchor", same ? "start" : "middle");
   lbl.setAttribute("class", `lbl${graph ? " graph" : ""}`); lbl.textContent = KIND[kind] + (missing && graph ? " (not in graph)" : "");
   if (S.instant) { linkLayer.append(lbl); return; }
   // draw it, then send a dot along it
-  const dash = path.getAttribute("stroke-dasharray");
   path.style.strokeDasharray = `${len}`; path.style.strokeDashoffset = `${len}`;
   await anim(650, t => { path.style.strokeDashoffset = `${len * (1 - t)}`; });
   path.style.strokeDasharray = ""; path.style.strokeDashoffset = "";
-  if (dash) path.setAttribute("stroke-dasharray", dash);
   linkLayer.append(lbl);
   const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  dot.setAttribute("r", 4); dot.setAttribute("class", "dot");
+  dot.setAttribute("r", 5); dot.setAttribute("class", "dot");
   if (graph) dot.style.fill = "var(--accent)";
   linkLayer.append(dot);
   await anim(700, t => { const q = path.getPointAtLength(len * t); dot.setAttribute("cx", q.x); dot.setAttribute("cy", q.y); });
   dot.remove();
+  pulse(b);
+}
+// A ring that grows and fades on a chip a step reaches.
+function pulse(ref) {
+  const p = POS[ref];
+  if (!p || p.hdr || S.instant) return;
+  const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  r.setAttribute("class", "ring"); r.setAttribute("rx", CHIP / 2);
+  ringLayer.append(r);
+  anim(600, t => {
+    const g = 7 * t;
+    r.setAttribute("x", p.x - g); r.setAttribute("y", p.y - CHIP / 2 - g);
+    r.setAttribute("width", p.w + 2 * g); r.setAttribute("height", CHIP + 2 * g); r.setAttribute("opacity", 1 - t);
+  }).then(() => r.remove());
 }
 // Timers, not requestAnimationFrame: a hidden frame gets no animation frames, and the walk must still finish.
 function anim(ms, fn) {
@@ -427,7 +477,10 @@ function anim(ms, fn) {
 // --- the walk ----------------------------------------------------------------------------------------------------
 const S = { step: -1, playing: false, token: 0, instant: false };
 function light(ref, on = true) {
-  svg.querySelector(`[data-ref="${CSS.escape(ref)}"]`)?.classList.toggle("lit", on);
+  const e = svg.querySelector(`[data-ref="${CSS.escape(ref)}"]`);
+  if (!e) return;
+  (e.classList.contains("hdr") ? e.parentNode : e).classList.toggle("lit", on);
+  if (on && !e.classList.contains("hdr")) pulse(ref);
 }
 async function runStep(i) {
   const st = seq.steps[i], tok = S.token;

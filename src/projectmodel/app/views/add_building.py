@@ -6,14 +6,15 @@ Every step has the same layout, like the Location page of a project: one header 
 the left (about 40% of the width) and what has been built so far on the right (about 60%): the site, the building in
 3D or 2D, the knowledge graph, the sequences linked to it, and the review. Both boxes run to the bottom of the screen.
 
-On the left, a document step starts as a drop zone with the step's example file next to it. The document is read in
+On the left, a document step starts as a drop zone; a building started from an example project (intake/examples.py)
+also gets that project's document for the step, and never another project's. The document is read in
 the same box, page by page, and then shown there with every fact it read outlined, with the same controls as the
 viewers on the right (zoom, fit, full screen, pages). A click on a unit, a room or a graph node opens its place in the
 document. What the reader is not sure about is asked, in a list or on the building itself. Answers are kept
 (method = human) and survive a re-read.
 
-The readers are rules (src/projectmodel/intake), no LLM. The example package in test_packages/troop_d/ has one file
-per step.
+The readers are rules (src/projectmodel/intake), no LLM. Three example projects can start a building: Troop D (the
+test package in test_packages/troop_d/, one file per step) and two public bid sets (docs/real-document-sets.md).
 """
 
 import base64
@@ -43,7 +44,8 @@ from projectmodel.intake import (graph, knowledge, pdfdoc, score, sequence_links
 from projectmodel.viz import render_html  # noqa: E402
 from projectmodel.intake.model import building, missing, progress  # noqa: E402
 from projectmodel.intake.state import Intake, list_intakes  # noqa: E402
-from projectmodel.intake.steps import STEPS, TEST_PACKAGE  # noqa: E402
+from projectmodel.intake import examples  # noqa: E402
+from projectmodel.intake.steps import STEPS  # noqa: E402
 
 APP = Path(__file__).resolve().parents[1]
 # Semantic colours, mid-tones that read on both the white page image and the dark app
@@ -131,15 +133,52 @@ def start_form(key: str) -> None:
                 st.rerun()
 
 
-def begin(name: str, address: str = "") -> None:
-    """A new, empty building: nothing read, nothing built. The graph, the twin and the review grow from here."""
-    it = Intake.create(name, address)
+def begin(name: str, address: str = "", example: str | None = None) -> None:
+    """A new, empty building: nothing read, nothing built. The graph, the twin and the review grow from here.
+    `example`: the example project whose documents its steps offer (only that project's)."""
+    it = Intake.create(name, address, example=example)
     st.session_state.update(ab_started=True, ab_slug=it.slug, ab_step="locate", ab_sel=None, ab_work=None,
                             ab_view="site", ab_out="side", ab_loc_query=address or name, ab_loc_results=None)
 
 
+def start_example(slug: str) -> None:
+    ex = examples.get(slug)
+    begin(ex.name, ex.address, example=slug)
+
+
 def resume(slug: str) -> None:
     st.session_state.update(ab_started=True, ab_slug=slug, ab_step=None, ab_sel=None, ab_work=None)
+
+
+def doc_line(ex, s) -> str:
+    """One step of an example project: what document it gets. Green: the real thing; amber: a stand-in; grey: none."""
+    d = ex.docs.get(s.id)
+    if d is None:
+        return f":grey[:material/remove_circle_outline: **{s.n} {SHORT[s.id]}** · none]"
+    if d.stand_in:
+        return f":orange[:material/change_circle:] **{s.n} {SHORT[s.id]}** · {d.what} :orange[(stand-in)]"
+    return f":green[:material/check_circle:] **{s.n} {SHORT[s.id]}** · {d.what}"
+
+
+def example_projects() -> None:
+    """Three public bid sets to start from, in a section that opens on demand. The building started from one gets
+    that project's documents, and only that project's, at every step."""
+    with st.expander("Example project documents", icon=":material/folder_special:"):
+        st.caption("No documents of your own at hand? Start a building from one of these public bid sets. Each step "
+                   "then offers **that project's document only**, so one building never mixes two projects. "
+                   ":green[:material/check_circle:] the document the step asks for · :orange[:material/change_circle:] "
+                   "the closest thing published · :grey[:material/remove_circle_outline:] nothing published.")
+        for col, ex in zip(st.columns(len(examples.EXAMPLES), gap="medium"), examples.EXAMPLES.values()):
+            with col, box(f"ex_{ex.slug}", height="stretch"):
+                st.markdown(f"#### {ex.name}")
+                st.caption(f":material/location_on: {ex.place} · {ex.kind}  \n:material/account_balance: {ex.owner}")
+                st.write(ex.blurb)
+                st.markdown("  \n".join(doc_line(ex, s) for s in STEPS[:-1]))
+                for n in ex.notes:
+                    st.caption(f":material/info: {n}")
+                st.space("stretch")
+                st.button("Start with this project", key=f"ex_go_{ex.slug}", type="primary",
+                          icon=":material/arrow_forward:", on_click=start_example, args=(ex.slug,), width="stretch")
 
 
 existing = list_intakes()
@@ -155,20 +194,16 @@ if not st.session_state.get("ab_started") or st.session_state.get("ab_slug") not
     left, right = st.columns([2, 3], gap="medium")
     with left, box("own", "Start a new building", "add_business", height="stretch"):
         start_form("ab_new")
-    with right, box("intro", "How it works", "route", height="stretch"):
-        st.markdown("##### Eight steps, from an address to a reviewed knowledge graph")
-        st.markdown("**0** Locate the building · **1** Floor plans · **2** Equipment schedules · **3** Sequences of "
-                    "operation · **4** Controls submittal · **5** BMS export · **6** Review · **7** What people know")
-        st.write("Each document you upload is read in front of you and turned into part of the building. The site, "
-                 "the building's twin, the knowledge graph and the review start empty and grow at every step, on the "
-                 "right of the page. Every step has an example file ready to use if you want to try it first.")
+    with right, box("going", "Buildings in progress", "pending_actions", height="stretch"):
         if existing:
-            st.divider()
-            st.markdown("**Buildings in progress**")
+            st.caption("Pick up a building where you left it.")
             with st.container(horizontal=True, vertical_alignment="bottom", gap="small"):
                 pick = st.selectbox("Continue", [s["slug"] for s in existing], label_visibility="collapsed",
                                     format_func=names.get, width=320)
                 st.button("Continue", icon=":material/arrow_forward:", on_click=resume, args=(pick,))
+        else:
+            st.caption("None yet. A building you start stays here until you finish it.")
+    example_projects()
     st.stop()
 
 slugs = [s["slug"] for s in existing]
@@ -410,14 +445,16 @@ def selected() -> tuple[dict | None, list[dict]]:
 
 
 def answer_selected(f: dict) -> None:
-    """Open the selection's question in the step's box: on its own step, Needs you tab, pinned at the top."""
+    """Open the selection's question: on its own step, in the Review tab on the right, pinned at the top."""
     to = f.get("step") if f.get("step") in FLOW_IDS else step_id
-    st.session_state.update(ab_step=to, ab_work="ask", ab_qpage=0)
+    st.session_state.update(ab_step=to, ab_qpage=0, ab_view_want="review")
+    if st.session_state.get("ab_out") == "hidden":
+        st.session_state["ab_out"] = "side"
 
 
 def selection_panel() -> None:
     """Above the building or the graph, one line: what is selected, the documents that mention it (a click opens the
-    place), its open question (answered in the step's box), and a note about it."""
+    place), its open question (answered in the Review tab), and a note about it."""
     unit, facts = selected()
     if not facts:
         return
@@ -436,7 +473,7 @@ def selection_panel() -> None:
             st.button(where(f), key=f"src_{k}", on_click=show_fact, args=(f["id"],), type="tertiary",
                       icon=":material/description:", help=f"{KIND_NAME.get(f['kind'], f['kind'])}: open it in the document")
         if open_:
-            st.button("Needs you", key="sel_answer", icon=":material/help:", on_click=answer_selected, args=(open_[0],),
+            st.button("Answer", key="sel_answer", icon=":material/help:", on_click=answer_selected, args=(open_[0],),
                       help=open_[0]["ask"]["q"])
         if target:
             st.button(f"Notes · {len(notes)}" if notes else "Add a note", key="note_here", type="tertiary",
@@ -449,7 +486,7 @@ def selection_panel() -> None:
 
 
 def selected_questions() -> None:
-    """At the top of Needs you: the open questions about what is selected on the building or in the graph."""
+    """At the top of the Review tab: the open questions about what is selected on the building or in the graph."""
     unit, facts = selected()
     for k, f in enumerate(f for f in facts if f["status"] == "proposed" and f.get("ask")):
         if k == 0:
@@ -508,20 +545,7 @@ def knowledge_view() -> None:
                     knowledge.add_note(it, target, targets[target], topic, body, author)
                     st.rerun()
         else:
-            st.caption("A YAML file with `tags`, `terms` and `notes`, in the shape the download below gives: what "
-                       "another building taught, or a list an engineer prepared.")
-            up = st.file_uploader("Knowledge file", type=["yaml", "yml"], key=f"know_up_{st.session_state.get('ab_knonce', 0)}",
-                                  label_visibility="collapsed")
-            if up:
-                classes = {"equipment": set(km.by_kind("equipment")), "point": set(km.by_kind("point"))}
-                added, problems = knowledge.load(it, up.getvalue().decode("utf-8", "replace"), classes)
-                st.session_state["ab_knonce"] = st.session_state.get("ab_knonce", 0) + 1
-                st.session_state["ab_know_msg"] = (added, problems)
-                st.rerun()
-            if msg := st.session_state.pop("ab_know_msg", None):
-                st.success(f"{msg[0]} added from the file.", icon=":material/check_circle:")
-                for line in msg[1]:
-                    st.warning(line, icon=":material/report:")
+            from_a_file(classes={"equipment": set(km.by_kind("equipment")), "point": set(km.by_kind("point"))})
     except ValueError as e:
         st.error(str(e))
 
@@ -558,6 +582,81 @@ def knowledge_view() -> None:
         st.download_button("Download this building's knowledge (YAML)", knowledge.export(it),
                            file_name=f"{it.slug}_knowledge.yaml", icon=":material/download:",
                            help="To review and move into the shared knowledge model, or to give to the next building.")
+
+
+def from_a_file(classes: dict[str, set[str]]) -> None:
+    """Knowledge from any file. A YAML file in the shape of the download below is added as it is. Any other file
+    (a PDF, Word, Excel, PowerPoint, CSV, text, email or a photo) is read by a model that proposes the rules and notes
+    it teaches, each with the words it comes from; you tick the ones to keep. The file is also kept in the project's
+    documents."""
+    from projectmodel import file_ai, fileread, library
+    st.caption("Any file that says something about this building: a naming convention, a points list, an O&M note, an "
+               "email, a spec page, a photo of a label. A YAML file in the shape of the download below is added as it "
+               "is; any other file is read, and what it teaches is proposed for you to confirm.")
+    up = st.file_uploader("Knowledge file", type=fileread.ACCEPTED, key=f"know_up_{st.session_state.get('ab_knonce', 0)}",
+                          label_visibility="collapsed")
+    if up:
+        data = up.getvalue()
+        library.add(it.slug, up.name, data)  # kept with the project's documents either way
+        if fileread.ext_of(up.name) in ("yaml", "yml"):
+            added, problems = knowledge.load(it, data.decode("utf-8", "replace"), classes)
+            st.session_state["ab_know_msg"] = (added, problems)
+        else:
+            content = fileread.read(up.name, data)
+            if not content.readable:
+                st.session_state["ab_know_msg"] = (0, [content.note or f"Nothing readable in {up.name}."])
+            else:
+                try:
+                    with st.spinner(f"Reading {up.name}…"):
+                        st.session_state["ab_know_props"] = dict(file_ai.propose_knowledge(
+                            content, up.name, it.name, sorted(classes["equipment"]), sorted(classes["point"]),
+                            store=get_store(), project=project_id(it)), file=up.name)
+                except Exception as e:  # noqa: BLE001 - AI off or every model failed: say so, keep the file
+                    st.session_state["ab_know_msg"] = (0, [f"{up.name} could not be read by a model: {e}"])
+        st.session_state["ab_knonce"] = st.session_state.get("ab_knonce", 0) + 1
+        st.rerun()
+    if msg := st.session_state.pop("ab_know_msg", None):
+        if msg[0]:
+            st.success(f"{msg[0]} added from the file.", icon=":material/check_circle:")
+        for line in msg[1]:
+            st.warning(line, icon=":material/report:")
+    props = st.session_state.get("ab_know_props")
+    if not props:
+        return
+    items = ([("tag", t, f"**{t['prefix']}** is a {t['class']}" + (" · serves a room" if t["terminal"] else ""))
+              for t in props["tags"]]
+             + [("term", t, f"**{t['phrase']}** is a {t['class']}") for t in props["terms"]]
+             + [("note", n, f"Note on **{n['target_label']}** · {n['topic']}: {n['body']}") for n in props["notes"]])
+    with st.container(border=True):
+        st.markdown(f"**{props['file']}** teaches {len(items)} thing{'s' if len(items) != 1 else ''} "
+                    f":small[· read by {props['model']} · ${props['cost_usd']:.3f}]")
+        if not items:
+            st.caption("Nothing in this file is a naming rule, a point term or a note about the building.")
+        picked = []
+        for i, (kind, row, label) in enumerate(items):
+            if st.checkbox(label, value=True, key=f"kp_{props['file']}_{i}", help=f"From the file: “{row['quote']}”"):
+                picked.append((kind, row))
+            st.caption(f"“{row['quote']}”")
+        with st.container(horizontal=True, gap="small"):
+            if items and st.button(f"Add the {len(picked)} ticked", type="primary", icon=":material/add:",
+                                   disabled=not picked, key="kp_add"):
+                by = f"{props['file']} (confirmed by you)"
+                units = {e["tag"].upper(): n for n, e in b["equip"].items()}
+                for kind, row in picked:
+                    if kind == "tag":
+                        knowledge.add_tag(it, row["prefix"].upper(), row["class"], row["family"], row["terminal"], by)
+                    elif kind == "term":
+                        knowledge.add_term(it, row["phrase"], row["class"], by)
+                    else:
+                        lab = row["target_label"]
+                        target = f"unit:{units[lab.upper()]}" if lab.upper() in units else "building"
+                        knowledge.add_note(it, target, lab if target != "building" else "the whole building",
+                                           row["topic"], row["body"], by)
+                st.session_state.pop("ab_know_props", None)
+                st.session_state["ab_know_msg"] = (len(picked), [])
+                st.rerun()
+            st.button("Discard", key="kp_drop", type="tertiary",
+                      on_click=lambda: st.session_state.pop("ab_know_props", None))
 
 
 def show_fact(fid: str) -> None:
@@ -866,7 +965,9 @@ def outputs_panel() -> None:
         elif view == "seq":
             sequences_view(h, key="ab_seq_out")
         elif view == "review":
-            review_live()
+            if step_id in steps.BY_ID and step_id != "review":
+                step_questions()
+            review_live(questions_too=step_id not in steps.BY_ID or step_id == "review")
         else:
             twin_view(h)
 
@@ -882,9 +983,21 @@ def shown_location() -> tuple | None:
     return None
 
 
-def review_live() -> None:
+def step_questions() -> None:
+    """The Review tab on a document step: what this step's reader wants you to decide, first (the question about the
+    selection pinned on top), then the whole building below. **Show** opens the place in the document on the left."""
+    nq = len(it.open_questions(step_id))
+    st.markdown(f"##### {step.title} · " + (f"{nq} to answer" if nq else "nothing to answer"))
+    selected_questions()
+    questions([step_id])
+    st.divider()
+    st.markdown("##### The whole building")
+
+
+def review_live(questions_too: bool = True) -> None:
     """The review as it stands after the steps read so far: what is confirmed, what waits for a second source,
-    what needs you. It grows with every document; step 6 is where it is finished."""
+    what needs you. It grows with every document; step 6 is where it is finished. On a document step, that step's
+    questions sit above it (step_questions), so the latest questions are not repeated here."""
     facts = it.facts()
     if not facts and not it.location:
         st.info("Nothing to review yet. Every fact the reader finds lands here, with its source and confidence, "
@@ -908,7 +1021,7 @@ def review_live() -> None:
                      "facts": len(fs), "confirmed": sum(1 for f in fs if f["status"] == "confirmed"),
                      "need you": len(it.open_questions(s_.id))})
     table(pd.DataFrame(rows), hide_index=True, width="stretch")
-    if asks:
+    if asks and questions_too:
         st.markdown("###### Latest questions")
         for i, f in enumerate(asks[-3:]):
             question_card(f, f"live{i}")
@@ -1101,8 +1214,15 @@ def finish_box() -> None:
 # ---------------------------------------------------------------- the document steps
 
 def read_now(files: list[tuple[str, bytes]]) -> None:
-    """Read the step's files here, in the step's box, with the reader's log as it goes."""
+    """Read the step's files here, in the step's box, with the reader's log as it goes. A file of another type is
+    turned into the step's own when it can be (a photo into a PDF page, a spreadsheet into CSV: fileread.for_step)."""
+    from projectmodel import fileread
     for name, data in files:
+        try:
+            name, data = fileread.for_step(name, data, step.types)
+        except fileread.NotForThisStep as e:
+            st.error(str(e), icon=":material/block:")
+            return
         it.add_file(step_id, name, data)
     with st.status(f"Reading {', '.join(n for n, _ in files) or 'the documents'}…", expanded=True) as status_box:
         n = steps.run(it, step_id, lambda m: status_box.write(m))
@@ -1210,31 +1330,63 @@ def review_step() -> None:
         questions([s.id for s in STEPS[:-1]])
 
 
+def example_file() -> list[tuple[str, bytes]] | None:
+    """The building's example project, if it was started from one: this step's document from that project only, or
+    why it has none. Returns the file to read when the person uses it."""
+    ex = examples.get(it.example)
+    if not ex:
+        return None
+    d = ex.docs.get(step_id)
+    with box("example", f"Example project · {ex.name}", "folder_special"):
+        if d is None:
+            st.caption(f":material/info: {examples.missing_note(step_id)}")
+            return None
+        if d.stand_in:
+            st.caption(f":orange[:material/change_circle:] {d.stand_in}")
+        ready = examples.available(ex.slug, step_id)
+        path = examples.file_for(ex.slug, step_id) if ready else None
+        with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
+            if path is not None and path.suffix.lower() == ".pdf":
+                st.image(thumbnail(str(path), str(path.stat().st_mtime)), width=150)
+            with st.container(gap="small"):
+                if path is not None:
+                    pages = f" · {pdfdoc.page_count(path)} pages" if path.suffix.lower() == ".pdf" else ""
+                    size = f"{path.stat().st_size / 1e6:.1f} MB{pages}"
+                else:
+                    size = "fetched from the owner's site the first time it is used"
+                st.markdown(f"**{d.name}**  \n{d.what}  \n:small[{size} · {ex.place}, public bid set]")
+                if st.button("Use this document", type="primary", icon=":material/play_arrow:", key="use_example"):
+                    try:
+                        with st.spinner(f"Getting the {ex.name} drawings…"):
+                            path = examples.file_for(ex.slug, step_id)
+                    except examples.ExampleError as e:
+                        st.error(str(e), icon=":material/cloud_off:")
+                        return None
+                    return [(path.name, path.read_bytes())]
+    return None
+
+
+def step_types() -> list[str]:
+    """The step's file types, and those turned into them on upload (photos and scans into PDF, Excel into CSV)."""
+    from projectmodel import fileread
+    return fileread.step_types(step.types)
+
+
 def empty_step() -> list[tuple[str, bytes]] | None:
-    """A step with nothing read yet: a big drop zone for its document, and the example ready to use next to it.
-    Returns the files to read now, if any."""
+    """A step with nothing read yet: a big drop zone for its document, and, for a building started from an example
+    project, that project's document for the step. Returns the files to read now, if any."""
     st.markdown(f"### {step.ask}")
     st.caption(f"**Builds:** {step.builds}  \n**Looks for:** {step.looks_for}")
     what = step.title.lower().replace('"', "")
     st.html(f'<style>.st-key-ab_drop {{ --ab-drop: "Drop the {what} here, or"; }}</style>')
     with st.container(key="ab_drop"):
         up = st.file_uploader(f"Drop the {step.title.lower()} here, or browse ({', '.join(step.types).upper()})",
-                              type=list(step.types), accept_multiple_files=True,
+                              type=step_types(), accept_multiple_files=True,
                               key=f"up_{step_id}_{st.session_state.get('ab_nonce', 0)}", label_visibility="collapsed")
     if up:
         return [(u.name, u.getvalue()) for u in up]
-    example = TEST_PACKAGE / step.test_file if step.test_file else None
-    if example and example.exists():
-        with box("example", "Or try it with the example", "science"):
-            with st.container(horizontal=True, vertical_alignment="center", gap="medium"):
-                if example.suffix.lower() == ".pdf":
-                    st.image(thumbnail(str(example), str(example.stat().st_mtime)), width=150)
-                with st.container(gap="small"):
-                    pages = f" · {pdfdoc.page_count(example)} pages" if example.suffix.lower() == ".pdf" else ""
-                    st.markdown(f"**{example.name}**  \n:small[{example.stat().st_size / 1e6:.1f} MB{pages} · from a "
-                                "public bid set, ready to use]")
-                    if st.button("Use this example", type="primary", icon=":material/play_arrow:", key="use_example"):
-                        return [(example.name, example.read_bytes())]
+    if files := example_file():
+        return files
     if needs := [steps.BY_ID[n] for n in step.needs if not it.done(n)]:
         st.caption(":material/info: Works best after " + ", ".join(f"step {n.n} ({n.title.lower()})" for n in needs)
                    + ".")
@@ -1251,11 +1403,12 @@ def document_step() -> None:
             read_now(todo)  # in this box, under the drop zone
         return
     nq = len(it.open_questions(step_id))
-    tabs = {"doc": "Document", "ask": count("Needs you", nq),
-            "built": "Sequences" if step_id == "sequences" else "Results", "log": "Log"}
+    # What needs you is answered in the Review tab on the right (step_questions), next to the building and the
+    # graph it changes; the step's box keeps the document, what was read and the log.
+    tabs = {"doc": "Document", "built": "Sequences" if step_id == "sequences" else "Results", "log": "Log"}
     todo, reread = None, False
     with st.container(horizontal=True, vertical_alignment="center", gap="small"):
-        work = work_tabs(tabs, "ask" if nq else ("built" if step_id == "sequences" else "doc"))
+        work = work_tabs(tabs, "built" if step_id == "sequences" else "doc")
         st.space("stretch")
         with st.container(key="ab_files", width="content"), st.popover(
                 "", icon=":material/folder_open:", help=f"{len(files)} file(s): add, remove, read again"):
@@ -1268,7 +1421,7 @@ def document_step() -> None:
                         it.remove_file(step_id, f["name"])
                         steps.run(it, step_id, lambda m: None)
                         st.rerun()
-            more = st.file_uploader("Add a file", type=list(step.types), accept_multiple_files=True,
+            more = st.file_uploader("Add a file", type=step_types(), accept_multiple_files=True,
                                     key=f"up_{step_id}_{st.session_state.get('ab_nonce', 0)}")
             if more:
                 todo = [(u.name, u.getvalue()) for u in more]
@@ -1279,15 +1432,15 @@ def document_step() -> None:
         read_now(todo)
     elif reread:
         read_now([])
+    if nq and "review" not in (st.session_state.get("ab_view"), st.session_state.get("ab_view_want")):
+        st.button(f"{nq} question{'s' if nq > 1 else ''} from this document wait for you in Review",
+                  icon=":material/help:", type="tertiary", key="to_review",
+                  on_click=lambda: st.session_state.update(ab_view_want="review", ab_out="side"))
     if stale := steps.stale(it, step_id):
         st.warning(f"{', '.join(stale)} changed since this step was read. **Read again** (the folder button) to use the latest.",
                    icon=":material/sync_problem:")
     if work == "doc":
         viewer([f["name"] for f in files])
-    elif work == "ask":
-        # A list here; the panel on the right shows where each question sits (the building, the graph).
-        selected_questions()
-        questions([step_id])
     elif work == "built":
         if step_id == "sequences":
             sequences_view(FIT, key="ab_seq_left")

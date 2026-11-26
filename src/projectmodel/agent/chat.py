@@ -132,9 +132,11 @@ def _summary(name: str, result: dict) -> str:
 
 class Agent:
     def __init__(self, router: Router, tools: GraphTools | None = None, knowledge=None, project: str | None = None,
-                 person: str | None = None, store=None):
+                 person: str | None = None, store=None, app_context: str | None = None):
+        """`app_context`: what the agent knows about the app and every project (agent/foundations.py), so it can
+        coach and answer questions about the app itself on any page."""
         self.router, self.tools, self.kb, self.project, self.person = router, tools, knowledge, project, person
-        self.store = store
+        self.store, self.app_context = store, app_context
 
     # prompt ------------------------------------------------------------------------------------------------------
 
@@ -150,9 +152,15 @@ class Agent:
             if idx := self.kb.skills_index(scopes):
                 parts.append("# Skills\nProcedures the team wrote. Read one with skill_view before you follow it.\n"
                              + "\n".join(f"- {s['name']} ({s['scope']}): {s['description']}" for s in idx))
+        if self.app_context:
+            parts.append("# The app and your projects\nWhat you know about this app and every project in it. Use it "
+                         "to answer questions about the app itself (what a page is for, how the pipeline works, where "
+                         "to go next, which project is where) and to coach the person: name the page as Area › Page. "
+                         "These answers need no citation; facts about one building still come from the tools.\n\n"
+                         + self.app_context)
         if not self.tools:
             parts.append("# No project\nNo project is open, so the graph tools are not available. Answer from the "
-                         "memory and skills, and say when a question needs a project.")
+                         "app context, the memory and skills, and say when a question needs a project open.")
         return "\n\n".join(parts), p.ref
 
     def tool_defs(self) -> list[dict]:

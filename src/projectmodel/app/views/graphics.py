@@ -5,7 +5,7 @@ well they cover the active project.
   result, and the classes of the points that land on no anchor.
 - Floors: each level's plan with its units in their rooms (hasLocation / serves, room positions from the plans).
 - Systems: the water side (feeds between plant equipment) and the air side (air handlers and what they feed).
-- Equipment: the 2D graphic of any equipment, with its QA; the 3D one is on the Equipment 3D page.
+- Equipment: the 2D graphic of any equipment, with its QA; the 3D one is on the Equipments page.
 
 Values are simulated (value_model), and every graphic says so.
 """
@@ -101,6 +101,14 @@ with tab_floor, box("gx_floor", "Floor graphics", "layers"):
             svg(g)
 
 with tab_sys, box("gx_sys", "System graphics", "account_tree"):
+    st.markdown(
+        "**What it is.** One drawing of a whole building system, made from the graph's *feeds* links: the **water "
+        "side** (the plant and the coils it supplies with chilled or hot water) and the **air side** (each air handler "
+        "and the VAV boxes it supplies with air).  \n"
+        "**Why it is needed.** Operators find problems by following the flow: a warm room → its VAV box → the air "
+        "handler → the chilled-water plant. The drawing also checks the graph at a glance: a unit in the *not "
+        "connected* strip has a missing feeds link. Today a controls contractor draws these by hand for every job; "
+        "here they come from the graph.")
     which = st.segmented_control("System", ["Water side", "Air side"], default="Water side", key="gx_sys_kind")
     g = render_water(twin) if which != "Air side" else render_air(twin)
     qa_line(g.qa)

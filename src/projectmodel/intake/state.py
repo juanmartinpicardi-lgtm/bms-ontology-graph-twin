@@ -68,21 +68,29 @@ class Intake:
         self.s = json.loads(path.read_text()) if path.exists() else None
 
     @classmethod
-    def create(cls, name: str, address: str = "", root: Path = INTAKE_DIR, test: bool = False) -> "Intake":
-        """A new, empty building. `test`: started from the test package; cleared when the server restarts."""
+    def create(cls, name: str, address: str = "", root: Path = INTAKE_DIR, test: bool = False,
+               example: str | None = None) -> "Intake":
+        """A new, empty building. `test`: started from the test package; cleared when the server restarts.
+        `example`: the example project (intake/examples.py) whose documents its steps offer; None for a building
+        set up from the person's own documents. A building only ever offers one project's documents."""
         slug, n = slugify(name), 2
         while (root / slug).exists():
             slug = f"{slugify(name)}-{n}"
             n += 1
         it = cls(slug, root)
-        it.s = {"name": name, "address": address, "test": test, "created": time.time(), "updated": time.time(),
-                "files": {}, "facts": {}, "decisions": {}, "log": {}}
+        it.s = {"name": name, "address": address, "test": test, "example": example, "created": time.time(),
+                "updated": time.time(), "files": {}, "facts": {}, "decisions": {}, "log": {}}
         it.save()
         return it
 
     @property
     def name(self) -> str:
         return self.s["name"]
+
+    @property
+    def example(self) -> str | None:
+        """The example project this building was started from, if any."""
+        return self.s.get("example")
 
     @property
     def location(self) -> dict | None:
@@ -99,7 +107,7 @@ class Intake:
         """Start the building over: every upload, fact, answer and piece of knowledge goes; its name, address and
         location stay."""
         shutil.rmtree(self.dir / "uploads", ignore_errors=True)
-        keep = {k: self.s[k] for k in ("name", "address", "location", "test", "created") if k in self.s}
+        keep = {k: self.s[k] for k in ("name", "address", "location", "test", "example", "created") if k in self.s}
         self.s = {**keep, "files": {}, "facts": {}, "decisions": {}, "log": {}}
         self.save()
 

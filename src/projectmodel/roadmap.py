@@ -121,6 +121,8 @@ PACKAGES = [
      "parts": [("Page rendering and page sorting", True),
                ("Real dev sets: 49% rules alone → 83% with the model", True),
                ("Calibrated within 1 point; about $0.04 per sheet", True),
+               ("Any common file opened: PDF, Word, Excel, PowerPoint, images, email; a model says what a document "
+                "is and what it teaches the Knowledge step", True),
                ("Room outlines, scanned sheets, zones", False),
                ("Schedules with an unknown layout", False)]},
     {"id": "W8", "name": "Sequences with AI", "wave": 2, "status": "done",

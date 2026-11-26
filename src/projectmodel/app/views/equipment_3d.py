@@ -1,11 +1,12 @@
-"""3D view of one piece of equipment: its parametric model with every point pinned on it, provenance on click, and
-simulated values (spec-equipment-3d §7). Next to it, the 2D graphic generated from the same payload (graphics/,
-plan §5.4) with its QA result, and an optional vision check.
+"""Equipments: one piece of equipment at a time, in 3D or 2D (a toggle above the viewer, one view at a time).
+3D: its parametric model with every point pinned on it, provenance on click, and simulated values
+(spec-equipment-3d §7). 2D: the graphic generated from the same payload (graphics/, plan §5.4) with its QA result, and
+an optional vision check.
 
 Left: every piece of equipment with a 3D model in the active project, filtered by type and name, so you always see
 what else there is and pick one. Above the viewer: previous / next and the equipment this one is fed by or feeds.
 
-Deep link: /Equipment_3D?project=alpha/names_paths&equip=eq:Airside AHU-2
+Deep link: /Equipment_3D?project=alpha/names_paths&equip=eq:Airside AHU-2 (add &view=2d for the 2D graphic)
 Fed-by / feeds links inside the viewer open the linked equipment on this page.
 """
 
@@ -40,6 +41,7 @@ QA_ICON = {"pass": ":material/check_circle:", "warn": ":material/warning:", "fai
 ALL = "all"
 # Simulated-value scenarios (keys and labels as in equipment3d/sim.js). One runs app-wide: its clock keeps going as
 # you move between equipment, so a fault develops the same way on the plant, the AHU and the VAV.
+VIEWS = {"3d": "3D model", "2d": "2D graphic"}
 SCENARIOS = {"normal": "Normal day", "hot": "Hot afternoon", "stuck": "Stuck reheat valve (VAVs with reheat)",
              "chw_warm": "Chilled water running warm"}
 
@@ -225,8 +227,17 @@ with main, box("eq_view", fit=True):
                           type="tertiary")
             if len(ids) > 2:
                 st.caption(f"+{len(ids) - 2} more", width="content")
+        st.space("stretch")
+        if qp.get("view") in VIEWS and qp.get("view") != st.session_state.get("_linked_view"):
+            st.session_state["_linked_view"] = st.session_state["eq_mode"] = qp.get("view")
+        st.session_state.setdefault("eq_mode", "3d")
+        mode = st.segmented_control("View", list(VIEWS), key="eq_mode", format_func=VIEWS.get,
+                                    label_visibility="collapsed", width="content",
+                                    help="One view at a time: the 3D model, or the 2D graphic made from the same "
+                                         "points") or "3d"
 
-    qp.update(project=project, equip=equip)  # the address bar is always a deep link to what is on screen
+    qp.update(project=project, equip=equip, view=mode)  # the address bar is always a deep link to what is on screen
+    st.session_state["_linked_view"] = mode
     if scenario != "normal":
         qp["scenario"] = st.session_state["_linked_scenario"] = scenario
     else:
@@ -234,19 +245,19 @@ with main, box("eq_view", fit=True):
         st.session_state["_linked_scenario"] = scenario
     st.session_state["_linked_equip"] = equip
     payload = equipment_payload(store, project, equip, km, anchors())
-    graphic = render_2d(payload)
-    qa = check_equipment(payload, graphic)
-    # Links inside the viewer open the target on this page (the top window), not inside the iframe.
-    payload["links"] = {i: link(project, i, scenario) for i in models if i != equip}
-    # The start time, not the elapsed time: the page stays identical between reruns, so the viewer doesn't reload.
-    payload["sim"] = {"scenario": scenario, "started": st.session_state.setdefault("sim_started", time.time())}
-    payload["link_target"] = "top"
-    view3d, view2d = st.columns([1.15, 1], gap="small")
-    with view3d:
+    if mode == "3d":
+        # Links inside the viewer open the target on this page (the top window), not inside the iframe.
+        payload["links"] = {i: link(project, i, scenario) for i in models if i != equip}
+        # The start time, not the elapsed time: the page stays identical between reruns, so the viewer doesn't reload.
+        payload["sim"] = {"scenario": scenario, "started": st.session_state.setdefault("sim_started", time.time())}
+        payload["link_target"] = "top"
         st.iframe(render_html(payload, st.context.theme.type), height=760)
-    with view2d:
+    else:
+        graphic = render_2d(payload)
+        qa = check_equipment(payload, graphic)
         svg = graphic.svg(st.context.theme.type or "light", max_width=None)
-        st.html(f"<div style='max-height:620px;overflow:auto'>{img_tag(svg, graphic.drawing.title)}</div>")
+        st.html(f"<div style='max-height:calc(var(--fit, 900px) - 190px);min-height:420px;overflow:auto;"
+                f"text-align:center'>{img_tag(svg, graphic.drawing.title)}</div>")
         c = qa["counts"]
         st.markdown(f"{QA_ICON.get(qa['status'], '')} **2D graphic QA: {qa['status']}** · {c['bound']} of "
                     f"{c['points']} points on their anchor · {c['anchors_filled']} of {c['anchors']} anchors filled")

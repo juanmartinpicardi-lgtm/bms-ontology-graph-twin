@@ -6,7 +6,7 @@ check). The 3D builders live in app/equipment3d/; both read the same payload and
 
 def graphic_ref(store, project: str, equip_id: str, km) -> dict | None:
     """The agent's `show_graphic` (agent_tools.GRAPHIC_PROVIDERS): where the unit's graphic is and how it binds.
-    A unit with a template opens on Equipment 3D (its 3D model and the 2D graphic next to it, with the QA result); a
+    A unit with a template opens on Equipments (its 3D model, or the 2D graphic with the QA result, one at a time); a
     system with its own points (the CHW plant) on the Graphics page, whose system graphic shows them. None when
     neither applies, so the caller falls back."""
     from ..equipment_view import equipment_payload, load_anchors, node_template

@@ -203,7 +203,7 @@ plans = mapping("map", "Floor plans", "PDF · guided setup", [
     ("Terminal's thermostat is in a room", [("serves", "off")]),
     ("Other unit drawn in a room", [("hasLocation", "brick")]),
     ("Plan line work, room positions", [("attributes", "own")]),
-], ["HVAC_Zone", "Building", "Site", "room → zone"])
+], ["HVAC_Zone", "room → zone"])
 
 schedules = mapping("table_rows", "Equipment schedules", "PDF · guided setup", [
     ("Row that starts with a tag", [("equipment node", "brick")]),
@@ -221,16 +221,17 @@ sequences = mapping("sync_alt", "Sequences of operation", "PDF or YAML · now", 
     ("Occupied, unoccupied, economizer", [("switches", "off")]),
     ("Intended values (55 °F adj.)", [("kept in the document", "own")]),
     ("Each phrase checked: ok, conflict, gap", [("findings", "own")]),
-], ["control relations in ba:", "as-built programs", "ba:Schedule"])
+], ["as-built programs", "ba:Schedule"])
 
 submittal = mapping("lan", "Controls submittal and riser", "PDF · guided setup", [
     ("Point row with its Metasys reference", [("point node", "brick"), ("Brick point class", "brick")]),
     ("Point on its device", [("hasPoint", "brick")]),
-    ("Riser: controller, address, device instance", [("attributes on the unit", "own")]),
-    ("Riser: MS/TP trunk (FC-1, FC-2…)", [("attributes", "own")]),
+    ("Riser: one controller per device instance", [("Field_Controller", "off"), ("controls", "off")]),
+    ("Riser: MS/TP trunk (FC-1, FC-2…)", [("Field_Network", "off"), ("isOnNetwork", "off")]),
+    ("Point on its controller", [("isHostedBy", "off")]),
     ("Room schedule vs the floor plans", [("second source", "own")]),
     ("Contractor's RFIs", [("questions", "own")]),
-], ["Field_Controller nodes", "Field_Network nodes", "isHostedBy", "isOnNetwork", "controls"])
+], ["BACnet object references"])
 
 bms = mapping("sensors", "BMS points from the tools", "Haystack now · Niagara, CPO next", [
     ("Point names (Haystack, BMS CSV)", [("Brick point class", "brick")]),
@@ -264,14 +265,14 @@ missing = '<div class="on-miss">' + "".join([
     *([group("rule", "Fix the ontology", [
         f"Declare {codes(OFF_RELS)} in the extension, or map them to standard terms",
         f"Add {codes(UNCHECKED)} to the Brick subset"])] if OFF else []),
-    group("verified", "Prove it", [
-        "Export each project graph as Brick Turtle, with " + codes(LOCATIONS) + " written as their rec: classes",
-        "Run SHACL validation on every import, not only in the loader"]),
+    group("verified", "Prove it on every import", [
+        "Each project already exports as Brick Turtle with " + codes(LOCATIONS) + " as their rec: classes, checked "
+        "by SHACL with one command",
+        "Next: run that check on every import, not only on demand"]),
     group("inventory_2", "Keep what the sources already give", [
-        "Controllers and networks from the riser as nodes, not attributes",
-        "Units, BACnet and time-series references on points",
-        "Nameplate data as Brick properties; zones, building and site nodes",
-        "The site's geocoded location, linked to a Site node"]),
+        "BACnet and time-series references on points",
+        "Nameplate data as Brick properties",
+        "Zones, where a source states them"]),
     group("cable", "Connect the sources still to come", [
         "Niagara and CPO Studio adapters",
         "Control programs, to compare intent with what runs",
@@ -330,9 +331,9 @@ story([
             p("Point rows carry the contractor's reference, and their description gives each point a Brick class "
               "through the same naming rules the BMS mapper uses. The riser diagram lists every controller: "
               "address, device instance, location and the MS/TP trunk it sits on.",
-              "Our extension already has the classes and relations for this (a field controller, its network, "
-              "<code>isHostedBy</code>, <code>isOnNetwork</code>, <code>controls</code>). Today the riser is kept "
-              "as attributes on each unit instead.")
+              "Each controller becomes a node of our extension's field controller class, on its trunk "
+              "(<code>isOnNetwork</code>); it <code>controls</code> its unit and hosts its points "
+              "(<code>isHostedBy</code>).")
             + features([("compare_arrows", "Second source.", "The contractor's room schedule is checked against "
                                                              "where the floor plans put each box.")]),
             submittal, [Go("Add a building", "views/add_building.py", "add_business")]),
@@ -356,8 +357,8 @@ story([
     Section("Still missing", "flag", "What a complete graph still needs.",
             p(("First the plumbing: give every term in use a home in the ontology, then export" if OFF else
                "First the plumbing: every term in use now has a home in the ontology, so export") +
-              " each project graph as Brick and validate it. Then keep what the sources already hand us instead of storing it as "
-              "attributes.",
+              " each project graph as Brick and validate it (both done; next on every import). Then keep what the "
+              "sources already hand us instead of storing it as attributes.",
               "Last, the sources that haven't arrived yet: Niagara, CPO Studio, control programs and live data.")
             + features([("task_alt", "Measured.", "The Complete graph page scores each of these facts on a "
                                                   "real project.")]),

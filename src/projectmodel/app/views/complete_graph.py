@@ -100,6 +100,7 @@ st.write("For agents to monitor, diagnose and act on a building, the graph must 
          "(**complete**) and every fact in it must be trustworthy (**reliable**). This page defines both, fact by "
          "fact, and names the source of each one.")
 st.iframe(page(st.context.theme.type, tuple(p.stat().st_mtime for p in SOURCES if p.exists())), height="content")
-st.caption(f"Today's status is measured live on {label(PROJECT)}. Sources marked “next” arrive with the Niagara and "
-           "CPO Studio adapters; “later” with project documents and live data.")
+st.caption(f"Today's status is measured live on {label(PROJECT)}. Project documents are read by the guided setup "
+           "(Projects › Add a building); sources marked “next” arrive with the Niagara and CPO Studio adapters; "
+           "“later” with live data and the site team.")
 shacl_section()

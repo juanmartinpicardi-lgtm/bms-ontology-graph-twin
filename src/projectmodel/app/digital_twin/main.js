@@ -148,7 +148,7 @@ function renderDetail() {
           : `<div>Floor</div><div><span class="badge inf">inferred</span> ${isZone(e) && servedBy(e) ? `served by ${esc(servedBy(e))} → ${e.floor}` : `from type → ${e.floor}`}</div>`}
         ${e.room_name ? `<div>Room</div><div><span class="badge">from the documents</span> ${e.room_rel === "serves" ? "serves" : "in"} ${esc(e.room_name)}</div>` : ""}
         <div>Geometry</div><div><span class="badge inf">generated</span> ${isZone(e) ? (e.room_name ? "room layout, " : "room, ") + "box in the ceiling" : e.type.toLowerCase() + " model, " + ({ ceiling: "hung from the ceiling", wall: "on the wall", floor: "on a pad on the floor", roof: "on the roof" })[mountOf(e)]}</div></div></div>
-      <div class="sec"><div class="actions">${D.links?.[e.id] ? `<a class="btn" href="${esc(D.links[e.id])}" target="_top" style="text-decoration:none">Open in Equipment 3D ↗</a>` : ""}<button class="btn" id="clearSel">Close</button></div></div>`;
+      <div class="sec"><div class="actions">${D.links?.[e.id] ? `<a class="btn" href="${esc(D.links[e.id])}" target="_top" style="text-decoration:none">Open in Equipments ↗</a>` : ""}<button class="btn" id="clearSel">Close</button></div></div>`;
     const drawPts = q => { $("#ptsTable", el).innerHTML = e.points.filter(p => !q || (p.n + " " + p.c).toLowerCase().includes(q)).map(p =>
       `<tr><td>${esc(p.n)}<div class="cls">${esc(p.c || "unmapped")} · ${p.m} ${p.conf}${p.s !== "proposed" ? ` · <span style="color:${C[p.s] || "#999"}">${p.s}</span>` : ""}</div></td><td class="v">${pointValue(e, p)}</td></tr>`).join(""); };
     drawPts(""); $("#ptq", el).oninput = ev => drawPts(ev.target.value.toLowerCase());
