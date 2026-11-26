@@ -14,6 +14,7 @@ Small requirements captured on 2026-11-26. **All 14 built on 2026-11-26** (branc
     - **Done.** `fileread.py` opens PDF, Word, Excel, PowerPoint, OpenDocument, images, email, CSV and text; images become PDF pages and Excel becomes CSV where a step needs it.
 5. **Equipment view: 3D / 2D toggle.** Show either the 3D or the 2D view, switched with a toggle, instead of both on the same screen.
     - **Done.** Segmented toggle 3D model / 2D graphic, also as `?view=2d` (`views/equipment_3d.py`).
+    - **Superseded (Nov 26).** The 2D equipment graphic was dropped; Equipments shows the 3D model only, and an old `?view=2d` link opens it.
 6. **Rename the "Equipment 3D" tab to "Equipments".**
     - **Done.** Renamed everywhere it is shown; the URL stays `Equipment_3D` so old links work.
 7. **System graphics: better visuals and a short explanation.** The user likes the system graphics (Graphics page, "System graphics" box: the air-side and water-side drawings built from the graph's `feeds` edges, `src/projectmodel/graphics/system.py`). Improve how they look, and add a short note on the page that says what a system graphic is and why it is needed.
