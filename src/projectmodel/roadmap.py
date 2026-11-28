@@ -162,7 +162,44 @@ PACKAGES = [
                ("Every citation checked; shown as a page crop in the dock", True),
                ("Troop D, 10 questions: answers and citations 100%, $0.06 each", True),
                ("Live BMS values", False)]},
-    {"id": "W12", "name": "Tool adapters", "wave": 4, "status": "later",
+    # Delivery wave (docs/plan-delivery.md): from a reviewed graph to what a contractor ships.
+    {"id": "D0", "name": "Write-back rule everywhere", "wave": 4, "status": "done",
+     "plain": "The app's own words say it: it writes back to a tool only when you ask, after a preview and a confirm.",
+     "parts": [("CLAUDE.md, How it works, memory and specs updated", True),
+               ("This wave listed on the Roadmap", True)]},
+    {"id": "F1", "name": "React front end and Python API", "wave": 4, "status": "doing",
+     "plain": "A faster screen that reacts at once, and a login, hosted on our Google Cloud so nothing is lost on "
+              "restart."},
+    {"id": "Q1", "name": "Accuracy push", "wave": 4, "status": "doing",
+     "plain": "Every model job at 85% or better on its own, aiming for 100%, with the strongest models and a vote."},
+    {"id": "D1", "name": "Cost per building", "wave": 4, "status": "doing",
+     "plain": "What each building cost in model calls, per step and per 1,000 points. Shown, never capped."},
+    {"id": "D2", "name": "Equipment library", "wave": 4, "status": "doing",
+     "plain": "Real makes and models with their manuals, protocols and point lists, found and read with page "
+              "citations."},
+    {"id": "D3", "name": "Point schedule and I/O plan", "wave": 4, "status": "next",
+     "plain": "Every point each unit needs, the controllers to order, estimated from the design or read as built."},
+    {"id": "D4", "name": "Agent actions and voice commands", "wave": 4, "status": "next",
+     "plain": "Say \"show me the 3D twin\" or \"swap the chillers\" and the screen changes; edits wait for your "
+              "confirm."},
+    {"id": "D5", "name": "Memory layer", "wave": 4, "status": "doing",
+     "plain": "Every action is remembered once you agree; a fix made twice can be saved as a rule for the next "
+              "building. (Engine first.)"},
+    {"id": "D6", "name": "Full system test with reports", "wave": 4, "status": "doing",
+     "plain": "Test scenarios per system, from the sequences: expected against observed, with a cited report."},
+    {"id": "D7", "name": "Frontier 3D and plant view", "wave": 4, "status": "doing",
+     "plain": "Better 3D equipment and a whole plant room built from the graph. (Engine first.)"},
+    {"id": "D8", "name": "Niagara output and write-back", "wave": 4, "status": "next",
+     "plain": "Tags, a station skeleton, logic and graphics for Niagara; tags written back only when you ask."},
+    {"id": "D9", "name": "Change impact on re-upload", "wave": 4, "status": "next",
+     "plain": "A revised document lists exactly which points, controllers, tests and outputs it changes."},
+    {"id": "D10", "name": "Sketches, single lines and risers", "wave": 4, "status": "next",
+     "plain": "A hand sketch or single line becomes a proposed layout; the agent asks if it does not look right."},
+    {"id": "D11", "name": "Operations questions over an event log", "wave": 4, "status": "later",
+     "plain": "Ask \"any anomalies since yesterday?\" over an alarm and event file. Waits for the twin state layer."},
+    {"id": "D12", "name": "Outputs hub", "wave": 4, "status": "next",
+     "plain": "One page per project to download every output and see how much of it is still unconfirmed."},
+    {"id": "W12", "name": "Tool adapters", "wave": 5, "status": "later",
      "plain": "Niagara and CPO Studio exports, merged on device id, when access exists."},
 ]
 BY_ID = {p["id"]: p for p in PACKAGES}
@@ -173,4 +210,5 @@ REAL_SETS = {
     "msu_mbb": {"name": "Montana State University lab renovation", "rooms": 39, "equipment": 80, "sequences": 2},
     "itd_d1_lab": {"name": "Idaho DOT District 1 testing lab", "rooms": 27, "equipment": 70, "sequences": 6},
 }
-WAVES = {1: "First wave · done", 2: "Second wave · done", 3: "Third wave · done", 4: "When access exists"}
+WAVES = {1: "First wave · done", 2: "Second wave · done", 3: "Third wave · done",
+         4: "Delivery wave · in progress", 5: "When access exists"}

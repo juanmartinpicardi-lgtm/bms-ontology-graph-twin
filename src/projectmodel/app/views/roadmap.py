@@ -235,7 +235,7 @@ def package(pk: dict) -> str:
         parts = meter(100 * done / len(pk["parts"]), "ok") + '<ul class="rm-parts">' + "".join(
             f'<li><span class="ms{" rm-y" if d else ""}">{"check_circle" if d else "radio_button_unchecked"}</span>'
             f'{escape(t)}</li>' for t, d in pk["parts"]) + "</ul>"
-    plain = f'<small>{escape(pk["plain"])}</small>' if pk["wave"] < 3 else ""  # later waves: one line each
+    plain = f'<small>{escape(pk["plain"])}</small>' if pk["wave"] < 3 or pk["wave"] == 4 else ""  # wave 3: name only; delivery wave: one line each
     return (f'<div class="rm-pk" title="{escape(pk["plain"])}"><code>{pk["id"]}</code><span><b>{escape(pk["name"])}'
             f'</b>{plain}{parts}</span>{st_}</div>')
 
@@ -359,8 +359,13 @@ story([
                                                              "made twice becomes a convention (W10), and the agent "
                                                              "answers \"does it run as designed?\" with citations "
                                                              "(W11)."),
-                        ("pending", "Next:", "W12 Niagara and CPO Studio adapters, when access exists. A real "
-                                             "submittal and BMS pair to measure on.")]),
+                        ("progress_activity", "Delivery wave, in progress:", "what a contractor ships (point schedule, "
+                                                                           "I/O plan, system tests, Niagara output), "
+                                                                           "talking to the app, a memory that learns, "
+                                                                           "a React front end on our cloud (D0 to "
+                                                                           "D12, Q1, F1). D0 is done."),
+                        ("pending", "Later:", "W12 Niagara and CPO Studio adapters, when access exists. A real "
+                                              "submittal and BMS pair to measure on.")]),
             waves),
     Section("Your projects", "monitoring", "How complete each project is, and what to do next.",
             p("Each project is measured against the same standard as the Complete graph page: six layers, from "

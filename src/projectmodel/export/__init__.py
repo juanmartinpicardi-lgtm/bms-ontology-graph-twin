@@ -6,7 +6,7 @@
     ex.write("alpha.ttl"); load_export("alpha.ttl")                 # round trip: same node and edge counts
     report = validate(ex, km)                                        # Brick's shapes + knowledge_model/shapes/*.ttl
 
-Data flows one way: the export reads the store and writes files; nothing is written back.
+The export reads the store and writes files for a tool to import: outputs, not write-back to a source. Nothing is written back to the store.
 """
 from .brick import PM, Export, class_uri, export_project, load_export, node_uri, relation_uri
 from .shacl import SHAPES_DIR, load_shapes, validate

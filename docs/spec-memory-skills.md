@@ -41,7 +41,7 @@ here anything that changes how documents are read waits for a person and must no
 ## 2. Non-goals (for now)
 
 - Auth and permissions. `author` and `approver` are free-text names, as in the review screen.
-- Writing to any source tool (CLAUDE.md §8). Memory is about how we read sources, never written back to them.
+- Writing to any source tool. Memory is about how we read sources; a write-back happens only when the user asks (CLAUDE.md §8, plan-delivery D8) and is not a memory job.
 - Vector databases or embeddings. SQLite FTS5 is enough at this size; revisit if recall is poor (§11).
 - Google's Agent Platform Memory Bank (formerly Vertex AI Memory Bank). It is a managed conversational memory; we
   need files in git, scopes, provenance and approval. Revisit for the agent's chat memory later (§11).

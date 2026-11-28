@@ -7,9 +7,10 @@ Three origins, one list:
     library  files added on the Documentation page (data/library/<site>/files/), with a category picked by the person
              or guessed from the name. They are kept and shown; the readers do not read them (yet).
     source   the raw source data a Haystack site was mapped from (data/raw/haystack/<site>.*) and its documents
-             (data/documents/<site>/). Read-only: data flows one way, the raw sources are never changed (CLAUDE.md §8).
+             (data/documents/<site>/). Read-only: the app never changes the raw source files.
 
-Nothing here writes back to any source system.
+Nothing here writes to a source system. Write-back to a source tool happens only when the user asks, with a
+preview, a confirm and a log of every write (CLAUDE.md §8).
 """
 from __future__ import annotations
 

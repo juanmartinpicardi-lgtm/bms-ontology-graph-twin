@@ -29,7 +29,7 @@ Each step of the setup is a source of its own (`setup:plans`, `setup:schedules`,
 `publish(it, store, steps=["bms"])` re-publishes one step and leaves the others' rows, and every decision people
 made in the app, as they are. Publishing everything also removes steps that no longer say anything. Statuses are the
 store's (db/store.py): a person's answer in the setup is confirmed_by human; a question still open holds the row as
-proposed. Nothing is written back to the setup.
+proposed. Publishing never changes the setup's files.
 """
 from __future__ import annotations
 
