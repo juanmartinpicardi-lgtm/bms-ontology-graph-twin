@@ -21,7 +21,7 @@ Values are **simulated** for this phase; the public datasets have no readings (H
 
 ## 2. Non-goals
 
-- Real live values, trending, alarms, writing commands. Read-only, one way (brief §8).
+- Real live values, trending, alarms, writing commands. The viewer is read-only: it never writes to a tool (write-back, when the user asks, is a separate package, plan-delivery D8; brief §8).
 - Photo-realistic or vendor-specific models. One clean, generic, parametric model per equipment type.
 - Imported 3D assets (glTF/FBX). Everything is drawn in code: no licences, no binary files, easy to vary.
 - Storing values in the knowledge graph. Values are **digital twin state** (later phase), never graph facts.

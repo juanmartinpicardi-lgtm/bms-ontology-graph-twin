@@ -46,8 +46,9 @@ entries:
   - id: m-0006
     kind: principle
     text: >
-      Data flows one way, from the sources into the app. Nothing is written back to a BMS, a station or a
-      design tool, and the agent never commands real equipment.
+      Data flows from the sources into the app. Write back to a BMS, a station or a design tool only when the
+      user asks: show what will change, get a confirm, log every write. Never write back on your own. The
+      agent never commands real equipment.
     source: {doc: CLAUDE.md#8}
     method: human
     author: project-model-team

@@ -5,7 +5,7 @@ Two providers behind one interface:
   google         Google Maps Platform Geocoding API. Needs an API key (.streamlit/secrets.toml, never in git).
   openstreetmap  Nominatim, OpenStreetMap's public geocoder. No key; at most one request per second, no bulk use.
 The typed address is sent to the chosen provider: the only place where project data leaves the app. Nothing is
-written back to any source. The stored location records the provider, the query and who confirmed it.
+written to any source tool. The stored location records the provider, the query and who confirmed it.
 """
 
 from __future__ import annotations

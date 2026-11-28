@@ -8,7 +8,7 @@ Build a prototype that turns engineering-tool exports into a reviewed **knowledg
 
 Phase 0 runs on **public data only** (Project Haystack example sites). Niagara and CPO Studio adapters come later, when internal access exists. The pipeline must not care which source the data came from.
 
-Not a goal: production quality, auth, scale, write-back to any tool.
+Not a goal: production quality, auth, scale. Writing back to a source tool is allowed when the user asks for it (§8).
 
 ## 2. Vocabulary (use these terms consistently in code and UI)
 
@@ -75,8 +75,8 @@ Download from project-haystack.org/example (CSV or Zinc). Store raw downloads in
 
 ## 8. Rules for the coding agent
 
-- Data flows one way: sources → app. Never write back to any source.
+- Data flows from sources into the app by default. Write back to a source tool (for example tags into a Niagara station) only when the user asks for it: show what will change first, the user confirms, and log every write with what was sent, where, when and by whom. Never write back on the app's own initiative. Files the app generates for a tool to import (CSV, `.bog`, graphics) are outputs, not write-back.
 - Keep adapters thin; all intelligence lives in the mapper + knowledge model.
 - Every fact must be traceable to its source and method.
 - Prefer rules and templates over LLM calls; log every LLM call with input, output, cost, latency.
-- Don't add a graph database, auth, or deployment until asked.
+- Auth and deployment are asked for (28 Nov 2026, `docs/plan-delivery.md` §7): Cloud Run, Cloud SQL Postgres, Cloud Storage, Identity-Aware Proxy login, region `us-central1`. Still no graph database.

@@ -14,7 +14,7 @@ feed steps 2-3; ignore rules flag points for review. A scoped class hint (a lear
 template's equipment, only instead of one class) decides after step 3. Whatever a convention decided or contributed
 is recorded in attrs.convention, e.g. ["site/alpha:abbreviations.cc"] or ["site/alpha:lc-3f2a1b"].
 A point's units, when its record has them, are kept as written with their QUDT id (units.py); they do not take part
-in classification. Nothing is written back to any source.
+in classification. Mapping reads the sources and never changes them.
 """
 
 from __future__ import annotations

@@ -16,7 +16,8 @@ import time
 ARCHITECTURE = [
     ("input", "Inputs", "Exports and documents: Project Haystack exports now; plans, schedules, sequences, the "
                         "controls submittal and the BMS export of a building; any other file on the Documentation "
-                        "tab. Niagara and CPO Studio later. Never written back.", "data/raw · data/intake"),
+                        "tab. Niagara and CPO Studio later. Read only; a write-back only when you ask.",
+     "data/raw · data/intake"),
     ("description", "Readers", "Thin adapters turn each source into one record shape (one per point); the guided "
                                "setup's readers turn each document into rooms, units, points and control logic; the "
                                "file reader opens PDF, Office, images, email and text.",
@@ -46,7 +47,9 @@ SUPPORT = [
                               "cost and time. PM_AI=off runs on rules only.", "ai/ · ai/prompts/"),
 ]
 PRINCIPLES = [
-    ("east", "One way", "Data flows from the sources into the app. Nothing is written back to a source tool."),
+    ("east", "One way by default", "Data flows from the sources into the app. The app writes back to a source tool "
+                                   "only when you ask: it shows what will change, you confirm, and every write is "
+                                   "logged. Files it makes for a tool to import are outputs, not write-back."),
     ("fingerprint", "Traceable", "Every node and link stores its source, method, confidence and status."),
     ("rule", "Rules first", "Rules and templates before a model; a model only gets a short list of candidates."),
     ("person_check", "People decide", "Low-confidence facts go to review; nothing a model says is final until a "
@@ -115,8 +118,9 @@ def foundations_text() -> str:
                    + ", ".join(sorted(e.docs)) for e in EXAMPLES.values())
     words = "\n".join(f"- {w}: {d}" for w, d in VOCABULARY)
     return f"""The app ("Graph and Ontology Builder") turns a building's engineering exports and documents into a
-reviewed knowledge graph, using a shared knowledge model, and measures how good it is. It is a prototype: no auth,
-no write-back to any tool, values are simulated (no live BMS connection yet).
+reviewed knowledge graph, using a shared knowledge model, and measures how good it is. It is a prototype: no login
+yet, no write-back to a tool built yet (it will only happen when the user asks, with a preview, a confirm and
+a log), values are simulated (no live BMS connection yet).
 
 Words:
 {words}

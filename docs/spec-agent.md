@@ -25,7 +25,7 @@ becomes the agent's `troubleshoot-warm-zone` skill.
 
 ## 2. Non-goals (for now)
 
-- Writing to any source system (CLAUDE.md §8). The agent never commands real equipment; "simulation" always means
+- Writing to a source system on the agent's own initiative (CLAUDE.md §8: write-back only when the user asks, with a preview, a confirm and a log). The agent never commands real equipment; "simulation" always means
   our simulator (`equipment3d/sim.js`, the sequences page), clearly labelled as simulated.
 - Live BMS values. They arrive with the Niagara adapter; until then every value the agent shows is simulated.
 - Auth and per-user permissions (later). Writes are confirmed and attributed to a free-text name, as today.

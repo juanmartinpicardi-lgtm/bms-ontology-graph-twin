@@ -37,7 +37,7 @@ if example:
     connect = record(f'{icon("description")}<b>One record per point</b>', [
         ("name", example["label"]), ("folder", attrs.get("path") or "none"),
         ("source", f"{Path(example['source_file']).name} · row {example['source_ref']}")],
-        "The same shape whatever the tool. Nothing is written back.")
+        "The same shape whatever the tool. Reading never changes the source.")
 else:
     connect = NOT_MAPPED
 
@@ -101,8 +101,8 @@ WORDS = glossary([
 ])
 
 hero("Exports go in. A knowledge graph comes out.",
-     "Four steps turn engineering-tool exports into a complete graph of the building. Data flows one way: "
-     "nothing is ever written back to the source tools.")
+     "Four steps turn engineering-tool exports into a complete graph of the building. Data flows from the "
+     "tools into the app. It writes back to a tool only when you ask, after a preview and a confirm.")
 
 story([
     Section("Connect", "cable", "Read every tool into one common record.",

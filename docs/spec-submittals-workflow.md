@@ -7,7 +7,7 @@ Status: the 8 steps agreed 2026-11-15; step 0, the four layers and §7 still to 
 A user drops a project's documents and gets, with one review pass, the same thing Alpha has today from a
 BMS export, plus what Alpha lacks: spaces, nameplate data and sequences on every unit.
 
-Documents are a source like any other: read only, never written back, every fact traceable to a file
+Documents are a source like any other: read only (the app never changes them), every fact traceable to a file
 and page.
 
 ## 2. The workflow, step by step
@@ -68,8 +68,8 @@ orientation for the floor plans, and placing the digital twin on the map.
 To decide and to check before building:
 
 - It needs a Google Maps Platform API key with billing, kept in Streamlit secrets, never in git.
-- The address is sent to Google: the only step where project data leaves the app. Data still flows one
-  way (nothing is written to a source), but this must be acceptable for customer projects.
+- The address is sent to Google: the only step where project data leaves the app. Nothing is
+  written to a source, but this must be acceptable for customer projects.
 - Google's terms limit how long geocoding results may be stored; the place id may be kept. To check
   against the current terms before storing coordinates.
 - Google Earth itself has no embeddable service; Photorealistic 3D Tiles are the equivalent. Coverage
